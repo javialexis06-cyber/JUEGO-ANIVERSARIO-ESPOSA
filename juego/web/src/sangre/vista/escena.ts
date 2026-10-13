@@ -111,6 +111,8 @@ export class Escena3D {
   zoom = 1;
   /** Cámara de vitrina para los menús: cerca del muñeco, baja y de frente, con el muñeco a un lado de la pantalla. */
   vitrina: { lado: number; dist: number; alto?: number } | null = null;
+  /** Presentación de un lugar: la cámara se aleja y gira despacio sobre el jugador (ui/postal.ts). */
+  postal: { t0: number } | null = null;
   private sacudida = 0;
   private tiempo = 0;
   private colorAntorcha = new THREE.Color('#ff9a4a');
@@ -570,6 +572,16 @@ export class Escena3D {
       // (teletransporte o reaparición: no se arrastra la cámara por todo el mapa)
       this.foco.copy(meta);
       this.focoVel.set(0, 0, 0);
+    }
+    if (this.postal) {
+      const t = (performance.now() - this.postal.t0) / 1000, k = Math.min(1, t / 16);
+      const az = 0.9 - t * 0.07, el = THREE.MathUtils.degToRad(40 + 8 * k), D = 34 - 14 * k * k * (3 - 2 * k);
+      const cx = this.foco.x, cz = this.foco.z;
+      this.camara.position.set(cx + Math.sin(az) * Math.cos(el) * D, Math.sin(el) * D, cz + Math.cos(az) * Math.cos(el) * D);
+      this.camara.lookAt(cx, 0, cz);
+      this.luna.position.set(cx - 7, 16, cz - 5);
+      this.luna.target.position.set(cx, 0, cz);
+      return;
     }
     if (this.vitrina) {
       const v = this.vitrina;

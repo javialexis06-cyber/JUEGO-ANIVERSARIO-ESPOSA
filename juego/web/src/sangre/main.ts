@@ -2,6 +2,7 @@
 // escoger clase y especialización, bioma, peligro, mutadores y equipo del Pozo, la expedición (cinco etapas con la
 // Forja entre medio), los resultados con la ceniza y la maestría, el Pozo de las Almas, los logros, la pausa y el
 // tutorial. Las partidas en grupo (hasta 4) van por `red/`.
+import { postalPendiente, verPostalBioma } from './ui/postal';
 import '../deslizar';
 import './sangre.css';
 import { App } from '@capacitor/app';
@@ -1054,7 +1055,12 @@ async function empezar(cfg: ConfigExpedicion, perfiles: PerfilJugador[], local: 
       red?.cuadro(p, dt);
     },
     alPaso: (sim) => red?.anf.alPaso(sim, DT),
-    alEtapa: (_p, sim) => red?.etapa(sim),
+    alEtapa: (_p, sim) => {
+      red?.etapa(sim);
+      // La primera vez en cada bioma, su presentación (solo jugando solo: en grupo no se detiene el mundo de los demás)
+      const solo = perfiles.length === 1 && !extra.sala && !cfg.tutorial && !params.has('bot') && (!params.has('prueba') || params.has('postal'));
+      if (solo && postalPendiente(sim.bioma.id)) window.setTimeout(() => { if (partida === pt) void verPostalBioma(sim.bioma.id, escena, (si) => pt.pausar(si, true)); }, 400);
+    },
     alFinEtapa: (p) => red?.finEtapa(p),
   });
   const red = extra.sala ? redAnfitrion(extra.sala, pt, perfiles, local) : null;

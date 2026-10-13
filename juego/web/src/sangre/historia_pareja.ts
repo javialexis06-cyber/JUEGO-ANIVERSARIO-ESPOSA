@@ -122,6 +122,8 @@ const PELICULAS: Partial<Record<IdEscena, string[]>> = { prologo: ['SC0'], afuer
 export async function verPelicula(id: IdEscena): Promise<boolean> {
   const p = PELICULAS[id];
   if (!p) return false;
+  // El final de Sangre y Ceniza abre, junto con la granja, el epílogo de la película (el Altar y la boda)
+  if (id === 'corte') try { localStorage.setItem('astra-sangre-final', '1'); } catch { /* sin almacenamiento */ }
   try {
     const [{ CineGranja, cargarMediosCine }, { PELICULAS: TODAS }] = await Promise.all([import('../granja-v3/cine-granja'), import('../granja-v3/cine-catalogo')]);
     // «La copa» es la misma película de la granja (el Conde termina en Nox una sola vez) y después, Nath'Gora
@@ -129,4 +131,17 @@ export async function verPelicula(id: IdEscena): Promise<boolean> {
     for (const id of p) { const c = new CineGranja(await TODAS[id](), medios); await c.preparar(); await c.reproducir(); }
     return true;
   } catch (e) { console.warn('película', id, e); return false; }
+}
+
+/** La voz del Conde en su pelea (JEF.C1 al aparecer, JEF.C2 cuando le salen las alas): la misma de las películas. */
+let vocesCine: Promise<Record<string, { archivo: string }>> | null = null;
+export function vozConde(cual: 'entrada' | 'furia') {
+  vocesCine ??= fetch('./granja/cine/medios.json').then((r) => (r.ok ? r.json() : {})).then((m: { voces?: Record<string, { archivo: string }> }) => m.voces ?? {}).catch(() => ({}));
+  void vocesCine.then((v) => {
+    const voz = v[cual === 'entrada' ? 'JEF.C1' : 'JEF.C2'];
+    if (!voz) return;
+    const a = new Audio(voz.archivo);
+    a.volume = 0.95;
+    void a.play().catch(() => {});
+  });
 }

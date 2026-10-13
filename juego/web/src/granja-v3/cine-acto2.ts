@@ -167,7 +167,7 @@ function corral(): Escenario {
     async montar(g) {
       const [pueblo, monte, granero, cerca, heno, unicornio, el, ella, mara, fuatia, nino, nina] = await Promise.all([
         cargar('granja_pueblo.glb'), cargar('granja_monte.glb'), cargar('granja-v2/granero.glb'), cargar('granja-v2/cerca.glb'), cargar('granja-v2/paca_heno.glb'),
-        cargar('granja-v3/unicornio.glb'), actorPareja('el'), actorPareja('ella'), actorVecino('cuidadora'), actorDiosa('fuatia'), actorVecino('nino'), actorVecino('nina'),
+        cargar('granja_cria.glb'), actorPareja('el'), actorPareja('ella'), actorVecino('cuidadora'), actorDiosa('fuatia'), actorVecino('nino'), actorVecino('nina'),
       ]);
       g.add(copia(granero, 0, -9, 0, 1.6));
       const tramos: [number, number, number, number, number][] = [];
@@ -178,7 +178,7 @@ function corral(): Escenario {
       const r = azar(3);
       const roble = piezaKit(monte, 'roble');
       if (roble) g.add(instanciar(roble, Array.from({ length: 40 }, () => { const a = r() * Math.PI * 2, d = 14 + r() * 40; return [Math.cos(a) * d, 0, Math.sin(a) * d - 4, r() * 6, 1 + r() * 0.5] as [number, number, number, number, number]; })));
-      cria = copia(unicornio, 3.2, -3.6, -0.5, 0.42);
+      cria = poner(unicornio, 'cria_unicornio', 3.2, -3.6, -0.5, 0.85);
       g.add(cria, motasFlotantes(160, [0, 0.4, 0], 9, 3, [1, 0.85, 0.55], 1.6, 9));
       colocar(el, -1.8, 2.4, 2, -2);
       colocar(ella, -0.4, 3.0, 2, -2);

@@ -134,18 +134,21 @@ export class Partida {
     this.bucle = null;
   }
 
-  pausar(si: boolean) {
+  /** En pausa de cine (la presentación de un lugar): el mundo se detiene pero se dibuja a 30 cuadros. */
+  cine = false;
+  pausar(si: boolean, cine = false) {
     this.pausado = si;
+    this.cine = si && cine;
     this.o.mando.activo = !si;
     if (si) this.o.mando.soltar();
-    this.hud.tenue(si);
+    this.hud.tenue(si && !cine);
   }
 
   private cuadro(dt: number, ahora: number) {
     const sim = this.sim;
     if (!sim || this.terminada) return;
     // 30 cuadros por segundo (el celular no se calienta); en pausa, 8 (casi nada se mueve)
-    const minimo = this.pausado || this.pausaExterna ? 120 : 30;
+    const minimo = (this.pausado && !this.cine) || this.pausaExterna ? 120 : 30;
     if (this.ultimoDibujo && ahora - this.ultimoDibujo < minimo) return;
     const dtReal = this.ultimoDibujo ? Math.min(0.1, (ahora - this.ultimoDibujo) / 1000) : DT;
     this.ultimoDibujo = ahora;

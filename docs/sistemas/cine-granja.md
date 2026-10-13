@@ -155,3 +155,41 @@ en la plaza del Pueblo del Sol; los representantes de los otros mundos con un ha
 la mesa), C08 (el ceramista: la vasija abierta y dos recuerdos en papel), C09 (el Borde de Astra: el escudo, la
 constelación y Nath'Gora como una sombra enorme que se aleja) y C10 (los dos surcos de C01, ya sanos, con
 `granja(false, { reparto })`). Las 14 cinemáticas de la campaña ya son película y se ven al tocar «Ver».
+
+## El epílogo: el Altar del Lazo y la boda (13 de octubre de 2026)
+
+`src/granja-v3/cine-epilogo.ts`:
+- **ALT «El Altar del Lazo»** (~67 s, de noche en el patio de la cabaña). Las reliquias llegan volando al altar y lo
+  encienden. La constelación se dibuja sobre el techo. Las cuatro diosas aparecen con un destello e invitan a Eterna.
+  Todos están en medio círculo abierto hacia la cámara, que es como mejor dirige `tomasDialogo`. A Lara y a Fuatia se
+  les dan planos propios porque quedaban tapadas.
+- **BOD «Siempre te elegiré»** (~4,5 min con créditos), en Eterna (`personajes/blender/granja_eterna.py` →
+  `granja_eterna.glb`). Por planos:
+  - La llegada, con el grifo que trae el velo.
+  - Celia hace florecer el arco rosa por rosa, Aura enciende las velas del camino con una chispa y Fuatia teje el lazo
+    de cuatro hilos.
+  - Laura entra mientras Javier se frota las manos.
+  - Lara oficia sin velo. Laura no habla: sin votos.
+  - La constelación entera y el pulso del escudo.
+  - La fiesta: baile lento, el unicornio de la mesa y el dragón en la fogata.
+  - El muelle del río con la frase de Javier en off y fundido a blanco.
+  - La mañana siguiente en la parcela («¿Y mañana?» «Miramos si brotó»).
+  - Los créditos con los 27 capítulos y «Feliz aniversario».
+- **Escala**: los muñecos de peluche tienen cabezas de casi un metro, así que las piezas de Eterna van al doble (el arco a
+  ×2,2, el pabellón a ×2,3) y los invitados quedan de pie (sentados no caben). Las sillas vacías van detrás.
+- **Ropa de boda**: `actorNovio('el' | 'ella')` en `cine-actores.ts` (saco azul noche con corbatín; vestido, velo y
+  tacones). `actorDiosa('lara', true)` es Lara sin velo, con una diadema clara.
+- **Cuándo sale**: `vigilarBoda()` en `granja-v3/main.ts`. Se dispara con P24 y F12 cerradas (`astra.expedientes`) y
+  el final de Sangre y Ceniza visto (`localStorage['astra-sangre-final']`, que marca `sangre/historia_pareja.ts` al ver
+  «corte»). Sale una sola vez (`astra-boda-vista`); se puede repetir con `__granjaV3.pelicula('ALT' | 'BOD')`.
+- **Créditos con fotos**: cada capítulo lleva su foto a un lado (`public/granja/cine/fotos/<id>.jpg`, 480×216). Se
+  vuelven a sacar con `node scripts/_fotos_creditos.mjs <carpeta> [id:fracción,…]` (servidor en 5176), recortando las
+  franjas. Si una película cambia mucho, repetir su foto.
+
+## Sangre y Ceniza: presentaciones de lugar y la voz del Conde
+
+- `sangre/ui/postal.ts`: la primera vez que se juega solo en un bioma, el mundo se detiene en pausa de cine
+  (`Partida.pausar(true, true)`, a 30 cuadros), la cámara se aleja girando (`Escena3D.postal`) y sale el nombre del lugar
+  con la voz del narrador (`LUG.<bioma>`). En grupo no sale. En pruebas, `sangre.html?prueba=1&postal=1`.
+- `vozConde()` en `historia_pareja.ts` (la de amigos no hace nada): el HUD la llama al aparecer el Conde y cuando pasa a
+  la fase 2.

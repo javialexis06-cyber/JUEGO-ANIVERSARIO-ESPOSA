@@ -15,6 +15,7 @@ import { MINERALES } from '../datos/minerales';
 import type { Escena3D } from '../vista/escena';
 import { COLOR_ASTRAL } from '../vista/astral';
 import { glifo, icono, medalla } from './iconos';
+import { vozConde } from '../historia_pareja';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -161,6 +162,7 @@ export class Hud {
   private veloDano = $('velo-dano');
   /** El cartel del Guardián ya salió en esta etapa (se reinicia al construir el HUD). */
   guardianAnunciado = false;
+  jefeActual = '';
   private golpeVelo = 0;
   private P = { x: 0, y: 0, visible: false };
 
@@ -513,6 +515,10 @@ export class Hud {
         const id = TIPOS[d[k + 4]]?.id;
         const j = id ? JEFES[id] : null;
         if (j) cartelJefe(j.nombre, j.titulo);
+        this.jefeActual = id ?? '';
+        if (id === 'conde') vozConde('entrada');
+      } else if (t === S.JEFE && d[k + 1] === 1 && d[k + 4] === 2 && this.jefeActual === 'conde') {
+        vozConde('furia');
       } else if (t === S.JEFE && d[k + 1] === 4 && !this.guardianAnunciado) {
         // (el Guardián se anuncia con su cartel una vez por etapa; los custodios, solo con el aviso)
         this.guardianAnunciado = true;
