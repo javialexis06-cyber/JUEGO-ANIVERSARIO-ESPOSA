@@ -513,6 +513,11 @@ Dónde está:
   colgadas y helechos). `riegoInvernadero` usa el tubo de cobre con aspersores y su llavecita roja. Todo fundido por
   material.
 
+- **Nodos de las minas en Blender** **hecho** (13 de octubre): `granja_nodos.glb` (`personajes/blender/granja_nodos.py`).
+  `escenas-aventura.ts rocaNodo` usa una de tres rocas redonditas con grietas y piedritas al pie y, encima, las
+  pepitas de la veta (metales, carbón, piedra y geodas) o el racimo de cristales de seis caras (gemas), pintados con el
+  color de cada mineral (`materialVeta`: un material compartido por mineral; los cristales brillan un poquito).
+
 ## Datos útiles
 
 - El Pueblo del Sol está en las coordenadas del mundo:

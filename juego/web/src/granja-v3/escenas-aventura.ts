@@ -5,6 +5,7 @@ import {JEFES} from './jefes';
 import { caja, esfera, liberar, compactar } from './suelo';
 import { destinoAventura, instanciaAventura, MINERALES, MONSTRUOS, MINA } from './aventura';
 import { terrenoMina, escaleraMina, cofreMina, paletaMina } from './mina-render';
+import { conKit } from './cuartos';
 import type { EstadoAventura, InstanciaAventura, MonstruoAventura, NodoAventura, TipoMonstruo, PuntoAventura } from './aventura';
 
 let mediosJefe:MediosAstra['modelos']={},cargarJefe:((archivo:string)=>Promise<{escena:THREE.Group;clips:THREE.AnimationClip[]}>)|undefined;
@@ -55,7 +56,28 @@ function rocaNodo(n:NodoAventura){
  if(['carbon','piedra','hierro','cobre','oro','plata','titanio','meteorita','estano','mitrilo','geoda','geoda_helada','geoda_magma','geoda_omni'].includes(n.mineral)){
   for(let k=0;k<6;k++){const angle=k*2.399+h(2),mesh=new THREE.Mesh(new THREE.DodecahedronGeometry(.11+h(k)*.05,0),new THREE.MeshStandardMaterial({color,roughness:n.mineral==='carbon'?.9:.35,metalness:['oro','plata','hierro','titanio','cobre'].includes(n.mineral)?.55:.05}));mesh.position.set(Math.sin(angle)*.33,.3+(k%3)*.12,Math.cos(angle)*.3);mesh.rotation.set(k,k*.6,k*.3);mesh.castShadow=true;g.add(mesh);}
  }else for(let k=0;k<4;k++){const angle=k*2.399+h(3);cristal(g,color,Math.sin(angle)*.25,Math.cos(angle)*.22,.5+k*.12);}
- g.scale.setScalar(1.25);objetivo(g,'nodo',n.id);g.position.set(n.x,0,n.z);return g;
+ g.scale.setScalar(1.25);objetivo(g,'nodo',n.id);g.position.set(n.x,0,n.z);
+ // Con granja_nodos.glb (personajes/blender/granja_nodos.py): una de las tres rocas de plastilina con grietas y, encima,
+ // las pepitas de la veta o el racimo de cristales pintados del color del mineral (mientras carga, lo de arriba)
+ conKit(g,'granja_nodos.glb',m=>{
+  const roca=m.get(['nodo_roca_a','nodo_roca_b','nodo_roca_c'][Math.floor(h(4)*3)%3]),veta=m.get(PEPITAS.has(n.mineral)?'nodo_pepitas':'nodo_cristales');if(!roca||!veta)return;
+  const nuevo=new THREE.Group();nuevo.add(roca.clone(true));const v=veta.clone(true);v.rotation.y=h(5)*6;nuevo.add(v);
+  v.traverse(o=>{const x=o as THREE.Mesh;if(x.isMesh)x.material=materialVeta(n.mineral,x.material as THREE.MeshStandardMaterial);});
+  for(const c of[...g.children]){c.removeFromParent();c.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(o.material as THREE.Material).dispose();}});}
+  g.add(nuevo);objetivo(g,'nodo',n.id);
+ });
+ return g;
+}
+const PEPITAS=new Set(['carbon','piedra','hierro','cobre','oro','plata','titanio','meteorita','estano','mitrilo','geoda','geoda_helada','geoda_magma','geoda_omni']);
+/** El material de la veta de cada mineral (uno por mineral y pieza, compartido entre todos los nodos). */
+const vetas=new Map<string,THREE.MeshStandardMaterial>();
+function materialVeta(mineral:NodoAventura['mineral'],base:THREE.MeshStandardMaterial){
+ if(/brillo/.test(base.name))return base;const clave=mineral+'|'+base.name;let mt=vetas.get(clave);if(mt)return mt;
+ const color=MINERALES[mineral].color,metal=['oro','plata','hierro','titanio','cobre','estano','mitrilo'].includes(mineral);
+ mt=base.clone();mt.color.set(color);
+ if(PEPITAS.has(mineral)){mt.metalness=metal?.6:.05;mt.roughness=mineral==='carbon'?.9:.35;}
+ else if(/cristal/.test(base.name)){mt.emissive=new THREE.Color(color);mt.emissiveIntensity=.22;mt.roughness=.2;}
+ mt.userData.compartido=true;vetas.set(clave,mt);return mt;
 }
 export function ambienteAventura(e:EstadoAventura){const d=destinoAventura(e.destinoActual),i=instanciaAventura(e);if(i&&i.destinoId===MINA){const p=paletaMina(i);return{fondo:p.fondo,niebla:p.niebla,luz:p.luz,mina:true};}return{mina:false,fondo:d?.espacial?'#252439':d?.tipo==='reino'?'#3c344c':'#404044',niebla:d?.espacial?'#343249':'#696578',luz:d?.luz??'#e8cfa4'};}
 
