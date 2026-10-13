@@ -1,3 +1,15 @@
+> Integrados también `9bd7107f` (postales y películas en Sangre y Ceniza) y el plano frontal de Fuatia. La postal espera mientras hay un lance de pesca; no modifica las escenas ni sus recursos.
+
+## Cercos y llamada de compañeros · 12 de octubre de 2026
+
+Se integró el remoto hasta `b13394e5`, conservando actores, películas, voces de diosas, mapas,
+correo y lavado. El motor conecta vallas sólidas, portones guardados y llamada de compañeros
+por rutas; comparte tránsito y protege ocupantes. Leer [CERCOS-INTEGRACION.md](../../juego/web/src/granja-v3/CERCOS-INTEGRACION.md).
+La puerta anterior del corral y sus rutinas se mantienen; la navegación libre del ganado sigue
+pendiente. Se reutiliza la presentación existente, sin producción de modelos o audio de pago.
+Se incorporó además el Acto I de `082b74f6`, conservando actores, escenas y catálogo.
+El adaptador del prólogo mantiene la protección de pesca antes de abrir una película o su texto.
+
 ## Pesca con picada y sedal · 12 de octubre de 2026
 
 Se integraron también el prólogo cinematográfico, cartas y Astra de `5ef116e`, conservando sus

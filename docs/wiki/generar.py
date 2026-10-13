@@ -130,7 +130,7 @@ def main():
         content = source(path, revision) if text is None else text
         add(page, f'# {page.replace("-", " ")}\n\n{status}\n\n' + convert(content, path, revision) + f'\n\nFuente técnica: [documento de referencia]({REPO}/blob/{revision}/{path}). Esta página no certifica la versión de la APK instalada.\n')
 
-    modules = ['PUEBLO', 'VIVIENDAS', 'DORMITORIOS', 'VIDA-SOCIAL', 'ENCARGOS', 'CORREO', 'COLECCIONES', 'FESTIVALES', 'CARPINTERIA', 'COMPANIA', 'HABILIDADES', 'GANADERIA', 'NARRATIVA', 'COMUNIDAD', 'BALANCE', 'REUNIONES', 'PESCA']
+    modules = ['PUEBLO', 'VIVIENDAS', 'DORMITORIOS', 'VIDA-SOCIAL', 'ENCARGOS', 'CORREO', 'COLECCIONES', 'FESTIVALES', 'CARPINTERIA', 'COMPANIA', 'HABILIDADES', 'GANADERIA', 'NARRATIVA', 'COMUNIDAD', 'BALANCE', 'REUNIONES', 'PESCA', 'CERCOS']
     source_map.update({f'juego/web/src/granja-v3/{m}-INTEGRACION.md': 'Granja-' + m.title() for m in modules})
     source_map.update({'juego/web/src/granja-v3/PLAN-MOTOR-COMPLETO.md': 'Plan-del-motor', 'juego/web/src/granja-v3/PLAN-PUEBLOS-MUNDOS.md': 'Plan-de-pueblos-y-mundos', 'juego/web/src/granja-v3/REPARTO-COMPLETO.md': 'Catalogo-tecnico-del-reparto', 'juego/web/src/granja-v3/ASTRA-INTEGRACION.md': 'Granja-Astra-Integracion', 'juego/web/src/granja-v3/HISTORIA-INTEGRACION.md': 'Granja-Campana-Integracion', 'juego/web/src/granja-v3/PREMIOS-INTEGRACION.md': 'Granja-Premios-Integracion', 'juego/web/src/granja-v3/VIDA-ASTRA-INTEGRACION.md': 'Granja-Vida-Astra', 'juego/web/src/granja-v3/REGIONES-INTEGRACION.md': 'Granja-Regiones'})
     general = {
@@ -164,8 +164,8 @@ def main():
     cine = '# El cine de la granja\n\nPrólogo cinematográfico sobre el canon de Celia, Aura y Lara; reutiliza personajes y modelos existentes.\n\n## El prólogo' + cine.split('\n\n## El prólogo', 1)[1]
     cine = cine.split('- **Pendiente para Javier**:', 1)[0].replace('; Javier descartó la catedral por exagerada', '')
     voces_cine = len(json.loads(source('juego/web/public/granja/cine/medios.json'))['voces'])
-    cine += '\nMúsica propia del cine pendiente; se conservan M12 y M13. Esta exportación no ejecuta generación de medios. Las demás películas de la campaña continúan en planificación.\n'
-    doc('Granja-Cine', cine_path, f'**Estado: prólogo y {voces_cine} tomas de voz integrados por el frente visual; música propia pendiente.** El motor pausa las acciones del valle durante la película; una sesión de pesca activa exige recoger o cancelar antes de verla.', text=cine)
+    cine += '\nEsta exportación no ejecuta generación de medios. Las tomas y músicas declaradas no implican que todas las películas estén animadas; consultar el estado del documento.\n'
+    doc('Granja-Cine', cine_path, f'**Estado: prólogo integrado y {voces_cine} tomas de cine declaradas por el frente visual; otras películas en producción.** El motor pausa las acciones del valle durante la película; una sesión de pesca activa exige recoger o cancelar antes de verla.', text=cine)
     for path, page in list(source_map.items()):
         if path.startswith('juego/web/'):
             planning = path.endswith(('PLAN-MOTOR-COMPLETO.md', 'PLAN-PUEBLOS-MUNDOS.md', 'REPARTO-COMPLETO.md'))
@@ -409,6 +409,7 @@ La documentación distingue el juego existente de los diseños. El estado de una
 | Cuadernos de mina K07 | Integrados: tres cuadernos, prospección y recetas alternativas | Ampliaciones del plan del motor |
 | Armas de granja | Siete familias, cuatro reguladores y dos cámaras; 16 destinos | Modelos y animación final; rendimiento físico |
 | Pesca con sedal | 26 especies, seis familias de movimiento, picada, tensión y captura recuperable | Animaciones de caña y pez; destreza y rendimiento en teléfonos |
+| Cercos y compañeros | Tres vallas sólidas, portón guardado y llamada con rutas de las cuatro familias | Navegación libre del ganado, reproducción, equipamiento y monturas fantásticas |
 | Astra ampliada | 28 lugares, 27 rutas, 178 habitantes, 93 domicilios, 217 contratos propios y 42 encargos de pueblos | Expansiones, cinemáticas y prueba física |
 | Producción Astra | 3.590 líneas, 3.581 tomas existentes, 23 músicas y contrato de producción | Sustitución de kits, animaciones de historia y mediciones físicas |
 | Sótano de terror y teléfono de crímenes | Ideas iniciales | Diseñar; no existen campañas completas jugables ni guiones cerrados |

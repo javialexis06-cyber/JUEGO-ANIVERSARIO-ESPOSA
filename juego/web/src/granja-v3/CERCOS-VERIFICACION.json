@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "fecha": "2026-10-12",
+  "zonaHoraria": "America/Bogota",
+  "bloque": "Vallas, portones y llamada por rutas de compañeros",
+  "integracionPosterior": "Acto II de d783b728: las pruebas de interfaz preceden únicamente la incorporación de C04/C05 al conjunto de películas. Resto de funciones de main y siete fuentes del motor idénticos; builds repetidos tras integrar cine.",
+  "regresion": {
+    "suites": 46,
+    "fallos": 0
+  },
+  "logica": {
+    "suite": "cercos-y-llamada",
+    "checks": 19,
+    "failures": 0,
+    "alcance": "Recursos, terreno y posiciones preparados; construcción, portones, rutas, llamadas, importación y devolución ejecutados por el motor. No certifica campaña ni teléfonos físicos."
+  },
+  "companerosAnteriores": {
+    "checks": 46,
+    "failures": 0
+  },
+  "builds": {
+    "pareja": "correcto",
+    "amigos": "correcto; contenido de pareja excluido"
+  },
+  "astra": {
+    "checks": 21,
+    "regiones": 28,
+    "npc": 178,
+    "viviendas": 93,
+    "rutas": 27,
+    "escenarios": "Partidas aisladas preparadas; no certifica una campaña humana completa."
+  },
+  "mediosAstra": {
+    "lineas": 3590,
+    "lineasReuniones": 312,
+    "vocesDeclaradas": 3581,
+    "modelosDeclarados": 0,
+    "musicaDeclarada": 23,
+    "errores": [],
+    "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
+  },
+  "mediosCine": {
+    "voces": 389,
+    "archivosYDuraciones": "correctos",
+    "errores": [],
+    "alcance": "Manifiesto local y archivos reales, incluidos audios de Astra reutilizados; no se genera audio ni se reproduce toda la campaña."
+  },
+  "navegador": {
+    "cercos": {
+      "checks": [
+        "Recarga restaura el portón cerrado y su colisión con el estado V5",
+        "Tocar el portón presenta su estado y el control para abrir desde el mundo",
+        "Almacenamiento rechazado conserva el portón cerrado y la partida anterior",
+        "Abrir y recargar libera las dos casillas sin cambiar la pieza ni los materiales",
+        "El teclado se detiene ante el portón cerrado",
+        "Abrir permite cruzar y cerrar sobre el personaje se rechaza",
+        "Si falla guardar la llamada, el caballo conserva su posición y la ficha sigue abierta",
+        "La ficha llama al caballo y cierra el panel; el cerco impide que atraviese la pared",
+        "Al abrir, el caballo renueva su ruta y cruza con pasos visibles",
+        "Guardar rechazado conserva la valla y no concede su pieza en la mochila",
+        "Editar y guardar una valla conserva una sola pieza tras recargar en horizontal"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenarioPreparado": "Terreno, recursos, recinto y caballo preparados por probar-cercos. Fotos apagadas, dibujo y reloj agrícola pausados solo en esta prueba; controles, movimiento visible, acciones y persistencia reales. No se escriben aperturas o posiciones del caballo durante la prueba.",
+      "dispositivosFisicos": []
+    },
+    "pescaCompatible": {
+      "checks": [
+        "Recarga abre el combate reservado sin elegir otro ejemplar ni cobrar otro cebo",
+        "El prólogo no interrumpe una sesión de pesca pendiente",
+        "Cancelar conserva el coste y el cuaderno presenta las 26 especies",
+        "Si falla guardar al lanzar, no se gasta cebo, energía ni se abre el minijuego",
+        "Lanzar espera la picada y engancha desde el botón con un único cebo",
+        "Teclado: mantener mueve la franja y soltar cambia su dirección",
+        "Puntero: captura y suelta el botón sin convertir el gesto de arrastre en una recogida",
+        "Seguir al ejemplar prepara una captura sin entregar material antes de recoger",
+        "Organizar mochila y volver con Escape conserva el ejemplar preparado",
+        "Guardar rechazado conserva captura, experiencia, hallazgo y materiales sin premio duplicado",
+        "Recoger y recargar conserva una captura real y su cuaderno en horizontal"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenarioPreparado": "Partida y posición preparados. Dibujo pausado y fotos de mapa apagadas después del arranque. Espera/picada por cuadros reales; seguimiento automatizado con entradas del sedal y pasos del motor, congelados para los controles y la prueba de guardado.",
+      "dispositivosFisicos": []
+    },
+    "integracionReal": {
+      "checks": [
+        "Botón de la casa abre la granja V5 sobre el build actual",
+        "Teclado mueve al personaje compartido actual",
+        "Mouse abre el buzón y conserva lectura",
+        "Inventario actual accesible en horizontal",
+        "Granja → casa real → granja conserva posición, inventario y jornada",
+        "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+      "dispositivosFisicos": []
+    }
+  },
+  "conservado": {
+    "revisionVisual": "d783b7283ab7f7d274892e35a7bdcec4d688b0ab",
+    "archivosIdenticos": [
+      "juego/web/src/casa/lavado",
+      "juego/web/src/granja-v3/cine-actores.ts",
+      "juego/web/src/granja-v3/cine-acto1.ts",
+      "juego/web/src/granja-v3/cine-kit.ts",
+      "juego/web/src/granja-v3/cine-catalogo.ts",
+      "juego/web/src/granja-v3/vecinos3d.ts"
+    ],
+    "partidas": "V5, claves, IDs, precios, recetas, huellas, puertas del ganado, genomas y cuidados reales anteriores",
+    "portonesAnteriores": "Abiertos mientras no exista un cierre explícito guardado",
+    "recuperacion": "Edición y retirada cercana mediante el modo diseño anterior, con devolución única de la pieza",
+    "presentacion": "Recursos anteriores y controles sencillos; sin generación de arte, voces o música"
+  },
+  "fuentesSha256": {
+    "cercos.ts": "6e805688bc08c7c795c80917174cfffeae0edb741d3541f66ab9fb42f0f25713",
+    "compania.ts": "00769149706be0fb76b653c6cc25539406a53f583459275e95542b03583b5e83",
+    "compania-ui.ts": "1de10c0043a97518bcb3258178611d9141b6742dbe07096c0be674cd1683d60b",
+    "estado.ts": "844a5842af31b6295611b53f990afd9e12d66e68bdca05a3e6dbbaeca170b014",
+    "motor.ts": "7feb1a82238a95ee47eaa7bd92e4e43c91a53431cad460964d77ce4c39d499b8",
+    "transito.ts": "51b25ae70be923c119bf5087cf0e37be97fea00cf89d07aafeb4acb368731eaa",
+    "vista.ts": "0dbde9d2cef302402ced176140120193a0b4191592f641bb5a0db10a1cb44187",
+    "main.ts": "05881222424815e410bebc8abc9407aa9ae2236119ebc0ab4cda29ba840d84c0"
+  },
+  "limites": [
+    "Los escenarios específicos preparan terreno, recursos y posiciones; no certifican una campaña completa.",
+    "Las pruebas específicas pausan dibujo y fotos; el recorrido general mantiene WebGL y fotos de mapa.",
+    "La llamada funciona dentro de la granja; no transporta al compañero desde otra región.",
+    "Ganado fuera del corral, reproducción y equipamiento de compañeros y monturas fantásticas siguen pendientes.",
+    "El plano frontal de Fuatia se integra como cambio de cámara del frente visual; esta prueba no reproduce toda la película.",
+    "No se certifica rendimiento, batería ni jugabilidad en teléfonos físicos."
+  ]
+}

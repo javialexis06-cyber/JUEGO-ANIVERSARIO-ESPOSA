@@ -1,3 +1,4 @@
+import { cercoBloquea } from './cercos';
 import { celdaReservadaObra } from './construccion';
 import type { EstadoGranja } from './estado';
 import { ARTICULOS, CULTIVOS, type Zona } from './catalogo';
@@ -13,6 +14,7 @@ export function celdaTransitable(s:EstadoGranja,x:number,z:number,zona:Zona=s.zo
  if(s.obstaculos.some(o=>(o.zona??'granja')===zona&&o.hp>0&&(zona!=='mina'||o.nivelMina===s.nivelMina)&&o.x===x&&o.z===z&&o.tipo!=='maleza'))return false;
  if(zona==='lago'&&((x-28)**2/13**2+(z-89)**2/10**2<1))return false;
  if(zona==='granja'){
+  if(cercoBloquea(s,x+.5,z+.5))return false;
   if(celdaReservadaObra(s,x,z,false))return false;
   if(aguaEn(s.paisaje,x,z)||huecoEn(s.paisaje,x,z)||s.frutales.some(f=>!f.edificioId&&f.x===x&&f.z===z))return false;
   if(s.parcelas.some(p=>p.x===x&&p.z===z&&p.cultivo&&p.cuidado?.status!=='arruinado'&&CULTIVOS.find(c=>c.id===p.cultivo)?.enrejado))return false;

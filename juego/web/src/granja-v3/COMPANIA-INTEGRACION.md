@@ -1,3 +1,10 @@
+# Actualización de cercos y llamada · 12 de octubre de 2026
+
+[CERCOS-INTEGRACION.md](CERCOS-INTEGRACION.md) conecta portones, colisiones de vallas y llamada
+de compañeros dentro de la granja. El caballo camina por rutas y espera ante cercos cerrados.
+La llamada de montura y colisiones de portones colocables dejan de estar pendientes; el resto
+del documento conserva la entrega original del 9 de octubre y sus cifras de verificación.
+
 # Compañeros y monturas: integración en el motor existente
 
 Fase integrada el **9 de octubre de 2026**, sobre `granja-v3`, guardado V5. No inicia un motor nuevo. Este documento registra una fase funcional; no certifica paridad con Stardew Valley, Expanded o Automate.
