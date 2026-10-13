@@ -8,7 +8,7 @@
 // rehace solo esa. Las tomas crudas quedan en modelos-crudos/_musica/ (no se suben) por si se quiere escoger otra.
 // En las canciones se generan varias tomas y se queda la que mejor se le entiende la letra (se transcribe con Scribe).
 // Necesita ELEVENLABS_API_KEY, ffmpeg y la red abierta a api.elevenlabs.io.
-import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -136,7 +136,8 @@ function armarLista(dir, entradas) {
     usados.add(archivo);
     lista[id] = [archivo, vieja[id]?.[0] === archivo ? vieja[id][1] : Math.round(segundos(join(dir, archivo)) * 100) / 100];
   }
-  for (const f of readdirSync(dir)) if (!usados.has(f)) unlinkSync(join(dir, f));
+  // Solo archivos sueltos: las subcarpetas (public/sfx/granja/, de efectos-granja.mjs) son de otros scripts
+  for (const f of readdirSync(dir)) if (!usados.has(f) && statSync(join(dir, f)).isFile()) unlinkSync(join(dir, f));
   writeFileSync(join(dir, 'lista.json'), JSON.stringify(lista, null, 0).replace(/\],"/g, '],\n"') + '\n');
   return Object.keys(lista).length;
 }

@@ -6,8 +6,10 @@ import { Personaje, type Cara } from '../personaje';
 import { elegirModelos } from '../recursos';
 import type { Pieza, RanuraAmigo } from '../salas/prendas';
 import { Vestidor } from '../salas/vestir';
+import type { AspectoJugador } from '../salas/tipos';
+import { personajeVecino } from './vecinos3d';
 
-export type IdDiosa = 'celia' | 'aura' | 'lara';
+export type IdDiosa = 'celia' | 'aura' | 'lara' | 'fuatia';
 export interface Actor {
   /** Lo que mueve el guion (posición, giro, escala); adentro va el muñeco. */
   raiz: THREE.Group;
@@ -49,6 +51,17 @@ const DIOSAS: Record<IdDiosa, DisenoDiosa> = {
       arriba: pieza('vestido_diosa', 'arriba', { principal: '#3a2f5c', cinta: '#c9b6ea', bordado: '#e9e4f5', joya: '#b9a4f0' }, ['abajo', 'pies'], ['medias']),
       cabeza: pieza('velo_lara', 'cabeza'),
       espalda: pieza('capa', 'espalda', { principal: '#2a2238', broche: '#c9b6ea' }),
+    },
+  },
+  // Fuatia (la diosa que creó Laura): los cuatro elementos en un solo vestido (agua, aire, fuego y tierra), corona de
+  // llamas tibias y alas de libélula; su halo cambia de color con los elementos (ver actualizarFuatia)
+  fuatia: {
+    piel: '#d9a982', pelo: '#2f6f73', ojos: '#e58a3a', halo: '#9fe3d6',
+    piezas: {
+      pelo: pieza('pelo_rizos', 'pelo'),
+      arriba: pieza('vestido_diosa', 'arriba', { principal: '#3f9fa3', cinta: '#eef6f4', bordado: '#e8803a', joya: '#c79a4e' }, ['abajo', 'pies'], ['medias']),
+      cabeza: pieza('corona_llamas', 'cabeza'),
+      espalda: pieza('alas_mariposa', 'espalda', { principal: '#bfeee6', detalle: '#e8a05a' }),
     },
   },
 };
@@ -115,3 +128,26 @@ export function actuar(a: Actor, pose: string, cara?: Cara) {
   if (a.p.tienePose(pose) && a.p.poseVisible !== pose) a.p.pose(pose);
   if (cara) a.p.cara(cara);
 }
+
+/** Un vecino de Astra con su ropa de siempre (Serena, Eliana, Flora, Mara, Nina, Eneas, Ofelia…). */
+export async function actorVecino(id: string): Promise<Actor> {
+  const { p } = await personajeVecino(id);
+  const raiz = new THREE.Group();
+  raiz.add(p.grupo);
+  marcarCompartido(raiz);
+  p.quieto();
+  return { raiz, p };
+}
+
+/** Un muñeco vestido a mano (el Conde antes del pacto, los invitados, la ropa de boda…). */
+export async function actorVestido(cuerpo: 'el' | 'ella', aspecto: Omit<AspectoJugador, 'cuerpo'>, piezas: Partial<Record<RanuraAmigo, Pieza>> = {}, escala = 1): Promise<Actor> {
+  await elegirModelos();
+  const p = new Personaje({ x: 0, y: 0 }, (cuerpo === 'ella' ? 0.7 : 0.69) * escala);
+  await p.cargarPoses(cuerpo);
+  await new Vestidor(p, cuerpo).aplicar({ cuerpo, ...aspecto }, piezas);
+  const raiz = new THREE.Group();
+  raiz.add(p.grupo);
+  marcarCompartido(raiz);
+  return { raiz, p };
+}
+export { pieza as piezaRopa };

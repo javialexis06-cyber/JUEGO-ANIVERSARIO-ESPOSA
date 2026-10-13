@@ -40,6 +40,1522 @@
     "PRO.C5": {
       "archivo": "./audio/cine/PRO.C5-88d434.ogg",
       "seg": 9.11
+    },
+    "SC0.N1": {
+      "archivo": "./audio/cine/SC0.N1-52327c.ogg",
+      "seg": 6.81
+    },
+    "SC0.C1": {
+      "archivo": "./audio/cine/SC0.C1-8e7fde.ogg",
+      "seg": 7.01
+    },
+    "SC0.NG1": {
+      "archivo": "./audio/cine/SC0.NG1-19fd65.ogg",
+      "seg": 7.71
+    },
+    "SC0.C2": {
+      "archivo": "./audio/cine/SC0.C2-c635f3.ogg",
+      "seg": 2.56
+    },
+    "SC0.NG2": {
+      "archivo": "./audio/cine/SC0.NG2-70a215.ogg",
+      "seg": 0.95
+    },
+    "SC0.N2": {
+      "archivo": "./audio/cine/SC0.N2-06ccf5.ogg",
+      "seg": 9.11
+    },
+    "SC0.E1": {
+      "archivo": "./audio/cine/SC0.E1-a5d3f0.ogg",
+      "seg": 5.91
+    },
+    "SC0.L1": {
+      "archivo": "./audio/cine/SC0.L1-6ef906.ogg",
+      "seg": 3.91
+    },
+    "SC0.S1": {
+      "archivo": "./audio/cine/SC0.S1-c5c4c6.ogg",
+      "seg": 9.11
+    },
+    "SC1.N1": {
+      "archivo": "./audio/cine/SC1.N1-83790f.ogg",
+      "seg": 8.31
+    },
+    "SC1.S1": {
+      "archivo": "./audio/cine/SC1.S1-9719f6.ogg",
+      "seg": 1.96
+    },
+    "SC1.N2": {
+      "archivo": "./audio/cine/SC1.N2-0573f8.ogg",
+      "seg": 4.61
+    },
+    "SC1.S2": {
+      "archivo": "./audio/cine/SC1.S2-6d06b5.ogg",
+      "seg": 5.71
+    },
+    "SC1.L1": {
+      "archivo": "./audio/cine/SC1.L1-dfdff1.ogg",
+      "seg": 2.02
+    },
+    "SC1.S3": {
+      "archivo": "./audio/cine/SC1.S3-772300.ogg",
+      "seg": 6.11
+    },
+    "SC1.E1": {
+      "archivo": "./audio/cine/SC1.E1-e69db7.ogg",
+      "seg": 2.39
+    },
+    "SC1.S4": {
+      "archivo": "./audio/cine/SC1.S4-48175a.ogg",
+      "seg": 6.31
+    },
+    "SC1.L2": {
+      "archivo": "./audio/cine/SC1.L2-cdf145.ogg",
+      "seg": 3.51
+    },
+    "SC1.E2": {
+      "archivo": "./audio/cine/SC1.E2-a3ef90.ogg",
+      "seg": 4.81
+    },
+    "SC1.S5": {
+      "archivo": "./audio/cine/SC1.S5-4dc5ac.ogg",
+      "seg": 4.71
+    },
+    "SC1.N3": {
+      "archivo": "./audio/cine/SC1.N3-59fbba.ogg",
+      "seg": 9.11
+    },
+    "SC2.N1": {
+      "archivo": "./audio/cine/SC2.N1-b29a91.ogg",
+      "seg": 7.01
+    },
+    "SC2.E1": {
+      "archivo": "./audio/cine/SC2.E1-294543.ogg",
+      "seg": 6.41
+    },
+    "SC2.S1": {
+      "archivo": "./audio/cine/SC2.S1-a23076.ogg",
+      "seg": 6.71
+    },
+    "SC2.N2": {
+      "archivo": "./audio/cine/SC2.N2-8b7933.ogg",
+      "seg": 9.71
+    },
+    "SC2.A1": {
+      "archivo": "./audio/cine/SC2.A1-6e9886.ogg",
+      "seg": 3.61
+    },
+    "SC2.LA1": {
+      "archivo": "./audio/cine/SC2.LA1-dab66f.ogg",
+      "seg": 3.61
+    },
+    "SC2.S2": {
+      "archivo": "./audio/cine/SC2.S2-6f8c35.ogg",
+      "seg": 7.61
+    },
+    "SC2.V1": {
+      "archivo": "./audio/cine/SC2.V1-eb9f54.ogg",
+      "seg": 5.51
+    },
+    "SC2.L1": {
+      "archivo": "./audio/cine/SC2.L1-762db9.ogg",
+      "seg": 1.5
+    },
+    "SC2.S3": {
+      "archivo": "./audio/cine/SC2.S3-a44e59.ogg",
+      "seg": 7.61
+    },
+    "SC2.E2": {
+      "archivo": "./audio/cine/SC2.E2-11a1cd.ogg",
+      "seg": 5.31
+    },
+    "SC3.N1": {
+      "archivo": "./audio/cine/SC3.N1-d7936f.ogg",
+      "seg": 7.41
+    },
+    "SC3.S1": {
+      "archivo": "./audio/cine/SC3.S1-91b88d.ogg",
+      "seg": 2.25
+    },
+    "SC3.N2": {
+      "archivo": "./audio/cine/SC3.N2-c14b11.ogg",
+      "seg": 5.71
+    },
+    "SC3.S2": {
+      "archivo": "./audio/cine/SC3.S2-4526dc.ogg",
+      "seg": 8.21
+    },
+    "SC3.L1": {
+      "archivo": "./audio/cine/SC3.L1-a86921.ogg",
+      "seg": 4.81
+    },
+    "SC3.S3": {
+      "archivo": "./audio/cine/SC3.S3-c51668.ogg",
+      "seg": 8.01
+    },
+    "SC3.E1": {
+      "archivo": "./audio/cine/SC3.E1-262079.ogg",
+      "seg": 4.21
+    },
+    "SC3.S4": {
+      "archivo": "./audio/cine/SC3.S4-b60b6b.ogg",
+      "seg": 1.27
+    },
+    "SC3.N3": {
+      "archivo": "./audio/cine/SC3.N3-a04879.ogg",
+      "seg": 5.81
+    },
+    "SC3.E2": {
+      "archivo": "./audio/cine/SC3.E2-8dce2e.ogg",
+      "seg": 6.91
+    },
+    "SC3.L2": {
+      "archivo": "./audio/cine/SC3.L2-b5bbaa.ogg",
+      "seg": 4.71
+    },
+    "SC3.E3": {
+      "archivo": "./audio/cine/SC3.E3-0da709.ogg",
+      "seg": 6.31
+    },
+    "C04X.NG1": {
+      "archivo": "./audio/cine/C04X.NG1-7f41f6.ogg",
+      "seg": 8.91
+    },
+    "C04X.L1": {
+      "archivo": "./audio/cine/C04X.L1-66015e.ogg",
+      "seg": 1.27
+    },
+    "C04X.S1": {
+      "archivo": "./audio/cine/C04X.S1-74f2bf.ogg",
+      "seg": 10.11
+    },
+    "C04X.S2": {
+      "archivo": "./audio/cine/C04X.S2-7d5304.ogg",
+      "seg": 6.41
+    },
+    "C04X.E1": {
+      "archivo": "./audio/cine/C04X.E1-9ab0dd.ogg",
+      "seg": 4.91
+    },
+    "C04X.NG2": {
+      "archivo": "./audio/cine/C04X.NG2-214df6.ogg",
+      "seg": 3.51
+    },
+    "C04X.L2": {
+      "archivo": "./audio/cine/C04X.L2-35c004.ogg",
+      "seg": 5.71
+    },
+    "SC4.N1": {
+      "archivo": "./audio/cine/SC4.N1-653890.ogg",
+      "seg": 4.91
+    },
+    "SC4.NG1": {
+      "archivo": "./audio/cine/SC4.NG1-cd176d.ogg",
+      "seg": 7.41
+    },
+    "C11X.N1": {
+      "archivo": "./audio/cine/C11X.N1-e5f416.ogg",
+      "seg": 9.01
+    },
+    "C11X.F1": {
+      "archivo": "./audio/cine/C11X.F1-ebe83d.ogg",
+      "seg": 5.01
+    },
+    "ELI.N1": {
+      "archivo": "./audio/cine/ELI.N1-928d5b.ogg",
+      "seg": 5.51
+    },
+    "ELI.E1": {
+      "archivo": "./audio/cine/ELI.E1-85b993.ogg",
+      "seg": 6.21
+    },
+    "ELI.NI1": {
+      "archivo": "./audio/cine/ELI.NI1-d41a17.ogg",
+      "seg": 5.91
+    },
+    "ELI.N2": {
+      "archivo": "./audio/cine/ELI.N2-951d3f.ogg",
+      "seg": 4.41
+    },
+    "ELI.E2": {
+      "archivo": "./audio/cine/ELI.E2-6f210b.ogg",
+      "seg": 4.51
+    },
+    "ELI.LA1": {
+      "archivo": "./audio/cine/ELI.LA1-59ca82.ogg",
+      "seg": 2.48
+    },
+    "ELI.L1": {
+      "archivo": "./audio/cine/ELI.L1-0a9f24.ogg",
+      "seg": 4.21
+    },
+    "ELI.A1": {
+      "archivo": "./audio/cine/ELI.A1-9d5f33.ogg",
+      "seg": 5.71
+    },
+    "ELI.E3": {
+      "archivo": "./audio/cine/ELI.E3-393cc0.ogg",
+      "seg": 4.21
+    },
+    "ELI.A2": {
+      "archivo": "./audio/cine/ELI.A2-30d85e.ogg",
+      "seg": 6.21
+    },
+    "T03.N1": {
+      "archivo": "./audio/cine/T03.N1-440c4d.ogg",
+      "seg": 5.11
+    },
+    "T03.M1": {
+      "archivo": "./audio/cine/T03.M1-8ee2af.ogg",
+      "seg": 4.41
+    },
+    "T03.E1": {
+      "archivo": "./audio/cine/T03.E1-fd7491.ogg",
+      "seg": 3.41
+    },
+    "T03.L1": {
+      "archivo": "./audio/cine/T03.L1-eaa338.ogg",
+      "seg": 4.11
+    },
+    "T03.F1": {
+      "archivo": "./audio/cine/T03.F1-ff3618.ogg",
+      "seg": 4.61
+    },
+    "T03.N2": {
+      "archivo": "./audio/cine/T03.N2-765863.ogg",
+      "seg": 4.21
+    },
+    "T03.E2": {
+      "archivo": "./audio/cine/T03.E2-0a7e83.ogg",
+      "seg": 3.61
+    },
+    "T03.F2": {
+      "archivo": "./audio/cine/T03.F2-fa684e.ogg",
+      "seg": 6.21
+    },
+    "S08.N1": {
+      "archivo": "./audio/cine/S08.N1-c30f83.ogg",
+      "seg": 7.71
+    },
+    "S08.NG1": {
+      "archivo": "./audio/cine/S08.NG1-7a6240.ogg",
+      "seg": 6.01
+    },
+    "S08.N2": {
+      "archivo": "./audio/cine/S08.N2-466d47.ogg",
+      "seg": 9.01
+    },
+    "S08.NG2": {
+      "archivo": "./audio/cine/S08.NG2-05f623.ogg",
+      "seg": 4.11
+    },
+    "S08.N3": {
+      "archivo": "./audio/cine/S08.N3-dd4485.ogg",
+      "seg": 7.61
+    },
+    "S08.N4": {
+      "archivo": "./audio/cine/S08.N4-e4ce0f.ogg",
+      "seg": 6.91
+    },
+    "ENE.N1": {
+      "archivo": "./audio/cine/ENE.N1-d20506.ogg",
+      "seg": 4.91
+    },
+    "ENE.EN1": {
+      "archivo": "./audio/cine/ENE.EN1-4212f3.ogg",
+      "seg": 6.11
+    },
+    "ENE.E1": {
+      "archivo": "./audio/cine/ENE.E1-b26224.ogg",
+      "seg": 2.64
+    },
+    "ENE.EN2": {
+      "archivo": "./audio/cine/ENE.EN2-85c4ad.ogg",
+      "seg": 5.81
+    },
+    "ENE.LA1": {
+      "archivo": "./audio/cine/ENE.LA1-80f8ee.ogg",
+      "seg": 11.81
+    },
+    "ENE.L1": {
+      "archivo": "./audio/cine/ENE.L1-eacf48.ogg",
+      "seg": 3.71
+    },
+    "ENE.LA2": {
+      "archivo": "./audio/cine/ENE.LA2-770b2e.ogg",
+      "seg": 2.71
+    },
+    "ENE.EN3": {
+      "archivo": "./audio/cine/ENE.EN3-ad86a2.ogg",
+      "seg": 1.8
+    },
+    "ENE.LA3": {
+      "archivo": "./audio/cine/ENE.LA3-a34bb3.ogg",
+      "seg": 4.91
+    },
+    "OFE.N1": {
+      "archivo": "./audio/cine/OFE.N1-3bfab3.ogg",
+      "seg": 6.11
+    },
+    "OFE.O1": {
+      "archivo": "./audio/cine/OFE.O1-9e4a62.ogg",
+      "seg": 7.81
+    },
+    "OFE.L1": {
+      "archivo": "./audio/cine/OFE.L1-b8d2a4.ogg",
+      "seg": 2.18
+    },
+    "OFE.O2": {
+      "archivo": "./audio/cine/OFE.O2-c3a7eb.ogg",
+      "seg": 6.11
+    },
+    "OFE.E1": {
+      "archivo": "./audio/cine/OFE.E1-7f7c5f.ogg",
+      "seg": 3.91
+    },
+    "OFE.N2": {
+      "archivo": "./audio/cine/OFE.N2-c0112c.ogg",
+      "seg": 5.01
+    },
+    "OFE.LA1": {
+      "archivo": "./audio/cine/OFE.LA1-a0b2ca.ogg",
+      "seg": 4.21
+    },
+    "OFE.O3": {
+      "archivo": "./audio/cine/OFE.O3-c7d73a.ogg",
+      "seg": 2.71
+    },
+    "OFE.LA2": {
+      "archivo": "./audio/cine/OFE.LA2-155bb3.ogg",
+      "seg": 2.57
+    },
+    "SER.N1": {
+      "archivo": "./audio/cine/SER.N1-ab72ee.ogg",
+      "seg": 6.01
+    },
+    "SER.S1": {
+      "archivo": "./audio/cine/SER.S1-27dea7.ogg",
+      "seg": 5.31
+    },
+    "SER.N2": {
+      "archivo": "./audio/cine/SER.N2-5959a0.ogg",
+      "seg": 4.21
+    },
+    "SER.LA1": {
+      "archivo": "./audio/cine/SER.LA1-bd1cec.ogg",
+      "seg": 3.41
+    },
+    "SER.S2": {
+      "archivo": "./audio/cine/SER.S2-d5a9af.ogg",
+      "seg": 5.01
+    },
+    "SER.LA2": {
+      "archivo": "./audio/cine/SER.LA2-cc1f30.ogg",
+      "seg": 3.41
+    },
+    "SER.N3": {
+      "archivo": "./audio/cine/SER.N3-66f33e.ogg",
+      "seg": 8.71
+    },
+    "ALT.N1": {
+      "archivo": "./audio/cine/ALT.N1-41e0e7.ogg",
+      "seg": 6.11
+    },
+    "ALT.E1": {
+      "archivo": "./audio/cine/ALT.E1-3eb76b.ogg",
+      "seg": 2.61
+    },
+    "ALT.L1": {
+      "archivo": "./audio/cine/ALT.L1-1a4b9a.ogg",
+      "seg": 3.11
+    },
+    "ALT.N2": {
+      "archivo": "./audio/cine/ALT.N2-fc5d41.ogg",
+      "seg": 3.61
+    },
+    "ALT.C1": {
+      "archivo": "./audio/cine/ALT.C1-f9c5be.ogg",
+      "seg": 4.81
+    },
+    "ALT.A1": {
+      "archivo": "./audio/cine/ALT.A1-4cde32.ogg",
+      "seg": 6.11
+    },
+    "ALT.LA1": {
+      "archivo": "./audio/cine/ALT.LA1-d57774.ogg",
+      "seg": 5.51
+    },
+    "ALT.F1": {
+      "archivo": "./audio/cine/ALT.F1-1f70e2.ogg",
+      "seg": 5.01
+    },
+    "BOD.LA1": {
+      "archivo": "./audio/cine/BOD.LA1-1e5774.ogg",
+      "seg": 10.81
+    },
+    "BOD.A1": {
+      "archivo": "./audio/cine/BOD.A1-f2ba32.ogg",
+      "seg": 8.71
+    },
+    "BOD.C1": {
+      "archivo": "./audio/cine/BOD.C1-3bf841.ogg",
+      "seg": 5.91
+    },
+    "BOD.F1": {
+      "archivo": "./audio/cine/BOD.F1-5c450e.ogg",
+      "seg": 11.31
+    },
+    "BOD.LA2": {
+      "archivo": "./audio/cine/BOD.LA2-60aa91.ogg",
+      "seg": 6.11
+    },
+    "BOD.N1": {
+      "archivo": "./audio/cine/BOD.N1-f96889.ogg",
+      "seg": 8.71
+    },
+    "BOD.L1": {
+      "archivo": "./audio/cine/BOD.L1-1c8bb1.ogg",
+      "seg": 11.01
+    },
+    "BOD.E1": {
+      "archivo": "./audio/cine/BOD.E1-dad26c.ogg",
+      "seg": 1.27
+    },
+    "BOD.L2": {
+      "archivo": "./audio/cine/BOD.L2-ea6266.ogg",
+      "seg": 2.2
+    },
+    "JEF.C1": {
+      "archivo": "./audio/cine/JEF.C1-5dbbc2.ogg",
+      "seg": 6.51
+    },
+    "JEF.C2": {
+      "archivo": "./audio/cine/JEF.C2-9d39cd.ogg",
+      "seg": 3.51
+    },
+    "LUG.frontera.1": {
+      "archivo": "./audio/cine/LUG.frontera.1-ac26f1.ogg",
+      "seg": 7.71
+    },
+    "LUG.frontera.2": {
+      "archivo": "./audio/cine/LUG.frontera.2-9cda98.ogg",
+      "seg": 7.21
+    },
+    "LUG.verdia.1": {
+      "archivo": "./audio/cine/LUG.verdia.1-fc7264.ogg",
+      "seg": 4.21
+    },
+    "LUG.verdia.2": {
+      "archivo": "./audio/cine/LUG.verdia.2-052b48.ogg",
+      "seg": 9.61
+    },
+    "LUG.senda.1": {
+      "archivo": "./audio/cine/LUG.senda.1-4f1588.ogg",
+      "seg": 3.71
+    },
+    "LUG.senda.2": {
+      "archivo": "./audio/cine/LUG.senda.2-3dab4c.ogg",
+      "seg": 7.21
+    },
+    "LUG.nox.1": {
+      "archivo": "./audio/cine/LUG.nox.1-0bf886.ogg",
+      "seg": 4.31
+    },
+    "LUG.nox.2": {
+      "archivo": "./audio/cine/LUG.nox.2-3b3045.ogg",
+      "seg": 7.11
+    },
+    "LUG.cielo.1": {
+      "archivo": "./audio/cine/LUG.cielo.1-949c11.ogg",
+      "seg": 4.11
+    },
+    "LUG.cielo.2": {
+      "archivo": "./audio/cine/LUG.cielo.2-e30957.ogg",
+      "seg": 7.11
+    },
+    "LUG.confluencia.1": {
+      "archivo": "./audio/cine/LUG.confluencia.1-e9a1d1.ogg",
+      "seg": 7.01
+    },
+    "LUG.confluencia.2": {
+      "archivo": "./audio/cine/LUG.confluencia.2-259b05.ogg",
+      "seg": 5.71
+    },
+    "LUG.pueblo_sol": {
+      "archivo": "./audio/cine/LUG.pueblo_sol-53426a.ogg",
+      "seg": 8.11
+    },
+    "LUG.cruce_valle": {
+      "archivo": "./audio/cine/LUG.cruce_valle-b34833.ogg",
+      "seg": 7.01
+    },
+    "LUG.puerto_lirios": {
+      "archivo": "./audio/cine/LUG.puerto_lirios-026cf4.ogg",
+      "seg": 6.41
+    },
+    "LUG.brumaverde": {
+      "archivo": "./audio/cine/LUG.brumaverde-db11cc.ogg",
+      "seg": 5.81
+    },
+    "LUG.piedralumbre": {
+      "archivo": "./audio/cine/LUG.piedralumbre-bfadcf.ogg",
+      "seg": 8.11
+    },
+    "LUG.brasaviva": {
+      "archivo": "./audio/cine/LUG.brasaviva-45c9d2.ogg",
+      "seg": 7.01
+    },
+    "LUG.nieveclara": {
+      "archivo": "./audio/cine/LUG.nieveclara-342be3.ogg",
+      "seg": 6.91
+    },
+    "LUG.vigilia": {
+      "archivo": "./audio/cine/LUG.vigilia-398e86.ogg",
+      "seg": 6.91
+    },
+    "LUG.rosal_eterno": {
+      "archivo": "./audio/cine/LUG.rosal_eterno-55cb2d.ogg",
+      "seg": 7.11
+    },
+    "LUG.jardines_eco": {
+      "archivo": "./audio/cine/LUG.jardines_eco-5f09ca.ogg",
+      "seg": 6.21
+    },
+    "LUG.travesia": {
+      "archivo": "./audio/cine/LUG.travesia-2d48df.ogg",
+      "seg": 6.01
+    },
+    "LUG.refugio_hilos": {
+      "archivo": "./audio/cine/LUG.refugio_hilos-a5372a.ogg",
+      "seg": 6.11
+    },
+    "LUG.bastion_velo": {
+      "archivo": "./audio/cine/LUG.bastion_velo-c9c518.ogg",
+      "seg": 4.11
+    },
+    "LUG.estacion_celia": {
+      "archivo": "./audio/cine/LUG.estacion_celia-0b6b87.ogg",
+      "seg": 6.81
+    },
+    "LUG.huerto_aurelia": {
+      "archivo": "./audio/cine/LUG.huerto_aurelia-370ae5.ogg",
+      "seg": 5.81
+    },
+    "LUG.vigia_nocturna": {
+      "archivo": "./audio/cine/LUG.vigia_nocturna-339977.ogg",
+      "seg": 5.41
+    },
+    "LUG.cantera_esmeralda": {
+      "archivo": "./audio/cine/LUG.cantera_esmeralda-10e7e5.ogg",
+      "seg": 6.81
+    },
+    "LUG.campamento_fragmentos": {
+      "archivo": "./audio/cine/LUG.campamento_fragmentos-2c969c.ogg",
+      "seg": 6.71
+    },
+    "LUG.fragmentos_cobre": {
+      "archivo": "./audio/cine/LUG.fragmentos_cobre-82ce93.ogg",
+      "seg": 6.21
+    },
+    "LUG.fragmentos_cristal": {
+      "archivo": "./audio/cine/LUG.fragmentos_cristal-885c38.ogg",
+      "seg": 5.01
+    },
+    "LUG.ambarina": {
+      "archivo": "./audio/cine/LUG.ambarina-c9955f.ogg",
+      "seg": 4.91
+    },
+    "LUG.iridalia": {
+      "archivo": "./audio/cine/LUG.iridalia-0ad6c1.ogg",
+      "seg": 5.61
+    },
+    "LUG.borde_astra": {
+      "archivo": "./audio/cine/LUG.borde_astra-7b2698.ogg",
+      "seg": 7.41
+    },
+    "LUG.confluencia": {
+      "archivo": "./audio/cine/LUG.confluencia-ae8ffc.ogg",
+      "seg": 8.01
+    },
+    "LUG.confluencia_fuego": {
+      "archivo": "./audio/cine/LUG.confluencia_fuego-6cd0c6.ogg",
+      "seg": 4.71
+    },
+    "LUG.confluencia_agua": {
+      "archivo": "./audio/cine/LUG.confluencia_agua-2e3121.ogg",
+      "seg": 4.31
+    },
+    "LUG.confluencia_tierra": {
+      "archivo": "./audio/cine/LUG.confluencia_tierra-de3550.ogg",
+      "seg": 4.61
+    },
+    "LUG.confluencia_aire": {
+      "archivo": "./audio/cine/LUG.confluencia_aire-f45875.ogg",
+      "seg": 4.11
+    },
+    "LUG.cementerio": {
+      "archivo": "./audio/cine/LUG.cementerio-fadea8.ogg",
+      "seg": 6.91
+    },
+    "LUG.catacumbas": {
+      "archivo": "./audio/cine/LUG.catacumbas-783956.ogg",
+      "seg": 7.01
+    },
+    "LUG.minas": {
+      "archivo": "./audio/cine/LUG.minas-356993.ogg",
+      "seg": 6.21
+    },
+    "LUG.abadia": {
+      "archivo": "./audio/cine/LUG.abadia-8e76b6.ogg",
+      "seg": 7.31
+    },
+    "LUG.castillo": {
+      "archivo": "./audio/cine/LUG.castillo-6b148f.ogg",
+      "seg": 4.81
+    },
+    "C01.L001": {
+      "archivo": "./audio/astra/C01.L001-2c213.ogg",
+      "seg": 7.31
+    },
+    "C01.L002": {
+      "archivo": "./audio/astra/C01.L002-57813.ogg",
+      "seg": 4.31
+    },
+    "C01.L003": {
+      "archivo": "./audio/astra/C01.L003-ce306.ogg",
+      "seg": 5.11
+    },
+    "C01.L004": {
+      "archivo": "./audio/astra/C01.L004-7c3f8.ogg",
+      "seg": 5.51
+    },
+    "C01.L005": {
+      "archivo": "./audio/astra/C01.L005-cc1b1.ogg",
+      "seg": 0.92
+    },
+    "C01.L006": {
+      "archivo": "./audio/astra/C01.L006-8e80a.ogg",
+      "seg": 5.11
+    },
+    "C01.L007": {
+      "archivo": "./audio/astra/C01.L007-86c0f.ogg",
+      "seg": 3.31
+    },
+    "C01.L008": {
+      "archivo": "./audio/astra/C01.L008-a5c21.ogg",
+      "seg": 1.53
+    },
+    "C01.L009": {
+      "archivo": "./audio/astra/C01.L009-694d9.ogg",
+      "seg": 4.91
+    },
+    "C01.L010": {
+      "archivo": "./audio/astra/C01.L010-42492.ogg",
+      "seg": 1.14
+    },
+    "C01.L011": {
+      "archivo": "./audio/astra/C01.L011-341c5.ogg",
+      "seg": 3.51
+    },
+    "C01.L012": {
+      "archivo": "./audio/astra/C01.L012-dd1c6.ogg",
+      "seg": 9.61
+    },
+    "C02.L001": {
+      "archivo": "./audio/astra/C02.L001-55441.ogg",
+      "seg": 5.71
+    },
+    "C02.L002": {
+      "archivo": "./audio/astra/C02.L002-29cb3.ogg",
+      "seg": 2.09
+    },
+    "C02.L003": {
+      "archivo": "./audio/astra/C02.L003-1e1cb.ogg",
+      "seg": 6.91
+    },
+    "C02.L004": {
+      "archivo": "./audio/astra/C02.L004-32d18.ogg",
+      "seg": 2.58
+    },
+    "C02.L005": {
+      "archivo": "./audio/astra/C02.L005-6a61a.ogg",
+      "seg": 0.78
+    },
+    "C02.L006": {
+      "archivo": "./audio/astra/C02.L006-69a8d.ogg",
+      "seg": 6.21
+    },
+    "C02.L007": {
+      "archivo": "./audio/astra/C02.L007-57eeb.ogg",
+      "seg": 5.11
+    },
+    "C02.L008": {
+      "archivo": "./audio/astra/C02.L008-c2a98.ogg",
+      "seg": 5.81
+    },
+    "C02.L009": {
+      "archivo": "./audio/astra/C02.L009-0079a.ogg",
+      "seg": 6.01
+    },
+    "C02.L010": {
+      "archivo": "./audio/astra/C02.L010-8a33d.ogg",
+      "seg": 2.23
+    },
+    "C02.L011": {
+      "archivo": "./audio/astra/C02.L011-57ad6.ogg",
+      "seg": 2.96
+    },
+    "C02.L012": {
+      "archivo": "./audio/astra/C02.L012-d32be.ogg",
+      "seg": 3.11
+    },
+    "C02.L013": {
+      "archivo": "./audio/astra/C02.L013-26764.ogg",
+      "seg": 8.11
+    },
+    "C03.L001": {
+      "archivo": "./audio/astra/C03.L001-3caf2.ogg",
+      "seg": 3.51
+    },
+    "C03.L002": {
+      "archivo": "./audio/astra/C03.L002-ab54d.ogg",
+      "seg": 2.12
+    },
+    "C03.L003": {
+      "archivo": "./audio/astra/C03.L003-9688d.ogg",
+      "seg": 4.11
+    },
+    "C03.L004": {
+      "archivo": "./audio/astra/C03.L004-d58b0.ogg",
+      "seg": 0.84
+    },
+    "C03.L005": {
+      "archivo": "./audio/astra/C03.L005-08716.ogg",
+      "seg": 7.21
+    },
+    "C03.L006": {
+      "archivo": "./audio/astra/C03.L006-db313.ogg",
+      "seg": 4.41
+    },
+    "C03.L007": {
+      "archivo": "./audio/astra/C03.L007-428ae.ogg",
+      "seg": 2.67
+    },
+    "C03.L008": {
+      "archivo": "./audio/astra/C03.L008-c8598.ogg",
+      "seg": 6.11
+    },
+    "C03.L009": {
+      "archivo": "./audio/astra/C03.L009-4076c.ogg",
+      "seg": 6.71
+    },
+    "C03.L010": {
+      "archivo": "./audio/astra/C03.L010-fa7a1.ogg",
+      "seg": 3.41
+    },
+    "C03.L011": {
+      "archivo": "./audio/astra/C03.L011-142c7.ogg",
+      "seg": 6.71
+    },
+    "C03.L012": {
+      "archivo": "./audio/astra/C03.L012-e6f39.ogg",
+      "seg": 6.51
+    },
+    "C03.L013": {
+      "archivo": "./audio/astra/C03.L013-384a6.ogg",
+      "seg": 7.91
+    },
+    "C04.L001": {
+      "archivo": "./audio/astra/C04.L001-457df.ogg",
+      "seg": 5.71
+    },
+    "C04.L002": {
+      "archivo": "./audio/astra/C04.L002-6a5f4.ogg",
+      "seg": 2.88
+    },
+    "C04.L003": {
+      "archivo": "./audio/astra/C04.L003-9bbf9.ogg",
+      "seg": 4.51
+    },
+    "C04.L004": {
+      "archivo": "./audio/astra/C04.L004-463af.ogg",
+      "seg": 4.51
+    },
+    "C04.L005": {
+      "archivo": "./audio/astra/C04.L005-b2428.ogg",
+      "seg": 4.81
+    },
+    "C04.L006": {
+      "archivo": "./audio/astra/C04.L006-d4c1a.ogg",
+      "seg": 4.21
+    },
+    "C04.L007": {
+      "archivo": "./audio/astra/C04.L007-46cb6.ogg",
+      "seg": 1.8
+    },
+    "C04.L008": {
+      "archivo": "./audio/astra/C04.L008-76584.ogg",
+      "seg": 7.11
+    },
+    "C04.L009": {
+      "archivo": "./audio/astra/C04.L009-c1339.ogg",
+      "seg": 5.21
+    },
+    "C04.L010": {
+      "archivo": "./audio/astra/C04.L010-05e16.ogg",
+      "seg": 3.51
+    },
+    "C04.L011": {
+      "archivo": "./audio/astra/C04.L011-03a4c.ogg",
+      "seg": 3.81
+    },
+    "C04.L012": {
+      "archivo": "./audio/astra/C04.L012-4bd2d.ogg",
+      "seg": 6.51
+    },
+    "C04.L013": {
+      "archivo": "./audio/astra/C04.L013-06021.ogg",
+      "seg": 6.41
+    },
+    "C04.L014": {
+      "archivo": "./audio/astra/C04.L014-a7d06.ogg",
+      "seg": 0.87
+    },
+    "C04.L015": {
+      "archivo": "./audio/astra/C04.L015-b9091.ogg",
+      "seg": 1.61
+    },
+    "C04.L016": {
+      "archivo": "./audio/astra/C04.L016-ecc1c.ogg",
+      "seg": 8.41
+    },
+    "C05.L001": {
+      "archivo": "./audio/astra/C05.L001-3de8b.ogg",
+      "seg": 5.61
+    },
+    "C05.L002": {
+      "archivo": "./audio/astra/C05.L002-ff323.ogg",
+      "seg": 2.36
+    },
+    "C05.L003": {
+      "archivo": "./audio/astra/C05.L003-c5096.ogg",
+      "seg": 2.75
+    },
+    "C05.L004": {
+      "archivo": "./audio/astra/C05.L004-7e25c.ogg",
+      "seg": 7.21
+    },
+    "C05.L005": {
+      "archivo": "./audio/astra/C05.L005-0cee0.ogg",
+      "seg": 4.91
+    },
+    "C05.L006": {
+      "archivo": "./audio/astra/C05.L006-55fa6.ogg",
+      "seg": 7.81
+    },
+    "C05.L007": {
+      "archivo": "./audio/astra/C05.L007-f776b.ogg",
+      "seg": 5.51
+    },
+    "C05.L008": {
+      "archivo": "./audio/astra/C05.L008-c3584.ogg",
+      "seg": 3.81
+    },
+    "C05.L009": {
+      "archivo": "./audio/astra/C05.L009-cc7e1.ogg",
+      "seg": 3.61
+    },
+    "C05.L010": {
+      "archivo": "./audio/astra/C05.L010-667ce.ogg",
+      "seg": 8.71
+    },
+    "C06.L001": {
+      "archivo": "./audio/astra/C06.L001-c534f.ogg",
+      "seg": 4.21
+    },
+    "C06.L002": {
+      "archivo": "./audio/astra/C06.L002-e0f66.ogg",
+      "seg": 3.81
+    },
+    "C06.L003": {
+      "archivo": "./audio/astra/C06.L003-3bd91.ogg",
+      "seg": 3
+    },
+    "C06.L004": {
+      "archivo": "./audio/astra/C06.L004-b11b4.ogg",
+      "seg": 2.99
+    },
+    "C06.L005": {
+      "archivo": "./audio/astra/C06.L005-2b5db.ogg",
+      "seg": 4.31
+    },
+    "C06.L006": {
+      "archivo": "./audio/astra/C06.L006-3fbbd.ogg",
+      "seg": 3.91
+    },
+    "C06.L007": {
+      "archivo": "./audio/astra/C06.L007-ad735.ogg",
+      "seg": 1.7
+    },
+    "C06.L008": {
+      "archivo": "./audio/astra/C06.L008-3565f.ogg",
+      "seg": 9.21
+    },
+    "C06.L009": {
+      "archivo": "./audio/astra/C06.L009-43e83.ogg",
+      "seg": 1.89
+    },
+    "C06.L010": {
+      "archivo": "./audio/astra/C06.L010-fa114.ogg",
+      "seg": 5.81
+    },
+    "C06.L011": {
+      "archivo": "./audio/astra/C06.L011-554c5.ogg",
+      "seg": 4.01
+    },
+    "C06.L012": {
+      "archivo": "./audio/astra/C06.L012-f07b8.ogg",
+      "seg": 1.83
+    },
+    "C06.L013": {
+      "archivo": "./audio/astra/C06.L013-8c593.ogg",
+      "seg": 3.91
+    },
+    "C06.L014": {
+      "archivo": "./audio/astra/C06.L014-54007.ogg",
+      "seg": 11.01
+    },
+    "C06.L015": {
+      "archivo": "./audio/astra/C06.L015-8b199.ogg",
+      "seg": 3.21
+    },
+    "C06.L016": {
+      "archivo": "./audio/astra/C06.L016-11907.ogg",
+      "seg": 2.62
+    },
+    "C07.L001": {
+      "archivo": "./audio/astra/C07.L001-b9ee5.ogg",
+      "seg": 5.61
+    },
+    "C07.L002": {
+      "archivo": "./audio/astra/C07.L002-6f7b0.ogg",
+      "seg": 7.01
+    },
+    "C07.L003": {
+      "archivo": "./audio/astra/C07.L003-7fa67.ogg",
+      "seg": 6.61
+    },
+    "C07.L004": {
+      "archivo": "./audio/astra/C07.L004-61e60.ogg",
+      "seg": 2.95
+    },
+    "C07.L005": {
+      "archivo": "./audio/astra/C07.L005-3d716.ogg",
+      "seg": 4.51
+    },
+    "C07.L006": {
+      "archivo": "./audio/astra/C07.L006-1d8de.ogg",
+      "seg": 4.01
+    },
+    "C07.L007": {
+      "archivo": "./audio/astra/C07.L007-c7c61.ogg",
+      "seg": 4.31
+    },
+    "C07.L008": {
+      "archivo": "./audio/astra/C07.L008-4824e.ogg",
+      "seg": 4.81
+    },
+    "C07.L009": {
+      "archivo": "./audio/astra/C07.L009-1c264.ogg",
+      "seg": 5.71
+    },
+    "C07.L010": {
+      "archivo": "./audio/astra/C07.L010-77b04.ogg",
+      "seg": 6.51
+    },
+    "C07.L011": {
+      "archivo": "./audio/astra/C07.L011-ffefa.ogg",
+      "seg": 2.91
+    },
+    "C07.L012": {
+      "archivo": "./audio/astra/C07.L012-4b8c9.ogg",
+      "seg": 10.21
+    },
+    "C08.L001": {
+      "archivo": "./audio/astra/C08.L001-3a0a5.ogg",
+      "seg": 2.72
+    },
+    "C08.L002": {
+      "archivo": "./audio/astra/C08.L002-139a5.ogg",
+      "seg": 3.71
+    },
+    "C08.L003": {
+      "archivo": "./audio/astra/C08.L003-1efe1.ogg",
+      "seg": 2.44
+    },
+    "C08.L004": {
+      "archivo": "./audio/astra/C08.L004-a9b79.ogg",
+      "seg": 5.11
+    },
+    "C08.L005": {
+      "archivo": "./audio/astra/C08.L005-c5e0a.ogg",
+      "seg": 4.31
+    },
+    "C08.L006": {
+      "archivo": "./audio/astra/C08.L006-f2368.ogg",
+      "seg": 10.01
+    },
+    "C08.L007": {
+      "archivo": "./audio/astra/C08.L007-fc9f3.ogg",
+      "seg": 6.11
+    },
+    "C08.L008": {
+      "archivo": "./audio/astra/C08.L008-168a4.ogg",
+      "seg": 2.06
+    },
+    "C08.L009": {
+      "archivo": "./audio/astra/C08.L009-027fa.ogg",
+      "seg": 6.21
+    },
+    "C08.L010": {
+      "archivo": "./audio/astra/C08.L010-387ba.ogg",
+      "seg": 11.11
+    },
+    "C08.L011": {
+      "archivo": "./audio/astra/C08.L011-4ba83.ogg",
+      "seg": 4.41
+    },
+    "C08.L012": {
+      "archivo": "./audio/astra/C08.L012-8d0f8.ogg",
+      "seg": 2.23
+    },
+    "C08.L013": {
+      "archivo": "./audio/astra/C08.L013-def3d.ogg",
+      "seg": 3.61
+    },
+    "C09.L001": {
+      "archivo": "./audio/astra/C09.L001-cf2f3.ogg",
+      "seg": 7.01
+    },
+    "C09.L002": {
+      "archivo": "./audio/astra/C09.L002-b6a6c.ogg",
+      "seg": 5.01
+    },
+    "C09.L003": {
+      "archivo": "./audio/astra/C09.L003-ceb68.ogg",
+      "seg": 4.41
+    },
+    "C09.L004": {
+      "archivo": "./audio/astra/C09.L004-11c55.ogg",
+      "seg": 7.51
+    },
+    "C09.L005": {
+      "archivo": "./audio/astra/C09.L005-78634.ogg",
+      "seg": 2.99
+    },
+    "C09.L006": {
+      "archivo": "./audio/astra/C09.L006-c2714.ogg",
+      "seg": 6.01
+    },
+    "C09.L007": {
+      "archivo": "./audio/astra/C09.L007-91fff.ogg",
+      "seg": 5.71
+    },
+    "C09.L008": {
+      "archivo": "./audio/astra/C09.L008-2f16e.ogg",
+      "seg": 4.01
+    },
+    "C09.L009": {
+      "archivo": "./audio/astra/C09.L009-9f4e0.ogg",
+      "seg": 3.31
+    },
+    "C09.L010": {
+      "archivo": "./audio/astra/C09.L010-690f2.ogg",
+      "seg": 7.71
+    },
+    "C09.L011": {
+      "archivo": "./audio/astra/C09.L011-23df6.ogg",
+      "seg": 7.21
+    },
+    "C09.L012": {
+      "archivo": "./audio/astra/C09.L012-e2271.ogg",
+      "seg": 4.51
+    },
+    "C09.L013": {
+      "archivo": "./audio/astra/C09.L013-a806f.ogg",
+      "seg": 4.61
+    },
+    "C09.L014": {
+      "archivo": "./audio/astra/C09.L014-7ff67.ogg",
+      "seg": 14.81
+    },
+    "C10.L001": {
+      "archivo": "./audio/astra/C10.L001-5a6f2.ogg",
+      "seg": 7.91
+    },
+    "C10.L002": {
+      "archivo": "./audio/astra/C10.L002-efb0c.ogg",
+      "seg": 1.18
+    },
+    "C10.L003": {
+      "archivo": "./audio/astra/C10.L003-603ce.ogg",
+      "seg": 6.31
+    },
+    "C10.L004": {
+      "archivo": "./audio/astra/C10.L004-c5e7f.ogg",
+      "seg": 1.97
+    },
+    "C10.L005": {
+      "archivo": "./audio/astra/C10.L005-c0ec4.ogg",
+      "seg": 3.71
+    },
+    "C10.L006": {
+      "archivo": "./audio/astra/C10.L006-3cea4.ogg",
+      "seg": 3.41
+    },
+    "C10.L007": {
+      "archivo": "./audio/astra/C10.L007-47d45.ogg",
+      "seg": 7.21
+    },
+    "C10.L008": {
+      "archivo": "./audio/astra/C10.L008-88266.ogg",
+      "seg": 3.61
+    },
+    "C10.L009": {
+      "archivo": "./audio/astra/C10.L009-1104d.ogg",
+      "seg": 0.73
+    },
+    "C10.L010": {
+      "archivo": "./audio/astra/C10.L010-59da0.ogg",
+      "seg": 1.28
+    },
+    "C10.L011": {
+      "archivo": "./audio/astra/C10.L011-da274.ogg",
+      "seg": 8.11
+    },
+    "C11.L001": {
+      "archivo": "./audio/astra/C11.L001-28c27.ogg",
+      "seg": 8.91
+    },
+    "C11.L002": {
+      "archivo": "./audio/astra/C11.L002-5c860.ogg",
+      "seg": 4.51
+    },
+    "C11.L003": {
+      "archivo": "./audio/astra/C11.L003-f9010.ogg",
+      "seg": 1.21
+    },
+    "C11.L004": {
+      "archivo": "./audio/astra/C11.L004-06fa2.ogg",
+      "seg": 3.11
+    },
+    "C11.L005": {
+      "archivo": "./audio/astra/C11.L005-84bd7.ogg",
+      "seg": 2.7
+    },
+    "C11.L006": {
+      "archivo": "./audio/astra/C11.L006-9c97b.ogg",
+      "seg": 2.69
+    },
+    "C11.L007": {
+      "archivo": "./audio/astra/C11.L007-e8a8e.ogg",
+      "seg": 6.8
+    },
+    "C11.L008": {
+      "archivo": "./audio/astra/C11.L008-77945.ogg",
+      "seg": 0.82
+    },
+    "C11.L009": {
+      "archivo": "./audio/astra/C11.L009-e09ba.ogg",
+      "seg": 6.53
+    },
+    "C11.L010": {
+      "archivo": "./audio/astra/C11.L010-9af0b.ogg",
+      "seg": 6.01
+    },
+    "C11.L011": {
+      "archivo": "./audio/astra/C11.L011-002d9.ogg",
+      "seg": 7.06
+    },
+    "C11.L012": {
+      "archivo": "./audio/astra/C11.L012-fb20a.ogg",
+      "seg": 4.61
+    },
+    "C11.L013": {
+      "archivo": "./audio/astra/C11.L013-6d078.ogg",
+      "seg": 3.91
+    },
+    "C11.L014": {
+      "archivo": "./audio/astra/C11.L014-9699a.ogg",
+      "seg": 2.49
+    },
+    "C11.L015": {
+      "archivo": "./audio/astra/C11.L015-f1127.ogg",
+      "seg": 5.71
+    },
+    "C11.L016": {
+      "archivo": "./audio/astra/C11.L016-6740d.ogg",
+      "seg": 4.61
+    },
+    "C11.L017": {
+      "archivo": "./audio/astra/C11.L017-ed9b0.ogg",
+      "seg": 4.61
+    },
+    "C11.L018": {
+      "archivo": "./audio/astra/C11.L018-5efbf.ogg",
+      "seg": 5.11
+    },
+    "C11.L019": {
+      "archivo": "./audio/astra/C11.L019-a4ca9.ogg",
+      "seg": 4.91
+    },
+    "C11.L020": {
+      "archivo": "./audio/astra/C11.L020-6b827.ogg",
+      "seg": 6.91
+    },
+    "C12.L001": {
+      "archivo": "./audio/astra/C12.L001-fc1f0.ogg",
+      "seg": 6.61
+    },
+    "C12.L002": {
+      "archivo": "./audio/astra/C12.L002-c5b3d.ogg",
+      "seg": 7.31
+    },
+    "C12.L003": {
+      "archivo": "./audio/astra/C12.L003-102a5.ogg",
+      "seg": 10.94
+    },
+    "C12.L004": {
+      "archivo": "./audio/astra/C12.L004-d24d2.ogg",
+      "seg": 7.39
+    },
+    "C12.L005": {
+      "archivo": "./audio/astra/C12.L005-187fb.ogg",
+      "seg": 5.91
+    },
+    "C12.L006": {
+      "archivo": "./audio/astra/C12.L006-f0866.ogg",
+      "seg": 2.97
+    },
+    "C12.L007": {
+      "archivo": "./audio/astra/C12.L007-401e2.ogg",
+      "seg": 2.24
+    },
+    "C12.L008": {
+      "archivo": "./audio/astra/C12.L008-c655c.ogg",
+      "seg": 6.91
+    },
+    "C12.L009": {
+      "archivo": "./audio/astra/C12.L009-0a888.ogg",
+      "seg": 2.2
+    },
+    "C12.L010": {
+      "archivo": "./audio/astra/C12.L010-20832.ogg",
+      "seg": 4.51
+    },
+    "C12.L011": {
+      "archivo": "./audio/astra/C12.L011-73964.ogg",
+      "seg": 2.9
+    },
+    "C12.L012": {
+      "archivo": "./audio/astra/C12.L012-878b6.ogg",
+      "seg": 4.71
+    },
+    "C12.L013": {
+      "archivo": "./audio/astra/C12.L013-24317.ogg",
+      "seg": 5.41
+    },
+    "C12.L014": {
+      "archivo": "./audio/astra/C12.L014-c2d9a.ogg",
+      "seg": 6.81
+    },
+    "C12.L015": {
+      "archivo": "./audio/astra/C12.L015-63cee.ogg",
+      "seg": 5.11
+    },
+    "C12.L016": {
+      "archivo": "./audio/astra/C12.L016-31a75.ogg",
+      "seg": 6.63
+    },
+    "C12.L017": {
+      "archivo": "./audio/astra/C12.L017-3328c.ogg",
+      "seg": 3.21
+    },
+    "C12.L018": {
+      "archivo": "./audio/astra/C12.L018-b0349.ogg",
+      "seg": 2.42
+    },
+    "C12.L019": {
+      "archivo": "./audio/astra/C12.L019-7ffff.ogg",
+      "seg": 1.89
+    },
+    "C12.L020": {
+      "archivo": "./audio/astra/C12.L020-084c1.ogg",
+      "seg": 6.63
+    },
+    "C12.L021": {
+      "archivo": "./audio/astra/C12.L021-e7b54.ogg",
+      "seg": 5.51
+    },
+    "C13.L001": {
+      "archivo": "./audio/astra/C13.L001-aff68.ogg",
+      "seg": 4.11
+    },
+    "C13.L002": {
+      "archivo": "./audio/astra/C13.L002-0f118.ogg",
+      "seg": 4.11
+    },
+    "C13.L003": {
+      "archivo": "./audio/astra/C13.L003-f8520.ogg",
+      "seg": 5.41
+    },
+    "C13.L004": {
+      "archivo": "./audio/astra/C13.L004-244f1.ogg",
+      "seg": 2.21
+    },
+    "C13.L005": {
+      "archivo": "./audio/astra/C13.L005-a1f52.ogg",
+      "seg": 3.51
+    },
+    "C13.L006": {
+      "archivo": "./audio/astra/C13.L006-0d210.ogg",
+      "seg": 7.25
+    },
+    "C13.L007": {
+      "archivo": "./audio/astra/C13.L007-31722.ogg",
+      "seg": 1.37
+    },
+    "C13.L008": {
+      "archivo": "./audio/astra/C13.L008-f83e7.ogg",
+      "seg": 7.32
+    },
+    "C13.L009": {
+      "archivo": "./audio/astra/C13.L009-c2d65.ogg",
+      "seg": 5.11
+    },
+    "C13.L010": {
+      "archivo": "./audio/astra/C13.L010-deb3a.ogg",
+      "seg": 2.86
+    },
+    "C13.L011": {
+      "archivo": "./audio/astra/C13.L011-d4d63.ogg",
+      "seg": 4.61
+    },
+    "C13.L012": {
+      "archivo": "./audio/astra/C13.L012-cda19.ogg",
+      "seg": 3.41
+    },
+    "C13.L013": {
+      "archivo": "./audio/astra/C13.L013-10316.ogg",
+      "seg": 4.91
+    },
+    "C13.L014": {
+      "archivo": "./audio/astra/C13.L014-306c5.ogg",
+      "seg": 10.76
+    },
+    "C13.L015": {
+      "archivo": "./audio/astra/C13.L015-020d5.ogg",
+      "seg": 5.01
+    },
+    "C13.L016": {
+      "archivo": "./audio/astra/C13.L016-14c29.ogg",
+      "seg": 5.31
+    },
+    "C13.L017": {
+      "archivo": "./audio/astra/C13.L017-dd282.ogg",
+      "seg": 4.21
+    },
+    "C13.L018": {
+      "archivo": "./audio/astra/C13.L018-aaccd.ogg",
+      "seg": 6.11
+    },
+    "C13.L019": {
+      "archivo": "./audio/astra/C13.L019-ba27d.ogg",
+      "seg": 6.16
+    },
+    "C13.L020": {
+      "archivo": "./audio/astra/C13.L020-8eebe.ogg",
+      "seg": 5.61
+    },
+    "C14.L001": {
+      "archivo": "./audio/astra/C14.L001-f8851.ogg",
+      "seg": 4.81
+    },
+    "C14.L002": {
+      "archivo": "./audio/astra/C14.L002-51ab4.ogg",
+      "seg": 5.41
+    },
+    "C14.L003": {
+      "archivo": "./audio/astra/C14.L003-79d4f.ogg",
+      "seg": 5.71
+    },
+    "C14.L004": {
+      "archivo": "./audio/astra/C14.L004-2b359.ogg",
+      "seg": 3.41
+    },
+    "C14.L005": {
+      "archivo": "./audio/astra/C14.L005-2510b.ogg",
+      "seg": 3.31
+    },
+    "C14.L006": {
+      "archivo": "./audio/astra/C14.L006-f2240.ogg",
+      "seg": 6.21
+    },
+    "C14.L007": {
+      "archivo": "./audio/astra/C14.L007-a6b8c.ogg",
+      "seg": 9.66
+    },
+    "C14.L008": {
+      "archivo": "./audio/astra/C14.L008-6502e.ogg",
+      "seg": 7.11
+    },
+    "C14.L009": {
+      "archivo": "./audio/astra/C14.L009-4c5a3.ogg",
+      "seg": 3.91
+    },
+    "C14.L010": {
+      "archivo": "./audio/astra/C14.L010-5d5da.ogg",
+      "seg": 6.09
+    },
+    "C14.L011": {
+      "archivo": "./audio/astra/C14.L011-676e2.ogg",
+      "seg": 4.71
+    },
+    "C14.L012": {
+      "archivo": "./audio/astra/C14.L012-a2dfd.ogg",
+      "seg": 4.21
+    },
+    "C14.L013": {
+      "archivo": "./audio/astra/C14.L013-867ce.ogg",
+      "seg": 3.31
+    },
+    "C14.L014": {
+      "archivo": "./audio/astra/C14.L014-551df.ogg",
+      "seg": 4.51
+    },
+    "C14.L015": {
+      "archivo": "./audio/astra/C14.L015-17d39.ogg",
+      "seg": 7.71
+    },
+    "C14.L016": {
+      "archivo": "./audio/astra/C14.L016-7cf78.ogg",
+      "seg": 3.11
+    },
+    "C14.L017": {
+      "archivo": "./audio/astra/C14.L017-f43d2.ogg",
+      "seg": 4.91
+    },
+    "C14.L018": {
+      "archivo": "./audio/astra/C14.L018-88f0d.ogg",
+      "seg": 3.11
+    },
+    "C14.L019": {
+      "archivo": "./audio/astra/C14.L019-06053.ogg",
+      "seg": 2.55
+    },
+    "C14.L020": {
+      "archivo": "./audio/astra/C14.L020-7aaa9.ogg",
+      "seg": 6.01
     }
   }
 }

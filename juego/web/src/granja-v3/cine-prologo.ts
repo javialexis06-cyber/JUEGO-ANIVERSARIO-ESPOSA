@@ -4,95 +4,9 @@
 import * as THREE from 'three';
 import { cargar } from '../recursos';
 import { actorDiosa, actorPareja, actuar, halo, type Actor } from './cine-actores';
+import { FIN_FRAG, RUIDO, azar, bez, clamp, hablar, instanciar, lerp, paso, piezaKit, puntosSuaves, sendero } from './cine-kit';
 import type { ContextoToma, Escenario, Guion, Toma, V3 } from './cine-granja';
 import { LINEAS_PROLOGO } from './cine-lineas';
-
-// ------------------------------------------------------------------ utilidades
-
-/** Azar con semilla (cada escena sale igual siempre, también al grabar). */
-function azar(semilla: number) {
-  let a = semilla >>> 0;
-  return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
-}
-const lerp = THREE.MathUtils.lerp, clamp = THREE.MathUtils.clamp;
-const paso = (a: number, b: number, x: number) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-const bez = (a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3, t: number) =>
-  new THREE.Vector3().copy(a).multiplyScalar((1 - t) * (1 - t)).addScaledVector(b, 2 * (1 - t) * t).addScaledVector(c, t * t);
-
-const RUIDO = /* glsl */ `
-float hash3(vec3 p){p=fract(p*0.3183099+.1);p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
-float ruido(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.-2.*f);
- return mix(mix(mix(hash3(i),hash3(i+vec3(1,0,0)),f.x),mix(hash3(i+vec3(0,1,0)),hash3(i+vec3(1,1,0)),f.x),f.y),
-            mix(mix(hash3(i+vec3(0,0,1)),hash3(i+vec3(1,0,1)),f.x),mix(hash3(i+vec3(0,1,1)),hash3(i+vec3(1,1,1)),f.x),f.y),f.z);}
-float fbm(vec3 p){float a=.5,s=0.;for(int i=0;i<5;i++){s+=a*ruido(p);p=p*2.03+vec3(1.7,9.2,3.1);a*=.5;}return s;}
-`;
-// Los #include van en su propia línea (pegados a otra instrucción no compilan)
-const FIN_FRAG = '\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n';
-
-/** Partículas suaves (estrellas, chispas, polen) dibujadas como puntos con su núcleo brillante. */
-function puntosSuaves(n: number, llenar: (i: number, pos: Float32Array, col: Float32Array, tam: Float32Array, fase: Float32Array) => void,
-  vertice: string, uniforms: Record<string, THREE.IUniform>, ref = 10) {
-  const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), tam = new Float32Array(n), fase = new Float32Array(n);
-  for (let i = 0; i < n; i++) llenar(i, pos, col, tam, fase);
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
-  geo.setAttribute('aTam', new THREE.BufferAttribute(tam, 1));
-  geo.setAttribute('aFase', new THREE.BufferAttribute(fase, 1));
-  // Los uniformes propios de cada sistema se declaran solos según su tipo
-  const propios = Object.entries(uniforms).map(([k, u]) => `uniform ${(u.value as THREE.Vector3).isVector3 ? 'vec3' : 'float'} ${k};`).join('');
-  const mat = new THREE.ShaderMaterial({
-    uniforms: { uT: { value: 0 }, uEscala: { value: 1 }, uAlfa: { value: 1 }, uRef: { value: ref }, ...uniforms },
-    vertexShader: `attribute vec3 aColor;attribute float aTam;attribute float aFase;uniform float uT;uniform float uEscala;uniform float uRef;${propios}
-      varying vec3 vColor;varying float vBrillo;
-      ${RUIDO}
-      void main(){vec3 p=position;float brillo=1.;${vertice}
-        vColor=aColor;vBrillo=brillo;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;
-        gl_PointSize=aTam*uEscala*clamp(uRef/max(.1,-mv.z),.35,6.);}`,
-    fragmentShader: `uniform float uAlfa;varying vec3 vColor;varying float vBrillo;
-      void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;float a=smoothstep(.5,0.,d);a=a*a+pow(a,8.)*1.5;
-        gl_FragColor=vec4(vColor*a*uAlfa*vBrillo,1.);${FIN_FRAG}}`,
-    blending: THREE.AdditiveBlending, depthWrite: false, transparent: true,
-  });
-  const p = new THREE.Points(geo, mat);
-  p.frustumCulled = false;
-  return p;
-}
-
-/** Hablar mientras dura la línea: boca y manos (vaivén), y vuelve a su pose al terminar. */
-function hablar(a: Actor, c: ContextoToma, pose = 'reposo', cara: 'normal' | 'feliz' = 'feliz') {
-  const l = c.toma.linea, desde = l?.desde ?? 0.4;
-  const hasta = c.dur - 0.9;
-  if (l && c.local > desde && c.local < hasta) {
-    a.p.vaiven('hablar_a', 'hablar_b', 0.5 + 0.5 * Math.sin(c.t * 3.1));
-    a.p.cara(Math.sin(c.t * 9.0) > -0.3 ? 'hablar' : cara);
-  } else actuar(a, pose, cara);
-}
-
-/** Copia una pieza del kit muchas veces con instancias (pocas llamadas de dibujo). */
-function instanciar(pieza: THREE.Object3D, lugares: [number, number, number, number, number?][]) {
-  const g = new THREE.Group();
-  if (!lugares.length) return g;
-  pieza.updateMatrixWorld(true);
-  const inv = pieza.matrixWorld.clone().invert(), m = new THREE.Matrix4(), q = new THREE.Quaternion(), eje = new THREE.Vector3(0, 1, 0);
-  pieza.traverse((o) => {
-    const malla = o as THREE.Mesh;
-    if (!malla.isMesh) return;
-    const local = inv.clone().multiply(malla.matrixWorld);
-    const im = new THREE.InstancedMesh(malla.geometry, malla.material, lugares.length);
-    lugares.forEach(([x, y, z, giro, esc = 1], i) => { m.compose(new THREE.Vector3(x, y, z), q.setFromAxisAngle(eje, giro), new THREE.Vector3(esc, esc, esc)); im.setMatrixAt(i, m.clone().multiply(local)); });
-    im.instanceMatrix.needsUpdate = true;
-    im.castShadow = true;
-    im.receiveShadow = true;
-    im.computeBoundingSphere();
-    im.userData.noLiberar = true;
-    g.add(im);
-  });
-  return g;
-}
-
-/** Busca una pieza en un kit de la granja (un vacío «m_<clave>» por pieza) o devuelve el modelo entero. */
-const piezaKit = (kit: THREE.Object3D, clave: string) => kit.getObjectByName('m_' + clave) ?? kit.getObjectByName(clave) ?? null;
 
 // ------------------------------------------------------------------ cosmos: nace Celia y se teje el Santuario
 
@@ -310,30 +224,6 @@ function cosmos(): Escenario {
 // ------------------------------------------------------------------ valle: Él y Ella llegan y Celia los recibe
 
 /** Caminito de tierra (una cinta sobre la curva del sendero). */
-function sendero(curva: THREE.CatmullRomCurve3, ancho: number) {
-  const n = 160, pos: number[] = [], col: number[] = [], idx: number[] = [];
-  const c1 = new THREE.Color('#b9915f'), c2 = new THREE.Color('#9a7448');
-  for (let i = 0; i <= n; i++) {
-    const t = i / n, p = curva.getPoint(t), d = curva.getTangent(t), lado = new THREE.Vector3(-d.z, 0, d.x).normalize();
-    for (const s of [-1, -0.45, 0, 0.45, 1]) {
-      const borde = Math.abs(s) > 0.9;
-      const q = p.clone().addScaledVector(lado, s * ancho * 0.5 * (1 + Math.sin(t * 40 + s) * 0.06));
-      pos.push(q.x, 0.025 - (borde ? 0.02 : 0), q.z);
-      const cc = c1.clone().lerp(c2, borde ? 0.8 : Math.abs(Math.sin(t * 90 + s * 3)) * 0.35);
-      col.push(cc.r, cc.g, cc.b);
-    }
-  }
-  for (let i = 0; i < n; i++) for (let j = 0; j < 4; j++) { const a = i * 5 + j; idx.push(a, a + 5, a + 1, a + 1, a + 5, a + 6); }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-  geo.setIndex(idx);
-  geo.computeVertexNormals();
-  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 }));
-  m.receiveShadow = true;
-  return m;
-}
-
 function valle(): Escenario {
   const g = new THREE.Group();
   g.name = 'valle';

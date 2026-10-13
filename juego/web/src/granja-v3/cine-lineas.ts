@@ -2,6 +2,8 @@
 // `texto` es lo que sale en el subtítulo; `d`, cómo se dice (las acotaciones en inglés entre corchetes las actúa
 // ElevenLabs y no las lee). Los ids no se cambian: con ellos se busca la voz.
 import type { LineaCine } from './cine-granja';
+import { LINEAS_HISTORIA } from './cine-lineas-historia';
+import { LINEAS_LUGARES } from './cine-lineas-lugares';
 
 const linea = (id: string, quien: string, nombre: string, texto: string, d: string, desde = 0.5): LineaCine => ({ id, quien, nombre, texto, d, desde });
 
@@ -30,4 +32,4 @@ export const LINEAS_PROLOGO = {
 };
 
 /** Todas las líneas de todas las películas (para el script de voces). */
-export const LINEAS_CINE: LineaCine[] = [...Object.values(LINEAS_PROLOGO)];
+export const LINEAS_CINE: LineaCine[] = [...Object.values(LINEAS_PROLOGO), ...LINEAS_HISTORIA, ...LINEAS_LUGARES];

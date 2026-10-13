@@ -169,6 +169,21 @@ export const PISTAS = [
   // lo de las diosas suene «armonioso y celestial». No van en bucle: acompañan la película de principio a fin.
   // El prólogo se queda con M12 («Heaven Theme Loop») y M13 («First Light Particles»), CC0, de la granja: a Javier le
   // gustaron (12 de octubre de 2026). Las demás películas usan la pieza de su cinemática (MUSICA_ESCENAS_ASTRA).
+  // La boda de la película de Astra (docs/en-obra/pelicula-de-astra.md, capítulo 4): no había nada gratuito a la altura
+  // del final, así que se compone. Un solo tema de amor que nace en la ceremonia, baila en la fiesta y vuelve en los
+  // créditos.
+  {
+    id: 'cine-boda-ceremonia', juego: 'granja', nombre: 'La boda · Ceremonia en Eterna', seg: 150, bucle: false, pareja: true,
+    prompt: 'Romantic cinematic wedding score for the finale of an animated fantasy film set in a tropical garden by a river at sunset. Opens with soft nylon guitar and warm strings as guests arrive with lanterns; glass celesta and harp sparkles as goddesses light candles and bloom a rose arch; a tender, unforgettable main love theme on solo piano and cello as the bride walks down the candlelit aisle; a calm, reverent passage with soft wordless female choir while the ceremony is blessed; then a radiant full-orchestra swell with choir as a constellation of two joined hands lights up the night sky; ends on a warm, luminous held chord. 66 bpm, emotional, heartfelt, instrumental only, no lyrics.',
+  },
+  {
+    id: 'cine-boda-fiesta', juego: 'granja', nombre: 'La boda · La fiesta', seg: 90, bucle: false, pareja: true,
+    prompt: 'Warm, joyful wedding party music for an animated film: a gentle slow-dance waltz version of a romantic love theme, Colombian-flavored with nylon guitar, soft marimba, light hand percussion, strings and accordion-like warmth; cozy fairy lights, a long table under a pavilion, friends toasting; ends softly as the couple walks alone to a riverside bonfire. 92 bpm in 3/4, heartfelt and playful, instrumental only, no lyrics.',
+  },
+  {
+    id: 'cine-boda-creditos', juego: 'granja', nombre: 'La boda · Créditos «Siempre te elegiré»', seg: 120, bucle: false, pareja: true,
+    prompt: 'End credits theme for an animated fantasy love story: begins with a solo piano statement of a tender love theme under a starry night, then grows with warm strings, harp and celesta, a soft wordless choir and a hopeful, sweeping orchestral climax remembering a whole journey across worlds, finally returning to a quiet piano and a gentle morning feeling with a simple acoustic guitar; ends with a soft, resolved final chord. 70 bpm, nostalgic, grateful, deeply romantic, instrumental only, no lyrics.',
+  },
 ];
 
 // ------------------------------------------------------------------------------------- Efectos de sonido

@@ -18,7 +18,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFile
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compilarModulo } from './modulos-prueba.mjs';
-import { FILTRO_CELESTIAL } from './filtro-celestial.mjs';
+import { DIOSAS, FILTRO_CELESTIAL } from './filtro-celestial.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PUB = join(RAIZ, 'public');
@@ -26,10 +26,11 @@ const DIR = join(PUB, 'audio', 'cine');
 const MEDIOS = join(PUB, 'granja', 'cine', 'medios.json');
 const REPARTO = join(RAIZ, 'voces-guion', 'cine-reparto.json');
 const REPARTO_ASTRA = join(RAIZ, 'voces-guion', 'astra-reparto.json');
+const MEDIOS_ASTRA = join(PUB, 'granja', 'astra', 'medios.json');
 const CLAVE = process.env.ELEVENLABS_API_KEY;
 const MODELO = process.env.MODELO ?? 'eleven_v4';
 const AJUSTES = { stability: 0.45, similarity_boost: 0.8, style: 0.35 };
-const DIVINAS = new Set(['celia', 'aura', 'lara']);
+const DIVINAS = DIOSAS; // Celia, Aura, Lara y Fuatia
 /** Cómo se procesa cada quien (ffmpeg). */
 const FILTRO = {
   celestial: FILTRO_CELESTIAL, // filtro-celestial.mjs
@@ -133,6 +134,15 @@ function armarMedios(voz) {
     if (!existsSync(f)) continue;
     usados.add(a);
     voces[l.id] = { archivo: `./audio/cine/${a}`, seg: Math.round(segundos(f) * 100) / 100 };
+  }
+  // Las 14 cinemáticas de la campaña usan las voces que ya hizo voces-astra.mjs: se declaran aquí con su duración
+  const astra = existsSync(MEDIOS_ASTRA) ? JSON.parse(readFileSync(MEDIOS_ASTRA, 'utf8')).voces ?? {} : {};
+  const viejos = existsSync(MEDIOS) ? JSON.parse(readFileSync(MEDIOS, 'utf8')).voces ?? {} : {};
+  for (const [id, v] of Object.entries(astra)) {
+    if (!/^C\d\d\./.test(id)) continue;
+    const f = join(PUB, v.archivo.replace(/^\.\//, ''));
+    if (!existsSync(f)) continue;
+    voces[id] = { archivo: v.archivo, seg: viejos[id]?.archivo === v.archivo ? viejos[id].seg : Math.round(segundos(f) * 100) / 100 };
   }
   let borrados = 0;
   if (existsSync(DIR)) for (const f of readdirSync(DIR)) if (f.endsWith('.ogg') && !usados.has(f)) (unlinkSync(join(DIR, f)), borrados++);

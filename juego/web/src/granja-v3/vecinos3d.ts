@@ -109,6 +109,19 @@ export function vecinoPeluche(id: string, index: number): THREE.Group {
   return g;
 }
 
+/** El muñeco de un vecino ya vestido, para el cine (no entra a la lista de los que respiran solos). */
+export async function personajeVecino(id: string): Promise<{ p: Personaje; cuerpo: 'el' | 'ella'; escala: number }> {
+  const d = DISENOS[id] ?? disenoAstra(id) ?? DISENOS.viajera;
+  const escala = d.escala ?? 1;
+  const p = new Personaje({ x: 0, y: 0 }, (d.c === 'ella' ? 0.7 : 0.69) * escala);
+  modelosListos ??= elegirModelos();
+  await modelosListos;
+  await p.cargarPoses(d.c);
+  await new Vestidor(p, d.c).aplicar(aspecto(d));
+  if (d.quieto && p.tienePose(d.quieto)) p.poseQuieto = d.quieto;
+  return { p, cuerpo: d.c, escala };
+}
+
 /** Anima al vecino: caminando (vaivén de piernas), hablando (`userData.hablando`: manos y boca) o quieto respirando. */
 export function animarVecino(g: THREE.Object3D, dt: number, andando: boolean, ahora = performance.now()) {
   const p = g.userData.personaje as Personaje | undefined;
