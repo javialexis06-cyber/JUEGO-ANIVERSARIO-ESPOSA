@@ -85,3 +85,4 @@ export const ESCENAS: Record<IdEscena, EscenaHistoria> = {
 
 /** La versión de amigos no tiene películas: siempre la escena escrita. */
 export async function verPelicula(_id: IdEscena): Promise<boolean> { return false; }
+export function vozConde(_cual: 'entrada' | 'furia') { /* en la sala de amigos el Conde no habla */ }

@@ -132,3 +132,16 @@ export async function verPelicula(id: IdEscena): Promise<boolean> {
     return true;
   } catch (e) { console.warn('película', id, e); return false; }
 }
+
+/** La voz del Conde en su pelea (JEF.C1 al aparecer, JEF.C2 cuando le salen las alas): la misma de las películas. */
+let vocesCine: Promise<Record<string, { archivo: string }>> | null = null;
+export function vozConde(cual: 'entrada' | 'furia') {
+  vocesCine ??= fetch('./granja/cine/medios.json').then((r) => (r.ok ? r.json() : {})).then((m: { voces?: Record<string, { archivo: string }> }) => m.voces ?? {}).catch(() => ({}));
+  void vocesCine.then((v) => {
+    const voz = v[cual === 'entrada' ? 'JEF.C1' : 'JEF.C2'];
+    if (!voz) return;
+    const a = new Audio(voz.archivo);
+    a.volume = 0.95;
+    void a.play().catch(() => {});
+  });
+}
