@@ -24,6 +24,11 @@ export function conKit(g:THREE.Object3D,archivo:string,usar:(piezas:Map<string,T
 export function precargarKit(archivo:string){return cargarKit(archivo).then(()=>undefined,()=>undefined);}
 export function precargarMuebles(){return Promise.all(['granja_muebles.glb','granja_pueblo.glb','granja_edificios.glb','granja_monte.glb'].map(a=>cargarKit(a).then(()=>undefined,()=>undefined)));}
 
+/** Cuando llega el kit, cambia todo lo que tiene g (la figura de antes) por lo que arme `armar` con sus piezas, fundido
+ * por material. Suelta las mallas viejas y sus materiales propios (los del kit son compartidos). */
+export function cambiarPorKit(g:THREE.Object3D,archivo:string,armar:(m:Map<string,THREE.Object3D>)=>THREE.Object3D|null){conKit(g,archivo,m=>{const nuevo=armar(m);if(!nuevo)return;
+ for(const c of [...g.children]){c.removeFromParent();c.traverse(o=>{const x=o as THREE.Mesh;if(!x.isMesh)return;if(!x.geometry.userData.compartido)x.geometry.dispose();for(const mt of ([] as THREE.Material[]).concat(x.material))if(!mt.userData.compartido)mt.dispose();});}
+ const f=fundir(nuevo);g.add(f);const v=g.userData.ganado;if(v)f.traverse(o=>{o.userData.ganado=v;});});}
 /** Junta en una malla por material todas las piezas de g (utilería quieta: decenas de copias pasan a pocas llamadas de
  * dibujo). Las mallas nuevas son propias del grupo; los materiales siguen siendo los compartidos del kit. */
 export function fundir(g:THREE.Object3D):THREE.Group{
