@@ -59,7 +59,7 @@ const DIOSAS: Record<IdDiosa, DisenoDiosa> = {
     piel: '#d9a982', pelo: '#2f6f73', ojos: '#e58a3a', halo: '#9fe3d6',
     piezas: {
       pelo: pieza('pelo_rizos', 'pelo'),
-      arriba: pieza('vestido_diosa', 'arriba', { principal: '#3f9fa3', cinta: '#eef6f4', bordado: '#e8803a', joya: '#c79a4e' }, ['abajo', 'pies'], ['medias']),
+      arriba: pieza('vestido_diosa', 'arriba', { principal: '#7cc8c2', cinta: '#ffffff', bordado: '#f08a3c', joya: '#d9a94e' }, ['abajo', 'pies'], ['medias']),
       cabeza: pieza('corona_llamas', 'cabeza'),
       espalda: pieza('alas_mariposa', 'espalda', { principal: '#bfeee6', detalle: '#e8a05a' }),
     },
@@ -130,8 +130,8 @@ export function actuar(a: Actor, pose: string, cara?: Cara) {
 }
 
 /** Un vecino de Astra con su ropa de siempre (Serena, Eliana, Flora, Mara, Nina, Eneas, Ofelia…). */
-export async function actorVecino(id: string): Promise<Actor> {
-  const { p } = await personajeVecino(id);
+export async function actorVecino(id: string, sin: ('cabeza' | 'cara' | 'espalda')[] = []): Promise<Actor> {
+  const { p } = await personajeVecino(id, sin);
   const raiz = new THREE.Group();
   raiz.add(p.grupo);
   marcarCompartido(raiz);
