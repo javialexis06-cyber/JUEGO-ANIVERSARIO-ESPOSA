@@ -64,7 +64,7 @@ export const CASO_NOCTURNA: Caso = {
       mensajes: [
         { de: 'celestina', t: '16:00', dia: 'Lunes 13 de Invierno', texto: 'Teo, los niños de la clase por radio quieren saber de tu estrella que camina 🌟' },
         { de: 'yo', t: '16:10', texto: 'Diles que se esconde detrás de las demás. Que la busquen por donde falta una estrella.' },
-        { de: 'celestina', t: '16:30', texto: '¡Ya le pusieron nombre! Votaron y ganó «la Andariega».', pista: 'andariega_nombre' },
+        { de: 'celestina', t: '16:30', voz: 'c5_celestina_nombre', pista: 'andariega_nombre' },
         { de: 'yo', t: '16:31', texto: 'Me encanta. La Andariega se queda 💫' },
       ],
     },
@@ -82,7 +82,7 @@ export const CASO_NOCTURNA: Caso = {
       con: 'bernardo',
       noLeidos: 1,
       mensajes: [
-        { de: 'bernardo', t: '19:00', dia: 'Sábado 18 de Invierno', texto: 'Teófilo, ¿tú sabes por qué se me apagan las balizas del borde? Las prendo y a los dos días amanecen cubiertas de un polvo gris.', pista: 'balizas' },
+        { de: 'bernardo', t: '19:00', dia: 'Sábado 18 de Invierno', voz: 'c5_bernardo_balizas', pista: 'balizas' },
         { de: 'yo', t: '19:10', texto: 'Guárdame un poquito de ese polvo, Bernardo.' },
         { de: 'bernardo', t: '19:12', foto: 'c5_polvo' },
         { de: 'bernardo', t: '01:02', dia: 'Martes 21 de Invierno', texto: 'Se apagaron otra vez las balizas del borde. Esta noche pasan almas por el tránsito, ¿cierto?' },
@@ -112,6 +112,8 @@ export const CASO_NOCTURNA: Caso = {
     { id: 'c5_teofilo_quedo', quien: 'teofilo', nombre: 'Teófilo', fecha: '21 de Invierno · 00:55', titulo: 'Me quedo', grabadora: true, pista: 'quedo', texto: 'Las balizas están todas tapadas. Si se apagan, las almas que pasan esta noche no ven el camino. Mando el carro de vuelta. Yo me quedo prendiéndolas.', d: '[calm, decided, helmet breathing] Las balizas están todas tapadas. Si se apagan, las almas que pasan esta noche no ven el camino. Mando el carro de vuelta. Yo me quedo prendiéndolas.' },
     { id: 'c5_matea_fin', quien: 'matea', nombre: 'Matea', fecha: '21 de Invierno', texto: 'Teo, te vemos. Toda la fila de balizas está prendida. Vamos por ti.', d: '[radio, relieved, warm] Teo, te vemos. Toda la fila de balizas está prendida. Vamos por ti.' },
     { id: 'c5_teofilo_fin', quien: 'teofilo', nombre: 'Teófilo', fecha: '21 de Invierno', texto: 'Díganle a los niños que la Andariega existe. Y que no se rían mucho de este viejo.', d: '[tired, happy, chuckling] Díganle a los niños que la Andariega existe. Y que no se rían mucho de este viejo.' },
+    { id: 'c5_celestina_nombre', quien: 'celestina', nombre: 'Celestina', fecha: '13 de Invierno', texto: '¡Ya le pusieron nombre! Votaron y ganó «la Andariega».', d: '[cheerful teacher, laughing] ¡Ya le pusieron nombre! Votaron y ganó «la Andariega».' },
+    { id: 'c5_bernardo_balizas', quien: 'bernardo', nombre: 'Bernardo', fecha: '18 de Invierno', texto: 'Teófilo, ¿tú sabes por qué se me apagan las balizas del borde? Las prendo y a los dos días amanecen cubiertas de un polvo gris.', d: '[tired, puzzled] Teófilo, ¿tú sabes por qué se me apagan las balizas del borde? Las prendo y a los dos días amanecen cubiertas de un polvo gris.' },
   ],
   llamadas: [
     { quien: 'matea', t: '06:11', dia: '21 de Invierno', tipo: 'perdida' },

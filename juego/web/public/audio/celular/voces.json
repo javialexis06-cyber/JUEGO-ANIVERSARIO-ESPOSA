@@ -1,0 +1,230 @@
+{
+ "version": 1,
+ "caracteres": 7031,
+ "voces": {
+  "c1_teresa_copa": {
+   "archivo": "./audio/celular/c1_teresa_copa-d8621e.ogg",
+   "seg": 8.81
+  },
+  "c1_marcela_miedo": {
+   "archivo": "./audio/celular/c1_marcela_miedo-5c5974.ogg",
+   "seg": 10.41
+  },
+  "c1_mama_tunel": {
+   "archivo": "./audio/celular/c1_mama_tunel-8d1ec0.ogg",
+   "seg": 6.21
+  },
+  "c1_tobias_terraza": {
+   "archivo": "./audio/celular/c1_tobias_terraza-eb0321.ogg",
+   "seg": 7.21
+  },
+  "c1_marcela_noche": {
+   "archivo": "./audio/celular/c1_marcela_noche-e7758c.ogg",
+   "seg": 6.71
+  },
+  "c1_marcela_bebio": {
+   "archivo": "./audio/celular/c1_marcela_bebio-73b231.ogg",
+   "seg": 8.71
+  },
+  "c1_fin_celina": {
+   "archivo": "./audio/celular/c1_fin_celina-0c15de.ogg",
+   "seg": 7.21
+  },
+  "c1_fin_mama": {
+   "archivo": "./audio/celular/c1_fin_mama-027122.ogg",
+   "seg": 2.52
+  },
+  "c1_teresa_noche": {
+   "archivo": "./audio/celular/c1_teresa_noche-e5a3e2.ogg",
+   "seg": 4.51
+  },
+  "c2_abundio_agua": {
+   "archivo": "./audio/celular/c2_abundio_agua-2361f3.ogg",
+   "seg": 8.01
+  },
+  "c2_barca_auxilio": {
+   "archivo": "./audio/celular/c2_barca_auxilio-038543.ogg",
+   "seg": 7.61
+  },
+  "c2_abundio_decision": {
+   "archivo": "./audio/celular/c2_abundio_decision-ca551f.ogg",
+   "seg": 7.61
+  },
+  "c2_abundio_salgo": {
+   "archivo": "./audio/celular/c2_abundio_salgo-507bed.ogg",
+   "seg": 9.71
+  },
+  "c2_julian_fin": {
+   "archivo": "./audio/celular/c2_julian_fin-f04948.ogg",
+   "seg": 6.41
+  },
+  "c2_abundio_fin": {
+   "archivo": "./audio/celular/c2_abundio_fin-b35a72.ogg",
+   "seg": 5.21
+  },
+  "c2_carmela_caldo": {
+   "archivo": "./audio/celular/c2_carmela_caldo-280faa.ogg",
+   "seg": 2.52
+  },
+  "c3_ursula_calor": {
+   "archivo": "./audio/celular/c3_ursula_calor-9c2164.ogg",
+   "seg": 8.71
+  },
+  "c3_golpes": {
+   "archivo": "./audio/celular/c3_golpes-6847ef.ogg",
+   "seg": 8.21
+  },
+  "c3_entro": {
+   "archivo": "./audio/celular/c3_entro-fa9a3c.ogg",
+   "seg": 5.21
+  },
+  "c3_adentro": {
+   "archivo": "./audio/celular/c3_adentro-c4e25e.ogg",
+   "seg": 11.81
+  },
+  "c3_eloy_fin": {
+   "archivo": "./audio/celular/c3_eloy_fin-4fbe11.ogg",
+   "seg": 6.11
+  },
+  "c3_rosalba_fin": {
+   "archivo": "./audio/celular/c3_rosalba_fin-7ff71a.ogg",
+   "seg": 4.91
+  },
+  "c3_petra_locura": {
+   "archivo": "./audio/celular/c3_petra_locura-552cda.ogg",
+   "seg": 2.73
+  },
+  "c3_hugo_lampara": {
+   "archivo": "./audio/celular/c3_hugo_lampara-6b6787.ogg",
+   "seg": 4.41
+  },
+  "c4_abril_seto": {
+   "archivo": "./audio/celular/c4_abril_seto-6de05f.ogg",
+   "seg": 8.41
+  },
+  "c4_esteban_molde": {
+   "archivo": "./audio/celular/c4_esteban_molde-92fedc.ogg",
+   "seg": 11.81
+  },
+  "c4_sora_coro": {
+   "archivo": "./audio/celular/c4_sora_coro-30ed4c.ogg",
+   "seg": 7.61
+  },
+  "c4_abril_fin": {
+   "archivo": "./audio/celular/c4_abril_fin-18c078.ogg",
+   "seg": 7.31
+  },
+  "c4_gregoria_abejas": {
+   "archivo": "./audio/celular/c4_gregoria_abejas-7bd493.ogg",
+   "seg": 7.51
+  },
+  "c4_iria_consejo": {
+   "archivo": "./audio/celular/c4_iria_consejo-421c40.ogg",
+   "seg": 8.61
+  },
+  "c5_teofilo_hueco": {
+   "archivo": "./audio/celular/c5_teofilo_hueco-1a7b35.ogg",
+   "seg": 7.71
+  },
+  "c5_teofilo_mancha": {
+   "archivo": "./audio/celular/c5_teofilo_mancha-06de7e.ogg",
+   "seg": 9.81
+  },
+  "c5_teofilo_quedo": {
+   "archivo": "./audio/celular/c5_teofilo_quedo-fe8293.ogg",
+   "seg": 10.11
+  },
+  "c5_matea_fin": {
+   "archivo": "./audio/celular/c5_matea_fin-bc275a.ogg",
+   "seg": 4.61
+  },
+  "c5_teofilo_fin": {
+   "archivo": "./audio/celular/c5_teofilo_fin-2aeb6f.ogg",
+   "seg": 6.51
+  },
+  "c5_celestina_nombre": {
+   "archivo": "./audio/celular/c5_celestina_nombre-551e35.ogg",
+   "seg": 5.31
+  },
+  "c5_bernardo_balizas": {
+   "archivo": "./audio/celular/c5_bernardo_balizas-972233.ogg",
+   "seg": 8.31
+  },
+  "c6_simon_losa": {
+   "archivo": "./audio/celular/c6_simon_losa-33ca42.ogg",
+   "seg": 8.01
+  },
+  "c6_simon_medir": {
+   "archivo": "./audio/celular/c6_simon_medir-4824a8.ogg",
+   "seg": 8.71
+  },
+  "c6_ezequiel_carro": {
+   "archivo": "./audio/celular/c6_ezequiel_carro-b5de74.ogg",
+   "seg": 8.91
+  },
+  "c6_zora_fin": {
+   "archivo": "./audio/celular/c6_zora_fin-18c143.ogg",
+   "seg": 7.21
+  },
+  "c6_simon_fin": {
+   "archivo": "./audio/celular/c6_simon_fin-a5c712.ogg",
+   "seg": 6.61
+  },
+  "c6_samira_tormenta": {
+   "archivo": "./audio/celular/c6_samira_tormenta-ab5355.ogg",
+   "seg": 5.91
+  },
+  "c6_kenzo_aljibe": {
+   "archivo": "./audio/celular/c6_kenzo_aljibe-292d00.ogg",
+   "seg": 9.41
+  },
+  "c7_orin_aviso": {
+   "archivo": "./audio/celular/c7_orin_aviso-d8ccee.ogg",
+   "seg": 6.31
+  },
+  "c7_maia_luces": {
+   "archivo": "./audio/celular/c7_maia_luces-230f3a.ogg",
+   "seg": 5.01
+  },
+  "c7_nahuel_fin": {
+   "archivo": "./audio/celular/c7_nahuel_fin-2324dd.ogg",
+   "seg": 6.01
+  },
+  "c7_orin_fin": {
+   "archivo": "./audio/celular/c7_orin_fin-63d170.ogg",
+   "seg": 4.91
+  },
+  "c7_mauro_luces": {
+   "archivo": "./audio/celular/c7_mauro_luces-881acc.ogg",
+   "seg": 5.41
+  },
+  "c7_nahuel_loma": {
+   "archivo": "./audio/celular/c7_nahuel_loma-9a3470.ogg",
+   "seg": 4.31
+  },
+  "c8_joaquin_esclusa": {
+   "archivo": "./audio/celular/c8_joaquin_esclusa-9b3070.ogg",
+   "seg": 6.91
+  },
+  "c8_joaquin_dentro": {
+   "archivo": "./audio/celular/c8_joaquin_dentro-8dd961.ogg",
+   "seg": 11.31
+  },
+  "c8_said_aviso": {
+   "archivo": "./audio/celular/c8_said_aviso-6869f1.ogg",
+   "seg": 6.01
+  },
+  "c8_helena_fin": {
+   "archivo": "./audio/celular/c8_helena_fin-d508ee.ogg",
+   "seg": 3.51
+  },
+  "c8_joaquin_fin": {
+   "archivo": "./audio/celular/c8_joaquin_fin-7fae9a.ogg",
+   "seg": 8.01
+  },
+  "c8_boris_camara": {
+   "archivo": "./audio/celular/c8_boris_camara-e18068.ogg",
+   "seg": 3.51
+  }
+ }
+}

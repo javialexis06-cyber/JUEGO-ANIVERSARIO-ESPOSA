@@ -57,7 +57,7 @@ export const CASO_COTA: Caso = {
         { de: 'yo', t: '21:36', texto: 'Tres golpes. Como cuando la brigada de mi papá avisaba que estaba bien. Golpe, golpe, golpe.', pista: 'golpes' },
         { de: 'petra', t: '21:40', texto: 'Rosa… esa galería lleva treinta y un años cerrada. Allá no hay nadie.' },
         { de: 'yo', t: '21:41', texto: 'Ya sé. Pero los oigo.' },
-        { de: 'petra', t: '19:00', dia: 'Miércoles 18 de Otoño', texto: 'No vayas a hacer una locura, ¿oíste?' },
+        { de: 'petra', t: '19:00', dia: 'Miércoles 18 de Otoño', voz: 'c3_petra_locura' },
       ],
     },
     {
@@ -91,13 +91,13 @@ export const CASO_COTA: Caso = {
     {
       con: 'hugo',
       mensajes: [
-        { de: 'hugo', t: '20:30', dia: 'Jueves 19 de Otoño', texto: 'Rosalba, la lámpara 46 no ha vuelto al gancho. ¿La tienes tú?' },
+        { de: 'hugo', t: '20:30', dia: 'Jueves 19 de Otoño', voz: 'c3_hugo_lampara' },
       ],
     },
   ],
   fotos: [
     { id: 'reja', archivo: 'c3_reja', fecha: '16 de Otoño', lugar: 'Cota tres', pie: 'La reja. Desde aquí se oyen los golpes, siempre después de las seis.' },
-    { id: 'casco', archivo: 'c3_casco', fecha: '15 de Otoño', lugar: 'Casillero', pie: 'El casco de mi papá. Brigada Candela, AV 281.', pista: 'candela' },
+    { id: 'casco', archivo: 'c3_casco', fecha: '15 de Otoño', lugar: 'Casillero', pie: 'La foto de mi papá con su casco. Brigada Candela, AV 281.', pista: 'candela' },
     { id: 'brigada', archivo: 'c3_brigada', fecha: '19 de Otoño', lugar: 'Bocamina', pie: 'La brigada de Eloy antes del turno. Yo soy la del pañuelo.' },
     { id: 'cristales', archivo: 'c3_cristales', fecha: '19 de Otoño · 19:12', lugar: 'Cota tres, primera curva', pie: 'Los cristales brillan solos y el aire está tibio.', candado: 'album', pista: 'calor' },
     { id: 'huevo', archivo: 'c3_huevo', fecha: '19 de Otoño · 19:40', lugar: 'Cota tres, el fondo', pie: '¿Esto es un huevo? Golpea desde adentro.', candado: 'album', pista: 'huevo' },
@@ -114,6 +114,8 @@ export const CASO_COTA: Caso = {
     { id: 'c3_adentro', quien: 'rosalba', nombre: 'Rosalba', fecha: '19 de Otoño · 20:30', titulo: 'Adentro', grabadora: true, pista: 'cuidada', texto: 'Me caí, el tobillo otra vez. Atrás se vino el techo. Hay algo enorme aquí y está tibio. No me hace daño. Creo que me está cuidando.', d: '[in pain, then amazed, quiet] Me caí... el tobillo otra vez. Atrás se vino el techo. Hay algo enorme aquí y está tibio. No me hace daño. Creo que... me está cuidando.' },
     { id: 'c3_eloy_fin', quien: 'eloy', nombre: 'Eloy', fecha: '20 de Otoño', texto: 'Quietos todos. Nos está dejando pasar. Amparo, adelante, despacio.', d: '[whispering, awed, careful] Quietos todos. Nos está dejando pasar. Amparo, adelante... despacio.' },
     { id: 'c3_rosalba_fin', quien: 'rosalba', nombre: 'Rosalba', fecha: '20 de Otoño', texto: 'Mi papá no estaba allá adentro. Pero yo tampoco estuve sola.', d: '[tired, smiling through tears] Mi papá no estaba allá adentro. Pero yo tampoco estuve sola.' },
+    { id: 'c3_petra_locura', quien: 'petra', nombre: 'Petra', fecha: '18 de Otoño', texto: 'No vayas a hacer una locura, ¿oíste?', d: '[worried friend, half joking] No vayas a hacer una locura, ¿oíste?' },
+    { id: 'c3_hugo_lampara', quien: 'hugo', nombre: 'Hugo', fecha: '19 de Otoño', texto: 'Rosalba, la lámpara 46 no ha vuelto al gancho. ¿La tienes tú?', d: '[concerned, practical] Rosalba, la lámpara 46 no ha vuelto al gancho. ¿La tienes tú?' },
   ],
   llamadas: [
     { quien: 'eloy', t: '22:11', dia: '19 de Otoño', tipo: 'perdida' },

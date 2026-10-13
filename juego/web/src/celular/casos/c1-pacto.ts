@@ -58,7 +58,7 @@ export const CASO_PACTO: Caso = {
         { de: 'teresa', t: '07:31', texto: 'Es de cuando comía con nosotros en esta cocina, antes de ser el señor de nada. Lávala con cuidado.' },
         { de: 'teresa', t: '19:02', dia: 'Jueves 29 de Invierno', texto: 'Esta noche no subas a la terraza. Él dijo que va a recibir una visita y que nadie suba.' },
         { de: 'yo', t: '19:05', texto: '¿Una visita a esta hora? Si las puertas de la muralla están cerradas' },
-        { de: 'teresa', t: '19:06', texto: 'No preguntes. Deja la copa en la mesa de la terraza y bajas.', pista: 'visita' },
+        { de: 'teresa', t: '19:06', voz: 'c1_teresa_noche', pista: 'visita' },
       ],
     },
     {
@@ -120,6 +120,7 @@ export const CASO_PACTO: Caso = {
     { id: 'c1_marcela_bebio', quien: 'marcela', nombre: 'Marcela', fecha: '30 de Invierno · 23:51', titulo: 'Me voy', grabadora: true, pista: 'bebio', texto: 'Bebió. Bebió ceniza en la copa vieja. Me voy por el túnel. Si alguien encuentra esto, díganle a mi mamá que llegué.', d: '[breathless, crying, whispering] Bebió. Bebió ceniza en la copa vieja. Me voy por el túnel. Si alguien encuentra esto... díganle a mi mamá que llegué.' },
     { id: 'c1_fin_celina', quien: 'marcela_hoy', nombre: 'Celina', fecha: 'AV 312', texto: 'Once años amasando sin sal, como le gustaba a él. Ya puedo volver a llamarme Marcela.', d: '[emotional, warm, steady] Once años amasando sin sal, como le gustaba a él. Ya puedo volver a llamarme Marcela.' },
     { id: 'c1_fin_mama', quien: 'mama', nombre: 'Mamá', fecha: 'AV 312', texto: 'Mija. Llegó.', d: '[crying with joy, very softly] Mija... Llegó.' },
+    { id: 'c1_teresa_noche', quien: 'teresa', nombre: 'Doña Teresa', fecha: '29 de Invierno', texto: 'No preguntes. Deja la copa en la mesa de la terraza y bajas.', d: '[whispering, worried] No preguntes. Deja la copa en la mesa de la terraza y bajas.' },
   ],
   llamadas: [
     { quien: 'mama', t: '23:41', dia: '30 de Invierno', tipo: 'perdida' },

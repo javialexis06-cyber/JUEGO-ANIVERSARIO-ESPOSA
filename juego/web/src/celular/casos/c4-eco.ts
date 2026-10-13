@@ -88,7 +88,7 @@ export const CASO_ECO: Caso = {
     {
       con: 'gregoria',
       mensajes: [
-        { de: 'gregoria', t: '16:00', dia: 'Lunes 7 de Primavera', texto: '¿Has visto a mis abejas? No quieren entrar al seto nuevo. Dan la vuelta en la puerta, como si chocaran con algo.', pista: 'abejas' },
+        { de: 'gregoria', t: '16:00', dia: 'Lunes 7 de Primavera', voz: 'c4_gregoria_abejas', pista: 'abejas' },
       ],
     },
     {
@@ -96,7 +96,7 @@ export const CASO_ECO: Caso = {
       mensajes: [
         { de: 'iria', t: '08:00', dia: 'Jueves 3 de Primavera', texto: '¿Llegaste bien a Verdia? Estoy muy orgullosa de ti. Lo de Senda no era fácil.' },
         { de: 'yo', t: '08:30', texto: 'Llegué 😭 Ya canto en un coro y todo. Gracias por no soltarme en la Travesía.' },
-        { de: 'iria', t: '08:32', texto: 'Una cosa: si ves algo que se repite igualito, no lo sigas. En la Travesía las rutas torcidas se repetían así.', pista: 'travesia' },
+        { de: 'iria', t: '08:32', voz: 'c4_iria_consejo', pista: 'travesia' },
       ],
     },
   ],
@@ -117,6 +117,8 @@ export const CASO_ECO: Caso = {
     { id: 'c4_esteban_molde', quien: 'esteban', nombre: 'Esteban', fecha: '8 de Primavera', texto: 'Tiene la geometría de las rutas que Vael\'Thor torció. Esos moldes solo saben repetir. Si quien está adentro responde algo distinto, el molde se rompe.', d: '[old scholar, calm, grave] Tiene la geometría de las rutas que Vael\'Thor torció. Esos moldes solo saben repetir. Si quien está adentro responde algo distinto... el molde se rompe.' },
     { id: 'c4_sora_coro', quien: 'sora', nombre: 'Sora', fecha: 'Ensayo', texto: 'Esta vez no vamos a cantar el final de siempre. Abril, campanita, contéstanos con lo tuyo.', d: '[warm choir leader, gentle, hopeful] Esta vez no vamos a cantar el final de siempre. Abril, campanita... contéstanos con lo tuyo.' },
     { id: 'c4_abril_fin', quien: 'abril', nombre: 'Abril', fecha: '12 de Primavera', texto: 'Era la misma tarde, una y otra vez. Y de repente alguien cantó otra cosa, y yo también.', d: '[relieved, a little teary, smiling] Era la misma tarde, una y otra vez. Y de repente alguien cantó otra cosa... y yo también.' },
+    { id: 'c4_gregoria_abejas', quien: 'gregoria', nombre: 'Gregoria', fecha: '7 de Primavera', texto: '¿Has visto a mis abejas? No quieren entrar al seto nuevo. Dan la vuelta en la puerta, como si chocaran con algo.', d: '[old woman, puzzled, gentle] ¿Has visto a mis abejas? No quieren entrar al seto nuevo. Dan la vuelta en la puerta, como si chocaran con algo.' },
+    { id: 'c4_iria_consejo', quien: 'iria', nombre: 'Iria', fecha: '3 de Primavera', texto: 'Una cosa: si ves algo que se repite igualito, no lo sigas. En la Travesía las rutas torcidas se repetían así.', d: '[serious, caring] Una cosa: si ves algo que se repite igualito, no lo sigas. En la Travesía las rutas torcidas se repetían así.' },
   ],
   llamadas: [
     { quien: 'sora', t: '19:21', dia: '6 de Primavera', tipo: 'perdida' },

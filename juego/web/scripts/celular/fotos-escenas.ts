@@ -188,6 +188,7 @@ function terraza(roja: boolean): SetFotos {
       brillo(g, -20, 30, -120, roja ? '#ff3a2a' : '#c9d4ff', 110, 0.55);
       // Las montañas del reino y la muralla abajo
       regar(g, k.paisaje, 'roca_volcanica', 30, 30, 90, 0, -40, [4, 9], 3, (x, z) => z < -20);
+      luz(g, -0.4, 2.2, 0.8, '#ffc890', 2.2, 6);
       if (roja) g.add(motasFlotantes(220, [0, 3, -4], 8, 6, [0.6, 0.55, 0.65], 2.4, 11));
     },
   }, roja
@@ -316,14 +317,14 @@ function puerto(noche: boolean): SetFotos {
     },
   }, noche
     ? [
-      { id: 'c2_noche', cam: [[-2, 1.6, -6], [-5.6, 0.8, -18], 34], salen: [], bloom: 1.2 },
+      { id: 'c2_noche', cam: [[0.5, 1.8, -7], [-5.6, 0.8, -18], 38], salen: [], bloom: 1.2 },
       { id: 'c2_fin_faro', cam: [[3.5, 1.6, 5.5], [-6, 4, -10], 44], poses: { julian: ['senalar_arriba', 'feliz'], abundio: ['jarras', 'feliz'], carmela: ['aplauso_a', 'feliz'] }, hacer: 'faro_prendido', bloom: 1.2 },
     ]
     : [
       { id: 'c2_fondo', cam: [[4, 2, 8], [-6, 5, -12], 48], salen: [] },
       { id: 'c2_faro', cam: [[-4, 1, -1], [-9, 6, -9], 50], salen: [] },
       { id: 'c2_marca', cam: [[2.6, 1.2, -4.6], [3.8, 0.6, -7.4], 30], salen: [] },
-      { id: 'c2_garza', cam: [[7.6, 1.6, -5.6], [5.2, 0.4, -9], 34], salen: [] },
+      { id: 'c2_garza', cam: [[2.4, 2.4, -4.2], [5.2, 0.4, -9], 36], salen: [] },
       { id: 'c2_abundio', cam: [[-0.8, 1.45, 4.4], [-1.4, 1.12, 1.2], 30], poses: { abundio: ['reposo', 'feliz'] }, cuadrado: true },
       retrato('c2_av_julian', CAST_PUERTO, 'julian', 'saludo_a', 'feliz'),
       retrato('c2_av_carmela', CAST_PUERTO, 'carmela', 'jarras', 'feliz'),
@@ -415,7 +416,7 @@ const galeria = set('c3_galeria', {
   { id: 'c3_reja', cam: [[1.2, 1.3, -2], [0, 1.1, -7.6], 42], salen: [] },
 ]);
 
-const CAST_NIDO: Puesto[] = [['rosalba', 'rosalba', 1.8, 1.4, -1, -1], ['eloy', 'piedra_eloy', -1.0, 4.2, 0, 0], ['amparo', 'piedra_amparo', 0.4, 4.6, 0, 0], ['ursula', 'piedra_ursula', -2.4, 4.6, 0, 0]];
+const CAST_NIDO: Puesto[] = [['rosalba', 'rosalba', 1.8, 1.4, 4, 5], ['eloy', 'piedra_eloy', -1.0, 4.2, 0, 0], ['amparo', 'piedra_amparo', 0.4, 4.6, 0, 0], ['ursula', 'piedra_ursula', -2.4, 4.6, 0, 0]];
 function nido(conGente: boolean): SetFotos {
   return set(conGente ? 'c3_nido_gente' : 'c3_nido', {
     hora: 'noche', colores: null, fondo: '#0a0402', exposicion: 1.45, radio: 12,
@@ -435,7 +436,7 @@ function nido(conGente: boolean): SetFotos {
       d.name = 'dragon';
       g.add(d);
       // El huevo de piedra que golpea
-      g.add(poner(k.obras, 'ref_huevo_dino', 2.2, -1.6, 0.3, 3.2));
+      g.add(poner(k.obras, 'ref_huevo_dino', 2.2, -1.6, 0.3, 8));
       brillo(g, 2.2, 0.8, -1.6, '#ffb35a', 2.4, 0.5);
       for (const [x, z, c] of [[-5, -5, '#7ad0ff'], [5.6, -4, '#c07aff'], [3, -6.4, '#7affc0']] as const) { luz(g, x, 1.6, z, c, 2.4, 7); brillo(g, x, 1.6, z, c, 4, 0.45); }
       luz(g, -3, 0.6, -2.4, '#ff6a2a', 3, 8);
@@ -451,7 +452,7 @@ function nido(conGente: boolean): SetFotos {
     : [
       { id: 'c3_cristales', cam: [[3, 1.6, 2], [-5, 1.4, -5], 44], salen: [] },
       { id: 'c3_huevo', cam: [[3.6, 1.1, 1.2], [2.2, 0.6, -1.6], 32], salen: [] },
-      { id: 'c3_ojo', cam: [[1.2, 1.8, 0.8], [-1.6, 1.6, -3.2], 26], salen: [], filtro: 'oscura' },
+      { id: 'c3_ojo', cam: [[0.2, 3.6, 0.2], [-1.6, 4.2, -3.2], 30], salen: [], filtro: 'oscura' },
       { id: 'c3_fondo_nido', cam: [[0, 2, 7], [0, 1, -3], 50], salen: [] },
     ]);
 }
@@ -588,9 +589,9 @@ function desierto(tormenta: boolean): SetFotos {
       for (const [x, z, rx, rz] of [[-20, -30, 14, 6], [18, -40, 20, 8], [0, -60, 30, 10], [30, -10, 10, 5], [-30, 0, 8, 6]] as const) banco(g, x, z, rx, rz, '#e4c080', 2.2);
       // Las ruinas de la terraza 9 (a la derecha, al fondo)
       const ruinas = new THREE.Group();
-      for (let i = 0; i < 6; i++) ruinas.add(poner(k.abadia, i % 2 ? 'pared_dura_a' : 'pared_borde', i * 2 - 5, -2, 0, 1.6));
-      ruinas.add(poner(k.abadia, 'pared_dura_b', -6, 0, Math.PI / 2, 1.6), poner(k.cementerio, 'deco_fosa', 0, 1.4, 0, 1.4));
-      ruinas.add(poner(k.paisaje, 'basalto', 5, 2, 0, 1.4), poner(k.paisaje, 'roca_volcanica', -4, 3, 1, 1.2));
+      for (let i = 0; i < 6; i++) ruinas.add(poner(k.catacumbas, i % 2 ? 'pared_dura_a' : 'pared_borde', i * 2 - 5, -2, 0, 1.4 + (i % 3) * 0.4));
+      for (const x of [-5, -1, 3]) ruinas.add(poner(k.castillo, 'deco_columna_marmol', x, 0.6, 0, 1));
+      ruinas.add(poner(k.catacumbas, 'pared_dura_b', -6.4, 0, Math.PI / 2, 1.2), poner(k.cementerio, 'deco_fosa', 0, 1.4, 0, 1.4), poner(k.castillo, 'deco_sillas_rotas', 4, 2.4));
       ruinas.position.set(10, 0, -12);
       g.add(ruinas);
       // El carro: la vagoneta con los doce barriles
@@ -602,16 +603,16 @@ function desierto(tormenta: boolean): SetFotos {
       carro.rotation.y = 0.5;
       g.add(carro);
       g.add(poner(k.paisaje, 'invernadero_cupula', -16, -24, 0, 1.4), poner(k.paisaje, 'pozo', -9, 2, 0, 1.1));
-      regar(g, k.paisaje, 'roca_volcanica', 20, 8, 50, 0, -10, [0.8, 2.4], 4);
+      regar(g, k.monte, 'roca_grande', 16, 10, 50, 0, -10, [0.8, 1.8], 4);
       if (tormenta) g.add(motasFlotantes(600, [0, 2, -4], 18, 6, [0.85, 0.65, 0.4], 3.2, 31));
     },
   }, tormenta
     ? [{ id: 'c6_tormenta', cam: [[-1, 1.6, 6], [-5, 1, -6], 46], salen: [] }]
     : [
       { id: 'c6_fondo', cam: [[0, 2.4, 12], [0, 2, -20], 50], salen: [] },
-      { id: 'c6_carro', cam: [[-1.6, 1.6, 1.6], [-5, 0.8, -4], 40], salen: [] },
-      { id: 'c6_terraza', cam: [[6, 1.8, -1], [10, 1.2, -12], 44], salen: [] },
-      { id: 'c6_losa', cam: [[10, 2.6, -7], [10, 0.2, -10.6], 40], salen: [] },
+      { id: 'c6_carro', cam: [[-2.6, 1.5, -0.6], [-5, 0.7, -4], 38], salen: [] },
+      { id: 'c6_terraza', cam: [[8, 1.6, -2], [10, 1.4, -13], 48], salen: [] },
+      { id: 'c6_losa', cam: [[11.2, 2.4, -7.4], [10, 0.1, -10.6], 42], salen: [] },
       retrato('c6_simon', CAST_DESIERTO, 'simon', 'reposo', 'feliz'),
       retrato('c6_av_ezequiel', CAST_DESIERTO, 'ezequiel', 'brazos_cruzados', 'normal'),
       retrato('c6_av_kenzo', CAST_DESIERTO, 'kenzo', 'pulgares_a', 'feliz'),
@@ -737,7 +738,7 @@ function estacion(): SetFotos {
       luz(g, -6, 2, -7, '#b0ffb0', 2, 8);
     },
     hacer(que, _g, rp) {
-      if (que === 'afuera') colocar(rp.joaquin, -9, 3, -6, -5);
+      if (que === 'afuera') colocar(rp.joaquin, -8, 5.6, -6, 8);
       else if (que === 'cupula') colocar(rp.joaquin, -3.4, -3.6, -6, -7);
       else if (que === 'puerta') { colocar(rp.helena, -4.6, -3.2, -6, -7); colocar(rp.boris, -3, -3.8, -6, -7); }
       else for (const [id, , x, z, mx, mz] of CAST_EST) colocar(rp[id], x, z, mx, mz);
@@ -769,7 +770,7 @@ function cupulaDentro(oscura: boolean): SetFotos {
       g.add(poner(k.invernadero, 'inv_estante', -5, -2, Math.PI / 2), poner(k.invernadero, 'inv_costales', 4.6, -1, 0), poner(k.invernadero, 'inv_regadera', 3.6, 0.2), poner(k.invernadero, 'inv_colgante', -2, -2, 0, 1, 2.6, false));
       if (helecho) g.add(copia(helecho, 5, -3.6, 0, 1.4));
       luz(g, 0, 3, 0, oscura ? '#9ad8ff' : '#e8ffe0', oscura ? 1.2 : 3, 12);
-      if (oscura) { luz(g, 1, 1.4, 1, '#fff6c8', 2.6, 5); brillo(g, 1.0, 1.3, 0.8, '#fff6c8', 2, 0.5); }
+      if (oscura) luz(g, 1, 1.4, 1, '#fff6c8', 2.6, 5);
       g.add(motasFlotantes(80, [0, 1.5, -1], 6, 2, [0.8, 1, 0.8], 1.4, 3));
     },
     hacer(_q, _g, rp) { if (rp.joaquin) rp.joaquin.raiz.position.y = 0; },

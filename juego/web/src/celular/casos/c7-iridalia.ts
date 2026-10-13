@@ -86,7 +86,7 @@ export const CASO_IRIDALIA: Caso = {
       mensajes: [
         { de: 'nahuel', t: '12:00', dia: 'Jueves 1 de Otoño', texto: 'Te tengo listo el discurso de bienvenida en señas y en palabras. ¿Lo hacemos juntos?' },
         { de: 'yo', t: '12:10', texto: 'Juntos. Tú hablas, yo hablo con las manos, y los cristales hablan por los dos.' },
-        { de: 'nahuel', t: '19:00', dia: 'Sábado 3 de Otoño', texto: 'Ximena, falta una hora para el concierto. La loma está llena.' },
+        { de: 'nahuel', t: '19:00', dia: 'Sábado 3 de Otoño', voz: 'c7_nahuel_loma' },
       ],
     },
     {
@@ -99,7 +99,7 @@ export const CASO_IRIDALIA: Caso = {
         { de: 'mauro', t: '21:06', foto: 'c7_luz3' },
         { de: 'mauro', t: '21:08', foto: 'c7_luz4' },
         { de: 'mauro', t: '21:10', foto: 'c7_luz5' },
-        { de: 'mauro', t: '21:12', texto: 'Y después se repite igual. Toda la noche. Como si alguien estuviera hablando.' },
+        { de: 'mauro', t: '21:12', voz: 'c7_mauro_luces' },
       ],
     },
     {
@@ -128,6 +128,8 @@ export const CASO_IRIDALIA: Caso = {
     { id: 'c7_maia_luces', quien: 'maia', nombre: 'Maia', fecha: '3 de Otoño · 06:32', transcrita: 'Ximena, ¿tú estás prendiendo los cristales? Si eres tú, dime algo.', texto: 'Ximena, ¿tú estás prendiendo los cristales? Si eres tú, dime algo.', d: '[young woman, anxious, hopeful] Ximena, ¿tú estás prendiendo los cristales? Si eres tú... dime algo.' },
     { id: 'c7_nahuel_fin', quien: 'nahuel', nombre: 'Nahuel', fecha: '3 de Otoño', texto: 'Dice: este concierto no se oye, se ve. Y hoy lo vieron todos.', d: '[man interpreting, moved, warm, speaking to a crowd] Dice: «Este concierto no se oye. Se ve. Y hoy lo vieron todos».' },
     { id: 'c7_orin_fin', quien: 'orin', nombre: 'Orin', fecha: '3 de Otoño', texto: 'Desde hoy, los avisos de la geoda se escriben. Nada de notas de voz.', d: '[relieved, ashamed, sincere] Desde hoy, los avisos de la geoda se escriben. Nada de notas de voz.' },
+    { id: 'c7_mauro_luces', quien: 'mauro', nombre: 'Mauro', fecha: '2 de Otoño', texto: 'Y después se repite igual. Toda la noche. Como si alguien estuviera hablando.', d: '[amazed, whispering at night] Y después se repite igual. Toda la noche. Como si alguien estuviera hablando.' },
+    { id: 'c7_nahuel_loma', quien: 'nahuel', nombre: 'Nahuel', fecha: '3 de Otoño', texto: 'Ximena, falta una hora para el concierto. La loma está llena.', d: '[worried, crowd noise behind] Ximena, falta una hora para el concierto. La loma está llena.' },
   ],
   llamadas: [
     { quien: 'maia', t: '06:35', dia: '3 de Otoño', tipo: 'perdida' },

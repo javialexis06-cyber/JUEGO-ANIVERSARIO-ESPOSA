@@ -14,7 +14,7 @@ export const CASO_AMBARINA: Caso = {
   mundo: 'Cielo de Astra',
   persona: { nombre: 'Simón', edad: '26 años', oficio: 'Repartidor de agua (ruta de las terrazas)', foto: 'c6_simon' },
   expediente: [
-    'En Ambarina el agua se cuenta gota por gota. Por eso asustó tanto: el carro de Simón apareció en la duna del pozo seco con los doce barriles llenos, sin tocar. Ni el burro estaba.',
+    'En Ambarina el agua se cuenta gota por gota. Por eso asustó tanto: el carro de Simón apareció en la duna del pozo seco con los doce barriles llenos, sin tocar. Ni Simón ni su mula estaban.',
     'Simón hace la ruta lejana, la de las terrazas. Lleva tres días sin aparecer, y anteayer hubo tormenta de arena.',
     'El teléfono estaba en el pescante. En el carro hay una placa: «CUPO 04-12». Rocío, la maestra, dice que Simón usa ese número para todo.',
   ],
@@ -55,7 +55,7 @@ export const CASO_AMBARINA: Caso = {
       noLeidos: 3,
       mensajes: [
         { de: 'ezequiel', t: '05:30', dia: 'Martes 12 de Verano', texto: 'Simón, hoy le toca la ruta 4: las cuatro terrazas. Doce barriles, ni uno más.' },
-        { de: 'yo', t: '05:35', texto: 'Listo jefe. Sale con burro y todo 🫏' },
+        { de: 'yo', t: '05:35', texto: 'Listo jefe. Salgo con la mula y todo' },
         { de: 'ezequiel', t: '09:40', dia: 'Jueves 14 de Verano', texto: 'El carro está en el pozo seco. ¿Y usted?' },
         { de: 'ezequiel', t: '09:41', texto: 'Los doce barriles llenos, Simón. LLENOS. Usted no se tomó ni una gota en dos días.', pista: 'intacta' },
         { de: 'ezequiel', t: '18:00', voz: 'c6_ezequiel_carro', pista: 'intacta' },
@@ -64,7 +64,7 @@ export const CASO_AMBARINA: Caso = {
     {
       con: 'samira',
       mensajes: [
-        { de: 'samira', t: '12:10', dia: 'Martes 12 de Verano', texto: '⚠ Tormenta de arena a las 14:00 sobre la ruta 4. Si estás afuera, busca resguardo y no camines.', pista: 'tormenta' },
+        { de: 'samira', t: '12:10', dia: 'Martes 12 de Verano', voz: 'c6_samira_tormenta', pista: 'tormenta' },
         { de: 'yo', t: '12:20', texto: 'Recibido. Estoy cerca de las ruinas de la terraza 9, me meto ahí.' },
         { de: 'samira', t: '12:21', texto: 'Las ruinas aguantan. Ojo con los pasadizos.' },
       ],
@@ -72,7 +72,7 @@ export const CASO_AMBARINA: Caso = {
     {
       con: 'kenzo',
       mensajes: [
-        { de: 'kenzo', t: '20:00', dia: 'Domingo 10 de Verano', texto: 'Simón, en la terraza 9 hay una boca tapada con losas. Los viejos decían que debajo hay un aljibe de antes de la sequía. Nunca he podido bajar.', pista: 'aljibe' },
+        { de: 'kenzo', t: '20:00', dia: 'Domingo 10 de Verano', voz: 'c6_kenzo_aljibe', pista: 'aljibe' },
         { de: 'yo', t: '20:05', texto: '¿Un aljibe con agua?' },
         { de: 'kenzo', t: '20:10', texto: 'O con arena. Nadie sabe. No entres solo.' },
       ],
@@ -94,7 +94,7 @@ export const CASO_AMBARINA: Caso = {
   fotos: [
     { id: 'carro', archivo: 'c6_carro', fecha: '12 de Verano · 06:00', lugar: 'Pozo de Ambarina', pie: 'El carro listo: doce barriles, todos sellados. Ruta 4.' },
     { id: 'terraza', archivo: 'c6_terraza', fecha: '12 de Verano · 11:50', lugar: 'Terraza 9', pie: 'Las ruinas de la terraza 9. Kenzo dice que debajo hay algo.' },
-    { id: 'tormenta', archivo: 'c6_tormenta', fecha: '12 de Verano · 13:55', lugar: 'Ruta 4', pie: 'Ahí viene. Dejo el carro en la duna y me meto a las ruinas con el burro.', pista: 'tormenta' },
+    { id: 'tormenta', archivo: 'c6_tormenta', fecha: '12 de Verano · 13:55', lugar: 'Ruta 4', pie: 'Ahí viene. Dejo el carro en la duna y me meto a las ruinas con la mula.', pista: 'tormenta' },
     { id: 'losa', archivo: 'c6_losa', fecha: '12 de Verano · 16:40', lugar: 'Terraza 9, adentro', pie: 'La tormenta movió la arena y destapó la losa. Se oye agua abajo.', pista: 'losa' },
     { id: 'agua', archivo: 'c6_aljibe', fecha: '13 de Verano · 09:10', lugar: '—', pie: '', oscura: true, pistaLinterna: 'agua' },
   ],
@@ -102,7 +102,7 @@ export const CASO_AMBARINA: Caso = {
     { id: 'ruta', titulo: 'Ruta 4', fecha: '12 de Verano', texto: 'Terraza 2: 3 barriles\nTerraza 5: 3 barriles\nTerraza 7: 4 barriles\nTerraza 9: 2 barriles (la familia Ortega)\n\nTotal: 12. Ni una gota prometida de más.' },
     {
       id: 'medidas', titulo: 'Cuaderno de medidas', fecha: '13-14 de Verano', candado: 'medidas', pista: 'midiendo',
-      texto: 'Día 1: bajé con la cuerda del burro. Hay agua. Fría, limpia.\nDía 2: marqué la piedra. En un día no bajó ni un dedo: se llena sola desde abajo.\nDía 3: necesito un día más para estar seguro. Si le digo a Zora sin medir, rompo el pacto.\nTomé de aquí. Los barriles del carro son de las terrazas: no los toco.',
+      texto: 'Día 1: bajé con la cuerda de la mula. Hay agua. Fría, limpia.\nDía 2: marqué la piedra. En un día no bajó ni un dedo: se llena sola desde abajo.\nDía 3: necesito un día más para estar seguro. Si le digo a Zora sin medir, rompo el pacto.\nTomé de aquí. Los barriles del carro son de las terrazas: no los toco.',
     },
   ],
   voces: [
@@ -111,6 +111,8 @@ export const CASO_AMBARINA: Caso = {
     { id: 'c6_ezequiel_carro', quien: 'ezequiel', nombre: 'Ezequiel', fecha: '14 de Verano', texto: 'Mijo, los doce barriles están llenos. Uno no aguanta dos días en ese desierto sin agua. Usted encontró de dónde tomar.', d: '[older man, gruff but worried, thinking aloud] Mijo, los doce barriles están llenos. Uno no aguanta dos días en ese desierto sin agua... Usted encontró de dónde tomar.' },
     { id: 'c6_zora_fin', quien: 'zora', nombre: 'Zora', fecha: '15 de Verano', texto: 'Cuatro días de medidas, piedra marcada y ni una gota de los barriles. Así se anuncia el agua en Ambarina.', d: '[proud, firm community leader] Cuatro días de medidas, piedra marcada y ni una gota de los barriles. Así se anuncia el agua en Ambarina.' },
     { id: 'c6_simon_fin', quien: 'simon', nombre: 'Simón', fecha: '15 de Verano', texto: 'No quería prometer nada que no fuera cierto. Ahora sí: la primera es para la huerta de la escuela.', d: '[sunburnt, tired, big smile] No quería prometer nada que no fuera cierto. Ahora sí: la primera es para la huerta de la escuela.' },
+    { id: 'c6_samira_tormenta', quien: 'samira', nombre: 'Samira', fecha: '12 de Verano', texto: '⚠ Tormenta de arena a las 14:00 sobre la ruta 4. Si estás afuera, busca resguardo y no camines.', d: '[urgent, radio warning] Tormenta de arena a las catorce sobre la ruta cuatro. Si estás afuera, busca resguardo y no camines.' },
+    { id: 'c6_kenzo_aljibe', quien: 'kenzo', nombre: 'Kenzo', fecha: '10 de Verano', texto: 'Simón, en la terraza 9 hay una boca tapada con losas. Los viejos decían que debajo hay un aljibe de antes de la sequía. Nunca he podido bajar.', d: '[curious explorer, low voice] Simón, en la terraza nueve hay una boca tapada con losas. Los viejos decían que debajo hay un aljibe de antes de la sequía. Nunca he podido bajar.' },
   ],
   llamadas: [
     { quien: 'ezequiel', t: '09:42', dia: '14 de Verano', tipo: 'perdida' },
@@ -169,7 +171,7 @@ export const CASO_AMBARINA: Caso = {
       texto: '¿Dónde está Simón?',
       opciones: ['En la duna del pozo seco', 'En la terraza 2', 'En las ruinas de la terraza 9, junto a un aljibe antiguo', 'Volvió al pozo de Ambarina'],
       correcta: 2,
-      porque: 'La tormenta destapó la losa del aljibe; él se quedó ahí con el burro.',
+      porque: 'La tormenta destapó la losa del aljibe; él se quedó ahí con la mula.',
     },
     {
       texto: '¿Por qué no avisó?',
@@ -181,7 +183,7 @@ export const CASO_AMBARINA: Caso = {
   final: {
     titulo: 'Agua contada',
     paneles: [
-      { foto: 'c6_fin_llegan', texto: 'Zora, Kenzo y Ezequiel llegan a la terraza 9 al mediodía. El burro los saluda primero.', mov: 'der' },
+      { foto: 'c6_fin_llegan', texto: 'Zora, Kenzo y Ezequiel llegan a la terraza 9 al mediodía. Simón los saluda desde la sombra de las columnas.', mov: 'der' },
       { foto: 'c6_fin_aljibe', texto: 'Simón les muestra la piedra marcada y el cuaderno. Zora lee las medidas dos veces.', voz: 'c6_zora_fin', mov: 'acerca' },
       { foto: 'c6_fin_huerta', texto: 'Una semana después, la primera agua del aljibe llega a la huerta de la escuela de Rocío.', voz: 'c6_simon_fin', mov: 'aleja' },
     ],

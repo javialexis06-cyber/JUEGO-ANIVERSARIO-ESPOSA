@@ -58,7 +58,7 @@ export const CASO_ESTACION: Caso = {
         { de: 'boris', t: '22:00', dia: 'Domingo 3 de Primavera', texto: 'Último turno, Joaco. Panel 4 del sector 7 y te vas a tu ajiaco. La esclusa del 7 anda trabándose, si se pega sales por la B.' },
         { de: 'yo', t: '22:05', texto: 'Listo. Ya dejé la bitácora llena para no olvidarme 😅' },
         { de: 'boris', t: '22:06', texto: 'Hombre, eso no se hace. La bitácora se llena al volver.', pista: 'antes' },
-        { de: 'boris', t: '06:15', dia: 'Lunes 4 de Primavera', texto: 'La cámara de la B no te vio entrar. ¿Por dónde volviste?' },
+        { de: 'boris', t: '06:15', dia: 'Lunes 4 de Primavera', voz: 'c8_boris_camara' },
       ],
     },
     {
@@ -115,6 +115,7 @@ export const CASO_ESTACION: Caso = {
     { id: 'c8_said_aviso', quien: 'said', nombre: 'Said', fecha: '3 de Primavera · 20:31', texto: 'Joaquín, con dieciséis horas despierto uno se equivoca en cosas bobas. Déjale ese turno a otro.', d: '[calm doctor, caring but firm] Joaquín, con dieciséis horas despierto uno se equivoca en cosas bobas. Déjale ese turno a otro.' },
     { id: 'c8_helena_fin', quien: 'helena', nombre: 'Helena', fecha: '4 de Primavera', texto: 'Abran la cúpula. Con o sin fumigación. Ya.', d: '[commander, firm, urgent] Abran la cúpula. Con o sin fumigación. Ya.' },
     { id: 'c8_joaquin_fin', quien: 'joaquin', nombre: 'Joaquín', fecha: '4 de Primavera', texto: 'Me salvaron las matas de Valentina. Y por favor, alguien avísele a mi mamá que el ajiaco me lo como mañana.', d: '[laughing, exhausted, sitting among plants] Me salvaron las matas de Valentina. Y por favor, alguien avísele a mi mamá que el ajiaco me lo como mañana.' },
+    { id: 'c8_boris_camara', quien: 'boris', nombre: 'Boris', fecha: '4 de Primavera', texto: 'La cámara de la B no te vio entrar. ¿Por dónde volviste?', d: '[puzzled, concerned] La cámara de la B no te vio entrar. ¿Por dónde volviste?' },
   ],
   llamadas: [
     { quien: 'helena', t: '06:01', dia: '4 de Primavera', tipo: 'perdida' },

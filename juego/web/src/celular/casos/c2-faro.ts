@@ -80,7 +80,7 @@ export const CASO_FARO: Caso = {
       mensajes: [
         { de: 'carmela', t: '18:00', dia: 'Sábado 7 de Verano', texto: '¿Va a bajar a comer antes de prender? Hay caldo de bagre.' },
         { de: 'yo', t: '18:05', texto: 'Hoy no mija. Hoy el agua está rara.' },
-        { de: 'carmela', t: '23:10', texto: 'Le guardé caldo, viejo terco' },
+        { de: 'carmela', t: '23:10', voz: 'c2_carmela_caldo' },
       ],
     },
     {
@@ -110,6 +110,7 @@ export const CASO_FARO: Caso = {
     { id: 'c2_abundio_salgo', quien: 'abundio', nombre: 'Don Abundio', fecha: '7 de Verano · 20:02', titulo: 'Salgo', grabadora: true, pista: 'salio', texto: 'Me voy en la Garza con el farol chiquito. Los Quintero no pueden pasar la noche en los juncos. Si nos agarra el agua, subimos a la choza de Genaro.', d: '[out of breath, rowing, wind] Me voy en la Garza con el farol chiquito. Los Quintero no pueden pasar la noche en los juncos. Si nos agarra el agua, subimos a la choza de Genaro.' },
     { id: 'c2_julian_fin', quien: 'julian', nombre: 'Julián', fecha: '8 de Verano', texto: '¡Tío! ¡Tío, aquí estamos! Viejo terco, nos tenía con el alma en un hilo.', d: '[shouting from a boat, relieved, laughing and crying] ¡Tío! ¡Tío, aquí estamos! Viejo terco... nos tenía con el alma en un hilo.' },
     { id: 'c2_abundio_fin', quien: 'abundio', nombre: 'Don Abundio', fecha: '8 de Verano', texto: 'Un faro también sirve apagado, mijo. Lo que importa es saber por qué.', d: '[tired, smiling, warm] Un faro también sirve apagado, mijo. Lo que importa es saber por qué.' },
+    { id: 'c2_carmela_caldo', quien: 'carmela', nombre: 'Carmela', fecha: '7 de Verano', texto: 'Le guardé caldo, viejo terco', d: '[fond, scolding, worried] Le guardé caldo, viejo terco' },
   ],
   llamadas: [
     { quien: 'barca7', t: '19:42', dia: '7 de Verano', tipo: 'perdida' },
