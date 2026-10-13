@@ -557,6 +557,8 @@ Dónde está:
   piedra con agua y comedero con paja, y el maíz de los gallineros), `detalleAmpliacion` (pilares con anillos y el
   letrero colgado con sus estrellas, dorado en el nivel 3), `incubadoraVista` (lámpara, rejillas, termómetro y el huevo
   aparte), `trufaVista` y `huevosRefugio` (nido de paja trenzada y huevitos del color de la especie).
+- **Guardián del bosque antiguo** **hecho** (13 de octubre): `vista.ts monstruo` usa el Guardián de piedra de
+  `granja_monstruos.glb` (la barra de vida sigue aparte).
 
 ## Datos útiles
 
