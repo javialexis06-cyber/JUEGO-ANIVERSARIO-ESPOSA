@@ -63,3 +63,11 @@ fallido. El escenario específico pausa dibujo; el recorrido general mantiene We
 Siguen pendientes navegación libre del ganado, colisiones avanzadas entre animales, reproducción
 y equipamiento de compañeros, interiores de descanso y monturas fantásticas. La llamada actual
 solo funciona en la granja. Rendimiento y destreza en teléfonos físicos requieren su propia prueba.
+
+## Verificación de entrega
+
+46 suites sin fallos, 19 casos de cercos y 46 de compañía anterior; builds de pareja y amigos
+correctos. Navegador: 11 comprobaciones de cercos, 11 de pesca compatible y seis del recorrido
+con WebGL y fotos activos. Escenarios preparados, sin certificar teléfonos físicos.
+Evidencia: [CERCOS-VERIFICACION.json](CERCOS-VERIFICACION.json). Actos I/II, postales y
+Sangre y Ceniza de Claude integrados hasta `d783b728`; películas y lavado conservados.
