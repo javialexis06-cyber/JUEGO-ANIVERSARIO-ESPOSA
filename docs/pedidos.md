@@ -20,8 +20,9 @@ Eterna, Sopetrán, oficiada por Lara y sin votos), más **presentaciones de cada
 planeación de cuatro minijuegos futuros. Plan completo en [`en-obra/pelicula-de-astra.md`](en-obra/pelicula-de-astra.md)
 (escenas plano a plano, modelos de Blender y fases A-H). Los **arreglos de coherencia quedaron hechos**. **Hecho** (13 de octubre): todas
 las voces de la película, la música de la boda y **las 28 películas animadas de punta a punta** (prólogo, Actos I-V,
-Sangre y Ceniza, las seis secundarias, el Altar del Lazo y la boda en Eterna con créditos). **Siguiente**: postales de
-los biomas dentro de Sangre, las líneas JEF del Conde y los modelos propios de la fase B. **Espera a Javier**: GitHub
+Sangre y Ceniza, las seis secundarias, el Altar del Lazo y la boda en Eterna con créditos). Después: postales de los
+biomas en Sangre, la voz del Conde en su pelea, fotos en los créditos, la cría de unicornio y la ropa propia de Fuatia,
+Nath'Gora y Vael'Thor. **Siguiente**: la copa del Conde en SC0 y, cuando Javier diga, los minijuegos (fase H). **Espera a Javier**: GitHub
 Actions quedó desactivado en su cuenta («Actions has been disabled for this user»): sin eso no salen APK nuevas.
 
 

@@ -53,14 +53,13 @@ const DIOSAS: Record<IdDiosa, DisenoDiosa> = {
       espalda: pieza('capa', 'espalda', { principal: '#2a2238', broche: '#c9b6ea' }),
     },
   },
-  // Fuatia (la diosa que creó Laura): los cuatro elementos en un solo vestido (agua, aire, fuego y tierra), corona de
-  // llamas tibias y alas de libélula; su halo cambia de color con los elementos (ver actualizarFuatia)
+  // Fuatia (la diosa que creó Laura): su vestido y su corona de los cuatro elementos (ropa_cine.py) y alas de libélula; su halo cambia de color con los elementos (ver actualizarFuatia)
   fuatia: {
     piel: '#d9a982', pelo: '#2f6f73', ojos: '#e58a3a', halo: '#9fe3d6',
     piezas: {
       pelo: pieza('pelo_rizos', 'pelo'),
-      arriba: pieza('vestido_diosa', 'arriba', { principal: '#7cc8c2', cinta: '#ffffff', bordado: '#f08a3c', joya: '#d9a94e' }, ['abajo', 'pies'], ['medias']),
-      cabeza: pieza('corona_llamas', 'cabeza'),
+      arriba: pieza('vestido_elementos', 'arriba', {}, ['abajo', 'pies'], ['medias']),
+      cabeza: pieza('corona_elementos', 'cabeza'),
       espalda: pieza('alas_mariposa', 'espalda', { principal: '#bfeee6', detalle: '#e8a05a' }),
     },
   },
@@ -164,10 +163,10 @@ export async function actorVestido(cuerpo: 'el' | 'ella', aspecto: Omit<AspectoJ
 }
 export { pieza as piezaRopa };
 
-/** Nath'Gora: una figura alta de frío y estrellas apagadas (piel gris azulada, capa negra, cuernos) con un halo oscuro. */
+/** Nath'Gora: una figura alta de frío y estrellas apagadas (piel gris azulada, capa negra, corona de esquirlas) con un halo oscuro. */
 export async function actorNathGora(): Promise<Actor> {
   const a = await actorVestido('el', { piel: '#7d8aa8', pelo: '#11131c', detalles: { ojos: '#9fd6ff' } }, {
-    pelo: pieza('pelo_largo_el', 'pelo'), cabeza: pieza('cuernos', 'cabeza', { principal: '#1b1d2a' }),
+    pelo: pieza('pelo_largo_el', 'pelo'), cabeza: pieza('corona_esquirlas', 'cabeza'),
     arriba: pieza('sangre_monarca', 'arriba', {}, ['abajo']), espalda: pieza('capa', 'espalda', { principal: '#0b0c14', broche: '#9fd6ff' }), pies: pieza('botas', 'pies'),
   }, 1.35);
   const h = halo('#3a4a7a', 6);
@@ -180,10 +179,10 @@ export async function actorNathGora(): Promise<Actor> {
   return { ...a, halo: h, luz };
 }
 
-/** Vael'Thor, el Ceramista de Sombras: sombrero de copa, antifaz y capa morada, con un brillo violeta. */
+/** Vael'Thor, el Ceramista de Sombras: sombrero de copa, máscara de porcelana rajada con oro y capa morada, con un brillo violeta. */
 export async function actorVaelThor(): Promise<Actor> {
   const a = await actorVestido('el', { piel: '#d9c7b8', pelo: '#2a1f33', detalles: { ojos: '#b07cff' } }, {
-    pelo: pieza('pelo_lado', 'pelo'), cabeza: pieza('sombrero_copa', 'cabeza', { principal: '#2a1f33' }), cara: pieza('antifaz', 'cara', { principal: '#5b2d82' }),
+    pelo: pieza('pelo_lado', 'pelo'), cabeza: pieza('sombrero_copa', 'cabeza', { principal: '#2a1f33' }), cara: pieza('mascara_porcelana', 'cara'),
     arriba: pieza('saco_corbata', 'arriba', { principal: '#3a2350', detalle: '#b07cff' }, ['abajo']), espalda: pieza('capa', 'espalda', { principal: '#4b2468', broche: '#e0c46a' }), pies: pieza('zapatos', 'pies'),
   });
   const h = halo('#9a6ad8', 4);

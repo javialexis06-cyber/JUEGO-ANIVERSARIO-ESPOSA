@@ -393,9 +393,9 @@ lunas) y Confluencia (los cuatro elementos girando).
 | Para | Modelo | Estado |
 |---|---|---|
 | Diosas | Celia, Aura y Lara (muñeco de Ella con `ropa_diosas.py`) | **Hecho** |
-| Diosas | **Fuatia**: vestido de cuatro colores, corona de los cuatro elementos y la figura de luz para su entrada | Falta |
-| Diosas | Lara **sin velo** (la boda) | Falta (variante) |
-| Villanos | **Nath'Gora** y **Vael'Thor** como actores (hoy son medallones) | Falta |
+| Diosas | **Fuatia**: vestido de cuatro colores, corona de los cuatro elementos y la figura de luz para su entrada | **Hecho** (`ropa_cine.py`) |
+| Diosas | Lara **sin velo** (la boda) | **Hecho** (diadema) |
+| Villanos | **Nath'Gora** y **Vael'Thor** como actores | **Hecho** (corona de esquirlas y máscara de porcelana) |
 | Villanos | El Conde | Hecho (jefe de Sangre); falta el **Conde humano** con la copa, antes del pacto |
 | Criaturas | Dragón, grifo y unicornio de la granja; la **cría de unicornio** (T03, `granja_cria.py`) | **Hecho** |
 | Gente | Serena, Eliana, Eneas, Ofelia, Elián y los vecinos | Hechos como habitantes de Astra; revisar que tengan cara para planos cercanos |
@@ -441,8 +441,10 @@ lunas) y Confluencia (los cuatro elementos girando).
   - El Conde habla en su pelea (JEF.C1 al aparecer, JEF.C2 con las alas).
   - Las fotos de las 28 películas en los créditos (`public/granja/cine/fotos/`, sacadas con `scripts/_fotos_creditos.mjs`).
   - La cría de unicornio propia (`personajes/blender/granja_cria.py`) en T03.
-- Falta de la fase B: las piezas exclusivas de Fuatia, Nath'Gora y Vael'Thor (hoy van armados con el clóset) y el Conde
-  humano.
+  - Las piezas propias de la fase B (`personajes/blender/ropa_cine.py`): el vestido y la corona de los cuatro elementos
+    de Fuatia, la corona de esquirlas con la estrella muerta de Nath'Gora y la máscara de porcelana rajada con oro de
+    Vael'Thor.
+- Queda: la copa del Conde humano en SC0 (hoy brinda con la mano vacía) y los minijuegos de la fase H.
 
 Cada escena: guion → voces → actores y escenario → animación con el motor del cine (`cine-granja.ts`) → pruebas en el
 navegador (cuadros sueltos y video) → captura revisada → commit y push. Las de Sangre y Ceniza llevan su versión de amigos
