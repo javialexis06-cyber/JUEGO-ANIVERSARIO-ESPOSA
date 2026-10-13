@@ -1,3 +1,4 @@
+import { RetratosMapa } from './retratos-mapa';
 import { regionAstra, NPC_ASTRA, RECURSOS_ASTRA, puntoRecurso, posicionNpcAstra, rutasDesde, planoAstra } from './astra';
 // La cara de la granja: reloj, monedas, energía, minimapa y mapa grande (con fotos de verdad desde arriba, nombres y
 // marcas), menú de pestañas y palanca táctil. Solo lee el estado del motor y abre los paneles que ya existen: no cambia reglas ni partidas.
@@ -55,14 +56,12 @@ export function renderAjustes(personaje: string, calidad: string, partida = ''):
 }
 
 const CLAVE_CALIDAD = 'granja-hud-calidad';
-/** Antes de cargar los modelos (así no se cargan dos veces): con detalle en celulares potentes o si la persona lo
- * escogió en Ajustes. */
+/** Antes de cargar modelos: perfil ligero por defecto; respetar la elección guardada en Ajustes. */
 export function calidadInicial(vista: VistaGranja) {
   let elegida = '';
   try { elegida = localStorage.getItem(CLAVE_CALIDAD) ?? ''; } catch { /* nada */ }
-  const nav = navigator as Navigator & { deviceMemory?: number };
-  const potente = (nav.deviceMemory ?? 4) >= 6 || (navigator.hardwareConcurrency ?? 4) >= 8;
-  if ((elegida === 'alta' || (!elegida && potente)) && vista.calidad !== 'alta') vista.cambiarCalidad();
+  // Muchos núcleos de CPU no garantizan una GPU potente. Se conserva la elección explícita.
+  if (elegida === 'alta' && vista.calidad !== 'alta') vista.cambiarCalidad();
   $('quality').textContent = vista.calidad === 'alta' ? 'Detalle' : 'Ligero';
 }
 
@@ -130,8 +129,8 @@ export function iniciarHud(h: Hud) {
   // ── Mapa: base pintada, fotos de verdad desde arriba, nombres y marcas ─────────────
   const mini = $('minimapa-lienzo') as HTMLCanvasElement, grande = $('mapa-grande-lienzo') as HTMLCanvasElement;
   const partida = () => String(motor.estado.tiempo?.semilla ?? 0);
-  const fotos = new FotosMapa(vista, partida), marcas = new MarcasMapa(partida);
-  (window as any).__granjaMapa = { fotos, marcas, clave: () => claveZona().clave };
+  const fotos = new FotosMapa(vista, partida), marcas = new MarcasMapa(partida), retratos=new RetratosMapa();let cuadrosMapa=0;const ultimoCentro={x:0,z:0,t:0};
+  (window as any).__granjaMapa = { fotos, marcas, clave: () => claveZona().clave, movimiento:()=>({cuadros:cuadrosMapa,...ultimoCentro}) };
   const fwd = { x: 0, z: -1 };
   /** Arriba del mapa = hacia donde mira la cámara, para que el mapa y la pantalla coincidan. */
   function orientar() {
@@ -284,9 +283,9 @@ export function iniciarHud(h: Hud) {
   }
 
   /** Un nombre con su fondo; no se dibuja si se monta encima de otro (salvo los importantes). */
-  function rotulo(m: Marco, ocupado: number[][], texto: string, x: number, y: number, px: number, estilo: 'lugar' | 'salida' | 'vecino', forzar = false) {
+  function rotulo(m: Marco, ocupado: number[][], texto: string, x: number, y: number, px: number, estilo: 'lugar' | 'salida', forzar = false) {
     const ctx = m.ctx;
-    ctx.font = `${estilo === 'vecino' ? 600 : 700} ${px}px Nunito, sans-serif`;
+    ctx.font = `700 ${px}px Nunito, sans-serif`;
     const t = estilo === 'salida' ? '➜ ' + texto : texto, w = ctx.measureText(t).width + px * 0.9, h = px * 1.45, aire = 2 * m.dpr;
     if (x + w / 2 < 0 || x - w / 2 > m.w || y < 0 || y > m.h) return;
     // Si se monta encima de otro nombre, se prueba un poquito más arriba o más abajo antes de saltárselo
@@ -297,9 +296,6 @@ export function iniciarHud(h: Hud) {
     ocupado.push(caja);
     y = caja[1] + h / 2;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    if (estilo === 'vecino') {
-      ctx.lineWidth = px * 0.35; ctx.strokeStyle = '#fff8eee6'; ctx.strokeText(t, x, y); ctx.fillStyle = '#3d2b27'; ctx.fillText(t, x, y); return;
-    }
     ctx.fillStyle = estilo === 'salida' ? '#f6cf5aee' : '#fff8eee0';
     ctx.beginPath(); ctx.roundRect(caja[0], caja[1], w, h, h / 2); ctx.fill();
     ctx.strokeStyle = estilo === 'salida' ? '#a9782b' : '#c8b28c'; ctx.lineWidth = Math.max(1, px * 0.1); ctx.stroke();
@@ -342,15 +338,7 @@ export function iniciarHud(h: Hud) {
     const ocupado: number[][] = [], k = m.dpr, yo = vista.avatar.position;
     // Uno mismo no se tapa con nombres
     const qy = aPantalla(m, yo.x, yo.z); ocupado.push([qy.x - 8 * k, qy.y - 8 * k, 16 * k, 16 * k]);
-    // Vecinos: siempre se ven (con su nombre en el mapa grande o si están cerquita)
-    const vecinos: { x: number; z: number; color: string; nombre: string }[] = [];
-    if (s.astra?.actual) {
-      const r = regionAstra(s.astra.actual)!;
-      for (const id of r.npc) { const n = NPC_ASTRA.find((n) => n.id === id)!, p = posicionNpcAstra(s, id); if (p && p.interior === s.astra.interior) vecinos.push({ x: p.x, z: p.z, color: '#da7659', nombre: n.nombre }); }
-    } else if (s.zona === 'pueblo' && !s.interior && !s.servicio) {
-      const resguardado = lluviaRiega(tiempoDia(s.tiempo, s.jornada.diasCompletados));
-      for (const n of NPCS_PUEBLO) { const u = ubicacionAldeano(n.id, s.jornada.diasCompletados, s.jornada.minutos, resguardado); if (u?.visible) vecinos.push({ x: u.x, z: u.z, color: n.color, nombre: n.nombre }); }
-    }
+    const vecinos = vista.puntosMapa();
     // Primero los nombres de los lugares (las salidas siempre), después los vecinos
     const px = (grandeMapa ? 10.5 : 8) * k;
     for (const l of lugares().sort((a, b) => +!!b.salida - +!!a.salida)) {
@@ -359,11 +347,9 @@ export function iniciarHud(h: Hud) {
       rotulo(m, ocupado, l.nombre, q.x, l.salida ? q.y - 9 * k : q.y, l.salida ? px * 0.95 : px, l.salida ? 'salida' : 'lugar', !!l.salida && grandeMapa);
     }
     for (const n of vecinos) {
-      const q = aPantalla(m, n.x, n.z), r = Math.max(2.4 * k, m.s * 0.55);
-      ctx.fillStyle = '#ffffffdd'; ctx.beginPath(); ctx.arc(q.x, q.y, r + 1.2 * k, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = n.color; ctx.beginPath(); ctx.arc(q.x, q.y, r, 0, Math.PI * 2); ctx.fill();
-      // Con el mapa lejos, los nombres de los vecinos taparían los de los lugares: salen al acercarlo
-      if (grandeMapa ? zoomG >= 1.7 : Math.hypot(n.x - yo.x, n.z - yo.z) < 7) rotulo(m, ocupado, n.nombre, q.x, q.y - r - 6 * k, (grandeMapa ? 9 : 7.5) * k, 'vecino');
+      const q = aPantalla(m, n.x, n.z), r = (grandeMapa ? 9 : 6.5) * k;
+      if(q.x+r<0||q.y+r<0||q.x-r>m.w||q.y-r>m.h)continue;
+      retratos.dibujar(ctx,n.id,q.x,q.y,r,'#9c795c');
     }
     // Las marcas de esta zona
     for (const mk of marcas.lista) if (mk.zona === clave) { const q = aPantalla(m, mk.x, mk.z); chincheta(m, q.x, q.y, mk.id === marcas.activa); }
@@ -444,7 +430,7 @@ export function iniciarHud(h: Hud) {
     $('minimapa').classList.toggle('apagado', !!(s.astra?.interior || s.interior || s.servicio || s.aventura.destinoActual));
     const { ctx, w, h: alto, dpr } = prepararLienzo(mini);
     orientar();
-    const p = vista.avatar.position;
+    const p = vista.avatar.position;cuadrosMapa++;ultimoCentro.x=p.x;ultimoCentro.z=p.z;ultimoCentro.t=performance.now();
     const m: Marco = { ctx, cx: w / 2, cy: alto / 2, s: 3.6 * dpr, px: p.x, pz: p.z, w, h: alto, dpr };
     dibujarZona(m, false);
     const guia = guiaMarca(m);
@@ -587,17 +573,20 @@ export function iniciarHud(h: Hud) {
   requestAnimationFrame(medir);
 
   // ── Bucle (barato: 5 veces por segundo, nada cuando la app duerme) ──
+  let ultimoMovimiento=performance.now();
   const tic = () => {
     if (document.hidden) return;
     try {
-      reloj();
-      if (!$('mapa-grande').hidden) pintarGrande();
-      else if (!h.panelAbierto()) pintarMini();
+      reloj();const s=motor.estado;$('minimapa').classList.toggle('apagado',!!(s.interior||s.servicio||s.astra?.interior));$('minimapa-nombre').textContent=nombreLugar();
+      const zona=claveZona();baseZona(zona.clave,zona.lim);
+      if(vista.avatar.moviendo)ultimoMovimiento=performance.now();
       // Una foto de lo que está cerca (si falta o está vieja) para el mapa de verdad
       // (las pruebas pueden apagarlas con window.__sinFotosMapa: sin tarjeta de video cada foto es lenta)
-      if (!instanciaAventura(motor.estado.aventura) && !(window as any).__sinFotosMapa) { const z = claveZona(); fotos.tic(z.clave, z.lim); }
+      if (!vista.avatar.moviendo && performance.now()-ultimoMovimiento>500 && !h.panelAbierto() && !instanciaAventura(motor.estado.aventura) && !(window as any).__sinFotosMapa) { const z = claveZona(); void fotos.tic(z.clave, z.lim); }
     } catch (e) { console.warn('HUD', e); }
   };
-  tic();
+  let ultimaPintada=0;
+  const moverMapa=(t:number)=>{requestAnimationFrame(moverMapa);if(document.hidden)return;const s=motor.estado;if(!$('mapa-grande').hidden){if(t-ultimaPintada>=100){pintarGrande();ultimaPintada=t;}}else if(!h.panelAbierto()&&!s.interior&&!s.servicio&&!s.astra?.interior&&(vista.avatar.moviendo||t-ultimaPintada>=100)){pintarMini();ultimaPintada=t;}};
+  tic();requestAnimationFrame(moverMapa);
   setInterval(tic, 200);
 }

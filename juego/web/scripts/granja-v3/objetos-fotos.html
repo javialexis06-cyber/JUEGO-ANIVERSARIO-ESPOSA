@@ -1,4 +1,4 @@
-<!doctype html><html><body style="margin:0;background:#c9e0b4"><script type="module">
+<!doctype html><html><head><base href="/"></head><body style="margin:0;background:#c9e0b4"><script type="module">
 import * as THREE from 'three';
 import { figuraObjeto } from '/src/granja-v3/iconos3d.ts';
 import { OBJETOS } from '/src/granja-v3/objetos.ts';
@@ -7,11 +7,20 @@ import { figura } from '/src/granja-v3/escenas-produccion.ts';
 import { crearRefugio } from '/src/granja-v3/arte.ts';
 import { Suelos } from '/src/granja-v3/suelo.ts';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { cargar as cargarModelo } from '/src/recursos.ts';
+import { usarCargadorMuebles, precargarMuebles, precargarKit } from '/src/granja-v3/cuartos.ts';
+import { cajaEnvioVista } from '/src/granja-v3/envios-render.ts';
+import { hogarMascotaVista } from '/src/granja-v3/compania-render.ts';
+// Los kits de Blender (máquinas, refugios, caja de envíos…) se cargan antes de fotografiar: si no, sale la figura de antes
+usarCargadorMuebles(cargarModelo);
+await precargarMuebles();await Promise.all(['granja_maquinas.glb','granja_obras.glb','granja_envio.glb','granja_herramientas.glb','granja_refugios.glb'].map(precargarKit));
 const manifiesto=await (await fetch('/modelos/granja-v2/manifest.json')).json(),glbs=new Set(manifiesto.assets.map(a=>a.id)),loader=new GLTFLoader(),suelos=new Suelos();
 /** Construcciones y máquinas: la misma figura que se ve en la granja. */
 async function construccion(id){
  const def=OBJETOS[id];
  if(def?.categoria==='maquina'||def?.categoria==='contenedor'||/^(aspersor_|portal_|nave_)/.test(id)){try{return figura(id).grupo;}catch{}}
+ if(id==='caja_envio')return cajaEnvioVista('icono',false);
+ if(id==='hogar_mascota')return hogarMascotaVista('icono',true);
  if(id.startsWith('refugio_')){const partes=id.split('_'),clima=partes.pop(),especie=partes.slice(1).join('_');return crearRefugio(especie,clima==='templado'?'madera':clima);}
  if(id==='establo')return crearRefugio('caballo','madera');
  if(id.startsWith('suelo_')){const g=new THREE.Group();for(const [x,z] of [[-.5,-.5],[.5,-.5],[-.5,.5],[.5,.5]]){const t=suelos.camino(id,{n:z>0,s:z<0,e:x<0,w:x>0});t.position.set(x,0,z);g.add(t);}return g;}
@@ -28,8 +37,11 @@ const solo=new URLSearchParams(location.search).get('solo');
 const fotos={};
 for(const id of Object.keys(OBJETOS)){
  if(solo&&!new RegExp(solo).test(id))continue;
- let g;try{g=figuraObjeto(id)??await construccion(id);}catch(e){console.error(id,e.message);continue;}
+ const maquina=OBJETOS[id]?.categoria==='maquina'||OBJETOS[id]?.categoria==='contenedor'||/^(aspersor_|portal_|nave_)/.test(id);
+ let g;try{g=maquina?(await construccion(id))??figuraObjeto(id):figuraObjeto(id)??await construccion(id);}catch(e){console.error(id,e.message);continue;}
  if(!g){console.log('sin figura',id);continue;}
+ // (el cambio por el kit llega en la siguiente vuelta: se espera a que lo ponga)
+ await new Promise(r=>setTimeout(r,60));
  const pivote=new THREE.Group();pivote.add(g);pivote.rotation.set(0.35,-0.45,0);s.add(pivote);pivote.updateMatrixWorld(true);
  const box=new THREE.Box3().setFromObject(pivote),c=box.getCenter(new THREE.Vector3()),z=box.getSize(new THREE.Vector3());const m=Math.max(z.x,z.y)*0.56;
  const cam=new THREE.OrthographicCamera(-m,m,m,-m,0.01,20);cam.position.set(c.x,c.y,c.z+5);cam.lookAt(c);

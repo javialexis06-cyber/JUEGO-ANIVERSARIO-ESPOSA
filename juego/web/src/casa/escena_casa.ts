@@ -44,7 +44,7 @@ export type Toque =
   | { tipo: 'regalo' }
   | { tipo: 'bebe' }
   /** El piso o un mueble (`mueble`: el nombre del mueble tocado, como «arcade» o «pedestal_super»). */
-  | { tipo: 'suelo'; x: number; y: number; mueble?: string }
+  | { tipo: 'suelo'; x: number; y: number; mueble?: string; puerta?: boolean }
   | null;
 
 const COLORES_NOTA = ['#FFE58A', '#FFC4D6', '#BFE9D8', '#CFE3FF', '#FFD7B0'];
@@ -718,6 +718,14 @@ export class Casa3D {
     }
   }
 
+  /** Punto de la puerta existente, para el adaptador de regreso y sus comprobaciones. */
+  puertaPantalla() {
+    const base=this.bases.get(this.actual);let puerta:THREE.Object3D|undefined;
+    base?.traverse(o=>{if(!puerta&&/^(puerta|marco_puerta)/i.test(o.name)&&visibleDeVerdad(o))puerta=o;});
+    const p=this.puerta(this.actual),q=puerta?new THREE.Box3().setFromObject(puerta).getCenter(new THREE.Vector3()):new THREE.Vector3(p.x,1,-p.y);
+    this.mundo.camara.updateMatrixWorld(true);q.project(this.mundo.camara);return {x:(q.x+1)*innerWidth/2,y:(1-q.y)*innerHeight/2};
+  }
+
   /** Qué se tocó en pantalla: un marcador de decoración, la nevera, el regalo o el piso. */
   tocar(px: number, py: number): Toque {
     const v = new THREE.Vector2((px / window.innerWidth) * 2 - 1, -(py / window.innerHeight) * 2 + 1);
@@ -745,7 +753,7 @@ export class Casa3D {
     let o: THREE.Object3D | null = h.object;
     while (o && o.parent && o.parent !== raiz) o = o.parent;
     const mueble = o && o.parent === raiz && !NO_ESTORBA.test(o.name) ? o.name : undefined;
-    return { tipo: 'suelo', x, y, mueble };
+    return { tipo: 'suelo', x, y, mueble, puerta: !!o && /^(puerta|marco_puerta)/i.test(o.name) };
   }
 }
 

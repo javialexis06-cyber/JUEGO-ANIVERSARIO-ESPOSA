@@ -11,6 +11,7 @@ import '@fontsource/nunito/latin-800.css';
 import '../estilos.css';
 import './casa.css';
 import './regreso_granja';
+import { leerRetornoHogar, volverALaGranja } from '../granja-v3/hogar';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import * as THREE from 'three';
@@ -280,6 +281,8 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   sonido.musica.iniciar('menu', 76, 'hogar');
   pistaCasa();
   (window as any).__listo = true;
+  if(leerRetornoHogar()){const regreso=document.getElementById('btn-volver-granja');if(regreso)regreso.hidden=true;}
+  (window as any).__puertaGranja=()=>casa3d.puertaPantalla();
   if (s.modo === 'linea') void asegurarCuenta();
   return true;
 }
@@ -3426,6 +3429,7 @@ function tocar(x: number, y: number) {
   if (casa3d.actual === 'patio' && !decorando && patio.tocar(x, y)) return;
   const t = casa3d.tocar(x, y);
   if (!t) return;
+  if(t.tipo==='suelo'&&t.puerta&&!decorando&&leerRetornoHogar()){void regresarPorPuertaGranja();return;}
   if (t.tipo === 'sitio') {
     if (!puedeDecorar(casa3d.actual)) return;
     return hojaDecorar(t.sitio);
@@ -3448,6 +3452,16 @@ function tocar(x: number, y: number) {
   // saliendo del cuarto) lo deja ya y va para allá
   const m = mascotas[yo];
   if (t.tipo === 'suelo' && m.cuarto === casa3d.actual && !dormido(yo)) void pasear(t.x, t.y);
+}
+
+let regresoGranjaPendiente=false;
+/** La puerta del cuarto visible devuelve a la granja después de que el personaje llegue a ella. */
+async function regresarPorPuertaGranja(){
+ if(regresoGranjaPendiente||!s||!leerRetornoHogar())return;
+ const cuarto=casa3d.actual,m=mascotas[yo];if(m.cuarto!==cuarto||dormido(yo))return;
+ regresoGranjaPendiente=true;const p=casa3d.puerta(cuarto);try{await pasear(p.x,p.y);const limite=performance.now()+60000;
+  await new Promise<void>((resolver)=>{const revisar=()=>{if(casa3d.actual!==cuarto||m.cuarto!==cuarto){resolver();return;}if(Math.hypot(m.p.pos.x-p.x,m.p.pos.y-p.y)<1.15){volverALaGranja();resolver();return;}if(performance.now()>limite||document.hidden){resolver();return;}requestAnimationFrame(revisar);};revisar();});
+ }finally{regresoGranjaPendiente=false;}
 }
 
 async function pasear(x: number, y: number) {

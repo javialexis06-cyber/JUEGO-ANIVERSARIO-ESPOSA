@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { caja, esfera, compactar } from './suelo';
 import { frutalDef } from './frutales-datos';
 import { faseFrutal, type Frutal } from './frutales';
+import { conKit, fundir } from './cuartos';
 function rama(g:THREE.Group,a:number[],b:number[],r:number,color:string){const aa=new THREE.Vector3().fromArray(a),bb=new THREE.Vector3().fromArray(b),v=bb.clone().sub(aa);const m=new THREE.Mesh(new THREE.CylinderGeometry(r*.7,r,v.length(),7),new THREE.MeshStandardMaterial({color,roughness:.92}));m.position.copy(aa.add(bb).multiplyScalar(.5));m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());m.castShadow=true;g.add(m);}
 export function frutalVista(f:Frutal){
  const g=new THREE.Group();g.name='frutal-vista-'+f.id;const d=frutalDef(f.tipo)!,fase=faseFrutal(f),seco=f.cuidado.status==='arruinado',escala=[.26,.43,.62,.81,1][fase];
@@ -21,5 +22,29 @@ export function interiorInvernadero(){const g=new THREE.Group();g.name='interior
  for(const x of[-7.9,-4,0,4,7.9])caja(g,[.14,3.2,.18],[x,1.6,-5.9],'#a58a62');for(const y of[.35,1.6,3.18])caja(g,[16,.13,.18],[0,y,-5.9],'#b6996e');
  for(const x of[-7.9,7.9]){caja(g,[.14,.45,12],[x,.2,0],'#c6b38d');for(const z of[-3,0,3])caja(g,[.12,2.6,.12],[x,1.3,z],'#b49a73');}
  for(const x of[-1,1])caja(g,[.13,2.7,.16],[x,1.35,5.9],'#a68b62');caja(g,[2.1,.15,.16],[0,2.7,5.9],'#bca27d');caja(g,[1.8,.025,1.1],[0,.025,5.25],'#e5d8b4');
- compactar(g);const cristal=new THREE.Mesh(new THREE.BoxGeometry(15.7,2.8,.04),new THREE.MeshStandardMaterial({color:'#b0d4c7',transparent:true,opacity:.22,roughness:.2,depthWrite:false}));cristal.position.set(0,1.8,-5.88);g.add(cristal);return g;}
-export function riegoInvernadero(){const g=new THREE.Group();g.name='riego-invernadero';for(const x of[-2.5,2.5]){caja(g,[.035,.07,6],[x,.08,0],'#7b9b93');for(const z of[-2.5,-.5,1.5]){caja(g,[.13,.09,.13],[x,.12,z],'#8daea0');}}compactar(g);return g;}
+ compactar(g);const cristal=new THREE.Mesh(new THREE.BoxGeometry(15.7,2.8,.04),new THREE.MeshStandardMaterial({color:'#b0d4c7',transparent:true,opacity:.22,roughness:.2,depthWrite:false}));cristal.position.set(0,1.8,-5.88);g.add(cristal);
+ // Cuando carga granja_invernadero.glb (personajes/blender/granja_invernadero.py) todo se cambia por sus piezas: piso de
+ // baldosas de barro con el caminito de lajas, las camas de madera, las paredes de vidrio con su murito de ladrillo, la
+ // puerta con letrero y tapete, y lo que le da vida (estantes con matas, mesa de trasplantar, regadera, costales,
+ // manguera, carretilla, matas colgadas y helechos en la entrada). Mientras carga se ve lo de arriba.
+ conKit(g,'granja_invernadero.glb',m=>{
+  if(!m.get('inv_piso')||!m.get('inv_cama'))return;
+  const kit=new THREE.Group();
+  const poner=(clave:string,x:number,y:number,z:number,ry=0)=>{const b=m.get(clave);if(!b)return;const c=b.clone(true);c.position.set(x,y,z);c.rotation.y=ry;kit.add(c);};
+  poner('inv_piso',0,0,0);poner('inv_pared_fondo',0,0,0);poner('inv_puerta',0,0,5.9);
+  for(const s of[-1,1]){poner('inv_cama',s*2.5,0,0);poner('inv_pared_lado',s*7.9,0,0);poner('inv_estante',s*5.8,0,-5.45);poner('inv_helecho',s*1.6,0,5.3);
+   poner('inv_colgante',s*2,3.05,-5.62);for(const z of[-1.5,1.5])poner('inv_colgante',s*7.55,2.5,z);}
+  poner('inv_mesa',-7.25,0,1.6,Math.PI/2);poner('inv_costales',-6.6,0,-3.4,.4);poner('inv_regadera',4.6,0,3.5,-.6);
+  poner('inv_manguera',7.15,0,3.8,-Math.PI/2);poner('inv_carretilla',5.7,0,-1.6,.7);
+  const unida=fundir(kit);unida.name='interior-invernadero-kit';
+  for(const c of[...g.children]){c.removeFromParent();c.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();for(const mt of Array.isArray(o.material)?o.material:[o.material])if(!mt.userData.compartido)mt.dispose();}});}
+  g.add(unida);
+ });
+ return g;}
+export function riegoInvernadero(){const g=new THREE.Group();g.name='riego-invernadero';for(const x of[-2.5,2.5]){caja(g,[.035,.07,6],[x,.08,0],'#7b9b93');for(const z of[-2.5,-.5,1.5]){caja(g,[.13,.09,.13],[x,.12,z],'#8daea0');}}compactar(g);
+ // El riego de Blender: tubo de cobre con tres aspersores y su llavecita roja en cada cama
+ conKit(g,'granja_invernadero.glb',m=>{const b=m.get('inv_riego');if(!b)return;const kit=new THREE.Group();for(const x of[-2.5,2.5]){const c=b.clone(true);c.position.x=x;kit.add(c);}
+  const unida=fundir(kit);unida.name='riego-invernadero-kit';
+  for(const c of[...g.children]){c.removeFromParent();c.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();for(const mt of Array.isArray(o.material)?o.material:[o.material])if(!mt.userData.compartido)mt.dispose();}});}
+  g.add(unida);});
+ return g;}

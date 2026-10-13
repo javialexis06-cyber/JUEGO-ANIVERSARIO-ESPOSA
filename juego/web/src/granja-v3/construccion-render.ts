@@ -2,7 +2,7 @@ import * as T from 'three';
 import { caja, esfera, compactar } from './suelo';
 import { ARTICULOS } from './catalogo';
 import { huellaObra, costeObra, type EncargoObra } from './construccion';
-import { conKit, fundir } from './cuartos';
+import { conKit, fundir, cambiarPorKit } from './cuartos';
 
 /** Suelta lo hecho con figuras (geometría y materiales propios) cuando llega el modelo de Blender. */
 function soltar(g:T.Object3D){g.removeFromParent();g.traverse(o=>{const m=o as T.Mesh;if(m.isMesh&&!m.geometry.userData.compartido){m.geometry.dispose();for(const mt of ([] as T.Material[]).concat(m.material))if(!mt.userData.compartido)mt.dispose();}});}
@@ -57,5 +57,7 @@ export function obraVista(o:EncargoObra,activa:boolean){
 export function animarObras(root:T.Object3D,tiempo:number,minutos:number){const trabajando=minutos>=8*60&&minutos<18*60;root.traverse(o=>{if(o.name==='cuadrilla')o.visible=o.userData.activa!==false&&trabajando;if(o.name==='martillo-cuadrilla')o.rotation.x=trabajando?-.3-Math.max(0,Math.sin(tiempo*5))*.8:0;});}
 export function detalleAmpliacion(nivel:number){const g=new T.Group();if(nivel<2)return g;
  for(const x of [.25,3.75]){caja(g,[.2,2.2,.13],[x,1.1,3.88],'#768d84');for(const y of [.35,1.9])caja(g,[.27,.08,.18],[x,y,3.9],'#d5be7e');}
- caja(g,[1.4,.25,.08],[2,2.23,3.94],nivel===3?'#d2be81':'#b0c7bc');for(let i=0;i<nivel;i++)esfera(g,[.065,.065,.015],[1.8+i*.2,2.23,4],'#5d7069');compactar(g);return g;
+ caja(g,[1.4,.25,.08],[2,2.23,3.94],nivel===3?'#d2be81':'#b0c7bc');for(let i=0;i<nivel;i++)esfera(g,[.065,.065,.015],[1.8+i*.2,2.23,4],'#5d7069');compactar(g);
+ // Con granja_patio.glb: pilares de piedra con anillos y remates, y el letrero colgado con sus estrellas
+ cambiarPorKit(g,'granja_patio.glb',m=>m.get('ampliacion_'+(nivel>=3?3:2))?.clone(true)??null);return g;
 }

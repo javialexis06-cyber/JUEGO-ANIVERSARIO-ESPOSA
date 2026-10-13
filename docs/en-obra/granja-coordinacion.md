@@ -1,3 +1,20 @@
+> Refugios de `7af0e4f5` integrados; builds y 17 pasos adicionales sobre sus gráficos pasan. El motor comprobado conserva sus 18 firmas.
+
+> Integrados los iconos de Blender de `ad5a6e80`, conservando todos los archivos del motor comprobados. La compilación APK/Windows se agrupa por rama para que `work` pueda verificar una entrega estable mientras el frente visual publica en la rama compartida.
+
+> Integrados también los modelos de `dce94b06`: herramientas, invernadero, envíos, monstruos y vetas. La selección conserva el camino con mouse junto al nuevo kit en la mano. Repetidos regresión, builds y recorridos sobre la combinación.
+
+> Integrados los Actos III, IV y V de Claude hasta `73ebc3ca`. Se mantienen sus películas, actores, música y voces; los cambios de rendimiento reutilizan esos recursos.
+
+## Puertas, mostradores y fluidez · 12 de octubre de 2026
+
+Javier solicitó continuar el motor y optimizar interacciones, entrada y salida física, compras desde
+mostradores y mapas. Se reutilizan los recursos de Claude; leer [FLUIDEZ-INTEGRACION.md](../../juego/web/src/granja-v3/FLUIDEZ-INTEGRACION.md).
+V5, huellas, precios, cuidados, horarios y permisos se conservan. La caché es acotada; no precargar
+los 28 mundos juntos. Los retratos no llevan nombres en el mapa. El movimiento con mouse conserva
+su camino; las puertas también admiten cruce del umbral. En la casa real solo se conecta el regreso
+por la puerta del cuarto visible; el lavado permanece intacto. Las mediciones en contenedor no son FPS de hardware.
+
 > Integrados también `9bd7107f` (postales y películas en Sangre y Ceniza) y el plano frontal de Fuatia. La postal espera mientras hay un lance de pesca; no modifica las escenas ni sus recursos.
 
 ## Cercos y llamada de compañeros · 12 de octubre de 2026
@@ -347,7 +364,8 @@ Contrato para el frente de motor:
 semillas en su sobre, plantones, minerales, lingotes, recursos, productos de animales, peces, comidas y armaduras).
 `node scripts/granja-v3/iconos-objetos.mjs [url] [regex]` los fotografía a `public/modelos/granja-v3/iconos/obj_<id>.webp`
 y reescribe `src/granja-v3/iconos-lista.ts`. Un objeto nuevo sin foto sigue usando su dibujo SVG: cuando agregues
-objetos, avísame (o corre el script) para fotografiarlos. Construcciones y máquinas siguen con SVG por ahora.
+objetos, avísame (o corre el script) para fotografiarlos. Construcciones y máquinas también tienen foto, con sus
+modelos de Blender (el script carga los kits antes de fotografiar).
 
 ## Vecinos de peluche (Claude, 10 de octubre de 2026)
 

@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: apk
+  group: apk-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
