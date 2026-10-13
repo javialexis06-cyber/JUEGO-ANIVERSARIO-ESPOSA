@@ -69,7 +69,7 @@ TEMAS = {
 }
 
 PASO = 1.0
-TROZO = 120.0
+TROZO = 250.0
 
 
 # ------------------------------------------------------------------------------------------------ la curva
@@ -127,11 +127,12 @@ class Lote:
         F = np.concatenate([Q[:, [0, 1, 2]], Q[:, [0, 2, 3]]])
         self.tri(mat, V, F, trozo)
 
-    def poner(self, proto, pos, rot=0.0, esc=1.0):
+    def poner(self, proto, pos, rot=0.0, esc=1.0, trozo=None):
         c, s = math.cos(rot), math.sin(rot)
         R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
         e = np.asarray(esc if isinstance(esc, (tuple, list)) else (esc, esc, esc), float)
-        trozo = (int(math.floor(pos[0] / TROZO)), int(math.floor(pos[1] / TROZO)))
+        if trozo is None:
+            trozo = (int(math.floor(pos[0] / TROZO)), int(math.floor(pos[1] / TROZO)))
         for mat, V, F in proto:
             self.tri(mat, (V * e) @ R.T + np.asarray(pos), F, trozo)
 
@@ -660,7 +661,7 @@ def construir(pid, plano=None):
         for gx in range(-R, R, 60):
             for gy in range(-R, R, 60):
                 V = [(gx, gy, 0), (gx + 60, gy, 0), (gx + 60, gy + 60, 0), (gx, gy + 60, 0)]
-                lote.quads(suelo, V, [(0, 1, 2, 3)])
+                lote.quads(suelo, V, [(0, 1, 2, 3)], trozo=(99, 99))
 
     # --- paisaje: se reparte lejos del camino
     centro2 = P[:, :2]
@@ -689,7 +690,7 @@ def construir(pid, plano=None):
         for k in range(cuantos):
             a = k / cuantos * math.tau + RNG.uniform(-0.2, 0.2)
             r = RNG.uniform(r0, r1)
-            lote.poner(pr, (math.cos(a) * r, math.sin(a) * r + 10, z if not callable(z) else z()), RNG.uniform(0, math.tau), RNG.uniform(*esc))
+            lote.poner(pr, (math.cos(a) * r, math.sin(a) * r + 10, z if not callable(z) else z()), RNG.uniform(0, math.tau), RNG.uniform(*esc), trozo=(99, 99))
 
     extra = {}
     if pid == 'valle':
@@ -751,7 +752,7 @@ def construir(pid, plano=None):
         mar = P_('mar', lambda c: nube(c, '#E8ECF8'))
         for gx in range(-300, 300, 28):
             for gy in range(-300, 300, 28):
-                lote.poner(mar, (gx + RNG.uniform(-8, 8), gy + RNG.uniform(-8, 8), -26 + RNG.uniform(-3, 3)), RNG.uniform(0, 6), RNG.uniform(2.2, 3.4))
+                lote.poner(mar, (gx + RNG.uniform(-8, 8), gy + RNG.uniform(-8, 8), -26 + RNG.uniform(-3, 3)), RNG.uniform(0, 6), RNG.uniform(2.2, 3.4), trozo=(99, 99))
         lote.poner(P_('aurelia', lambda c: luna(c, AURELIA, 40, '#D9A43A')), (-230, 260, 80), 0, 1.0)
         lote.poner(P_('nocturna', lambda c: luna(c, NOCTURNA, 30, '#2B2038')), (260, 210, 60), 0, 1.0)
         lote.poner(P_('esmeralda', lambda c: luna(c, ESMERALDA, 18, '#3A9A60')), (40, 320, 110), 0, 1.0)
@@ -800,7 +801,7 @@ def construir(pid, plano=None):
     )
     if plano:
         dibujar_plano(P, N, hw, hombro, flags, datos, plano)
-    print(pid, 'largo', round(L), 'm,', n, 'muestras,', len(objs), 'mallas', flush=True)
+    print(pid, 'largo', round(L), 'm,', n, 'muestras,', len(objs), 'mallas,', len(lote.mats), 'materiales', flush=True)
     return raiz, datos
 
 
@@ -840,6 +841,8 @@ def main(out, ids=None, plano=False):
         global RNG
         RNG = np.random.default_rng(21 + len(pid))
         clay.reset_scene()
+        import tiendas
+        tiendas._MATS.clear()
         raiz, datos = construir(pid, os.path.join(out, f'_plano_{pid}.png') if plano else None)
         with open(os.path.join(out, f'carreras_{pid}.json'), 'w') as fh:
             json.dump(datos, fh, separators=(',', ':'))
