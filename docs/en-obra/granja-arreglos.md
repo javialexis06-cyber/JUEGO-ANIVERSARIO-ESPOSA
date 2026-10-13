@@ -518,6 +518,12 @@ Dónde está:
   pepitas de la veta (metales, carbón, piedra y geodas) o el racimo de cristales de seis caras (gemas), pintados con el
   color de cada mineral (`materialVeta`: un material compartido por mineral; los cristales brillan un poquito).
 
+- **Caja de envíos y casita de los compañeros en Blender** **hecho** (13 de octubre): `granja_envio.glb`
+  (`personajes/blender/granja_envio.py`). `envios-render.ts` usa el cajón con zunchos, etiqueta con sello y cuerda, la
+  tapa (dentro del mismo grupo `tapa_envio`, que se sigue abriendo) y la banderita que sube con carga;
+  `compania-render.ts hogarMascotaVista` la casita con techo de tejas, cojín con botones, cobijita y letrero con
+  huella, y el cuenco de barro con huellitas (el agua aparte, solo si está lleno).
+
 ## Datos útiles
 
 - El Pueblo del Sol está en las coordenadas del mundo:
