@@ -470,7 +470,7 @@ export class Motor {
 
   private soltar(tipo: IdEnemigo, ruta: number, s: number, lado?: number) {
     const d = ENEMIGOS[tipo];
-    const crece = this.infinito ? 1 + this.oleada * 0.13 + this.oleada * this.oleada * 0.004 : this.nivel.fuerza * (1 + (this.oleada - 1) * 0.08);
+    const crece = this.infinito ? 1 + this.oleada * 0.2 + this.oleada * this.oleada * 0.012 : this.nivel.fuerza * (1 + (this.oleada - 1) * (this.nivel.crece ?? 0.14));
     const vida = Math.round(d.vida * (tipo === 'jefe' ? (this.infinito ? 0.5 + this.oleada * 0.05 : 1) : crece));
     const e: Enemigo = {
       id: this.sigId++, tipo, ruta, s, lado: lado ?? (this.azar() - 0.5) * (d.aereo ? 1.2 : 0.8), vida, vidaMax: vida, armadura: d.armadura, aereo: d.aereo,

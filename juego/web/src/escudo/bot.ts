@@ -15,14 +15,15 @@ function cobertura(m: Motor) {
   return m.sitios.map(([x, z]) => muestras.filter(([a, b]) => Math.hypot(a - x, b - z) < 4).length);
 }
 
-export function crearBot(habilidad = 1): Bot {
+/** `torpe`: escoge sitios al azar y no usa las habilidades (como alguien que juega por primera vez). */
+export function crearBot(habilidad = 1, torpe = false): Bot {
   let cob: number[] | null = null;
   let reloj = 0;
   let turno = 0;
   return {
     pensar(m: Motor) {
       if (m.terminado) return;
-      cob ??= cobertura(m);
+      cob ??= torpe ? m.sitios.map((_, i) => ((i * 7919) % 13)) : cobertura(m);
       reloj -= 1 / 30;
       if (m.oleada === 0 && m.t > 1.5) m.llamarOleada();
       if (reloj > 0) return;
@@ -32,7 +33,7 @@ export function crearBot(habilidad = 1): Bot {
       const hayAire = tipos.has('polilla');
       const hayGolem = tipos.has('golem') || tipos.has('jefe');
       // Habilidades: donde haya un montón junto
-      for (const id of ['eliana', 'serena'] as const) {
+      for (const id of torpe ? [] : (['eliana', 'serena'] as const)) {
         if (!m.habilidadLista(id)) continue;
         let mejor: [number, number, number] | null = null;
         for (const e of m.enemigos) {
@@ -54,7 +55,8 @@ export function crearBot(habilidad = 1): Bot {
       const cuenta = (tipo: IdTorre) => m.torres.filter((t) => t.tipo === tipo).length;
       const permitida = (t: IdTorre) => m.torresPermitidas.includes(t);
       let quiero: IdTorre | null = null;
-      if (hayAire && permitida('grifo') && cuenta('grifo') < 1 + Math.floor(m.oleada / 4)) quiero = 'grifo';
+      const aireYa = (m.oleadaSiguiente() ?? []).filter((g) => g.t === 'polilla').reduce((a, g) => a + g.n, 0);
+      if (hayAire && permitida('grifo') && cuenta('grifo') < 1 + Math.floor(m.oleada / 4) + (aireYa >= 12 ? 1 : 0)) quiero = 'grifo';
       else if (permitida('lara') && cuenta('lara') < 1 + Math.floor(m.torres.length / 5)) quiero = 'lara';
       else if (permitida('unicornio') && m.torres.length >= 4 && cuenta('unicornio') < Math.floor(m.torres.length / 4)) quiero = 'unicornio';
       else if (permitida('fuatia') && hayGolem && cuenta('fuatia') < 1 + Math.floor(m.torres.length / 6)) quiero = 'fuatia';

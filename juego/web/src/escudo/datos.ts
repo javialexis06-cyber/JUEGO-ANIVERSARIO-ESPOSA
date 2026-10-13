@@ -178,13 +178,13 @@ export interface DefEnemigo {
 }
 
 export const ENEMIGOS: Record<IdEnemigo, DefEnemigo> = {
-  mota: { id: 'mota', nombre: 'Mota de ceniza', desc: 'Llegan muchas. Sola no asusta.', vida: 40, vel: 1.45, armadura: 0, aereo: false, valor: 5, dano: 1, radio: 0.4 },
-  motita: { id: 'motita', nombre: 'Motita', desc: 'Lo que suelta la brasa partida.', vida: 26, vel: 1.9, armadura: 0, aereo: false, valor: 2, dano: 1, radio: 0.3 },
-  sombra: { id: 'sombra', nombre: 'Sombra veloz', desc: 'Corre el doble. Ralentízala con Lara.', vida: 32, vel: 2.9, armadura: 0, aereo: false, valor: 6, dano: 1, radio: 0.4 },
-  golem: { id: 'golem', nombre: 'Gólem de ceniza', desc: 'Blindado: la armadura le quita la mitad del daño. Tierra, jade y el unicornio se la rompen.', vida: 300, vel: 0.72, armadura: 0.55, aereo: false, valor: 22, dano: 3, radio: 0.7 },
-  polilla: { id: 'polilla', nombre: 'Polilla de ceniza', desc: 'Vuela: el fuego no le llega. Grifos, aire y Lara sí.', vida: 62, vel: 1.65, armadura: 0, aereo: true, valor: 8, dano: 1, radio: 0.45 },
-  divisora: { id: 'divisora', nombre: 'Brasa partida', desc: 'Al romperla suelta tres motitas.', vida: 150, vel: 1.05, armadura: 0, aereo: false, valor: 10, dano: 2, radio: 0.6 },
-  jefe: { id: 'jefe', nombre: 'La sombra de Nath’Gora', desc: 'Llama a la ceniza y apaga torres. Si llega al escudo, lo rompe.', vida: 5600, vel: 0.42, armadura: 0.3, aereo: false, valor: 250, dano: 20, radio: 1.2 },
+  mota: { id: 'mota', nombre: 'Mota de ceniza', desc: 'Llegan muchas. Sola no asusta.', vida: 60, vel: 1.45, armadura: 0, aereo: false, valor: 5, dano: 1, radio: 0.4 },
+  motita: { id: 'motita', nombre: 'Motita', desc: 'Lo que suelta la brasa partida.', vida: 39, vel: 1.9, armadura: 0, aereo: false, valor: 2, dano: 1, radio: 0.3 },
+  sombra: { id: 'sombra', nombre: 'Sombra veloz', desc: 'Corre el doble. Ralentízala con Lara.', vida: 48, vel: 2.9, armadura: 0, aereo: false, valor: 6, dano: 1, radio: 0.4 },
+  golem: { id: 'golem', nombre: 'Gólem de ceniza', desc: 'Blindado: la armadura le quita la mitad del daño. Tierra, jade y el unicornio se la rompen.', vida: 450, vel: 0.72, armadura: 0.55, aereo: false, valor: 22, dano: 3, radio: 0.7 },
+  polilla: { id: 'polilla', nombre: 'Polilla de ceniza', desc: 'Vuela: el fuego no le llega. Grifos, aire y Lara sí.', vida: 93, vel: 1.65, armadura: 0, aereo: true, valor: 8, dano: 1, radio: 0.45 },
+  divisora: { id: 'divisora', nombre: 'Brasa partida', desc: 'Al romperla suelta tres motitas.', vida: 225, vel: 1.05, armadura: 0, aereo: false, valor: 10, dano: 2, radio: 0.6 },
+  jefe: { id: 'jefe', nombre: 'La sombra de Nath’Gora', desc: 'Llama a la ceniza y apaga torres. Si llega al escudo, lo rompe.', vida: 8400, vel: 0.42, armadura: 0.3, aereo: false, valor: 250, dano: 20, radio: 1.2 },
 };
 
 // ------------------------------------------------------------------------------------------------- los niveles
@@ -220,6 +220,8 @@ export interface Nivel {
   luz: number;
   /** Multiplica la vida de la ceniza (se suma un 8 % por oleada). */
   fuerza: number;
+  /** Cuánto más dura la ceniza en cada oleada (0,14 = 14 % más por oleada). */
+  crece?: number;
   oleadas: Oleada[];
   /** Torres que se pueden construir aquí. */
   torres: IdTorre[];
@@ -239,7 +241,7 @@ const T6: IdTorre[] = [...T5, 'fuatia'];
 
 export const NIVELES: Nivel[] = [
   {
-    id: 'mirador', nombre: 'El Mirador de las Santas', sub: 'I', luz: 260, fuerza: 1, sitios: 11, torres: ['aura', 'lara', 'dragon'],
+    id: 'mirador', nombre: 'El Mirador de las Santas', sub: 'I', luz: 260, fuerza: 0.95, sitios: 11, torres: ['aura', 'lara', 'dragon'],
     intro: 'Aquí las Santas miraban las estrellas. Hoy la ceniza viene por el camino viejo.',
     rutas: [
       [[-17, -3], [-10, -3], [-10, 3.5], [-3, 3.5], [-3, -4], [4, -4], [4, 2.5], [10, 2.5], [10, -1], [17, -1]],
@@ -258,7 +260,7 @@ export const NIVELES: Nivel[] = [
     cielo: ['#2a2350', '#0b0a1e'], utileria: ['farol_estrella', 'banco_madera', 'telescopio', 'arbol_estelar', 'flores_estrella', 'cristal_azul', 'columna_rota', 'estandarte_aura', 'estandarte_lara'],
   },
   {
-    id: 'arcos', nombre: 'Los Arcos Rotos', sub: 'II', luz: 280, fuerza: 1.1, sitios: 12, torres: T4,
+    id: 'arcos', nombre: 'Los Arcos Rotos', sub: 'II', luz: 280, fuerza: 1.25, sitios: 12, torres: T4,
     intro: 'Las ruinas de las Santas de antes. Por encima vuelan las polillas de ceniza.',
     rutas: [
       [[-17, 4], [-11, 4], [-11, -3.5], [-4, -3.5], [-4, 1], [3, 1], [3, -5], [9, -5], [9, 1.5], [17, 1.5]],
@@ -278,7 +280,7 @@ export const NIVELES: Nivel[] = [
     cielo: ['#3a2150', '#100a1e'], utileria: ['arco_roto', 'columna_rota', 'cristal_morado', 'hongos_luz', 'farol_estrella', 'roca_lunar_1', 'flores_estrella', 'provisiones'],
   },
   {
-    id: 'cantera', nombre: 'La Cantera de Cristal', sub: 'III', luz: 300, fuerza: 1.2, sitios: 12, torres: T5,
+    id: 'cantera', nombre: 'La Cantera de Cristal', sub: 'III', luz: 300, fuerza: 1.0, sitios: 12, torres: T5,
     intro: 'Dos grietas a la vez. El unicornio de Celia vino a sostener la luz.',
     rutas: [
       [[-17, -5.5], [-9, -5.5], [-9, -1], [-1, -1], [-1, 3.5], [7, 3.5], [7, 0], [17, 0]],
@@ -300,7 +302,7 @@ export const NIVELES: Nivel[] = [
     cielo: ['#1f3550', '#08121e'], utileria: ['cristal_azul', 'cristal_dorado', 'cristal_morado', 'provisiones', 'roca_lunar_2', 'roca_lunar_1', 'farol_estrella', 'tienda_campana'],
   },
   {
-    id: 'rosal', nombre: 'El Rosal de la Noche', sub: 'IV', luz: 320, fuerza: 1.3, sitios: 13, torres: T6,
+    id: 'rosal', nombre: 'El Rosal de la Noche', sub: 'IV', luz: 320, fuerza: 1.35, crece: 0.22, sitios: 13, torres: T6,
     intro: 'Donde Lara deja descansar a las almas. Fuatia trajo sus cuatro elementos.',
     rutas: [
       [[-17, 0], [-11, 0], [-11, -5], [-5, -5], [-5, 0], [1, 0], [1, -5], [7, -5], [7, 1], [12, 1], [12, -1], [17, -1]],
@@ -321,7 +323,7 @@ export const NIVELES: Nivel[] = [
     cielo: ['#2e1d48', '#0c0818'], utileria: ['rosal_lara', 'estandarte_lara', 'flores_estrella', 'hongos_luz', 'arbol_estelar', 'columna_rota', 'farol_estrella'],
   },
   {
-    id: 'puente', nombre: 'El Puente de las Brasas', sub: 'V', luz: 340, fuerza: 1.42, sitios: 13, torres: T6,
+    id: 'puente', nombre: 'El Puente de las Brasas', sub: 'V', luz: 340, fuerza: 1.35, crece: 0.24, sitios: 13, torres: T6,
     intro: 'El paso angosto sobre el abismo. Si la ceniza cruza aquí, llega al escudo.',
     huecos: [[-1, -2], [0, -2], [1, -2], [-1, 2], [0, 2], [1, 2]],
     rutas: [
@@ -344,7 +346,7 @@ export const NIVELES: Nivel[] = [
     cielo: ['#3d1f2a', '#140a0e'], utileria: ['brasero_aura', 'estandarte_aura', 'provisiones', 'cristal_dorado', 'roca_lunar_1', 'farol_estrella', 'tienda_campana'],
   },
   {
-    id: 'grieta', nombre: 'La Estrella sin Dueño', sub: 'VI · P23', luz: 420, fuerza: 1.5, sitios: 15, torres: T6, historia: true,
+    id: 'grieta', nombre: 'La Estrella sin Dueño', sub: 'VI · P23', luz: 400, fuerza: 1.3, crece: 0.26, sitios: 15, torres: T6, historia: true,
     intro: 'La última autorización. Nath’Gora en persona viene por el escudo.',
     rutas: [
       [[-17, -4], [-11, -4], [-11, 1], [-5, 1], [-5, -5], [2, -5], [2, -1], [8, -1], [8, 3], [12, 3], [12, 0], [17, 0]],
