@@ -103,12 +103,14 @@ export async function actorPareja(rol: 'el' | 'ella'): Promise<Actor> {
   return { raiz, p };
 }
 
-export async function actorDiosa(id: IdDiosa): Promise<Actor> {
+export async function actorDiosa(id: IdDiosa, sinVelo = false): Promise<Actor> {
   await elegirModelos();
   const d = DIOSAS[id];
   const p = new Personaje({ x: 0, y: 0 }, 0.7);
   await p.cargarPoses('ella');
-  await new Vestidor(p, 'ella').aplicar({ cuerpo: 'ella', piel: d.piel, pelo: d.pelo, detalles: { ojos: d.ojos } }, d.piezas);
+  // En la boda, Lara se quita el velo por primera vez en todo el juego (y se le ve una diadema de luna)
+  const piezas = sinVelo ? { ...d.piezas, cabeza: pieza('tiara', 'cabeza', { principal: '#e9e4f5' }) } : d.piezas;
+  await new Vestidor(p, 'ella').aplicar({ cuerpo: 'ella', piel: d.piel, pelo: d.pelo, detalles: { ojos: d.ojos } }, piezas);
   const raiz = new THREE.Group();
   raiz.add(p.grupo);
   marcarCompartido(raiz);
@@ -121,6 +123,16 @@ export async function actorDiosa(id: IdDiosa): Promise<Actor> {
   luz.position.set(0, 2.2, 1.6);
   raiz.add(luz);
   return { raiz, p, halo: h, luz };
+}
+
+/** Javier y Laura vestidos para la boda: él de traje azul noche con moño y ella de blanco con velo largo. */
+export async function actorNovio(rol: 'el' | 'ella'): Promise<Actor> {
+  const a = await actorPareja(rol);
+  const piezas: Partial<Record<RanuraAmigo, Pieza>> = rol === 'el'
+    ? { arriba: pieza('saco_corbatin', 'arriba', { principal: '#1f2a4a', camisa: '#f6f2ea', corbata: '#151515' }), pies: pieza('zapatos', 'pies', { principal: '#1a1a1a' }) }
+    : { arriba: pieza('vestido_novia', 'arriba', {}, ['abajo']), cabeza: pieza('velo_novia', 'cabeza'), pies: pieza('tacones', 'pies', { principal: '#e8d7a8' }) };
+  await new Vestidor(a.p, rol).aplicar({ cuerpo: rol }, piezas);
+  return a;
 }
 
 /** Pone la pose y la cara del actor (si existe la pose). */
