@@ -434,7 +434,11 @@ lunas) y Confluencia (los cuatro elementos girando).
 - **Fase D (Acto II) animada**: SC2, T03, SC3, C04 (con el Lazo; la misma en la granja y en Sangre), C05 y SC4.
 - **Fase E (Acto III) animada**: S08 (papel animado), C12, Eneas, Ofelia, C06 y Serena.
 - **Fase F (Actos IV y V) animada**: C13, C14, C07, C08, C09 y C10. Las 14 cinemáticas ya son película.
-- Falta: las postales de los biomas dentro de Sangre y Ceniza.
+- **Fase G animada**: Eterna modelada en Blender, la ropa de boda, el Altar del Lazo (ALT) y la boda completa (BOD)
+  con créditos. Se dispara en la granja al cerrar P24 y F12 con el final de Sangre visto (`cine-granja.md`).
+- Falta: las postales de los biomas dentro de Sangre y Ceniza, las 2 líneas JEF del Conde en Sangre, los modelos propios
+  de la fase B (Fuatia, Nath'Gora, Vael'Thor, el Conde humano y la cría de unicornio; hoy van armados con el clóset) y
+  las fotos de cada escena en los créditos (hoy van los títulos).
 
 Cada escena: guion → voces → actores y escenario → animación con el motor del cine (`cine-granja.ts`) → pruebas en el
 navegador (cuadros sueltos y video) → captura revisada → commit y push. Las de Sangre y Ceniza llevan su versión de amigos

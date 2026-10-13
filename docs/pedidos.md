@@ -19,8 +19,9 @@ de antes (M12 y M13).
 Eterna, Sopetrán, oficiada por Lara y sin votos), más **presentaciones de cada lugar** (6 llegadas y 33 postales) y la
 planeación de cuatro minijuegos futuros. Plan completo en [`en-obra/pelicula-de-astra.md`](en-obra/pelicula-de-astra.md)
 (escenas plano a plano, modelos de Blender y fases A-H). Los **arreglos de coherencia quedaron hechos**. **Hecho** (13 de octubre): todas
-las voces de la película, la música de la boda y el Acto I animado (C01, C11, SC0, C02, Eliana, SC1, C03). **Siguiente**:
-las presentaciones de los lugares del Acto I, SC0/SC1 en el mapa de la Noche y el Acto II. **Espera a Javier**: GitHub
+las voces de la película, la música de la boda y **las 28 películas animadas de punta a punta** (prólogo, Actos I-V,
+Sangre y Ceniza, las seis secundarias, el Altar del Lazo y la boda en Eterna con créditos). **Siguiente**: postales de
+los biomas dentro de Sangre, las líneas JEF del Conde y los modelos propios de la fase B. **Espera a Javier**: GitHub
 Actions quedó desactivado en su cuenta («Actions has been disabled for this user»): sin eso no salen APK nuevas.
 
 

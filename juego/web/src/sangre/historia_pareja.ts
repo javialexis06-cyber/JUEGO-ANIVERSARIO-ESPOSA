@@ -122,6 +122,8 @@ const PELICULAS: Partial<Record<IdEscena, string[]>> = { prologo: ['SC0'], afuer
 export async function verPelicula(id: IdEscena): Promise<boolean> {
   const p = PELICULAS[id];
   if (!p) return false;
+  // El final de Sangre y Ceniza abre, junto con la granja, el epílogo de la película (el Altar y la boda)
+  if (id === 'corte') try { localStorage.setItem('astra-sangre-final', '1'); } catch { /* sin almacenamiento */ }
   try {
     const [{ CineGranja, cargarMediosCine }, { PELICULAS: TODAS }] = await Promise.all([import('../granja-v3/cine-granja'), import('../granja-v3/cine-catalogo')]);
     // «La copa» es la misma película de la granja (el Conde termina en Nox una sola vez) y después, Nath'Gora
