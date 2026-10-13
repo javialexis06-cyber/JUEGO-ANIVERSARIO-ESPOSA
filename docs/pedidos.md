@@ -18,8 +18,10 @@ de antes (M12 y M13).
 (prólogo, 14 cinemáticas, 5 de Sangre y Ceniza, 6 secundarias, el Altar del Lazo y **la boda** «Siempre te elegiré» en
 Eterna, Sopetrán, oficiada por Lara y sin votos), más **presentaciones de cada lugar** (6 llegadas y 33 postales) y la
 planeación de cuatro minijuegos futuros. Plan completo en [`en-obra/pelicula-de-astra.md`](en-obra/pelicula-de-astra.md)
-(escenas plano a plano, modelos de Blender y fases A-H). Los **arreglos de coherencia quedaron hechos**. **Siguiente**:
-fase A (guiones y voces del Acto I), cuando Javier dé la orden.
+(escenas plano a plano, modelos de Blender y fases A-H). Los **arreglos de coherencia quedaron hechos**. **Hecho** (13 de octubre): todas
+las voces de la película, la música de la boda y el Acto I animado (C01, C11, SC0, C02, Eliana, SC1, C03). **Siguiente**:
+las presentaciones de los lugares del Acto I, SC0/SC1 en el mapa de la Noche y el Acto II. **Espera a Javier**: GitHub
+Actions quedó desactivado en su cuenta («Actions has been disabled for this user»): sin eso no salen APK nuevas.
 
 
 **Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y

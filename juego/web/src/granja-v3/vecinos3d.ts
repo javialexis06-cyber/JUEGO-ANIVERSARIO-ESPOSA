@@ -110,8 +110,10 @@ export function vecinoPeluche(id: string, index: number): THREE.Group {
 }
 
 /** El muñeco de un vecino ya vestido, para el cine (no entra a la lista de los que respiran solos). */
-export async function personajeVecino(id: string): Promise<{ p: Personaje; cuerpo: 'el' | 'ella'; escala: number }> {
-  const d = DISENOS[id] ?? disenoAstra(id) ?? DISENOS.viajera;
+export async function personajeVecino(id: string, sin: ('cabeza' | 'cara' | 'espalda')[] = []): Promise<{ p: Personaje; cuerpo: 'el' | 'ella'; escala: number }> {
+  const d0 = DISENOS[id] ?? disenoAstra(id) ?? DISENOS.viajera;
+  const d: Diseno = { ...d0 };
+  for (const k of sin) delete d[k];
   const escala = d.escala ?? 1;
   const p = new Personaje({ x: 0, y: 0 }, (d.c === 'ella' ? 0.7 : 0.69) * escala);
   modelosListos ??= elegirModelos();

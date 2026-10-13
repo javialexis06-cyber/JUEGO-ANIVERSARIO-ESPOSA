@@ -18,3 +18,4 @@
  font:inherit;font-size:12px;padding:6px 14px;cursor:pointer;opacity:.75}
 .cine-granja .cg-saltar:hover{opacity:1}
 .cine-granja.grabando .cg-saltar{display:none}
+.cine-granja.grabando,.cine-granja.grabando *{transition:none!important}

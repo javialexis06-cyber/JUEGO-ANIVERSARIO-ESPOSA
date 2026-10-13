@@ -78,3 +78,38 @@ generadas (`public/granja/astra/medios.json`) y la música, asignada (`MUSICA_ES
 | C12 | El día posterior al nacimiento | F04 | 3 min | 21 | M23 (CC0) | falta |
 | C13 | El precio de una alianza | F06 | 3 min | 20 | M23 (CC0) | falta |
 | C14 | La cuenta que ya no se cierra sola | F12 | 3–4 min | 20 | M23 (CC0) | falta |
+
+## Las películas del Acto I (12-13 de octubre de 2026)
+
+`src/granja-v3/cine-acto1.ts`, con su catálogo en `cine-catalogo.ts` (`PELICULAS[id]`, se cargan solo al verlas):
+
+| Id | Película | Escenario | Cómo se ve en el juego |
+|---|---|---|---|
+| C01 | Dos surcos | la granja de la tarde (dos surcos, cabaña, pozo, cerca) | botón «Ver C01» de la campaña (`accionAstra` → `verPelicula`) |
+| C11 | El agua que escucha (con la entrada de Fuatia) | la granja con el canal | «Ver C11» |
+| C02 | La campana y la mesa | la plaza del Pueblo del Sol, de tarde | «Ver C02» |
+| C03 | La firma | el archivo (cuarto con bibliotecas) | «Ver C03» |
+| SC0 | La Noche Eterna | terraza del castillo, la casa de noche y el altar de Lara | `__granjaV3.pelicula('SC0')` (falta llevarla al mapa de la Noche de Sangre y Ceniza) |
+| SC1 | Las Afueras | el cementerio hundido, la grieta y el grifo | `__granjaV3.pelicula('SC1')` (ídem) |
+| ELI | El brote que puede esperar | la plaza en la Fiesta del Despertar Dorado | `__granjaV3.pelicula('ELI')` (falta dispararla al cerrar la misión de Eliana) |
+
+Al terminar una película de la campaña, su escena queda leída (no se repiten los subtítulos). Las líneas de las 14
+cinemáticas salen de `granja/astra/produccion.json` con `node scripts/granja-v3/lineas-cinematicas.mjs`
+(`cine-lineas-campana.ts`); sus voces ya existían y `voces-cine.mjs` las declara en `granja/cine/medios.json` con su
+duración. Las líneas nuevas (Sangre y Ceniza, secundarias, el Altar, la boda, los lugares) están en
+`cine-lineas-historia.ts` y `cine-lineas-lugares.ts`, todas con voz.
+
+**La caja de herramientas** (`cine-kit.ts`): cielos por hora (día, tarde, atardecer, noche, noche roja) con estrellas,
+suelo con lomas, luces con sombras, luz que titila, fogata, motas (ceniza, polen, escarcha), la Constelación de los
+Amantes, `poner` (una pieza de un kit de Blender parada en el piso) y **la dirección automática de diálogos**
+(`tomasDialogo`): para cada línea escoge plano medio, sobre el hombro, de dos o general, sin meter la cámara en un
+obstáculo ni detrás de alguien, del lado del público (`audiencia`), dentro del cuarto en interiores (`dentro`), y con
+los muebles bajos (`bajos`) que se pueden mirar por encima. `actuarDialogo` mueve boca y manos del que habla y hace que
+los demás lo miren.
+
+**Actores** (`cine-actores.ts`): además de Javier, Laura y las diosas, `actorDiosa('fuatia')` (vestido de los cuatro
+elementos), `actorVecino(id)` (cualquier habitante con su ropa; `sin` quita el sombrero o lo de la cara) y
+`actorVestido` (el Conde antes del pacto, la ropa de boda…).
+
+**Pruebas**: `node scripts/_cine.mjs <id> <carpeta> tomas` (con el servidor de pruebas en 5176) saca una foto por toma;
+`scripts/_peli_juego.mjs` la reproduce dentro de la granja.
