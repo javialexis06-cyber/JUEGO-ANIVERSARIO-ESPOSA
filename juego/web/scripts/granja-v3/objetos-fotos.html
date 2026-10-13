@@ -13,7 +13,7 @@ import { cajaEnvioVista } from '/src/granja-v3/envios-render.ts';
 import { hogarMascotaVista } from '/src/granja-v3/compania-render.ts';
 // Los kits de Blender (máquinas, refugios, caja de envíos…) se cargan antes de fotografiar: si no, sale la figura de antes
 usarCargadorMuebles(cargarModelo);
-await precargarMuebles();await Promise.all(['granja_maquinas.glb','granja_obras.glb','granja_envio.glb','granja_herramientas.glb'].map(precargarKit));
+await precargarMuebles();await Promise.all(['granja_maquinas.glb','granja_obras.glb','granja_envio.glb','granja_herramientas.glb','granja_refugios.glb'].map(precargarKit));
 const manifiesto=await (await fetch('/modelos/granja-v2/manifest.json')).json(),glbs=new Set(manifiesto.assets.map(a=>a.id)),loader=new GLTFLoader(),suelos=new Suelos();
 /** Construcciones y máquinas: la misma figura que se ve en la granja. */
 async function construccion(id){

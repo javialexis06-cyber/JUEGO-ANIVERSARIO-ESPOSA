@@ -273,7 +273,27 @@ export function crearRefugio(especie: string, estilo = 'madera'): THREE.Group {
   }
   if (especie === 'grifo') { const perch = box(root, [2.30, .10, .18], [0, 1.16, 2.06], timber); perch.name = 'percha_exterior'; }
   detallesRefugio(root, especie, { wall, timber, dark, roof, edge, stone, metal });
-  compact(root); return root;
+  compact(root);
+  // Con granja_refugios.glb (personajes/blender/granja_refugios.py) todo lo de arriba se cambia por el refugio de
+  // peluche: cuerpo, techo de tejas gorditas, veleta, la carita de la especie en el frontón y los adornos de clima y
+  // especie. Las partes «ref …» del modelo toman los colores de aquí (clima y especie); mientras carga, lo de arriba.
+  conKit(root, 'granja_refugios.glb', m => {
+    const claves = ['refe_cuerpo', 'refe_techo', especie === 'gallina' || especie === 'pato' ? 'refe_veleta_gallo' : 'refe_veleta_flecha', 'refe_emb_' + especie];
+    if (especie === 'gallina' || especie === 'pato') claves.push('refe_nidales');
+    if (especie === 'grifo') claves.push('refe_percha');
+    if (especie === 'dragon' || estilo === 'fantasia') claves.push('refe_cristales_techo');
+    if (estilo === 'volcanico' || estilo === 'mineral' || estilo === 'polar') claves.push('refe_cristales_lado');
+    if (estilo === 'humedo') claves.push('refe_enredadera');
+    if (estilo === 'celeste') claves.push('refe_halo');
+    if (!m.get('refe_cuerpo') || !m.get('refe_techo')) return;
+    const por: Record<string, THREE.Material> = { 'ref muro': wall, 'ref techo': roof, 'ref madera': timber, 'ref oscuro': dark, 'ref borde': edge, 'ref piedra': stone, 'ref vidrio': glass, 'ref metal': metal };
+    const nuevo = new THREE.Group();
+    for (const k of claves) { const b = m.get(k); if (!b) continue; const c = b.clone(true); c.traverse(o => { const x = o as THREE.Mesh; if (!x.isMesh) return; const n = (x.material as THREE.Material).name.replace(/^Granja \| /, ''); if (por[n]) x.material = por[n]; }); nuevo.add(c); }
+    const propios = new Set(Object.values(por));
+    for (const c of [...root.children]) { c.removeFromParent(); c.traverse(o => { const x = o as THREE.Mesh; if (!x.isMesh) return; x.geometry.dispose(); for (const mt of ([] as THREE.Material[]).concat(x.material)) if (!propios.has(mt)) mt.dispose(); }); }
+    const f = fundir(nuevo); f.traverse(o => { o.castShadow = true; o.receiveShadow = true; }); root.add(f);
+  });
+  return root;
 }
 
 /** Detalles de granja de verdad: cimiento de piedras, veleta en el caballete, farol junto a la puerta, heno y
