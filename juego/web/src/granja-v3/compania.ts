@@ -20,7 +20,7 @@ export interface EstadoCompania {version:1;animales:Companero[];montada:string|n
 export type AccionCompania=
  |{tipo:'adoptar';animal:TipoCompania;variante:number;nombre:string;edificioId:string}
  |{tipo:'cuidar';id:string;metodo:ComfortMethod|'alimentar'|'medico'}
- |{tipo:'agua'|'seguir'|'montar'|'desmontar';id:string}
+ |{tipo:'agua'|'seguir'|'llamar'|'montar'|'desmontar';id:string}
  |{tipo:'trasladar';id:string;edificioId:string};
 export const crearCompania=():EstadoCompania=>({version:1,animales:[],montada:null});
 export const companiaDisponible=(s:EstadoGranja,tipo:TipoCompania)=>tipo==='caballo'?s.misionesCompletadas.includes('huerta')||s.desbloqueos.includes('montura'):s.misionesCompletadas.includes('hogar')||s.desbloqueos.includes('companeros');
@@ -33,7 +33,7 @@ export function companeroVisible(s:EstadoGranja,a:Companero){return !s.interior&
 export function actualizarCompania(s:EstadoGranja,now:number){for(const a of todosCompaneros(s))a.cuidado=reconciliarAnimal(a.cuidado,now);}
 export function monturaSana(s:EstadoGranja){const a=s.compania.animales.find(a=>a.id===s.compania.montada);if(!a)return true;const salud=estadoAnimal(a.cuidado,s.ultimoTiempo);return !salud.enfermo&&!salud.deprimido&&!salud.hambriento;}
 export function posicionMontada(s:EstadoGranja,x:number,z:number,direccion?:number){const a=todosCompaneros(s).find(a=>a.id===s.compania.montada);if(a&&!s.interior&&!s.servicio&&!s.aventura.destinoActual&&dentroDeZona(s.zona,x,z)){a.posicion={zona:s.zona,x,z};if(direccion!==undefined&&Number.isFinite(direccion))a.direccion=Math.atan2(Math.sin(direccion),Math.cos(direccion));s.posicionExterior={zona:s.zona,x,z};}}
-export function cerrarDiaCompania(s:EstadoGranja){for(const a of todosCompaneros(s)){if(a.aguaDia===s.jornada.diasCompletados)a.amistad=Math.min(1000,a.amistad+6);const b=s.edificios.find(b=>b.id===a.edificioId)!;const p=hogarCompania(b,a.tipo),libre=puntoTransitable(s,p.x,p.z,a.tipo==='caballo'?.45:.2,'granja')?p:buscarPatioLibre(s,p,a.tipo==='caballo'?.45:.2);if(libre)a.posicion={zona:'granja',...libre};a.actividad='reposo';}s.compania.montada=null;}
+export function cerrarDiaCompania(s:EstadoGranja){for(const a of todosCompaneros(s)){if(a.aguaDia===s.jornada.diasCompletados)a.amistad=Math.min(1000,a.amistad+6);const b=s.edificios.find(b=>b.id===a.edificioId)!;const p=hogarCompania(b,a.tipo),libre=puntoTransitable(s,p.x,p.z,a.tipo==='caballo'?.45:.2,'granja')?p:buscarPatioLibre(s,p,a.tipo==='caballo'?.45:.2);if(libre)a.posicion={zona:'granja',...libre};if(a.tipo==='caballo')a.seguir=false;a.actividad='reposo';}s.compania.montada=null;}
 function buscarPatioLibre(s:EstadoGranja,p:{x:number;z:number},radio:number){for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]])if(puntoTransitable(s,p.x+dx,p.z+dz,radio,'granja'))return {x:p.x+dx,z:p.z+dz};return null;}
 export function trasladarHogarCompania(s:EstadoGranja,b:Edificio){for(const a of todosCompaneros(s).filter(a=>a.edificioId===b.id)){a.posicion={zona:'granja',...hogarCompania(b,a.tipo)};a.actividad='reposo';}}
 export function puntoDesmontar(s:EstadoGranja,x:number,z:number){for(const [dx,dz]of [[1.1,0],[-1.1,0],[0,1.1],[0,-1.1],[.85,.85],[-.85,.85],[.85,-.85],[-.85,-.85]])if(puntoTransitable(s,x+dx,z+dz))return {x:x+dx,z:z+dz};return null;}
@@ -61,11 +61,18 @@ export function actuarCompania(s:EstadoGranja,a:AccionCompania,x:number,z:number
   if(s.compania.montada!==c.id||!companeroVisible(s,c)||!Number.isFinite(x)||!Number.isFinite(z)||Math.hypot(x-c.posicion.x,z-c.posicion.z)>.8)return mal('Esta montura no está junto al personaje.');
   const p=puntoDesmontar(s,x,z);if(!p)return mal('No hay espacio libre para desmontar. Busca un camino más ancho.');s.compania.montada=null;c.actividad='reposo';s.posicionExterior={zona:s.zona,...p};return {...bien('Desmontas; '+c.nombre+' esperará aquí.'),posicionZona:p};
  }
+ if(a.tipo==='llamar'){
+  if(s.zona!=='granja'||s.interior||s.servicio||s.aventura.destinoActual||c.posicion.zona!=='granja'||!Number.isFinite(x)||!Number.isFinite(z)||!dentroDeZona('granja',x,z))return mal('La llamada funciona mientras ambos están en el exterior de la granja.');
+  if(s.compania.montada)return mal('Desmonta antes de llamar a un compañero.');
+  if(s.jornada.minutos<360||s.jornada.minutos>=1140)return mal('Deja descansar al compañero hasta la mañana.');
+  const salud=estadoAnimal(c.cuidado,now);if(salud.enfermo||salud.deprimido||c.tipo==='caballo'&&salud.hambriento)return mal('Alimenta y atiende al compañero antes de llamarlo.');
+  if(c.seguir)return mal('El compañero ya está atendiendo tu llamada.');c.seguir=true;return bien(c.nombre+' caminará hacia ti por los pasos libres. Si el cerco está cerrado, abre el portón.');
+ }
  const b=s.edificios.find(b=>b.id===c.edificioId)!;const p=a.tipo==='agua'?cuencoCompania(b):c.posicion;
  if(!companeroVisible(s,c)||a.tipo==='agua'&&s.zona!=='granja'||!Number.isFinite(x)||!Number.isFinite(z)||Math.hypot(x-p.x,z-p.z)>2.8)return mal('Acércate al compañero o a su cuenco.');
  if(s.compania.montada)return mal('Desmonta antes de cuidar o montar otro animal.');
  if(a.tipo==='montar'){
-  if(c.tipo!=='caballo'||s.zona==='mina')return mal('Solo puedes montar caballos al aire libre.');const salud=estadoAnimal(c.cuidado,now);if(salud.enfermo||salud.deprimido||salud.hambriento)return mal('Alimenta y cura al caballo antes de montar.');if(!puntoTransitable(s,c.posicion.x,c.posicion.z,.45))return mal('Despeja el espacio alrededor del caballo.');s.compania.montada=c.id;s.posicionExterior={...c.posicion};return {...bien('Montas a '+c.nombre+'. Usa WASD o las flechas; pulsa Desmontar para bajarte.'),posicionZona:{x:c.posicion.x,z:c.posicion.z}};
+  if(c.tipo!=='caballo'||s.zona==='mina')return mal('Solo puedes montar caballos al aire libre.');const salud=estadoAnimal(c.cuidado,now);if(salud.enfermo||salud.deprimido||salud.hambriento)return mal('Alimenta y cura al caballo antes de montar.');if(!puntoTransitable(s,c.posicion.x,c.posicion.z,.45))return mal('Despeja el espacio alrededor del caballo.');c.seguir=false;s.compania.montada=c.id;s.posicionExterior={...c.posicion};return {...bien('Montas a '+c.nombre+'. Usa WASD o las flechas; pulsa Desmontar para bajarte.'),posicionZona:{x:c.posicion.x,z:c.posicion.z}};
  }
  if(a.tipo==='agua'){
   if(c.tipo==='caballo')return mal('Este cuenco pertenece a una mascota.');if(s.herramienta!=='regadera'||s.mejoraHerramienta?.herramienta==='regadera')return mal('Equipa tu regadera para llenar el cuenco.');if(c.aguaDia===dia)return mal('El cuenco ya tiene agua para esta jornada.');c.aguaDia=dia;puerto.contar('cuencos_regados');return bien('Cuenco lleno. Su vínculo mejorará al dormir, una vez por jornada.');
@@ -81,22 +88,22 @@ export function actuarCompania(s:EstadoGranja,a:AccionCompania,x:number,z:number
 /** Las rutas son una caché de sesión, no crecimiento ni datos necesarios del guardado. */
 export class PaseosCompania {
  private estado?:EstadoGranja;private revision=-1;private celdas=new Map<string,boolean>();
- private libre(s:EstadoGranja,x:number,z:number){if(this.estado!==s||this.revision!==s.revision){this.celdas.clear();this.estado=s;this.revision=s.revision;}return [[-.18,-.18],[.18,-.18],[-.18,.18],[.18,.18]].every(([dx,dz])=>{const xx=Math.floor(x+dx),zz=Math.floor(z+dz),key=xx+','+zz;if(!this.celdas.has(key))this.celdas.set(key,celdaTransitable(s,xx,zz,'granja'));return this.celdas.get(key)!;});}
+ private libre(s:EstadoGranja,x:number,z:number,radio=.18){if(this.estado!==s||this.revision!==s.revision){this.celdas.clear();this.estado=s;this.revision=s.revision;}return [[-radio,-radio],[radio,-radio],[-radio,radio],[radio,radio]].every(([dx,dz])=>{const xx=Math.floor(x+dx),zz=Math.floor(z+dz),key=xx+','+zz;if(!this.celdas.has(key))this.celdas.set(key,celdaTransitable(s,xx,zz,'granja'));return this.celdas.get(key)!;});}
  private rutas=new Map<string,{puntos:{x:number;z:number}[];restante:number;meta:string}>();
  limpiar(){this.rutas.clear();this.celdas.clear();this.estado=undefined;this.revision=-1;}
  paso(s:EstadoGranja,dt:number,jugador:{x:number;z:number;direccion?:number}){
   if(!Number.isFinite(dt)||dt<=0||s.interior||s.servicio||s.aventura.destinoActual||s.jornada.resumenPendiente)return;dt=Math.min(dt,.1);posicionMontada(s,jugador.x,jugador.z,jugador.direccion);
   if(s.zona!=='granja')return;
   for(const a of todosCompaneros(s)){
-   if(a.tipo==='caballo'||a.posicion.zona!=='granja')continue;
-   const salud=estadoAnimal(a.cuidado,s.ultimoTiempo);if(salud.enfermo||salud.deprimido){a.actividad='reposo';continue;}
-   const b=s.edificios.find(b=>b.id===a.edificioId);if(!b)continue;const noche=s.jornada.minutos>=19*60;
-   const meta=a.seguir&&!noche?jugador:hogarCompania(b,a.tipo);const distancia=Math.hypot(meta.x-a.posicion.x,meta.z-a.posicion.z);if(distancia<(a.seguir&&!noche?1.6:.3)){a.actividad=noche?'dormir':'reposo';this.rutas.delete(a.id);continue;}
+   if(a.posicion.zona!=='granja'||s.compania.montada===a.id||a.tipo==='caballo'&&!a.seguir)continue;
+   const salud=estadoAnimal(a.cuidado,s.ultimoTiempo);if(salud.enfermo||salud.deprimido||a.tipo==='caballo'&&salud.hambriento){a.actividad='reposo';continue;}
+   const b=s.edificios.find(b=>b.id===a.edificioId);if(!b)continue;const noche=s.jornada.minutos>=19*60;if(a.tipo==='caballo'&&noche){a.seguir=false;a.actividad='reposo';this.rutas.delete(a.id);continue;}const radio=a.tipo==='caballo'?.45:.18;
+   const meta=a.seguir&&!noche?jugador:hogarCompania(b,a.tipo);const distancia=Math.hypot(meta.x-a.posicion.x,meta.z-a.posicion.z);if(distancia<(a.seguir&&!noche?1.6:.3)){a.actividad=noche?'dormir':'reposo';if(a.tipo==='caballo')a.seguir=false;this.rutas.delete(a.id);continue;}
    const clave=Math.floor(meta.x)+','+Math.floor(meta.z);let ruta=this.rutas.get(a.id);if(ruta)ruta.restante-=dt;
-   if(!ruta||ruta.restante<=0||ruta.meta!==clave){ruta={puntos:buscarRuta(s,a.posicion,meta,(x,z)=>this.libre(s,x,z)),restante:1,meta:clave};this.rutas.set(a.id,ruta);}
+   if(!ruta||ruta.restante<=0||ruta.meta!==clave){ruta={puntos:buscarRuta(s,a.posicion,meta,(x,z)=>this.libre(s,x,z,radio)),restante:1,meta:clave};this.rutas.set(a.id,ruta);}
    const p=ruta.puntos[0];if(!p){a.actividad='reposo';continue;}
    const dx=p.x-a.posicion.x,dz=p.z-a.posicion.z,d=Math.hypot(dx,dz),paso=Math.min(d,dt*(a.tipo==='tortuga'?.65:2.2));
-   if(d<.05){ruta.puntos.shift();continue;}const x=a.posicion.x+dx/d*paso,z=a.posicion.z+dz/d*paso;if(!this.libre(s,x,z)){this.rutas.delete(a.id);a.actividad='reposo';continue;}
+   if(d<.05){ruta.puntos.shift();continue;}const x=a.posicion.x+dx/d*paso,z=a.posicion.z+dz/d*paso;if(!this.libre(s,x,z,radio)){this.rutas.delete(a.id);a.actividad='reposo';continue;}
    a.posicion.x=x;a.posicion.z=z;a.direccion=Math.atan2(dx,dz);a.actividad='caminar';
   }
  }
