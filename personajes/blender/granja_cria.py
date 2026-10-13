@@ -1,10 +1,13 @@
-"""Nuestro Hogar · granja: la cría de unicornio de «La cría que no quiere hablar» (T03, docs/en-obra/pelicula-de-astra.md).
+"""Nuestro Hogar · granja: utilería de cine (docs/en-obra/pelicula-de-astra.md): la cría de unicornio de «La cría que no
+quiere hablar» (T03) y la copa del Conde de «La Noche Eterna» (SC0).
 
   cria_unicornio   potrillo de peluche: cabeza grande y redonda, cuerpo gordito, patas cortas con cascos lila,
                    ojos enormes, cachetes rosados, crin y cola de colores pastel y un cuernito nacarado que apenas
                    está brotando (con su espiral)
 
-Mira hacia -y (en el juego, hacia la cámara). Un solo GLB: granja_cria.glb.
+  copa_conde       la copa de oro viejo con un rubí, llena de ceniza de estrella muerta que brilla frío
+
+La cría mira hacia -y (en el juego, hacia la cámara). Un solo GLB: granja_cria.glb.
 Uso: blender -b -P granja_cria.py -- <carpeta_salida>
 """
 import math
@@ -83,6 +86,17 @@ def m_cria_unicornio(coll):
                       laca('estrella cría', '#F2C94C', 0.3), n=3)
 
 
+def m_copa_conde(coll):
+    oro = laca('oro viejo copa', '#B88A3A', 0.3)
+    clay.lathe('copa conde', [(0.0, 0.0), (0.07, 0.0), (0.075, 0.015), (0.02, 0.03), (0.014, 0.1), (0.03, 0.13), (0.075, 0.17), (0.085, 0.24), (0.078, 0.245),
+                              (0.068, 0.18), (0.0, 0.17)], coll, oro, segments=24)
+    clay.blob('nudo copa', (0, 0, 0.075), (0.025, 0.025, 0.02), coll, oro, n=5)
+    clay.lathe('ceniza copa', [(0.0, 0.22), (0.072, 0.22), (0.072, 0.225), (0.0, 0.225)], coll, luz('ceniza estrella', '#8FA0D8', 1.4), segments=20, subsurf=0)
+    for k in range(3):
+        a = k / 3 * math.tau
+        clay.blob('rubí copa', (math.cos(a) * 0.082, math.sin(a) * 0.082, 0.2), (0.016, 0.012, 0.02), coll, laca('rubí', '#B0142C', 0.15), n=4)
+
+
 PIEZAS = {k[2:]: v for k, v in list(globals().items()) if k.startswith('m_') and callable(v) and v.__module__ == __name__}
 
 
@@ -104,7 +118,7 @@ def main(out, claves=None):
     objs = []
     for r in raices:
         objs.extend(exportar_glb.arbol(r))
-    exportar_glb.exportar(objs, os.path.join(out, 'granja_cria.glb'))
+    exportar_glb.exportar(objs, os.path.join(out, 'granja_cria.glb'))  # (la cría y la copa)
 
 
 if __name__ == '__main__':

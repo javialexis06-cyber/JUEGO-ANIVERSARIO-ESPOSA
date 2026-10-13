@@ -22,7 +22,7 @@ planeación de cuatro minijuegos futuros. Plan completo en [`en-obra/pelicula-de
 las voces de la película, la música de la boda y **las 28 películas animadas de punta a punta** (prólogo, Actos I-V,
 Sangre y Ceniza, las seis secundarias, el Altar del Lazo y la boda en Eterna con créditos). Después: postales de los
 biomas en Sangre, la voz del Conde en su pelea, fotos en los créditos, la cría de unicornio y la ropa propia de Fuatia,
-Nath'Gora y Vael'Thor. **Siguiente**: la copa del Conde en SC0 y, cuando Javier diga, los minijuegos (fase H). **Espera a Javier**: GitHub
+Nath'Gora y Vael'Thor. También la copa del Conde en SC0. **Siguiente**: cuando Javier diga, los minijuegos (fase H). **Espera a Javier**: GitHub
 Actions quedó desactivado en su cuenta («Actions has been disabled for this user»): sin eso no salen APK nuevas.
 
 

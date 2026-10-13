@@ -237,8 +237,8 @@ function castillo(): Escenario {
         hora: 'noche', sol: new THREE.Vector3(0.1, 0.4, -0.9), colores: null, fondo: '#05050c', niebla: ['#0b0814', 14, 70], exposicion: 1.05, radio: 14,
         async montar(g) {
           g.add(cieloM);
-          const [kit, conde] = await Promise.all([
-            cargar('sangre/bioma_castillo.glb'),
+          const [kit, utileria, conde] = await Promise.all([
+            cargar('sangre/bioma_castillo.glb'), cargar('granja_cria.glb'),
             actorVestido('el', { piel: '#e7c2a6', pelo: '#6b6460', detalles: { ojos: '#4a3a3a' } }, {
               pelo: piezaRopa('pelo_lado', 'pelo'), cara: piezaRopa('bigote', 'cara'), cabeza: piezaRopa('corona', 'cabeza'),
               arriba: piezaRopa('sangre_monarca', 'arriba', {}, ['abajo']), espalda: piezaRopa('capa', 'espalda', { principal: '#5a1424', broche: '#d9b45a' }), pies: piezaRopa('botas', 'pies'),
@@ -268,6 +268,11 @@ function castillo(): Escenario {
           frio = motasFlotantes(160, [0, 0.4, -1.5], 3.5, 3, [0.55, 0.65, 1], 2, 21);
           g.add(ceniza, frio);
           colocar(conde, 0, -1.6, 0, 5);
+          // La copa con la ceniza de estrella muerta, en la mano del Conde
+          const copa = poner(utileria, 'copa_conde', 0, 0, 0, 1, 0, false);
+          // (el hueso «comida» es el que lleva lo que se come a la boca: así la copa sube cuando bebe)
+          const mano = conde.p.huesos.get('comida') ?? conde.p.huesos.get('manoR');
+          if (mano) { mano.add(copa); copa.position.set(0, 0, 0); copa.rotation.x = -0.5; copa.scale.setScalar(COPA_ESCALA); }
           return { conde };
         },
         animar(c, reparto) {
@@ -346,6 +351,8 @@ function altarLara(): Escenario {
   });
 }
 
+/** Tamaño de la copa en el hueso de la mano (el muñeco viene escalado). */
+const COPA_ESCALA = 2.4;
 export const SC0: Guion = (() => {
   const [n1, c1, ng1, c2, ng2, n2, e1, l1, s1] = LINEAS_SC0;
   const tomas: Toma[] = [
