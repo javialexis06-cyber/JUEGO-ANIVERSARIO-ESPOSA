@@ -557,6 +557,12 @@ Dónde está:
   piedra con agua y comedero con paja, y el maíz de los gallineros), `detalleAmpliacion` (pilares con anillos y el
   letrero colgado con sus estrellas, dorado en el nivel 3), `incubadoraVista` (lámpara, rejillas, termómetro y el huevo
   aparte), `trufaVista` y `huevosRefugio` (nido de paja trenzada y huevitos del color de la especie).
+- **Piezas que se mueven en las máquinas** **hecho** (13 de octubre): `granja_movimiento.glb`
+  (`personajes/blender/granja_movimiento.py`), cada pieza armada alrededor de su bisagra: rotor de la nave, brazo del
+  aspersor (cobre o hierro), rodillo dentado (trituradora y recuperadoras), fuelle del alto horno, broca en espiral,
+  brazo mecánico con pinza y engranajes de la ensambladora (ahora parados, giran en z), volante de la prensa,
+  manivela del molino y la rueda de la recicladora. `escenas-produccion.ts figura` las cuelga de cada `movil` (en los
+  aros, escaladas al radio y con el aro escondido). Íconos de esas máquinas vueltos a fotografiar.
 - **Guardián del bosque antiguo** **hecho** (13 de octubre): `vista.ts monstruo` usa el Guardián de piedra de
   `granja_monstruos.glb` (la barra de vida sigue aparte).
 

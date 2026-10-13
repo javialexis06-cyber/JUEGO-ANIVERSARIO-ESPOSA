@@ -97,6 +97,15 @@ export function figura(articulo:string):FiguraProduccion{
  compactar(fijo);const luz=piloto(grupo);luz.visible=false;
  // La parte fija se cambia por su modelo de Blender (granja_maquinas.glb); lo que se mueve sigue siendo de aquí
  conKit(grupo,'granja_maquinas.glb',m=>{const base=m.get(claveMaquina(articulo));if(!base)return;for(const o of [...fijo.children]){o.removeFromParent();o.traverse(x=>{const malla=x as THREE.Mesh;if(malla.isMesh){malla.geometry.dispose();for(const mt of ([] as THREE.Material[]).concat(malla.material))mt.dispose();}});}fijo.add(base.clone(true));});
+ // Lo que se mueve, con las piezas de granja_movimiento.glb (personajes/blender/granja_movimiento.py), hechas
+ // alrededor de su bisagra: cada pieza se cuelga del mismo grupo (o del aro, que se esconde) y sigue girando igual
+ if(!portal)conKit(grupo,'granja_movimiento.glb',m=>{moviles.forEach((mov,k)=>{
+  const clave=articulo.startsWith('nave_')?'mov_nave_rotor':aspersor?(articulo.includes('hierro')?'mov_aspersor_hierro':'mov_aspersor_cobre'):articulo==='trituradora'||articulo.startsWith('recuperadora_')?'mov_rodillo':articulo==='alto_horno'?'mov_fuelle':articulo==='taladro_vapor'?'mov_broca':articulo==='ensambladora'?(k?'mov_engranaje':'mov_brazo'):articulo==='prensa'?'mov_volante':articulo==='molino_artesanal'?'mov_manivela':'mov_rueda';
+  const pieza=m.get(clave);if(!pieza)return;const c=pieza.clone(true),malla=mov as THREE.Mesh;
+  if(malla.isMesh){const radio=(malla.geometry as THREE.TorusGeometry).parameters?.radius??.2;c.scale.setScalar(radio);(malla.material as THREE.Material).visible=false;malla.castShadow=false;}
+  else for(const hijo of [...mov.children]){hijo.removeFromParent();hijo.traverse(o=>{const x=o as THREE.Mesh;if(x.isMesh){x.geometry.dispose();for(const mt of ([] as THREE.Material[]).concat(x.material))mt.dispose();}});}
+  mov.add(c);
+ });});
  return {grupo,articulo,moviles,piloto:luz,proceso:false,llena:false,portal,aspersor};
 }
 
@@ -116,7 +125,7 @@ export class EscenaProduccion{
  update(dt:number){if(!this.grupo.visible)return;this.tiempo+=Math.max(0,Math.min(.1,dt));const t=this.tiempo;
   for(const f of this.figuras.values()){
    if(f.portal){f.moviles.forEach((m,i)=>{if(!i)(m as THREE.Mesh<THREE.BufferGeometry,THREE.MeshBasicMaterial>).material.opacity=.4+Math.sin(t*1.6)*.07;else{m.position.x=Math.sin(t*.5+i*2.4)*.53;m.position.y=.35+((t*.15+i*.21)%1.57);}});}
-   else if(f.aspersor||f.proceso||f.articulo==='nave_exploradora')for(const [k,m] of f.moviles.entries()){if(f.articulo==='recicladora')m.rotation.z+=dt*1.4;else if(f.articulo==='trituradora'||f.articulo.startsWith('recuperadora_'))m.rotation.x+=dt*(k?-3:3);else if(f.articulo==='alto_horno')m.scale.y=1+Math.sin(performance.now()/180)*.35;else if(f.articulo==='ensambladora')m.rotation.y=k?m.rotation.y+dt*2.4:Math.sin(performance.now()/400)*.9;else if(f.articulo==='taladro_vapor')m.rotation.y+=dt*6;else m.rotation.y+=dt*(f.aspersor?1.1:f.articulo==='nave_exploradora'?.35:1.4);}
+   else if(f.aspersor||f.proceso||f.articulo==='nave_exploradora')for(const [k,m] of f.moviles.entries()){if(f.articulo==='recicladora')m.rotation.z+=dt*1.4;else if(f.articulo==='trituradora'||f.articulo.startsWith('recuperadora_'))m.rotation.x+=dt*(k?-3:3);else if(f.articulo==='alto_horno')m.scale.y=1+Math.sin(performance.now()/180)*.35;else if(f.articulo==='ensambladora'){if(k)m.rotation.z+=dt*(k%2?2.4:-3.4);else m.rotation.y=Math.sin(performance.now()/400)*.9;}else if(f.articulo==='taladro_vapor')m.rotation.y+=dt*6;else m.rotation.y+=dt*(f.aspersor?1.1:f.articulo==='nave_exploradora'?.35:1.4);}
    f.piloto.scale.setScalar(f.llena?1:1+Math.sin(t*4)*.08);
   }
  }
