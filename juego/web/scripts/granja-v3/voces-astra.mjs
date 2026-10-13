@@ -5,6 +5,7 @@
 //                                                     mano) y la prueba; queda en voces-guion/astra-reparto.json
 //   SECO=1 node scripts/granja-v3/voces-astra.mjs     → cuenta lo que falta y lo que cuesta, no gasta nada
 //   node scripts/granja-v3/voces-astra.mjs           → genera lo que falte (SOLO=<escena o prefijo>, LIMITE=n)
+//   node scripts/granja-v3/voces-astra.mjs celestial → pasa al sonido celestial los audios de las diosas que ya existían
 //
 // Él y Ella usan sus voces clonadas («EL» y «ELLA»). Las líneas «(En señas)» no llevan voz (Maia habla en señas).
 // Cada audio va a public/audio/astra/<id>-<huella>.ogg (Opus mono 24 kb/s, sin silencios en las puntas) y se declara en
@@ -15,6 +16,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { DIOSAS, FILTRO_CELESTIAL } from './filtro-celestial.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PUB = join(RAIZ, 'public');
@@ -146,7 +148,11 @@ async function reparto() {
 
 const enSenas = (l) => /^\(En señas\)/.test(l.texto);
 const decir = (l) => l.texto.replace(/^\([^)]*\)\s*/, '');
-const huellaAudio = (l, voz) => createHash('sha1').update(`${MODELO}|${JSON.stringify(AJUSTES)}|${voz}|${decir(l)}`).digest('hex').slice(0, 5);
+// Las diosas llevan el sonido celestial de las películas (filtro-celestial.mjs); entra en la huella para rehacerlas
+const celestial = (l) => DIOSAS.has(l.hablante);
+const huellaCruda = (l, voz) => createHash('sha1').update(`${MODELO}|${JSON.stringify(AJUSTES)}|${voz}|${decir(l)}`).digest('hex').slice(0, 5);
+const huellaAudio = (l, voz) => (celestial(l) ? createHash('sha1').update(`${huellaCruda(l, voz)}|${FILTRO_CELESTIAL}`).digest('hex').slice(0, 5) : huellaCruda(l, voz));
+const filtroDe = (l) => `silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse,${celestial(l) ? `${FILTRO_CELESTIAL},apad=pad_dur=0.6` : 'apad=pad_dur=0.1'},loudnorm=I=-18:TP=-2:LRA=11`;
 const archivoDe = (l, voz) => `${l.id}-${huellaAudio(l, voz)}.ogg`;
 
 async function generar() {
@@ -181,7 +187,7 @@ async function generar() {
         });
         const mp3 = join(tmp, `${l.id}.mp3`);
         writeFileSync(mp3, Buffer.from(await r.arrayBuffer()));
-        execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', mp3, '-af', 'silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse,apad=pad_dur=0.1,loudnorm=I=-18:TP=-2:LRA=11', '-ar', '48000', '-ac', '1', '-c:a', 'libopus', '-b:a', '24k', join(DIR, archivoDe(l, voz(l.hablante)))]);
+        execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', mp3, '-af', filtroDe(l), '-ar', '48000', '-ac', '1', '-c:a', 'libopus', '-b:a', '24k', join(DIR, archivoDe(l, voz(l.hablante)))]);
         unlinkSync(mp3);
         if (++hechas % 50 === 0) console.log(`  ${hechas}/${falta.length}`);
       } catch (err) {
@@ -214,5 +220,21 @@ function armarMedios(conVoz, voz) {
   console.log(`medios.json: ${Object.keys(voces).length} voces${borrados ? ` (${borrados} audios viejos borrados)` : ''}`);
 }
 
+/** Pasa al sonido celestial los audios de las diosas que ya existían con la misma voz (sin gastar créditos). */
+async function celestialSinGastar() {
+  const rep = JSON.parse(readFileSync(REPARTO, 'utf8'));
+  let n = 0;
+  for (const l of produccion.lineas) {
+    const v = rep[l.hablante]?.voz;
+    if (!celestial(l) || !v || enSenas(l)) continue;
+    const viejo = join(DIR, `${l.id}-${huellaCruda(l, v)}.ogg`), nuevo = join(DIR, archivoDe(l, v));
+    if (!existsSync(viejo) || existsSync(nuevo)) continue;
+    execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', viejo, '-af', `${FILTRO_CELESTIAL},apad=pad_dur=0.6,loudnorm=I=-18:TP=-2:LRA=11`, '-ac', '1', '-ar', '48000', '-c:a', 'libopus', '-b:a', '24k', nuevo]);
+    n++;
+  }
+  console.log(`celestial: ${n} audios de las diosas reprocesados`);
+}
+
 if (process.argv[2] === 'reparto') await reparto();
+else if (process.argv[2] === 'celestial') await celestialSinGastar();
 else await generar();

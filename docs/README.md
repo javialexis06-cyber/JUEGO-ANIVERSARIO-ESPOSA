@@ -30,6 +30,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 
 | Archivo | Estado |
 |---|---|
+| [`pelicula-de-astra.md`](en-obra/pelicula-de-astra.md) | **Propuesta** de la película de Astra: las 28 escenas animadas en orden, la boda, Sangre y Ceniza y los minijuegos futuros. |
 | [`granja-coordinacion.md`](en-obra/granja-coordinacion.md) | Reparto pedido por Javier: motor/historia en el frente de granja; gráficos, personajes y presentación a cargo de Claude; avances probados y subidos. |
 | [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor (misiones, minerales, mapa de la Noche y, en L, armas, sobrecargas, reliquias y el familiar), para pulirla con Javier. |
 | [`lavado-propuesta.md`](en-obra/lavado-propuesta.md) | Lavarse la cara 2: lo que le falta frente a Vampire Survivors (24 armas, cartas, modos, tesoros, mercader, escenarios, disfraces), para pulirla con Javier. |

@@ -7,7 +7,7 @@
 //   SECO=1 node scripts/granja-v3/voces-cine.mjs     → cuenta lo que falta y lo que cuesta, no gasta nada
 //   node scripts/granja-v3/voces-cine.mjs            → genera lo que falte
 //
-// Las diosas pasan por un procesado celestial (reverberación de catedral, un coro muy suave y brillo arriba); el
+// Las diosas pasan por un procesado celestial suave (eco corto, un coro que casi no se nota y algo de brillo arriba); el
 // narrador, por una sala cálida. Cada audio va a public/audio/cine/<id>-<huella>.ogg y se declara con su duración en
 // public/granja/cine/medios.json (el cine mide así cada toma sin cargar el audio). La huella sale del modelo, la voz,
 // el procesado y cómo se dice: si algo cambia, se rehace solo esa línea.
@@ -18,6 +18,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFile
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compilarModulo } from './modulos-prueba.mjs';
+import { DIOSAS, FILTRO_CELESTIAL } from './filtro-celestial.mjs';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PUB = join(RAIZ, 'public');
@@ -25,14 +26,14 @@ const DIR = join(PUB, 'audio', 'cine');
 const MEDIOS = join(PUB, 'granja', 'cine', 'medios.json');
 const REPARTO = join(RAIZ, 'voces-guion', 'cine-reparto.json');
 const REPARTO_ASTRA = join(RAIZ, 'voces-guion', 'astra-reparto.json');
+const MEDIOS_ASTRA = join(PUB, 'granja', 'astra', 'medios.json');
 const CLAVE = process.env.ELEVENLABS_API_KEY;
 const MODELO = process.env.MODELO ?? 'eleven_v4';
 const AJUSTES = { stability: 0.45, similarity_boost: 0.8, style: 0.35 };
-const DIVINAS = new Set(['celia', 'aura', 'lara']);
+const DIVINAS = DIOSAS; // Celia, Aura, Lara y Fuatia
 /** Cómo se procesa cada quien (ffmpeg). */
 const FILTRO = {
-  // Catedral: dos ecos largos y suaves, un coro apenas perceptible y un poquito de brillo arriba
-  celestial: 'highpass=f=90,chorus=0.7:0.9:55|70:0.22|0.18:0.25|0.3:2|2.3,aecho=0.85:0.75:120|240|380:0.32|0.22|0.14,equalizer=f=9000:t=q:w=1:g=3',
+  celestial: FILTRO_CELESTIAL, // filtro-celestial.mjs
   narrador: 'highpass=f=70,aecho=0.8:0.6:45|90:0.16|0.08',
   normal: 'highpass=f=70',
 };
@@ -133,6 +134,15 @@ function armarMedios(voz) {
     if (!existsSync(f)) continue;
     usados.add(a);
     voces[l.id] = { archivo: `./audio/cine/${a}`, seg: Math.round(segundos(f) * 100) / 100 };
+  }
+  // Las 14 cinemáticas de la campaña usan las voces que ya hizo voces-astra.mjs: se declaran aquí con su duración
+  const astra = existsSync(MEDIOS_ASTRA) ? JSON.parse(readFileSync(MEDIOS_ASTRA, 'utf8')).voces ?? {} : {};
+  const viejos = existsSync(MEDIOS) ? JSON.parse(readFileSync(MEDIOS, 'utf8')).voces ?? {} : {};
+  for (const [id, v] of Object.entries(astra)) {
+    if (!/^C\d\d\./.test(id)) continue;
+    const f = join(PUB, v.archivo.replace(/^\.\//, ''));
+    if (!existsSync(f)) continue;
+    voces[id] = { archivo: v.archivo, seg: viejos[id]?.archivo === v.archivo ? viejos[id].seg : Math.round(segundos(f) * 100) / 100 };
   }
   let borrados = 0;
   if (existsSync(DIR)) for (const f of readdirSync(DIR)) if (f.endsWith('.ogg') && !usados.has(f)) (unlinkSync(join(DIR, f)), borrados++);

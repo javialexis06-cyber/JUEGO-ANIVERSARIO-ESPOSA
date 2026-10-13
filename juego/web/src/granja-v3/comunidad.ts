@@ -33,7 +33,7 @@ export function puedePescarComunidad(s:EstadoGranja,x?:number,z?:number){
 export function anotarHecho(s:EstadoGranja,id:string,hecho:HechoCuaderno,n=1){if(!s.comunidad||!obtenerObjeto(id)||!Number.isInteger(n)||n<1)return;const e=s.comunidad.cuaderno[id]??={};const r=e[hecho];e[hecho]={cantidad:Math.min(1e9,(r?.cantidad??0)+n),dia:r?.dia??s.jornada.diasCompletados};}
 export function registrarComunidad(s:EstadoGranja,a:Accion,antes:EstadoGranja){
  for(const [id,n]of Object.entries(s.inventario)){const delta=n-(antes.inventario[id]??0);if(delta>0)anotarHecho(s,id,'obtener',delta);}
- if(a.tipo==='pescar')for(const p of PECES){const n=(s.estadisticas['pez_'+p.id]??0)-(antes.estadisticas['pez_'+p.id]??0);if(n>0)anotarHecho(s,p.id,'capturar',n);}
+ if(a.tipo==='pescar'||a.tipo==='pesca')for(const p of PECES){const n=(s.estadisticas['pez_'+p.id]??0)-(antes.estadisticas['pez_'+p.id]??0);if(n>0)anotarHecho(s,p.id,'capturar',n);}
  if(a.tipo==='vender_pila'){const p=antes.casillasInventario[a.casilla];if(p)anotarHecho(s,p.articulo,'vender',Math.max(0,(antes.inventario[p.articulo]??0)-(s.inventario[p.articulo]??0)));}
  if(a.tipo==='dormir')for(const p of s.jornada.ultimaNoche?.envios?.lineas??[])anotarHecho(s,p.articulo,'vender',p.cantidad);
 }

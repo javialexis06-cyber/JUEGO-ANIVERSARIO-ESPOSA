@@ -1,3 +1,4 @@
+import type {EstadoPesca,AccionPesca} from './pesca-tipos';
 import type {EstadoComunidad,AccionComunidad} from './comunidad-tipos';
 import type {EstadoRegional,AccionRegional} from './regiones-tipos';
 import type {AccionVidaAstra} from './vida-astra-tipos';
@@ -34,11 +35,12 @@ import type { EstadoTiempo } from './clima';
 import type { EstadoGuia } from './guia';
 
 export interface Animal {id:string;nombre:string;especie:Species;sexo:'hembra'|'macho';genoma:Genome;nacimiento:number;edadDias:number;ultimoCruce:number|null;edificioId:string;cuidado:AnimalCare;productos:number;ultimoProductoAt:number;ultimoDiaExperiencia?:number;productoLegado?:boolean;rutina?:RutinaAnimal}
-export interface Edificio {nivel?:1|2|3;id:string;articulo:string;x:number;z:number;giro:number;especie?:Species;clima:Clima;pasto:number;ultimoPastoAt:number;puertaGanado?:boolean;henoReserva?:number;henoCalidades?:[number,number,number,number]}
+export interface Edificio {nivel?:1|2|3;id:string;articulo:string;x:number;z:number;giro:number;especie?:Species;clima:Clima;pasto:number;ultimoPastoAt:number;portonAbierto?:boolean;puertaGanado?:boolean;henoReserva?:number;henoCalidades?:[number,number,number,number]}
 export interface Obstaculo {id:string;tipo:'arbol'|'roca'|'maleza'|'ruina';x:number;z:number;sectorId:number;hp:number;hpMax:number;zona?:Zona;nivelMina?:number;regeneraEn:number|null;gigante?:boolean}
 export interface Drop {id:string;articulo:string;cantidad:number;x:number;z:number;zona:Zona;nivelMina?:number}
 export interface Parcela {campo?:CampoCultivo;x:number;z:number;cultivo:string|null;cuidado:CropCare|null}
 export interface EstadoGranja extends EstadoBarra {
+ pesca:EstadoPesca;
  libros:EstadoLibros;colecciones:EstadoColecciones;festivales:EstadoFestivales;correo:EstadoCorreo;vidaSocial:EstadoVidaSocial;encargos:EstadoEncargos;pueblo:EstadoPueblo;obras:EstadoObras;compania:EstadoCompania;ganaderia:EstadoGanaderia;habilidades:EstadoHabilidades;jornada:Jornada;tiempo:EstadoTiempo;envios:EstadoEnvios;frutales:Frutal[];invernaderos:Invernadero[];
  guia?:EstadoGuia;comunidad?:EstadoComunidad;regional?:EstadoRegional;historia?:EstadoHistoria;astra?:EstadoAstra;paisaje?:PaisajeGranja;posicionExterior?:{zona:Zona;x:number;z:number};
  produccion:EstadoProduccion;aventura:EstadoAventura;posicionAventura:PuntoAventura|null;
@@ -47,6 +49,7 @@ export interface EstadoGranja extends EstadoBarra {
  zona:Zona;interior:string|null;vida:number;energia:number;enemigo:number;nivelMina:number;ayudante:{desde:number;hasta:number;ultimoTurno:number}|null;secuencia:number;
 }
 export type Accion =
+ |{tipo:'pesca';accion:AccionPesca;xJugador:number;zJugador:number}
  |{tipo:'comunidad';accion:AccionComunidad;xJugador:number;zJugador:number}
  |{tipo:'guia';hecho:'prologo'}
  |{tipo:'regional';accion:AccionRegional;xJugador:number;zJugador:number}
@@ -70,6 +73,7 @@ export type Accion =
  |{tipo:'emplazar_obra';id:string;x:number;z:number;giro?:number}
  |{tipo:'cancelar_obra';id:string}
  |{tipo:'compania';accion:AccionCompania;xJugador:number;zJugador:number}
+ |{tipo:'porton';edificioId:string;abierto:boolean;xJugador:number;zJugador:number}
  |{tipo:'puerta_ganado';edificioId:string;xJugador:number;zJugador:number}
  |{tipo:'abastecer_refugio'|'retirar_heno';edificioId:string;cantidad:number;xJugador:number;zJugador:number}
  |{tipo:'ordenar'|'esquilar'|'buscar_trufas';animalId:string;xJugador:number;zJugador:number}

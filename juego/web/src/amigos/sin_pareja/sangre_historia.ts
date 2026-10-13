@@ -14,7 +14,7 @@ export interface EscenaHistoria {
 }
 
 export const NOMBRES_HABLANTES: Record<Hablante, string> = {
-  el: 'Sobreviviente', ella: 'Sobreviviente', santa: 'La Santa de Lara', conde: 'El Conde Sangrevil', nathgora: 'Nath’Gora', vaelthor: 'Vael’Thor', narrador: '',
+  el: 'Sobreviviente', ella: 'Sobreviviente', santa: 'Serena, Santa de Lara', conde: 'El Conde Sangrevil', nathgora: 'Nath’Gora', vaelthor: 'Vael’Thor', narrador: '',
 };
 
 export const CON_PAREJA = false;
@@ -29,7 +29,7 @@ export const ESCENAS: Record<IdEscena, EscenaHistoria> = {
     lineas: [
       n('Más allá del Santuario de Celia, donde el mundo toca el mar de estrellas de Astra, está Valdemora: el reino de la frontera.'),
       n('Una noche, la Constelación de los Amantes parpadeó. Y sobre Valdemora cayó una noche que no se acaba.'),
-      santa('Sobrevivientes: soy la Santa de Lara. Las almas de Valdemora ya no llegan a la mano de mi señora.'),
+      santa('Sobrevivientes: soy Serena, la Santa de Lara. Las almas de Valdemora ya no llegan a la mano de mi señora.'),
       santa('Algo abrió una grieta en el escudo. Por ahí entra la ceniza.'),
       yo('¿Y qué podemos hacer nosotros?'),
       santa('Bajar. Recuperar lo que mantiene abierta la grieta. Y salir vivos por la campana.'),
@@ -82,3 +82,6 @@ export const ESCENAS: Record<IdEscena, EscenaHistoria> = {
     ],
   },
 };
+
+/** La versión de amigos no tiene películas: siempre la escena escrita. */
+export async function verPelicula(_id: IdEscena): Promise<boolean> { return false; }

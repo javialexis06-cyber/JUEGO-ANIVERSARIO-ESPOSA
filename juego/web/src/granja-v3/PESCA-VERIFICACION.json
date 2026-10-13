@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "fecha": "2026-10-12",
+  "zonaHoraria": "America/Bogota",
+  "bloque": "Pesca con picada, seguimiento y tensión del sedal",
+  "especies": 26,
+  "familiasMovimiento": 6,
+  "regresion": {
+    "suites": 45,
+    "fallos": 0
+  },
+  "logica": {
+    "checks": 18,
+    "especies": 26,
+    "movimientos": 6,
+    "alcance": "Recursos, fechas, clima y semilla preparados; acciones, captura, seguimiento con entradas del sedal, guardado y registros reales. No mide destreza humana, campaña ordinaria ni rendimiento de teléfonos."
+  },
+  "builds": {
+    "pareja": "correcto",
+    "amigos": "correcto; 505 archivos revisados y contenido de pareja excluido"
+  },
+  "astra": {
+    "checks": 21,
+    "regiones": 28,
+    "npc": 178,
+    "viviendas": 93,
+    "rutas": 27,
+    "escenarios": "Partidas aisladas preparadas; no certifica una campaña humana completa."
+  },
+  "medios": {
+    "lineas": 3590,
+    "lineasReuniones": 312,
+    "vocesDeclaradas": 3581,
+    "modelosDeclarados": 0,
+    "musicaDeclarada": 23,
+    "errores": [],
+    "estado": "Ausencia de medios opcionales permitida; una referencia declarada debe existir y coincidir."
+  },
+  "mediosCine": {
+    "voces": [
+      {
+        "id": "PRO.N1",
+        "archivo": "./audio/cine/PRO.N1-1cd298.ogg",
+        "bytes": 44108,
+        "segDeclarados": 9.01,
+        "segMedidos": 9.0065
+      },
+      {
+        "id": "PRO.AURA",
+        "archivo": "./audio/cine/PRO.AURA-bb45fa.ogg",
+        "bytes": 29749,
+        "segDeclarados": 6.31,
+        "segMedidos": 6.3065
+      },
+      {
+        "id": "PRO.LARA",
+        "archivo": "./audio/cine/PRO.LARA-5d36ad.ogg",
+        "bytes": 26317,
+        "segDeclarados": 5.71,
+        "segMedidos": 5.7065
+      },
+      {
+        "id": "PRO.N2",
+        "archivo": "./audio/cine/PRO.N2-35dd20.ogg",
+        "bytes": 38290,
+        "segDeclarados": 7.71,
+        "segMedidos": 7.7065
+      },
+      {
+        "id": "PRO.N3",
+        "archivo": "./audio/cine/PRO.N3-2f8e71.ogg",
+        "bytes": 23066,
+        "segDeclarados": 4.61,
+        "segMedidos": 4.6065
+      },
+      {
+        "id": "PRO.C1",
+        "archivo": "./audio/cine/PRO.C1-e79fb4.ogg",
+        "bytes": 39803,
+        "segDeclarados": 8.41,
+        "segMedidos": 8.4065
+      },
+      {
+        "id": "PRO.C2",
+        "archivo": "./audio/cine/PRO.C2-84bbbe.ogg",
+        "bytes": 40478,
+        "segDeclarados": 8.41,
+        "segMedidos": 8.4065
+      },
+      {
+        "id": "PRO.C3",
+        "archivo": "./audio/cine/PRO.C3-a22694.ogg",
+        "bytes": 37605,
+        "segDeclarados": 7.91,
+        "segMedidos": 7.906521
+      },
+      {
+        "id": "PRO.C4",
+        "archivo": "./audio/cine/PRO.C4-02b028.ogg",
+        "bytes": 34452,
+        "segDeclarados": 7.31,
+        "segMedidos": 7.3065
+      },
+      {
+        "id": "PRO.C5",
+        "archivo": "./audio/cine/PRO.C5-88d434.ogg",
+        "bytes": 43589,
+        "segDeclarados": 9.11,
+        "segMedidos": 9.106521
+      }
+    ],
+    "errores": [],
+    "alcance": "Archivos locales, encabezado OGG, IDs existentes y duraciones medidas. No se genera audio ni se ejecuta una película completa."
+  },
+  "navegador": {
+    "pesca": {
+      "checks": [
+        "Recarga abre el combate reservado sin elegir otro ejemplar ni cobrar otro cebo",
+        "El prólogo no interrumpe una sesión de pesca pendiente",
+        "Cancelar conserva el coste y el cuaderno presenta las 26 especies",
+        "Si falla guardar al lanzar, no se gasta cebo, energía ni se abre el minijuego",
+        "Lanzar espera la picada y engancha desde el botón con un único cebo",
+        "Teclado: mantener mueve la franja y soltar cambia su dirección",
+        "Puntero: captura y suelta el botón sin convertir el gesto de arrastre en una recogida",
+        "Seguir al ejemplar prepara una captura sin entregar material antes de recoger",
+        "Organizar mochila y volver con Escape conserva el ejemplar preparado",
+        "Guardar rechazado conserva captura, experiencia, hallazgo y materiales sin premio duplicado",
+        "Recoger y recargar conserva una captura real y su cuaderno en horizontal"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenarioPreparado": "Partida y posición preparados. Dibujo pausado y fotos de mapa apagadas después del arranque. Espera/picada por cuadros reales; seguimiento automatizado con entradas del sedal y pasos del motor, congelados para los controles y la prueba de guardado.",
+      "dispositivosFisicos": []
+    },
+    "integracionReal": {
+      "checks": [
+        "Botón de la casa abre la granja V5 sobre el build actual",
+        "Teclado mueve al personaje compartido actual",
+        "Mouse abre el buzón y conserva lectura",
+        "Inventario actual accesible en horizontal",
+        "Granja → casa real → granja conserva posición, inventario y jornada",
+        "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenariosPreparados": "Cuarto habilitado y avatar posicionado en contexto nuevo aislado.",
+      "dispositivosFisicos": []
+    }
+  },
+  "conservado": {
+    "revisionClaude": "c989032285d3d9eecb6778864ae26b01d59ac75d",
+    "archivosIdenticos": [
+      "juego/web/src/casa/lavado",
+      "juego/web/src/casa/lavado.css",
+      "juego/web/src/granja-v3/cine-granja.css",
+      "juego/web/src/granja-v3/cine-granja.ts",
+      "juego/web/src/granja-v3/correo-campana.ts",
+      "juego/web/src/granja-v3/correo.ts",
+      "juego/web/src/granja-v3/cine-actores.ts",
+      "juego/web/src/granja-v3/cine-lineas.ts",
+      "juego/web/src/granja-v3/cine-prologo.ts",
+      "juego/web/src/granja-v3/astra-ui.ts",
+      "juego/web/src/granja-v3/aldeanos-ui.ts"
+    ],
+    "guardado": "V5, claves, IDs, economía, genomas, huellas y puertas anteriores",
+    "calendario": "El sedal pausa el reloj agrícola y rutas ampliadas; conserva cuidados reales de 48 horas",
+    "capturasCompatibles": "La API anterior conserva sus contratos; la interfaz usa sesiones guardadas",
+    "vozYGraficos": "Sin generación de modelos o voces ni llamadas de pago; presentación sencilla sobre recursos existentes"
+  },
+  "fuentesSha256": {
+    "comunidad.ts": "37b05b702dc9d0d2a26f0ed178236add6eb67211bd62bc5abf87f28b129bce9a",
+    "estado.ts": "736a0877f89c1afef4101085f2ca7c904ebdab86726e661998a657affebdbb05",
+    "estilo.css": "acb65e8610c86ef87bba7fb0d189b1fbcb89a00858b4a9215a5268c7f2ea2bf7",
+    "historia.ts": "20171c0dc517edfa93a254dcf05820cdcfebf0b0334cb3dbb813941b3783b2bc",
+    "main.ts": "fc02ac916e5598189e80b6dd871568e3cfe631711e48160e1736adba947a535a",
+    "motor.ts": "1423c86944a91f040494e34052313e69d3141113236259a1b9b295bf42f3630a",
+    "pesca-datos.ts": "8f4cb23ebb04229ea1c3b3b370e196bf8d928ab8530022936010768ff614c4aa",
+    "pesca-tipos.ts": "25147a39fb491c3d11bb1e6f7f758524b64548122c2fa47538e19a6d5141c3d4",
+    "pesca-ui.ts": "d6dfc6b04aeeb6dc8684b7c6c92ee9eadd04d631f3628ebfe8b11ef9b0dc6580",
+    "pesca.ts": "800a5bef5b2099b6f6318ea8247c2b88f5d31e1529d229f85a5a561f5007cb73",
+    "vida-astra.ts": "8d4760c773a6e87d91a4377a1cc2511599deaaf5cf1a4df3e679771c4a990053"
+  },
+  "entradaBuildSha256": "24d84112cd913945535ba83c7f4ea4c5e8d42ff809fe4a37647f038fc0f1f67e",
+  "continuidadPruebas": "El código TypeScript/CSS y la entrada del build conservan la firma del recorrido WebGL. La última integración añade diez audios y un manifiesto del cine, verificados por archivo y duración.",
+  "limites": [
+    "El seguimiento de las 26 especies se automatiza con entradas del sedal; no mide destreza humana.",
+    "La prueba específica prepara una partida y pausa dibujo; el recorrido general conserva WebGL real y fotos del mapa.",
+    "No se certifica rendimiento o jugabilidad en teléfonos físicos.",
+    "El recorrido ordinario de 36 principales conserva la API compatible; no se presenta como 80 combates humanos con el nuevo sedal.",
+    "Animaciones finales de caña y peces quedan para el frente visual; las capacidades parciales de PLAN-MOTOR-COMPLETO.md permanecen abiertas."
+  ]
+}

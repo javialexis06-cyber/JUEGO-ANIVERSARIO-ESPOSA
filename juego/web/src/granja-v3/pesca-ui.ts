@@ -1,0 +1,20 @@
+import type {EstadoGranja} from './estado';
+import {PECES} from './catalogo';
+import {posicionPez,parametrosSedal,perfilSedal} from './pesca';
+export function actualizarPescaUI(s:EstadoGranja,elemento:HTMLElement){const a=s.pesca?.actual;
+ elemento.classList.toggle('open',!!a);if(!a)return;
+ const pez=PECES.find(p=>p.id===a.pez)!,p=perfilSedal(a.pez),ancho=parametrosSedal(s).ancho;
+ elemento.dataset.fase=a.fase;
+ const nombre=elemento.querySelector<HTMLElement>('#fish-title')!,texto=elemento.querySelector<HTMLElement>('#fish-instruccion')!,accion=elemento.querySelector<HTMLButtonElement>('#reel')!,cancelar=elemento.querySelector<HTMLButtonElement>('#cancel-fish')!;
+ nombre.textContent=a.fase==='espera'?'Espera la picada':a.fase==='picada'?'¡Está picando!':a.fase==='tiron'?'Sigue al pez':a.fase==='lista'?'El pez está en la orilla':'El pez escapó';
+ texto.textContent=a.fase==='espera'?'El cebo ya está en el agua. Espera a que la boya avise.':a.fase==='picada'?'Recoge durante el aviso para enganchar.':a.fase==='tiron'?'Mantén el botón o Espacio para mover la franja hacia la derecha; suelta para volver. Sigue la marca y suelta si aumenta la tensión.':a.fase==='lista'?pez.nombre+'. Recoge para guardar la captura.':'Recoge la caña para intentar otra vez. Un lanzamiento usa un cebo.';
+ accion.disabled=a.fase==='espera'||a.fase==='escapo';accion.textContent=a.fase==='tiron'?'Mantener para recoger':a.fase==='lista'?'Guardar captura':'Enganchar';
+ elemento.querySelector<HTMLButtonElement>('#fish-bag')!.hidden=a.fase!=='lista';
+ cancelar.textContent=a.fase==='lista'?'Soltar el pez y recoger la caña':a.fase==='escapo'?'Recoger la caña':'Cancelar lanzamiento';
+ const pista=elemento.querySelector<HTMLElement>('.fish-track')!;pista.hidden=a.fase!=='tiron';
+ const goal=elemento.querySelector<HTMLElement>('.fish-goal')!;goal.style.left=((a.jugador-ancho/2)*100)+'%';goal.style.width=(ancho*100)+'%';
+ elemento.querySelector<HTMLElement>('#fish-marker')!.style.left=(posicionPez(a)*100)+'%';
+ elemento.querySelector<HTMLProgressElement>('#fish-progreso')!.value=a.progreso;
+ elemento.querySelector<HTMLProgressElement>('#fish-tension')!.value=a.tension;
+ elemento.querySelector<HTMLElement>('#fish-estado')!.textContent=a.fase==='tiron'?`Captura ${Math.round(a.progreso*100)} % · tensión ${Math.round(a.tension*100)} %`:a.fase==='picada'?`Aviso: ${Math.max(0,p.ventana-a.segundos).toFixed(1)} s`:'';
+}

@@ -1,0 +1,27 @@
+{
+ "narrador": {
+  "voz": "SAGbayTufdvOWwIvhMH2",
+  "nombre": "Josué Maya",
+  "motivo": "Grave y sereno: cercano, sin anunciar emociones grandiosas",
+  "sexo": "el",
+  "edad": null
+ },
+ "celia": {
+  "voz": "NYPV3zHpSYleWL30LnJx",
+  "nombre": "Alejandra - Young, Soft and Calm",
+  "acento": "latin american",
+  "motivo": "celestial: joven, dulce y tranquila"
+ },
+ "aura": {
+  "voz": "xzWD1ftyNVsuUMY2ll3j",
+  "nombre": "Valentina - Radiant, Expressive and Warm",
+  "acento": "latin american",
+  "motivo": "celestial: la del fuego y la mañana, cálida y luminosa"
+ },
+ "lara": {
+  "voz": "6sefJctHkzCgLShKcnrI",
+  "nombre": "Esperanza - Serene and Assured",
+  "acento": "colombian",
+  "motivo": "celestial: la de la noche, serena y madura"
+ }
+}

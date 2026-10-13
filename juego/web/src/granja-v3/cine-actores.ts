@@ -6,8 +6,10 @@ import { Personaje, type Cara } from '../personaje';
 import { elegirModelos } from '../recursos';
 import type { Pieza, RanuraAmigo } from '../salas/prendas';
 import { Vestidor } from '../salas/vestir';
+import type { AspectoJugador } from '../salas/tipos';
+import { personajeVecino } from './vecinos3d';
 
-export type IdDiosa = 'celia' | 'aura' | 'lara';
+export type IdDiosa = 'celia' | 'aura' | 'lara' | 'fuatia';
 export interface Actor {
   /** Lo que mueve el guion (posición, giro, escala); adentro va el muñeco. */
   raiz: THREE.Group;
@@ -49,6 +51,17 @@ const DIOSAS: Record<IdDiosa, DisenoDiosa> = {
       arriba: pieza('vestido_diosa', 'arriba', { principal: '#3a2f5c', cinta: '#c9b6ea', bordado: '#e9e4f5', joya: '#b9a4f0' }, ['abajo', 'pies'], ['medias']),
       cabeza: pieza('velo_lara', 'cabeza'),
       espalda: pieza('capa', 'espalda', { principal: '#2a2238', broche: '#c9b6ea' }),
+    },
+  },
+  // Fuatia (la diosa que creó Laura): los cuatro elementos en un solo vestido (agua, aire, fuego y tierra), corona de
+  // llamas tibias y alas de libélula; su halo cambia de color con los elementos (ver actualizarFuatia)
+  fuatia: {
+    piel: '#d9a982', pelo: '#2f6f73', ojos: '#e58a3a', halo: '#9fe3d6',
+    piezas: {
+      pelo: pieza('pelo_rizos', 'pelo'),
+      arriba: pieza('vestido_diosa', 'arriba', { principal: '#7cc8c2', cinta: '#ffffff', bordado: '#f08a3c', joya: '#d9a94e' }, ['abajo', 'pies'], ['medias']),
+      cabeza: pieza('corona_llamas', 'cabeza'),
+      espalda: pieza('alas_mariposa', 'espalda', { principal: '#bfeee6', detalle: '#e8a05a' }),
     },
   },
 };
@@ -114,4 +127,56 @@ export async function actorDiosa(id: IdDiosa): Promise<Actor> {
 export function actuar(a: Actor, pose: string, cara?: Cara) {
   if (a.p.tienePose(pose) && a.p.poseVisible !== pose) a.p.pose(pose);
   if (cara) a.p.cara(cara);
+}
+
+/** Un vecino de Astra con su ropa de siempre (Serena, Eliana, Flora, Mara, Nina, Eneas, Ofelia…). */
+export async function actorVecino(id: string, sin: ('cabeza' | 'cara' | 'espalda')[] = []): Promise<Actor> {
+  const { p } = await personajeVecino(id, sin);
+  const raiz = new THREE.Group();
+  raiz.add(p.grupo);
+  marcarCompartido(raiz);
+  p.quieto();
+  return { raiz, p };
+}
+
+/** Un muñeco vestido a mano (el Conde antes del pacto, los invitados, la ropa de boda…). */
+export async function actorVestido(cuerpo: 'el' | 'ella', aspecto: Omit<AspectoJugador, 'cuerpo'>, piezas: Partial<Record<RanuraAmigo, Pieza>> = {}, escala = 1): Promise<Actor> {
+  await elegirModelos();
+  const p = new Personaje({ x: 0, y: 0 }, (cuerpo === 'ella' ? 0.7 : 0.69) * escala);
+  await p.cargarPoses(cuerpo);
+  await new Vestidor(p, cuerpo).aplicar({ cuerpo, ...aspecto }, piezas);
+  const raiz = new THREE.Group();
+  raiz.add(p.grupo);
+  marcarCompartido(raiz);
+  return { raiz, p };
+}
+export { pieza as piezaRopa };
+
+/** Nath'Gora: una figura alta de frío y estrellas apagadas (piel gris azulada, capa negra, cuernos) con un halo oscuro. */
+export async function actorNathGora(): Promise<Actor> {
+  const a = await actorVestido('el', { piel: '#7d8aa8', pelo: '#11131c', detalles: { ojos: '#9fd6ff' } }, {
+    pelo: pieza('pelo_largo_el', 'pelo'), cabeza: pieza('cuernos', 'cabeza', { principal: '#1b1d2a' }),
+    arriba: pieza('sangre_monarca', 'arriba', {}, ['abajo']), espalda: pieza('capa', 'espalda', { principal: '#0b0c14', broche: '#9fd6ff' }), pies: pieza('botas', 'pies'),
+  }, 1.35);
+  const h = halo('#3a4a7a', 6);
+  h.position.set(0, 1.6, -0.5);
+  h.material.opacity = 0.5;
+  a.raiz.add(h);
+  const luz = new THREE.PointLight('#8fb8ff', 1.2, 7, 1.8);
+  luz.position.set(0, 2.4, 1.4);
+  a.raiz.add(luz);
+  return { ...a, halo: h, luz };
+}
+
+/** Vael'Thor, el Ceramista de Sombras: sombrero de copa, antifaz y capa morada, con un brillo violeta. */
+export async function actorVaelThor(): Promise<Actor> {
+  const a = await actorVestido('el', { piel: '#d9c7b8', pelo: '#2a1f33', detalles: { ojos: '#b07cff' } }, {
+    pelo: pieza('pelo_lado', 'pelo'), cabeza: pieza('sombrero_copa', 'cabeza', { principal: '#2a1f33' }), cara: pieza('antifaz', 'cara', { principal: '#5b2d82' }),
+    arriba: pieza('saco_corbata', 'arriba', { principal: '#3a2350', detalle: '#b07cff' }, ['abajo']), espalda: pieza('capa', 'espalda', { principal: '#4b2468', broche: '#e0c46a' }), pies: pieza('zapatos', 'pies'),
+  });
+  const h = halo('#9a6ad8', 4);
+  h.position.set(0, 1.3, -0.5);
+  h.material.opacity = 0.35;
+  a.raiz.add(h);
+  return { ...a, halo: h };
 }

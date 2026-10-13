@@ -90,6 +90,13 @@ Tiene miedo a que una pregunta no reciba la respuesta prevista. En conversacione
 
 **Disparador:** prueba material de F01, antes de su cierre. **Duración orientativa:** 2–3 minutos. **Producción:** surco, vaso y pala; cámara sencilla sobre manos y canal. El brillo y los cuatro colores se reservan para arte posterior. Pausas de cinco segundos pueden saltarse; no afectan clima ni cosecha.
 
+**Entrada de Fuatia en la película** (12 de octubre de 2026, para la película de Astra, `docs/en-obra/pelicula-de-astra.md`): es la primera vez que se ve y es la diosa que creó Laura, así que tiene una entrada propia de unos 20 s, antes de su primera línea. Una brasa sale del surco, el agua del canal sube en hilos, la tierra suelta polvo dorado y una ráfaga lo junta todo; los cuatro colores giran y forman su figura. Se oye su voz antes de verla del todo. Lleva el sonido celestial de las otras diosas.
+
+> **Narrador:** Primero fue una brasa en el barro. Después el agua se levantó, la tierra respiró y el viento lo juntó todo.
+> **Fuatia:** No se asusten. Ustedes llevan toda la mañana tocándome.
+
+(Estas dos líneas van con su propio id en `src/granja-v3/cine-lineas.ts` cuando se anime C11; se escriben en cita para que `exportar.py` no corra la numeración de las líneas de C11, que ya tienen voz.)
+
 narrador: El agua dejó de correr por la grieta. No desapareció. Encontró, bajo la pala, una orilla que hasta entonces nadie había visto.
 botanica: Deja la herramienta ahí. Quiero comparar la marca antes de mover otra cosa.
 ella: ¿Has notado el aire?

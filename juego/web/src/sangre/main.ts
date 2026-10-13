@@ -17,7 +17,7 @@ import { RANURAS_SIGILO, SIGILOS, SIGILOS_INICIALES, SIGILOS_ORDEN, TECLAS_SIGIL
 import { ANOMALIAS, CENIZA_PRUEBA, COSTO_ANOMALIA, ETAPAS_PRUEBA, PUNTOS_PRUEBA, contrato, locura } from './datos/desafios';
 import { NOMBRE_PAREJA } from '../nombres';
 import { LUGAR, LUGARES, SECTOR, SECTORES, claveMeta, lugarAbierto, metasDe, metasNuevas, sectorAbierto, type DefLugar, type IdEscena } from './datos/noche';
-import { ESCENAS } from './historia_pareja';
+import { ESCENAS, verPelicula } from './historia_pareja';
 import { Expedicion } from './expedicion';
 import { Guardado, ponerPreferencia, preferencia } from './guardado';
 import { quienSoy } from './identidad';
@@ -701,13 +701,16 @@ function retratosEscena() {
 /** Una escena de la historia (y se anota como vista). */
 function contarEscena(id: IdEscena, alFin: () => void) {
   const s = id === 'prologo' ? { color: '#6a5a8a', glifo: 'luna' } : SECTOR[id];
+  const anotar = () => { const p = P(); if (!p.noche.escenas.includes(id)) p.noche.escenas.push(id); guardado.guardar(); alFin(); };
+  // Si la escena ya es película, se ve como película (con su propia música); si no se puede, queda la escrita
+  musica.parar();
+  void verPelicula(id).then((ok) => { if (ok) { anotar(); return; } escrita(); });
+  function escrita() {
   musica.cambiar('menu');
   verEscena(ESCENAS[id], { color: s.color, glifo: s.glifo, ...retratosEscena() }, () => {
-    const p = P();
-    if (!p.noche.escenas.includes(id)) p.noche.escenas.push(id);
-    guardado.guardar();
-    alFin();
+    anotar();
   });
+  }
 }
 
 function noche() {
