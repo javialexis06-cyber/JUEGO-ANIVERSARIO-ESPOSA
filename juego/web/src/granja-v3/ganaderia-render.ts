@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { Objeto, type Asset, type Calidad } from '../granja-v2/biblioteca';
 import { compactar, liberar } from './suelo';
+import { cambiarPorKit } from './cuartos';
 import type { Species } from './genetica';
 import type { Incubadora } from './ganaderia';
 export type ObjetivoGanado={tipo:'buzon'|'obra'|'establo'|'companero'|'cuenco'|'animal'|'trufa'|'incubadora'|'nido'|'puerta'|'comedero';id:string};
@@ -45,12 +46,15 @@ export function puertaGanadoVista(id:string,abierta:boolean){
  const box=(s:number[],p:number[],m:T.Material)=>{const o=new T.Mesh(new T.BoxGeometry(...s as [number,number,number]),m);o.position.set(...p as [number,number,number]);o.castShadow=true;hoja.add(o);};
  for(let i=0;i<5;i++)box([.18,1.45,.10],[.09+i*.19,.8,0],madera);
  for(const y of [.3,1.25])box([.93,.1,.13],[.475,y,.02],metal);
- box([.07,.15,.15],[.8,.8,.13],metal);compactar(hoja);return g;
+ box([.07,.15,.15],[.8,.8,.13],metal);compactar(hoja);
+ // Con granja_cercas.glb (personajes/blender/granja_cercas.py): la hoja de tablas con bandas, remaches y herradura
+ cambiarPorKit(hoja,'granja_cercas.glb',m=>m.get('puerta_ganado')?.clone(true)??null);return g;
 }
 export function comederoVista(id:string,henos:number){
  const g=new T.Group(),wood=new T.MeshStandardMaterial({color:'#a7855f',roughness:.85}),hay=new T.MeshStandardMaterial({color:'#d6bf79',roughness:.95});g.name='comedero-'+id;
  const box=(s:number[],p:number[],m:T.Material)=>{const o=new T.Mesh(new T.BoxGeometry(...s as [number,number,number]),m);o.position.set(...p as [number,number,number]);o.castShadow=true;g.add(o);};
  box([1.8,.12,.65],[0,.45,0],wood);for(const z of [-.32,.32])box([1.9,.28,.08],[0,.58,z],wood);for(const x of [-.92,.92])box([.08,.28,.7],[x,.58,0],wood);for(const x of [-.72,.72])box([.1,.45,.1],[x,.23,0],wood);
  if(henos>0){box([1.7,.12,.53],[0,.55,0],hay);for(let i=0;i<18;i++){const o=new T.Mesh(new T.BoxGeometry(.15,.02,.012),hay);o.position.set(-.7+i%6*.26,.63+.015*(i%2),-.19+Math.floor(i/6)*.18);o.rotation.y=i*.71;g.add(o);}}
- compactar(g);g.userData.ganado={tipo:'comedero',id} satisfies ObjetivoGanado;g.position.set(-.88,0,-.76);g.scale.set(.6,.75,1);return g;
+ compactar(g);g.userData.ganado={tipo:'comedero',id} satisfies ObjetivoGanado;g.position.set(-.88,0,-.76);g.scale.set(.6,.75,1);
+ cambiarPorKit(g,'granja_cercas.glb',m=>m.get(henos>0?'comedero_heno':'comedero')?.clone(true)??null);return g;
 }

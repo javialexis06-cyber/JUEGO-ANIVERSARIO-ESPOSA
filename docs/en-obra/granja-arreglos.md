@@ -546,6 +546,12 @@ Dónde está:
   especie en el frontón (13) y los adornos (nidales con rampa, percha del grifo, cristales de techo o de los lados,
   enredadera, halo con nubes). Las partes «ref muro/techo/madera/oscuro/borde/piedra/vidrio/metal» toman los mismos
   colores de clima y especie de antes. Todo fundido por material. Los íconos de los refugios se volvieron a fotografiar.
+- **Cercas, portón, corral y pérgola en Blender** **hecho** (13 de octubre): `granja_cercas.glb`
+  (`personajes/blender/granja_cercas.py`). Con el ayudante `cambiarPorKit` (`cuartos.ts`): la cerca del patio de los
+  refugios (`vista.ts valla`, postes y tramos estirados), las vallas del jugador (madera con clavos y veta, pilar de
+  piedras con vigas y musgo, floral con enredadera y flores), el portón (cerrado, o abierto de par en par), la puerta
+  del corral (`puertaGanadoVista`, tablas con bandas, remaches y herradura), el comedero vacío o con heno
+  (`comederoVista`) y la pérgola de la enredadera con su banquito.
 
 ## Datos útiles
 
