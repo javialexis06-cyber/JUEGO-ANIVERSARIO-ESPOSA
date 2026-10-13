@@ -58,6 +58,7 @@ svg {
   position: fixed;
   inset: 0;
   overflow: hidden;
+  overflow: clip;
   background:
     radial-gradient(70% 90% at 50% 18%, #ffcf8a33 0%, transparent 60%),
     repeating-linear-gradient(92deg, #0000 0 38px, #00000014 38px 40px, #0000 40px 86px, #ffffff08 86px 88px),
@@ -709,6 +710,7 @@ svg {
   height: 100%;
   border-radius: 20px;
   overflow: hidden;
+  overflow: clip;
   background: #000;
   box-shadow: inset 0 0 0 1px #000;
 }
@@ -730,6 +732,7 @@ svg {
   font-family: var(--letra-tel);
   color: var(--texto-app);
   overflow: hidden;
+  overflow: clip;
 }
 .cel-grieta {
   position: absolute;
@@ -948,6 +951,7 @@ svg {
   }
 }
 .cel-bloqueo.pidiendo > :not(.cel-candado):not(.cel-barra) {
+  visibility: hidden;
   opacity: 0;
   pointer-events: none;
 }
@@ -1676,9 +1680,10 @@ svg {
 }
 .cel-mapa-ficha {
   position: absolute;
-  left: 8px;
-  bottom: 8px;
-  max-width: 55%;
+  right: 8px;
+  top: 8px;
+  max-width: 42%;
+  pointer-events: none;
   padding: 6px 9px;
   border-radius: 10px;
   background: var(--fondo-app);
