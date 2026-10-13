@@ -5,6 +5,8 @@ correo y lavado. El motor conecta vallas sólidas, portones guardados y llamada 
 por rutas; comparte tránsito y protege ocupantes. Leer [CERCOS-INTEGRACION.md](../../juego/web/src/granja-v3/CERCOS-INTEGRACION.md).
 La puerta anterior del corral y sus rutinas se mantienen; la navegación libre del ganado sigue
 pendiente. Se reutiliza la presentación existente, sin producción de modelos o audio de pago.
+Se incorporó además el Acto I de `082b74f6`, conservando actores, escenas y catálogo.
+El adaptador del prólogo mantiene la protección de pesca antes de abrir una película o su texto.
 
 ## Pesca con picada y sedal · 12 de octubre de 2026
 

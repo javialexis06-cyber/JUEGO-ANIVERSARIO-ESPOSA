@@ -149,7 +149,7 @@ async function verPelicula(id:string):Promise<boolean>{if(enCine||motor.estado.p
  catch(e){console.warn('película',id,e);ok=false;}
  finally{enCine=false;silenciarGranja(false);}
  return ok;}
-async function verPrologo(){const vista_ok=await verPelicula('prologo');
+async function verPrologo(){if(enCine||motor.estado.pesca?.actual)return;const vista_ok=await verPelicula('prologo');
  if(!vista_ok){lineaPrologo=0;mostrarPanel('prologo');return;}
  if(pasoGuia(motor.estado)?.id==='prologo')await actuar({tipo:'guia',hecho:'prologo'},true);}
 function renderPrologo(){const n=PROLOGO_CELIA.length,i=Math.min(lineaPrologo,n-1);return `<div class="prologo"><div class="prologo-sello" aria-hidden="true">🌱</div><div class="caps">Celia · Semidiosa de la Tierra · ${i+1}/${n}</div><p class="vecino-dialogo prologo-texto">${escape(PROLOGO_CELIA[i])}</p>${i<n-1?btn('Continuar','prologo-seguir','','primary'):btn('Comenzar','prologo-fin','','primary')}</div>`;}
