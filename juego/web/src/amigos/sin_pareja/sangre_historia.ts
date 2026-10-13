@@ -82,3 +82,6 @@ export const ESCENAS: Record<IdEscena, EscenaHistoria> = {
     ],
   },
 };
+
+/** La versión de amigos no tiene películas: siempre la escena escrita. */
+export async function verPelicula(_id: IdEscena): Promise<boolean> { return false; }
