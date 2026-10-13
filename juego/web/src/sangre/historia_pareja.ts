@@ -118,15 +118,15 @@ export const ESCENAS: Record<IdEscena, EscenaHistoria> = {
 
 /** Las escenas que ya son película (cine de la granja, docs/en-obra/pelicula-de-astra.md): se ven así y, si el
  * teléfono no puede, queda la escena escrita. La versión de amigos no tiene películas. */
-const PELICULAS: Partial<Record<IdEscena, string>> = { prologo: 'SC0', afueras: 'SC1' };
+const PELICULAS: Partial<Record<IdEscena, string[]>> = { prologo: ['SC0'], afueras: ['SC1'], subsuelo: ['SC2'], santuario: ['SC3'], corte: ['C04', 'SC4'] };
 export async function verPelicula(id: IdEscena): Promise<boolean> {
   const p = PELICULAS[id];
   if (!p) return false;
   try {
     const [{ CineGranja, cargarMediosCine }, { PELICULAS: TODAS }] = await Promise.all([import('../granja-v3/cine-granja'), import('../granja-v3/cine-catalogo')]);
-    const c = new CineGranja(await TODAS[p](), await cargarMediosCine({}));
-    await c.preparar();
-    await c.reproducir();
+    // «La copa» es la misma película de la granja (el Conde termina en Nox una sola vez) y después, Nath'Gora
+    const medios = await cargarMediosCine({});
+    for (const id of p) { const c = new CineGranja(await TODAS[id](), medios); await c.preparar(); await c.reproducir(); }
     return true;
   } catch (e) { console.warn('película', id, e); return false; }
 }

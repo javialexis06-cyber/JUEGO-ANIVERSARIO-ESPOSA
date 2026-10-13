@@ -10,4 +10,10 @@ export const PELICULAS: Record<string, () => Promise<Guion>> = {
   ELI: async () => (await import('./cine-acto1')).ELIANA,
   SC1: async () => (await import('./cine-acto1')).SC1,
   C03: async () => (await import('./cine-acto1')).C03,
+  SC2: async () => (await import('./cine-acto2')).SC2,
+  T03: async () => (await import('./cine-acto2')).T03,
+  SC3: async () => (await import('./cine-acto2')).SC3,
+  C04: async () => (await import('./cine-acto2')).C04,
+  C05: async () => (await import('./cine-acto2')).C05,
+  SC4: async () => (await import('./cine-acto2')).SC4,
 };

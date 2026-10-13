@@ -113,3 +113,20 @@ elementos), `actorVecino(id)` (cualquier habitante con su ropa; `sin` quita el s
 
 **Pruebas**: `node scripts/_cine.mjs <id> <carpeta> tomas` (con el servidor de pruebas en 5176) saca una foto por toma;
 `scripts/_peli_juego.mjs` la reproduce dentro de la granja.
+
+## Las películas del Acto II (13 de octubre de 2026)
+
+`src/granja-v3/cine-acto2.ts`:
+
+| Id | Película | Escenario | Cómo se ve |
+|---|---|---|---|
+| SC2 | El fuego bajo la piedra (Misterio 1: el mural, Aura y Lara ven apagarse un mundo, Vael'Thor) | la mina de los dragones (bioma de minas, La Cría, dragones) | Sangre: puerta del Subsuelo |
+| T03 | La cría que no quiere hablar | el corral al atardecer (granero, cría de unicornio, Fuatia) | al cerrar la historia T03 |
+| SC3 | El Santuario roto (Misterio 2: las prisiones de Vael'Thor) | la abadía en llamas, monjes rezándole a otro | Sangre: puerta del Santuario |
+| C04 | La copa (con el Misterio 3, el Lazo Primordial) | la terraza del trono, la grieta, Nath'Gora detrás, Lara se lleva al Conde | «Ver C04» en la granja y la puerta de la Corte en Sangre (es la misma película) |
+| C05 | Una mañana que no basta | el patio de Vigilia (camillas, la sopa) | «Ver C05» |
+| SC4 | El descenso («Todavía no») | el abismo de Astra, una estrella muerta | Sangre: justo después de La copa |
+
+Actores nuevos: `actorNathGora()` y `actorVaelThor()` (armados con el clóset; los modelos propios siguen pendientes).
+Las presentaciones de lugares viven en `postal.ts` (cámara del juego, franjas, nombre y narrador), se disparan al
+llegar a un lugar nuevo (`vigilarLugar` en `main.ts`) y se recuerdan en el teléfono (`granja-postales-vistas`).
