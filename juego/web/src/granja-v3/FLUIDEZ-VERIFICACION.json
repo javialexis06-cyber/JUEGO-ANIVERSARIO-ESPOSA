@@ -1,0 +1,336 @@
+{
+  "version": 1,
+  "fecha": "2026-10-12",
+  "zonaHoraria": "America/Bogota",
+  "bloque": "Puertas, mostradores, mapas y rendimiento",
+  "regresion": {
+    "suites": 47,
+    "fallos": 0
+  },
+  "logica": {
+    "suite": "accesos-rendimiento",
+    "checks": 14,
+    "failures": 0
+  },
+  "navegador": {
+    "puertasMostradoresMapas": {
+      "checks": [
+        "Clic en la puerta entra en el negocio y deja caminar sin panel ni cuadro de salida",
+        "En la entrada no se puede comprar a distancia ni gastar monedas",
+        "Si falla guardar una compra, monedas y productos se restauran sin doble entrega",
+        "Caminar al mostrador abre iconos y precios; comprar entrega una unidad con su precio anterior",
+        "Clic en la puerta de salida devuelve al pueblo desde caché sin reconstruirlo ni usar un botón de texto",
+        "El teclado cruza el umbral para entrar y salir; el regreso no vuelve a abrir la puerta",
+        "La puerta del anexo da acceso a la vivienda y su umbral devuelve al barrio",
+        "El mapa conserva nombres de ubicaciones y usa retratos donde están los vecinos, sin sus nombres",
+        "El minimapa sigue posiciones decimales en los cuadros de movimiento, sin esperar el tic de 200 ms",
+        "Recarga conserva V5, la compra y la jornada en escritorio sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        1280,
+        720
+      ],
+      "escenarioPreparado": "Pueblo y mediodía preparados; movimiento, clics, umbrales, compras y guardado reales. Fotos y dibujo continuo pausados en este recorrido específico; capturas con un render real. El recorrido general aparte conserva dibujo y fotos.",
+      "dispositivosFisicos": []
+    },
+    "integracionWebGL": {
+      "checks": [
+        "Botón de la casa abre la granja V5 sobre el build actual",
+        "Teclado mueve al personaje compartido actual",
+        "Mouse abre el buzón y conserva lectura",
+        "Inventario actual accesible en horizontal",
+        "Puertas de granja → casa real → granja conservan posición, inventario y jornada",
+        "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenariosPreparados": "Cuarto habilitado, avatar posicionado y sesión local de casa preparada en contexto nuevo aislado.",
+      "dispositivosFisicos": []
+    },
+    "cercos": {
+      "checks": [
+        "Recarga restaura el portón cerrado y su colisión con el estado V5",
+        "Tocar el portón presenta su estado y el control para abrir desde el mundo",
+        "Almacenamiento rechazado conserva el portón cerrado y la partida anterior",
+        "Abrir y recargar libera las dos casillas sin cambiar la pieza ni los materiales",
+        "El teclado se detiene ante el portón cerrado",
+        "Abrir permite cruzar y cerrar sobre el personaje se rechaza",
+        "Si falla guardar la llamada, el caballo conserva su posición y la ficha sigue abierta",
+        "La ficha llama al caballo y cierra el panel; el cerco impide que atraviese la pared",
+        "Al abrir, el caballo renueva su ruta y cruza con pasos visibles",
+        "Guardar rechazado conserva la valla y no concede su pieza en la mochila",
+        "Editar y guardar una valla conserva una sola pieza tras recargar en horizontal"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenarioPreparado": "Terreno, recursos, recinto y caballo preparados por probar-cercos. Fotos apagadas, dibujo y reloj agrícola pausados solo en esta prueba; controles, movimiento visible, acciones y persistencia reales. No se escriben aperturas o posiciones del caballo durante la prueba.",
+      "dispositivosFisicos": []
+    },
+    "pesca": {
+      "checks": [
+        "Recarga abre el combate reservado sin elegir otro ejemplar ni cobrar otro cebo",
+        "El prólogo no interrumpe una sesión de pesca pendiente",
+        "Cancelar conserva el coste y el cuaderno presenta las 26 especies",
+        "Si falla guardar al lanzar, no se gasta cebo, energía ni se abre el minijuego",
+        "Lanzar espera la picada y engancha desde el botón con un único cebo",
+        "Teclado: mantener mueve la franja y soltar cambia su dirección",
+        "Puntero: captura y suelta el botón sin convertir el gesto de arrastre en una recogida",
+        "Seguir al ejemplar prepara una captura sin entregar material antes de recoger",
+        "Organizar mochila y volver con Escape conserva el ejemplar preparado",
+        "Guardar rechazado conserva captura, experiencia, hallazgo y materiales sin premio duplicado",
+        "Recoger y recargar conserva una captura real y su cuaderno en horizontal"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "escenarioPreparado": "Partida y posición preparados. Dibujo pausado y fotos de mapa apagadas después del arranque. Espera/picada por cuadros reales; seguimiento automatizado con entradas del sedal y pasos del motor, congelados para los controles y la prueba de guardado.",
+      "dispositivosFisicos": []
+    },
+    "aventurasIntegradas": {
+      "checks": [
+        "La cámara de Forma Fija se abre desde su acceso físico de Confluencia",
+        "Reintentar desde la baliza reactiva el mecanismo y conserva su entrega única",
+        "El aviso comparte área con el motor y conserva su patrón al recargar",
+        "El regreso seguro conserva mochila y vuelve al territorio"
+      ],
+      "errors": [],
+      "bad": [],
+      "viewport": [
+        844,
+        390
+      ],
+      "dibujoWebGLPausado": true,
+      "alcance": "Acceso, reintento, telegráficas, recarga y regreso con campaña, posición y recursos preparados; no certifica combate humano ni GPU."
+    }
+  },
+  "totalNavegador": 42,
+  "builds": {
+    "pareja": "correcto",
+    "amigos": "correcto; contenido privado de pareja excluido"
+  },
+  "metricas": {
+    "motorAntes": {
+      "obstaculos": 1206,
+      "bytes": 146757,
+      "clonar": {
+        "medianaMs": 1.548,
+        "p95Ms": 2.317
+      },
+      "seleccionar": {
+        "medianaMs": 1.624,
+        "p95Ms": 2.414
+      },
+      "fila": {
+        "medianaMs": 1.672,
+        "p95Ms": 3.247
+      },
+      "colision1000": {
+        "medianaMs": 6.045,
+        "p95Ms": 9.201
+      },
+      "serializar": {
+        "medianaMs": 0.584,
+        "p95Ms": 0.977
+      }
+    },
+    "motorDespues": {
+      "obstaculos": 1206,
+      "bytes": 146757,
+      "clonar": {
+        "medianaMs": 1.598,
+        "p95Ms": 2.603
+      },
+      "seleccionar": {
+        "medianaMs": 0.149,
+        "p95Ms": 0.341
+      },
+      "fila": {
+        "medianaMs": 0.145,
+        "p95Ms": 0.433
+      },
+      "colision1000": {
+        "medianaMs": 6.079,
+        "p95Ms": 9.91
+      },
+      "serializar": {
+        "medianaMs": 0.43,
+        "p95Ms": 1.013
+      }
+    },
+    "vistaAntes": {
+      "contexto": "Chromium en contenedor con SwiftShader, perfil ligero 844×390. Costes JS con dibujo y fotos pausados; conteo de render real al inicio. No FPS de hardware.",
+      "dibujo": {
+        "modelos": 226,
+        "prototipos": 12,
+        "clima": {
+          "tipo": "sol",
+          "visible": false,
+          "particulas": 0,
+          "drawCalls": 0
+        },
+        "drawCalls": 408,
+        "triangulos": 1034561
+      },
+      "seleccion": {
+        "medianaMs": 8.5,
+        "p95Ms": 26.7
+      },
+      "sincronizar": {
+        "medianaMs": 1.8,
+        "p95Ms": 7
+      },
+      "cambios": [
+        {
+          "servicio": null,
+          "ms": 0.5
+        },
+        {
+          "servicio": "semillas",
+          "ms": 8.8
+        },
+        {
+          "servicio": null,
+          "ms": 2846.7
+        },
+        {
+          "servicio": "semillas",
+          "ms": 7.1
+        },
+        {
+          "servicio": null,
+          "ms": 2431.5
+        },
+        {
+          "servicio": "semillas",
+          "ms": 5.5
+        }
+      ],
+      "errores": []
+    },
+    "vistaDespues": {
+      "contexto": "Chromium en contenedor con SwiftShader, perfil ligero 844×390. Costes JS con dibujo y fotos pausados; conteo de render real al inicio. No FPS de hardware.",
+      "dibujo": {
+        "entornos": {
+          "residentes": 2,
+          "limite": 3,
+          "creadas": 2,
+          "aciertos": 1
+        },
+        "instancias": {
+          "raices": 223,
+          "dibujos": 121
+        },
+        "modelos": 226,
+        "prototipos": 12,
+        "clima": {
+          "tipo": "sol",
+          "visible": false,
+          "particulas": 0,
+          "drawCalls": 0
+        },
+        "drawCalls": 351,
+        "triangulos": 1108835
+      },
+      "seleccion": {
+        "medianaMs": 3.5,
+        "p95Ms": 9.4
+      },
+      "sincronizar": {
+        "medianaMs": 3.1,
+        "p95Ms": 3.9
+      },
+      "cambios": [
+        {
+          "servicio": null,
+          "ms": 0.2
+        },
+        {
+          "servicio": "semillas",
+          "ms": 3.9
+        },
+        {
+          "servicio": null,
+          "ms": 11.1
+        },
+        {
+          "servicio": "semillas",
+          "ms": 0.2
+        },
+        {
+          "servicio": null,
+          "ms": 9.1
+        },
+        {
+          "servicio": "semillas",
+          "ms": 0.2
+        }
+      ],
+      "errores": []
+    }
+  },
+  "fuentesSha256": {
+    "granja-v3/main.ts": "1d529a55e7df8a3a1328f3c57ead2eeeaad84c0f1e9a5bed644d3aabccb35066",
+    "granja-v3/vista.ts": "fc2208633d2d669ac3ab5725948b2c7260dde81a1523b81f03134b26336be658",
+    "granja-v3/avatar.ts": "c40d00980ea178b6de26b4e269e0ddeacbe6a42e6561ebd8e8ac023958f42e40",
+    "granja-v3/motor.ts": "0888af4dc0776ec5811a0f7b62961101efdb862e2f84ca55bb1c02d88aece6fa",
+    "granja-v3/astra-render.ts": "d61e317bd60e1586d642a3bc98cbb28873c4dc0ae857c30febbb7df88ff91a3f",
+    "granja-v3/accesos-fisicos.ts": "532d9ae0ed4282e992f1db83a24e44bc47cb6923a2d2b6f143204b4d8c651a86",
+    "granja-v3/cache-entornos.ts": "aa7f4226eae92eb0db1e2384abebc387110f74c557e27f7aba00422d143e818d",
+    "granja-v3/instancias-estaticas.ts": "01b5a1042f9212ede00b6248804c3d7ba996922808dffeb1ab5bb130d80a994d",
+    "granja-v3/hud.ts": "20c6c5837ef8da6b5f0aa5b724cda565b2753b24148d8c3e2cff373f106ddea5",
+    "granja-v3/mapa-real.ts": "da47642bfb598798db3e9d29c45bf2c2e057dbf9429366a3f64e227ecae6e3f9",
+    "granja-v3/mostrador-ui.ts": "f2c373dd210a1ead2563d63b15c0142d2b72cd36121a775beb2709a8faace9cf",
+    "granja-v3/retratos-mapa.ts": "69cefa949d7ca69258cf8c85c4f98b9034baa2534c832928223aa69603330228",
+    "granja-v3/pueblo.ts": "ab92d4c1120e921a96ccd4803e5f3c2e1d20b3b6a3371cc83291c6374586b900",
+    "granja-v3/suelo.ts": "a45ab3395a0ab8ef1e699374384530bea2eda66fa3443cc68bae0e7da9e53017",
+    "granja-v3/ganaderia-ui.ts": "73bc2e1918b2868ac7ffda4ca4b936be30ee854cc31de881686ecf02d697d521",
+    "granja-v3/viviendas-ui.ts": "868c819c4a236c3ecf984da7f966dfb25238f9efa12dac19f047f9d323765d0b",
+    "casa/main.ts": "dc6835631622353cad82f1e77d1735fccfe6e6a42528acba0e85100f3a0ef1d6",
+    "casa/escena_casa.ts": "f8a6011401a7bc4d9abbbf17f0a42837b04b7403ae8f8de46676933e66431e70"
+  },
+  "conservado": {
+    "revisionVisual": "dce94b067126bdc48a34889ae57a7afb33448bd1",
+    "archivosIdenticos": [
+      "juego/web/src/casa/lavado",
+      "juego/web/src/granja-v3/compania-render.ts",
+      "juego/web/src/granja-v3/envios-render.ts",
+      "juego/web/src/granja-v3/huerto-render.ts",
+      "juego/web/src/granja-v3/escenas-aventura.ts",
+      "juego/web/src/granja-v3/herramientas3d.ts",
+      "juego/web/src/granja-v3/cine-actores.ts",
+      "juego/web/src/granja-v3/cine-acto1.ts",
+      "juego/web/src/granja-v3/cine-acto2.ts",
+      "juego/web/src/granja-v3/cine-acto3.ts",
+      "juego/web/src/granja-v3/cine-acto4.ts",
+      "juego/web/src/granja-v3/cine-catalogo.ts",
+      "juego/web/src/granja-v3/cine-kit.ts",
+      "juego/web/src/granja-v3/vecinos3d.ts",
+      "juego/web/public/granja/cine/medios.json"
+    ],
+    "partidas": "V5, claves, huellas, IDs, precios, genes, cuidado real, calendario al dormir y permisos anteriores"
+  },
+  "limites": [
+    "Se preparan la hora, el pueblo, posiciones y sesión local de casa en los escenarios; no se certifica toda la campaña humana.",
+    "Los recorridos específicos pausan dibujo continuo y fotos; el recorrido general mantiene WebGL y fotos activos.",
+    "Los benchmarks comparan la misma partida y perfil ligero en contenedor SwiftShader; no son FPS de hardware físico.",
+    "Menos llamadas de dibujo implican una agrupación algo más amplia: la medición conserva también los conteos de triángulos y costes de sincronización forzada.",
+    "La primera carga incluye preparación de vecinos; los recursos nuevos todavía pueden cargar y compilar shaders.",
+    "La caché conserva tres fondos del valle y dos capas de Astra; no carga los 28 mundos al mismo tiempo.",
+    "La API económica anterior se mantiene compatible; la interfaz exige mostrador y revierte compras cuando falla el guardado.",
+    "La modificación final del catálogo excluye semillas regionales no vendibles; se repitieron ambos builds y el recorrido de diez comprobaciones tras ese ajuste.",
+    "Navegación libre del ganado, reproducción y equipo de compañeros y monturas fantásticas continúan pendientes."
+  ]
+}

@@ -17,6 +17,7 @@ Ver [BALANCE-INTEGRACION.md](BALANCE-INTEGRACION.md) y su evidencia, además de 
 | Cercos y compañeros | Tres vallas sólidas, portón guardado, protección del paso y llamada por rutas | Ganado fuera del corral, reproducción, equipamiento y monturas fantásticas pendientes |
 | Producción y logística | Colas, reservas, cofres, conectores locales, exportación opcional y carga pagada entre archivos | Los cofres no forman un inventario global instantáneo; la carga necesita una noche y retirada |
 | Comunidad | Cuatro obras, pedidos semanales, 52 reuniones con 312 líneas y vecinos presentes; prioridades y decisiones recuperables | Rita e Ivo revisan la terminal; sin nuevas visitas al muelle, galería o banco. Las 312 voces nuevas siguen pendientes |
+| Navegación y rendimiento | Puertas y umbrales, mostradores, retratos, minimapa continuo, cachés acotadas y utilería por instancias | Primera carga y compilación de shaders siguen existiendo; hardware físico sin medir |
 | Validación | Regresión, ambos builds, navegador, CI e instaladores con SHA concreto | Sin dispositivos físicos: FPS, batería y memoria de Android real no medidos |
 
 La matriz histórica de abajo conserva la línea base V4 del 7 de octubre; sus rótulos «pendiente» no

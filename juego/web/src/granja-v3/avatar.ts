@@ -18,14 +18,14 @@ export class AvatarGranja{
  get moviendo(){return !!this.activo?.moviendo;}
  get ocupado(){return !!this.golpe;}
  detener(){this.direccion.set(0,0);this.manual=false;if(this.activo){this.activo.ruta=[];this.activo.alLlegar=null;if(!this.golpe)this.activo.quieto();}}
- conducir(x:number,z:number,correr=false){this.manual=true;this.direccion.set(x,z);if(this.direccion.lengthSq()>1)this.direccion.normalize();this.carrera=correr;}
+ conducir(x:number,z:number,correr=false){const activa=Math.hypot(x,z)>.01;if(this.manual&&!activa&&this.activo){this.activo.ruta=[];this.activo.quieto();}this.manual=activa;this.direccion.set(x,z);if(this.direccion.lengthSq()>1)this.direccion.normalize();this.carrera=correr;}
  mirar(x:number,z:number){this.activo?.mirarA({x,y:-z});}
  usar(x:number,z:number,impacto:()=>void,terminar:()=>void=()=>{}){if(this.golpe||!this.activo)return false;this.detener();this.mirar(x,z);this.activo.pose('reponer');this.golpe={tiempo:0,impacto,terminar,hecho:false};return true;}
  ir(x:number,z:number,walkable:(x:number,z:number)=>boolean,done?:()=>void){if(!this.activo)return false;const start=[Math.floor(this.position.x),Math.floor(this.position.z)],end=[Math.floor(x),Math.floor(z)],key=(x:number,z:number)=>x+','+z;
   if(!walkable(...end as [number,number]))return false;
   const queue=[start],seen=new Set([key(...start as [number,number])]),parents=new Map<string,number[]>();let at=0,found=false;
   while(at<queue.length&&at<12000){const [cx,cz]=queue[at++];if(cx===end[0]&&cz===end[1]){found=true;break;}for(const[dx,dz]of[[1,0],[-1,0],[0,1],[0,-1]]){const xx=cx+dx,zz=cz+dz,k=key(xx,zz);if(Math.abs(xx-start[0])>70||Math.abs(zz-start[1])>70||seen.has(k)||!walkable(xx,zz))continue;seen.add(k);parents.set(k,[cx,cz]);queue.push([xx,zz]);}}
-  if(!found)return false;let c=end,path:number[][]=[];while(c[0]!==start[0]||c[1]!==start[1]){path.push(c);c=parents.get(key(c[0],c[1]))!;}path.reverse();this.activo.ruta=path.map(([xx,zz])=>({x:xx+.5,y:-(zz+.5)}));this.activo.alLlegar=()=>{this.activo?.quieto();done?.();};if(!path.length)done?.();return true;
+  if(!found)return false;this.manual=false;this.direccion.set(0,0);let c=end,path:number[][]=[];while(c[0]!==start[0]||c[1]!==start[1]){path.push(c);c=parents.get(key(c[0],c[1]))!;}path.reverse();this.activo.ruta=path.map(([xx,zz])=>({x:xx+.5,y:-(zz+.5)}));this.activo.alLlegar=()=>{this.activo?.quieto();done?.();};if(!path.length)done?.();return true;
  }
  equipar(id:string,nivel=0){liberar(this.herramienta);const g=new THREE.Group();g.userData.id=id;g.userData.nivel=nivel;this.herramienta=g;g.visible=!this.montada;if(id==='mano'||id==='mover')return;
   const fina=crearHerramienta(id,nivel);if(fina){g.add(...fina.children);}

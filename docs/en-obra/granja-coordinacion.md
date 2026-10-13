@@ -1,3 +1,16 @@
+> Integrados también los modelos de `dce94b06`: herramientas, invernadero, envíos, monstruos y vetas. La selección conserva el camino con mouse junto al nuevo kit en la mano. Repetidos regresión, builds y recorridos sobre la combinación.
+
+> Integrados los Actos III, IV y V de Claude hasta `73ebc3ca`. Se mantienen sus películas, actores, música y voces; los cambios de rendimiento reutilizan esos recursos.
+
+## Puertas, mostradores y fluidez · 12 de octubre de 2026
+
+Javier solicitó continuar el motor y optimizar interacciones, entrada y salida física, compras desde
+mostradores y mapas. Se reutilizan los recursos de Claude; leer [FLUIDEZ-INTEGRACION.md](../../juego/web/src/granja-v3/FLUIDEZ-INTEGRACION.md).
+V5, huellas, precios, cuidados, horarios y permisos se conservan. La caché es acotada; no precargar
+los 28 mundos juntos. Los retratos no llevan nombres en el mapa. El movimiento con mouse conserva
+su camino; las puertas también admiten cruce del umbral. En la casa real solo se conecta el regreso
+por la puerta del cuarto visible; el lavado permanece intacto. Las mediciones en contenedor no son FPS de hardware.
+
 > Integrados también `9bd7107f` (postales y películas en Sangre y Ceniza) y el plano frontal de Fuatia. La postal espera mientras hay un lance de pesca; no modifica las escenas ni sus recursos.
 
 ## Cercos y llamada de compañeros · 12 de octubre de 2026

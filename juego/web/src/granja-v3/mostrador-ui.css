@@ -1,0 +1,9 @@
+.mostrador-productos{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:8px;margin-bottom:16px}
+.mostrador-producto{display:grid;justify-items:center;gap:4px;position:relative;padding:10px 6px;border:1px solid #ccb493;border-radius:12px;background:#fff7e6;color:#3d2b27;font:inherit;cursor:pointer}
+.mostrador-producto>img,.mostrador-producto .inv-icono{width:42px;height:42px;object-fit:contain}
+.mostrador-producto>strong{font-size:12px;line-height:1.15}
+.mostrador-producto>span{font-weight:800;color:#78532f}
+.mostrador-producto>small{font-size:10px;color:#806c57}
+.mostrador-producto:disabled{opacity:.5;cursor:default}
+.mostrador-producto:not(:disabled):hover{background:#ffefd0}
+.mostrador-producto:not(:disabled):active{transform:translateY(1px)}
