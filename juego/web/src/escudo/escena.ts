@@ -658,12 +658,12 @@ export class EscenaEscudo {
         } else v.orbe = poner(`fuatia_${t.elemento}`, 2.0);
         break;
     }
-    // Una lucecita del color de la torre (solo con buena calidad)
-    if (this.calidad >= 1) {
-      const l = new THREE.PointLight(TORRES[t.tipo].color, 1.2, 4, 2);
-      l.position.y = alto + 1.6;
-      o.add(l);
-    }
+    // Un brillo suave del color de la torre (sprite: una luz de verdad obligaría a recompilar los sombreadores)
+    const brillo = new THREE.Sprite(new THREE.SpriteMaterial({ map: texturaHalo(), color: TORRES[t.tipo].color, transparent: true, opacity: 0.35,
+      blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+    brillo.scale.setScalar(2.2);
+    brillo.position.y = alto + 1.3;
+    o.add(brillo);
     void m;
     return v;
   }
@@ -749,7 +749,9 @@ export class EscenaEscudo {
     const o = new THREE.Group();
     const cuerpo = this.pieza(tipo === 'motita' ? 'mota' : tipo);
     o.add(cuerpo);
-    if (tipo === 'motita') cuerpo.scale.setScalar(0.7);
+    if (tipo === 'motita') cuerpo.scale.setScalar(0.85);
+    // Más grandecitos en la pantalla del celular (que se lean bien de lejos)
+    o.scale.setScalar(tipo === 'jefe' ? 1.15 : tipo === 'golem' ? 1.1 : 1.3);
     let alas: THREE.Object3D[] | undefined;
     if (tipo === 'polilla') {
       alas = [-1, 1].map((s) => {
@@ -813,7 +815,7 @@ export class EscenaEscudo {
         case 'mota': case 'motita':
           c.position.y = Math.abs(Math.sin(v.fase * 1.6)) * 0.16;
           c.scale.set(1 + Math.sin(v.fase * 3.2) * 0.05, 1 - Math.sin(v.fase * 3.2) * 0.06, 1);
-          if (e.tipo === 'motita') c.scale.multiplyScalar(0.7);
+          if (e.tipo === 'motita') c.scale.multiplyScalar(0.85);
           break;
         case 'sombra':
           c.rotation.x = 0.25;
@@ -1127,10 +1129,12 @@ export class EscenaEscudo {
   /** Si los cuadros tardan mucho, baja la calidad (y la resolución) solita. */
   private medir(ms: number) {
     this.cuadros.push(ms);
-    if (this.cuadros.length < 45) return;
+    // Los primeros cuadros se miden rápido (si el aparato no da, que se note de una)
+    if (this.cuadros.length < (this.ultimoAjuste === 0 ? 10 : 45)) return;
     const prom = this.cuadros.reduce((a, b) => a + b, 0) / this.cuadros.length;
     this.cuadros = [];
-    if (performance.now() - this.ultimoAjuste < 2500) return;
+    if (this.ultimoAjuste && performance.now() - this.ultimoAjuste < 2500) return;
+    if (!this.ultimoAjuste) this.ultimoAjuste = 1;
     if (prom > 40) {
       this.ultimoAjuste = performance.now();
       const pr = this.renderer.getPixelRatio();

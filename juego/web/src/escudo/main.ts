@@ -79,8 +79,10 @@ async function arrancar() {
   document.addEventListener('pointerdown', () => despertar(), { once: false, passive: true });
   instalarControles();
   instalarAtras();
-  cuadros(cuadro, 0.1);
-  (window as any).__escudo = { motor: () => motor, escena: () => escena, progreso: () => progreso, jugar: (id: string) => jugarNivel(nivelPorId(id)), saltar: () => saltarCine?.() };
+  cuadros(cuadro, 0.25);
+  (window as any).__escudo = { motor: () => motor, bot: () => bot,
+    /** Para las pruebas: corre la simulación n pasos de una (con el bot si hay). */
+    avanzar: (n: number) => { for (let i = 0; i < n && motor && !motor.terminado; i++) { bot?.pensar(motor); motor.paso(); const ev = motor.eventos.splice(0); if (i > n - 60) escena.eventos(motor, ev); const fin = ev.filter((e) => e.k === 'fin'); if (fin.length) reaccionar(fin); } }, escena: () => escena, progreso: () => progreso, jugar: (id: string) => jugarNivel(nivelPorId(id)), saltar: () => saltarCine?.() };
   carga.classList.add('fuera');
   setTimeout(() => carga.remove(), 700);
   if (params.has('vitrina')) return vitrina();
@@ -160,6 +162,7 @@ function cuadro(dt: number, ahora: number) {
   // 30 cuadros por segundo
   if (ahora - ultimoRender < 1000 / 31) return;
   const dtR = Math.min(0.1, (ahora - ultimoRender) / 1000);
+  const msReal = ahora - ultimoRender;
   const t0 = performance.now();
   ultimoRender = ahora;
   escena.actualizar(pausado && pantalla === 'batalla' ? 0 : dtR, motor && pantalla !== 'menu' ? motor : null);
@@ -167,7 +170,7 @@ function cuadro(dt: number, ahora: number) {
   defensa?.actualizar(dtR, reloj);
   cielo?.actualizar(reloj, motor && motor.lazo > 0 ? 1 : pantalla === 'cine' ? 0.8 : 0.35);
   camaraMenu(dtR);
-  escena.render(performance.now() - t0 + (dtR * 1000 > 45 ? dtR * 1000 : 0));
+  escena.render(Math.max(performance.now() - t0, msReal < 400 ? msReal : 0));
 }
 
 /** En el menú la cámara pasea despacio por el mapa. */
@@ -323,6 +326,7 @@ function armarHud() {
     } else if (b.dataset.centrar !== undefined) { escena.encuadrar(); fx.toque(); }
     else if (b.dataset.pausa !== undefined) abrirPausa();
     else if (b.dataset.llamar !== undefined) {
+      capa.querySelector('.escudo-consejo')?.remove();
       const premio = motor.llamarOleada();
       fx.oleada();
       if (premio > 0) avisar(`+${premio} ✦ por adelantarla`);
@@ -598,10 +602,19 @@ function abrirMenuSitio(sitio: number, sel: Partial<NonNullable<typeof seleccion
     if (b.dataset.elemento && t) { motor.cambiarElemento(t, b.dataset.elemento as 'fuego'); return abrirMenuSitio(sitio); }
     // Lo que gasta luz se confirma (primer toque escoge y muestra el alcance; el botón ✓ lo hace)
     const confirmar = (texto: string, hacer: () => boolean) => {
-      const r = b.getBoundingClientRect();
-      confirmarBoton(r.left + r.width / 2, r.top - 26, texto, () => {
-        if (hacer()) { cerrarMenuTorre(); } else { fx.no(); avisar('No alcanza la luz de estrellas', 'pista'); }
-      });
+      quitarConfirmar();
+      const c = document.createElement('button');
+      c.className = 'escudo-confirmar en-menu';
+      c.innerHTML = texto;
+      c.onclick = (e) => {
+        e.stopPropagation();
+        if (hacer()) cerrarMenuTorre();
+        else { fx.no(); avisar('No alcanza la luz de estrellas', 'pista'); }
+      };
+      el.append(c);
+      // Que siga cabiendo en la pantalla
+      const r = el.getBoundingClientRect();
+      if (r.bottom > window.innerHeight - 6) el.style.top = `${Math.max(6, window.innerHeight - r.height - 6)}px`;
     };
     if (b.dataset.tipo) {
       const id = b.dataset.tipo as IdTorre;
