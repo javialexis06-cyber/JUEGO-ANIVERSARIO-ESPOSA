@@ -4,6 +4,7 @@
 // herramientas de antes, para que la animación del golpe y la mano no cambien.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { conKit } from './cuartos';
 
 export const NOMBRES_CALIDAD = ['Básica', 'Cobre', 'Hierro', 'Acero estelar', 'Cristal de Celia'];
 
@@ -157,6 +158,31 @@ export function crearHerramienta(id: string, nivel = 0): THREE.Group | null {
   const g = new THREE.Group();
   g.name = `herramienta_${id}_${nivel}`;
   g.userData.id = id; g.userData.nivel = nivel;
-  hacer(g, tono(nivel), Math.max(0, Math.min(4, nivel | 0)));
+  // (las piezas van en un grupo propio: la mano se lo lleva entero y el modelo de Blender las cambia adentro)
+  const piezas = new THREE.Group();
+  piezas.name = 'piezas';
+  hacer(piezas, tono(nivel), Math.max(0, Math.min(4, nivel | 0)));
+  g.add(piezas);
+  vestirConKit(piezas, id, nivel);
   return g;
+}
+
+/** Las herramientas de granja_herramientas.glb (personajes/blender/granja_herramientas.py): mango gordito con agarre
+ *  de cuero, cabezas redondeadas. Las de calidad usan los materiales del nivel («h metal», «h filo», «h mango»,
+ *  «h agarre», «h adorno»); las demás traen sus colores. Mientras carga se ve la de three.js. */
+const CLAVE_KIT: Record<string, string> = { cubo_ordeno: 'h_cubo', tijeras_esquila: 'h_tijeras', semillas: 'h_semillas', pasto: 'h_semillas' };
+export function vestirConKit(piezas: THREE.Group, id: string, nivel: number | null) {
+  const clave = CLAVE_KIT[id] ?? 'h_' + id;
+  conKit(piezas, 'granja_herramientas.glb', (m) => {
+    const b = m.get(clave);
+    if (!b) return;
+    const c = b.clone(true);
+    if (nivel !== null && HACER[id]) {
+      const t = tono(nivel);
+      const por: Record<string, THREE.Material | undefined> = { 'h metal': t.metal, 'h filo': t.filo, 'h mango': t.mango, 'h agarre': t.agarre, 'h adorno': t.adorno };
+      c.traverse((o) => { const x = o as THREE.Mesh; if (!x.isMesh) return; const nombre = (x.material as THREE.Material).name.replace(/^Granja \| /, ''); const nuevo = por[nombre]; if (nuevo) x.material = nuevo; x.castShadow = true; });
+    }
+    for (const o of [...piezas.children]) { o.removeFromParent(); o.traverse((x) => { if (x instanceof THREE.Mesh) { x.geometry.dispose(); } }); }
+    piezas.add(c);
+  });
 }

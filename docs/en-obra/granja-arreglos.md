@@ -523,6 +523,11 @@ Dónde está:
   tapa (dentro del mismo grupo `tapa_envio`, que se sigue abriendo) y la banderita que sube con carga;
   `compania-render.ts hogarMascotaVista` la casita con techo de tejas, cojín con botones, cobijita y letrero con
   huella, y el cuenco de barro con huellitas (el agua aparte, solo si está lleno).
+- **Herramientas en la mano en Blender** **hecho** (13 de octubre): `granja_herramientas.glb`
+  (`personajes/blender/granja_herramientas.py`, 10 piezas `h_*`). `herramientas3d.ts vestirConKit` cambia las piezas
+  hechas a mano por las del kit y les pone los materiales de la calidad (los nombres `h metal`, `h filo`, `h mango`,
+  `h agarre`, `h adorno` del kit se reemplazan por los de `tono(nivel)`); `avatar.ts` hace lo mismo con el cubo de
+  ordeño, las tijeras y la bolsa de semillas (pasto incluido). Mientras carga el kit se ve la versión de antes.
 
 ## Datos útiles
 
