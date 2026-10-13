@@ -78,12 +78,13 @@ export class PastoreoGanado {
   if(encontrado&&this.segmento(s,b,puntos.at(-1)??t.desde,t.hasta))puntos.push(t.hasta);return puntos;
  }
  /** true significa que esta rutina fue atendida; la rutina clásica no debe volver a moverla. */
- paso(s:EstadoGranja,b:Edificio,a:Animal,dt:number,exterior:boolean):boolean{
+ paso(s:EstadoGranja,b:Edificio,a:Animal,dt:number,exterior:boolean,destinoCorral?:Punto):boolean{
   const r=a.rutina!;if(r.lugar==='refugio')return false;if(s.interior)return r.lugar==='campo';
-  const salir=b.pastoreoLibre===true&&exterior&&a.cuidado.illnessSince===null;
-  if(r.lugar==='corral'&&!salir)return false;
+  const salir=!destinoCorral&&b.pastoreoLibre===true&&exterior&&a.cuidado.illnessSince===null;
+  if(r.lugar==='corral'&&!salir&&!destinoCorral)return false;
   const volver=!salir;let objetivo:Punto;
-  if(volver)objetivo={u:3.3,v:6.5};
+  // La sed vuelve primero por el paso del corral y luego va al cuenco. Usa el mismo presupuesto.
+  if(volver)objetivo=destinoCorral&&r.lugar==='corral'?destinoCorral:{u:3.3,v:6.5};
   else if(r.lugar==='corral')objetivo={u:4.6,v:6.5};
   else{
    if(r.espera>0){r.espera=Math.max(0,r.espera-dt);r.actividad=b.pasto>0?'pastorear':'descansar';return true;}
