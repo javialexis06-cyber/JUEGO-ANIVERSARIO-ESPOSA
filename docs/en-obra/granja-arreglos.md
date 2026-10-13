@@ -539,6 +539,13 @@ Dónde está:
   caja de envíos y la casita de los compañeros se vuelven a fotografiar con `scripts/granja-v3/iconos-objetos.mjs`,
   que ahora carga los kits de Blender antes de la foto (`precargarKit`, con el cargador del juego de `recursos.ts` y
   `<base href="/">`: antes el kit no cargaba y salía la figura vieja).
+- **Refugios de los animales por fuera en Blender** **hecho** (13 de octubre): `granja_refugios.glb`
+  (`personajes/blender/granja_refugios.py`). `arte.ts crearRefugio` cambia las cajitas por el cuerpo (cimiento de cantos,
+  paredes con juntas de tablas, postes, ventanas con cruz y jardinera, farol, pacas y costal), el techo de tejas
+  gorditas con caballete, la veleta (gallito en gallineros y patos, flecha en los demás), la carita de peluche de cada
+  especie en el frontón (13) y los adornos (nidales con rampa, percha del grifo, cristales de techo o de los lados,
+  enredadera, halo con nubes). Las partes «ref muro/techo/madera/oscuro/borde/piedra/vidrio/metal» toman los mismos
+  colores de clima y especie de antes. Todo fundido por material. Los íconos de los refugios se volvieron a fotografiar.
 
 ## Datos útiles
 
