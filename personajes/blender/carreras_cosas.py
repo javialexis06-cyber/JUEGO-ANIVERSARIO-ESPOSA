@@ -744,6 +744,38 @@ def m_copa(coll):
     g.parent = raiz
 
 
+def m_garaje(coll):
+    """El tapete del garaje (menú): un tapete redondo de fieltro con costura dorada y el emblema, cajas de objetos a
+    los lados, un banderín, un barril de herramientas y flores."""
+    raiz = bpy.data.objects.new('garaje', None)
+    clay.link(raiz, coll)
+
+    def cuerpo():
+        clay.lathe('tapete garaje', [(0.0, 0.0), (3.4, 0.0), (3.45, 0.06), (3.3, 0.1), (0.0, 0.1)], coll, tela('tapete garaje', '#7A5BB8'), segments=48, subsurf=0)
+        clay.lathe('borde garaje', [(3.3, 0.06), (3.6, 0.05), (3.6, 0.12), (3.3, 0.12)], coll, tela('borde garaje', '#F2C14E'), segments=48, subsurf=0, cap_top=False, cap_bottom=False)
+        ring = [(math.cos(a) * 3.0, math.sin(a) * 3.0, 0.11) for a in np.linspace(0, math.tau, 49)[:-1]]
+        clay.stitches('costura garaje', ring, 0.025, 0.12, 0.08, coll, oro(), closed=True)
+        for k in range(16):
+            a = k / 16 * math.tau
+            bola(coll, 'borla garaje', (math.cos(a) * 3.55, math.sin(a) * 3.55, 0.12), 0.08, tela(f'borla {k % 2}', ('#E4566B', '#FFF3DA')[k % 2]), n=2, sub=0)
+        # Barril de herramientas y un banderín atrás
+        clay.lathe('barril', [(0.0, 0.0), (0.42, 0.0), (0.5, 0.45), (0.42, 0.9), (0.0, 0.9)], coll, MAD(), segments=14, subsurf=1)
+        o = coll.objects[-1]
+        o.location = (2.6, 2.0, 0.1)
+        for z in (0.2, 0.7):
+            r = clay.lathe('aro barril', [(0.46, z), (0.48, z + 0.04), (0.46, z + 0.08)], coll, HIERRO(), segments=14, subsurf=0, cap_top=False, cap_bottom=False)
+            r.location = (2.6, 2.0, 0.1)
+        for k in range(3):
+            tubo(coll, 'herramienta', [(2.5 + k * 0.1, 2.0, 0.9), (2.45 + k * 0.12, 2.0, 1.5)], 0.03, OSC(), seg=4)
+        banderin(coll, -2.7, 2.1, 0.1, alto=1.8)
+        for k in range(6):
+            a = 2.3 + k * 0.3
+            bola(coll, 'flor garaje', (math.cos(a) * 3.1, math.sin(a) * 3.1, 0.25), 0.12, tela(f'flor cesta {k % 3}', ('#FFFFFF', '#F7C948', '#C9B6EA')[k % 3]), n=2, sub=0)
+            bola(coll, 'mata garaje', (math.cos(a) * 3.15, math.sin(a) * 3.15, 0.12), (0.2, 0.2, 0.14), tela('mata', '#5E9A44'), n=2, sub=0)
+    g = grupo(coll, 'garaje', (0, 0, 0), cuerpo)
+    g.parent = raiz
+
+
 PIEZAS = {k[2:]: v for k, v in list(globals().items()) if k.startswith('m_') and callable(v) and v.__module__ == __name__}
 
 

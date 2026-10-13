@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'carreras.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -28,6 +28,7 @@ const SUSTITUTOS: Record<string, string> = {
   'src/escenas/catalogo.ts': 'src/amigos/sin_pareja/escenas.ts',
   'src/escenas/cine.ts': 'src/amigos/sin_pareja/cine.ts',
   'src/reacciones/pareja.ts': 'src/amigos/sin_pareja/reacciones.ts',
+  'src/carreras/pareja.ts': 'src/amigos/sin_pareja/carreras.ts',
 };
 
 /**
@@ -42,11 +43,15 @@ export const PERMITIDOS_AMIGOS = [
   'src/sueltos/', 'src/casa/cohete/', 'src/casa/cohete.ts', 'src/casa/cohete.css', 'src/casa/cocina/', 'src/casa/progreso_nube.ts', 'src/casa/ropa.json',
   // los juegos de mesa (sin las escenas premium, que son de la pareja: ver SUSTITUTOS)
   'src/reacciones/', 'src/mesa/',
+  // La Carrera de las Tres Lunas (lo de la pareja va en src/carreras/pareja.ts, ver SUSTITUTOS)
+  'src/carreras/',
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
 export const PUBLICOS_AMIGOS = ['modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/', 'datos/niveles.json',
-  'modelos/manifest_export.json'];
+  'modelos/manifest_export.json',
+  // La carrera: pistas, carros y criaturas (las tres de la granja que tiran los carros), íconos y voces (sin las de la pareja)
+  'modelos/carreras/', 'carreras/', 'modelos/granja-v3/unicornio_lod.glb', 'modelos/granja-v3/grifo_lod.glb', 'modelos/granja-v3/dragon_lod.glb', 'audio/carreras/'];
 
 /** Lo de Súper Manía en `modelos/` (y en `modelos-plano/`, la copia para celulares sin WebAssembly): el local en sus
  *  4 tamaños, vitrinas, letreros, productos, utilería y la gente; y los íconos de los productos. */
@@ -164,7 +169,7 @@ export default defineConfig(({ mode, command }) => {
             // desde la sala de juegos de amigos (retrete.html, cocina.html)
             casa: resolve(raiz, 'index.html'), super: resolve(raiz, 'super.html'), puertas: resolve(raiz, 'puertas.html'), mesa: resolve(raiz, 'mesa.html'),
             granjaV3: resolve(raiz, 'granja-v3.html'),
-            amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'),
+            amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'), carreras: resolve(raiz, 'carreras.html'),
           },
       },
     },

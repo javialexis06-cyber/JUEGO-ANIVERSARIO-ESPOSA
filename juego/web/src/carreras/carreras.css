@@ -1,0 +1,212 @@
+/* La Carrera de las Tres Lunas: menús de fieltro (crema, lila de Astra y oro de Aurelia) y el HUD de la carrera,
+   pensados para el celular en horizontal (844 × 390). */
+:root {
+  --car-crema: #fff6e8;
+  --car-crema2: #f6e2c8;
+  --car-cacao: #4a2e2a;
+  --car-lila: #7a5bb8;
+  --car-noche: #3b2e6e;
+  --car-oro: #f2c14e;
+  --car-coral: #e4566b;
+  --car-texto: 'Nunito', 'Baloo 2', 'Segoe UI', system-ui, sans-serif;
+}
+html, body.carreras {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #f6e2c8;
+  font: 800 15px/1.25 var(--car-texto);
+  color: var(--car-cacao);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+#lienzo { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#capa, #pantallas { position: fixed; inset: 0; pointer-events: none; }
+#capa > *, #pantallas > * { pointer-events: auto; }
+.carreras button { font-family: inherit; color: inherit; cursor: pointer; }
+
+/* ------------------------------------------------------------------ carga */
+#carga {
+  position: fixed; inset: 0; z-index: 30; display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 35%, #5a47a0, #2a2058 70%);
+  color: #fff6e8;
+}
+#carga[hidden] { display: none; }
+.carga-centro { text-align: center; width: min(420px, 80vw); }
+.carga-logo, .car-logo {
+  font-weight: 900; font-size: 46px; line-height: 0.95; letter-spacing: 0.5px;
+  color: #ffe9a8; text-shadow: 0 3px 0 #b5602e, 0 6px 0 rgba(42, 32, 88, 0.6), 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+.carga-logo small, .car-logo small { display: block; font-size: 0.42em; color: #fff6e8; text-shadow: 0 2px 0 rgba(42, 32, 88, 0.6); letter-spacing: 2px; text-transform: uppercase; }
+.carga-frase { margin: 18px 0 10px; opacity: 0.9; }
+.carga-barra { height: 12px; border-radius: 99px; background: rgba(255, 255, 255, 0.18); overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25); }
+.carga-barra i { display: block; height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, #f2c14e, #ff9a6a, #e4566b); transition: width 0.3s; }
+
+/* ------------------------------------------------------------------ menús */
+.car-pantalla { position: absolute; inset: 0; display: flex; align-items: center; padding: 14px max(18px, env(safe-area-inset-left)); box-sizing: border-box; }
+.car-pantalla.podio { align-items: flex-end; justify-content: center; pointer-events: none; }
+.car-pantalla.podio .car-podio-texto { pointer-events: auto; }
+.car-menu { width: min(400px, 52vw); }
+.car-menu .car-logo { font-size: clamp(34px, 6.4vw, 54px); }
+.car-sub { margin: 4px 0 10px; color: var(--car-noche); }
+.car-opciones { display: flex; flex-direction: column; gap: 7px; }
+.car-boton {
+  border: 0; border-radius: 16px; padding: 9px 16px; text-align: left; font-size: 16px; font-weight: 900;
+  background: var(--car-crema); color: var(--car-cacao);
+  box-shadow: 0 3px 0 #d9b48a, 0 6px 14px rgba(74, 46, 42, 0.18);
+  transition: transform 0.08s;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.6) 1px, transparent 1.4px);
+  background-size: 6px 6px;
+}
+.car-boton small { display: block; font-size: 11.5px; font-weight: 700; opacity: 0.7; }
+.car-boton.grande { background-color: var(--car-coral); color: #fff; box-shadow: 0 3px 0 #a8323f, 0 6px 16px rgba(168, 50, 63, 0.35); font-size: 18px; }
+.car-boton.suave { background-color: #efe0f8; box-shadow: 0 3px 0 #c6b0e0, 0 6px 12px rgba(74, 46, 42, 0.12); }
+.car-boton:active, .car-redondo:active { transform: translateY(2px); }
+.car-fila-abajo { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+.car-redondo { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--car-crema); box-shadow: 0 3px 0 #d9b48a; font-size: 18px; }
+.car-chip { display: inline-flex; gap: 6px; align-items: center; background: var(--car-crema); border-radius: 99px; padding: 6px 12px; font-size: 13px; box-shadow: 0 2px 0 #d9b48a; }
+.car-chip select { font: inherit; border: 0; background: transparent; color: var(--car-coral); }
+.car-panel {
+  background: rgba(255, 246, 232, 0.94); border-radius: 22px; padding: 12px 16px; max-height: calc(100% - 8px); overflow: auto; box-sizing: border-box;
+  box-shadow: 0 0 0 3px #f2c14e, 0 0 0 6px rgba(122, 91, 184, 0.35), 0 12px 30px rgba(42, 32, 88, 0.3);
+  border: 2px dashed rgba(181, 96, 46, 0.35);
+}
+.car-panel h2 { margin: 0 0 6px; font-size: 20px; color: var(--car-noche); }
+.car-panel h3 { margin: 6px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--car-lila); }
+.car-garaje { width: min(470px, 58vw); }
+.car-cartas { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.car-carta {
+  flex: 0 0 auto; width: 92px; border: 0; border-radius: 14px; padding: 5px; background: #fff; text-align: center;
+  box-shadow: 0 2px 0 #e2c9a6; display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.car-carta img { width: 64px; height: 64px; object-fit: contain; }
+.car-carta b { font-size: 12px; line-height: 1.1; }
+.car-carta small { font-size: 10px; opacity: 0.7; font-weight: 700; }
+.car-carta.activa { background: #fff3c6; box-shadow: 0 0 0 3px var(--car-oro), 0 2px 0 #e2c9a6; }
+.car-cartas.chicas .car-carta { width: auto; padding: 8px 12px; }
+.car-colores { display: flex; gap: 6px; flex-wrap: wrap; }
+.car-color { width: 30px; height: 30px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15); }
+.car-color.activa { box-shadow: 0 0 0 3px var(--car-noche); }
+.car-barras { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; margin-top: 4px; }
+.car-barra { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.car-barra span { width: 70px; }
+.car-barra i { flex: 1; height: 7px; border-radius: 9px; background: #eadbc6; overflow: hidden; }
+.car-barra b { display: block; height: 100%; background: linear-gradient(90deg, #f2c14e, #e4566b); border-radius: 9px; }
+.car-garaje .car-boton.grande { margin-top: 8px; width: 100%; text-align: center; }
+.car-pistas { width: min(560px, 70vw); }
+.car-cartas.pistas { flex-wrap: wrap; overflow: visible; }
+.car-carta.pista { width: calc(50% - 4px); flex-direction: row; text-align: left; gap: 8px; padding: 6px; border-left: 8px solid var(--tarjeta); position: relative; }
+.car-carta.pista img { width: 96px; height: 58px; object-fit: cover; border-radius: 10px; flex: 0 0 auto; }
+.car-carta.pista b { font-size: 13.5px; }
+.car-carta.pista small { display: block; }
+.car-carta.pista em { position: absolute; right: 8px; top: 5px; font-size: 10px; font-style: normal; color: var(--car-lila); }
+.car-carta.pista > :not(img) { display: block; }
+.car-fin { margin: 0 auto; width: min(560px, 80vw); }
+.car-grande { font-size: 40px; margin: 6px 0; color: var(--car-coral); }
+.car-resultados { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.car-resultados li { display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 12px; padding: 2px 10px 2px 4px; }
+.car-resultados li.yo { background: #fff3c6; box-shadow: 0 0 0 2px var(--car-oro); }
+.car-resultados .pos { width: 24px; text-align: center; font-size: 17px; color: var(--car-lila); }
+.car-resultados b { flex: 1; }
+.car-resultados .t { font-variant-numeric: tabular-nums; opacity: 0.75; font-size: 13px; }
+.car-resultados em { width: 30px; text-align: right; color: #2f8f5b; font-style: normal; font-size: 12px; }
+.car-resultados strong { width: 30px; text-align: right; color: var(--car-coral); }
+.car-carita { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px #fff; }
+.car-carita svg { width: 30px; height: 30px; }
+.car-carita.grande, .car-carita.grande svg { width: 64px; height: 64px; }
+.car-podio-texto { text-align: center; margin-bottom: 8px; }
+.car-podio-texto h2 { margin: 0; font-size: 26px; color: #fff; text-shadow: 0 3px 0 rgba(59, 46, 110, 0.8), 0 6px 18px rgba(0, 0, 0, 0.3); }
+.car-podio-texto p { display: flex; gap: 12px; justify-content: center; margin: 4px 0 8px; color: #fff; text-shadow: 0 2px 0 rgba(59, 46, 110, 0.8); }
+.car-podio-texto .car-boton { display: inline-block; }
+.car-linea { width: min(420px, 60vw); }
+.car-unirse { display: flex; gap: 6px; }
+.car-unirse input { flex: 1; min-width: 0; border: 0; border-radius: 14px; padding: 8px 12px; font: 900 18px var(--car-texto); letter-spacing: 3px; text-transform: uppercase; background: #fff; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12); }
+
+/* ------------------------------------------------------------------ HUD */
+.car-hud { position: absolute; inset: 0; pointer-events: none; }
+.car-hud[hidden] { display: none; }
+.car-hud > * { position: absolute; }
+.car-obj {
+  left: max(12px, env(safe-area-inset-left)); top: 10px; width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(255, 246, 232, 0.55); box-shadow: 0 0 0 3px rgba(242, 193, 78, 0.85), inset 0 3px 8px rgba(59, 46, 110, 0.3);
+  display: grid; place-items: center;
+}
+.car-obj img { width: 56px; height: 56px; }
+.car-obj img:not([src]) { visibility: hidden; }
+.car-obj.lleno { background: rgba(255, 246, 232, 0.85); }
+.car-obj.ruleta img { animation: ruleta 0.16s linear infinite; }
+@keyframes ruleta { 50% { transform: scale(0.85); } }
+.car-usos { position: absolute; right: -4px; bottom: -2px; background: var(--car-coral); color: #fff; border-radius: 99px; padding: 0 6px; font-size: 13px; }
+.car-usos:empty { display: none; }
+.car-centro { left: 50%; top: 8px; transform: translateX(-50%); text-align: center; color: #fff; text-shadow: 0 2px 0 rgba(42, 32, 88, 0.85), 0 0 8px rgba(42, 32, 88, 0.6); }
+.car-vuelta { font-size: 17px; }
+.car-reloj { font-size: 14px; font-variant-numeric: tabular-nums; opacity: 0.95; }
+.car-puesto {
+  right: max(56px, calc(env(safe-area-inset-right) + 44px)); top: 4px; color: #fff; font-weight: 900; display: flex; align-items: baseline;
+  text-shadow: 0 3px 0 #a8323f, 0 6px 0 rgba(42, 32, 88, 0.6);
+}
+.car-puesto b { font-size: 54px; line-height: 1; }
+.car-puesto small { font-size: 22px; }
+.car-puesto i { font-size: 15px; font-style: normal; opacity: 0.8; margin-left: 2px; }
+.car-puesto.p1 { color: #ffe27a; }
+.car-puesto.p2 { color: #eef2ff; }
+.car-puesto.p3 { color: #ffc28a; }
+.car-puesto.salta { animation: salta 0.35s ease; }
+@keyframes salta { 40% { transform: scale(1.3); } }
+.car-pausa { pointer-events: auto; right: max(10px, env(safe-area-inset-right)); top: 10px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(255, 246, 232, 0.75); font-size: 13px; color: var(--car-noche); }
+.car-mapa { left: max(10px, env(safe-area-inset-left)); top: 84px; width: 150px; height: 120px; opacity: 0.92; }
+.car-tabla { right: max(8px, env(safe-area-inset-right)); top: 66px; margin: 0; padding: 0; list-style: none; font-size: 10.5px; color: #fff; text-shadow: 0 1px 2px rgba(42, 32, 88, 0.9); }
+.car-tabla li { display: flex; align-items: center; gap: 4px; opacity: 0.85; line-height: 1.35; }
+.car-tabla li.yo { opacity: 1; color: #ffe27a; font-size: 12px; }
+.car-tabla i { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 0 1px #fff; }
+.car-cuenta { left: 50%; top: 40%; transform: translate(-50%, -50%); font-size: 96px; font-weight: 900; color: #ffe27a; text-shadow: 0 6px 0 #b5602e, 0 12px 24px rgba(42, 32, 88, 0.5); }
+.car-cuenta.pum { animation: pum 0.9s ease both; }
+@keyframes pum { 0% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; } 25% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } }
+.car-aviso { left: 50%; top: 23%; transform: translateX(-50%) scale(0.6); opacity: 0; font-size: 26px; color: #fff; white-space: nowrap; transition: transform 0.2s, opacity 0.2s;
+  text-shadow: 0 3px 0 var(--car-lila), 0 6px 14px rgba(42, 32, 88, 0.5); }
+.car-aviso.visible { transform: translateX(-50%) scale(1); opacity: 1; }
+.car-aviso.ultima { color: #ffe27a; font-size: 34px; text-shadow: 0 3px 0 #a8323f, 0 6px 14px rgba(42, 32, 88, 0.5); }
+.car-aviso.turbo { color: #ffd27a; }
+.car-aviso.meta { font-size: 40px; color: #ffe27a; text-shadow: 0 4px 0 #a8323f, 0 8px 18px rgba(42, 32, 88, 0.5); }
+.car-aviso.lluvia { color: #bfe6ff; }
+.car-globo {
+  left: 50%; bottom: 14px; transform: translate(-50%, 20px); opacity: 0; transition: 0.25s; max-width: 46vw;
+  background: rgba(255, 246, 232, 0.92); border-radius: 16px; padding: 5px 12px; font-size: 13px; text-align: center; box-shadow: 0 4px 12px rgba(42, 32, 88, 0.3);
+}
+.car-globo b { display: block; font-size: 10.5px; color: var(--car-lila); }
+.car-globo.visible { opacity: 1; transform: translate(-50%, 0); }
+
+/* ------------------------------------------------------------------ mando */
+.car-mando { position: absolute; inset: 0; pointer-events: none; }
+.car-mando[hidden] { display: none; }
+.car-zona-joy { position: absolute; left: 0; bottom: 0; width: 42%; height: 62%; pointer-events: auto; touch-action: none; }
+.car-joy { position: absolute; width: 104px; height: 104px; margin: -52px 0 0 -52px; border-radius: 50%; pointer-events: none;
+  background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35); opacity: 0.55; transition: opacity 0.2s; }
+.car-joy.activo { opacity: 0.9; }
+.car-joy i { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: rgba(255, 246, 232, 0.5); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); }
+.car-mando:not(.tactil) .car-joy, .car-mando:not(.tactil) .car-btn { display: none; }
+.car-btn {
+  position: absolute; pointer-events: auto; border: 0; border-radius: 50%; touch-action: none; color: #fff;
+  background: rgba(59, 46, 110, 0.38); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45), 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: grid; place-items: center; font-size: 11px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.car-btn.apretado { background: rgba(242, 193, 78, 0.6); transform: scale(0.94); }
+.car-derrape { width: 92px; height: 92px; right: max(22px, env(safe-area-inset-right)); bottom: 24px; font-size: 13px; }
+.car-objeto { width: 68px; height: 68px; right: max(124px, calc(env(safe-area-inset-right) + 102px)); bottom: 48px; background: rgba(228, 86, 107, 0.42); }
+.car-freno { width: 52px; height: 52px; right: max(96px, calc(env(safe-area-inset-right) + 74px)); bottom: 130px; }
+.car-acel { display: none !important; }
+.car-mando.manual .car-acel { display: grid !important; width: 70px; height: 70px; right: max(120px, calc(env(safe-area-inset-right) + 98px)); bottom: 128px; background: rgba(111, 211, 154, 0.42); }
+.car-mando.manual .car-freno { bottom: 200px; right: max(44px, calc(env(safe-area-inset-right) + 22px)); }
+
+/* ------------------------------------------------------------------ pausa */
+.car-pausa-menu { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(42, 32, 88, 0.45); }
+.car-pausa-menu .car-panel { width: min(320px, 70vw); display: flex; flex-direction: column; gap: 8px; }
+.car-pausa-menu .car-boton { text-align: center; }
+
+@media (max-height: 420px) {
+  .car-menu .car-logo { font-size: 38px; }
+  .car-boton { padding: 7px 14px; font-size: 15px; }
+  .car-boton.grande { font-size: 16px; }
+}
