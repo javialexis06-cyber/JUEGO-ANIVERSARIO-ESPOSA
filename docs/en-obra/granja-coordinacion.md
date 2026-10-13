@@ -347,7 +347,8 @@ Contrato para el frente de motor:
 semillas en su sobre, plantones, minerales, lingotes, recursos, productos de animales, peces, comidas y armaduras).
 `node scripts/granja-v3/iconos-objetos.mjs [url] [regex]` los fotografía a `public/modelos/granja-v3/iconos/obj_<id>.webp`
 y reescribe `src/granja-v3/iconos-lista.ts`. Un objeto nuevo sin foto sigue usando su dibujo SVG: cuando agregues
-objetos, avísame (o corre el script) para fotografiarlos. Construcciones y máquinas siguen con SVG por ahora.
+objetos, avísame (o corre el script) para fotografiarlos. Construcciones y máquinas también tienen foto, con sus
+modelos de Blender (el script carga los kits antes de fotografiar).
 
 ## Vecinos de peluche (Claude, 10 de octubre de 2026)
 

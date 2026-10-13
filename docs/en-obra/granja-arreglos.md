@@ -533,6 +533,12 @@ Dónde está:
   velo nocturno, centinela y los cuatro constructos). `escenas-aventura.ts figura` cambia el cuerpo por el del kit y
   toma las patas, brazos y alas de los vacíos `miembro_<k>` (se siguen meciendo). Si el jefe tiene su arte propio,
   ese gana (`userData.arteJefe`). Los reguladores y las formas sin pieza siguen con la figura de antes.
+- **Íconos 3D** **hecho** (13 de octubre): las herramientas (las 7 en sus 5 calidades, el balde y las tijeras) se
+  renderizan en Blender con `personajes/blender/granja_iconos_herramientas.py -- <carpeta>` y se pasan a webp con
+  `node scripts/granja-v3/iconos-blender.mjs <carpeta>`. Las máquinas, cofres, aspersores, portales, refugios, la
+  caja de envíos y la casita de los compañeros se vuelven a fotografiar con `scripts/granja-v3/iconos-objetos.mjs`,
+  que ahora carga los kits de Blender antes de la foto (`precargarKit`, con el cargador del juego de `recursos.ts` y
+  `<base href="/">`: antes el kit no cargaba y salía la figura vieja).
 
 ## Datos útiles
 
