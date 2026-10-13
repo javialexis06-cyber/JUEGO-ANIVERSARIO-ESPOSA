@@ -397,11 +397,11 @@ lunas) y Confluencia (los cuatro elementos girando).
 | Diosas | Lara **sin velo** (la boda) | Falta (variante) |
 | Villanos | **Nath'Gora** y **Vael'Thor** como actores (hoy son medallones) | Falta |
 | Villanos | El Conde | Hecho (jefe de Sangre); falta el **Conde humano** con la copa, antes del pacto |
-| Criaturas | Dragón, grifo y unicornio de la granja | **Hecho**; falta la **cría de unicornio** (T03) |
+| Criaturas | Dragón, grifo y unicornio de la granja; la **cría de unicornio** (T03, `granja_cria.py`) | **Hecho** |
 | Gente | Serena, Eliana, Eneas, Ofelia, Elián y los vecinos | Hechos como habitantes de Astra; revisar que tengan cara para planos cercanos |
 | Lugares | Valle, pueblo, regiones de Astra y biomas de Sangre | **Hechos** (`granja_*.glb`, `sangre/bioma_*.glb`) |
 | Lugares | El cosmos (estrellas, planeta, escudo) | Hecho en el motor (prólogo) |
-| Boda | **Eterna**: pabellón, cabañas en A, piscina, árbol grande, arco de rosas, río con decks, fogata, mesa larga | Falta |
+| Boda | **Eterna**: pabellón, cabañas en A, piscina, árbol grande, arco de rosas, río con decks, fogata, mesa larga | **Hecho** (`granja_eterna.py`) |
 | Boda | Traje y vestido de boda, velo, lazo de cuatro hilos, faroles, velas, calas | Falta |
 | Casa | **El Altar del Lazo** (también se usa en el juego de la casa) | Falta |
 | Papel animado | Láminas para S08 y los recuerdos de C08 | Falta (se pintan con texturas) |
@@ -436,9 +436,13 @@ lunas) y Confluencia (los cuatro elementos girando).
 - **Fase F (Actos IV y V) animada**: C13, C14, C07, C08, C09 y C10. Las 14 cinemáticas ya son película.
 - **Fase G animada**: Eterna modelada en Blender, la ropa de boda, el Altar del Lazo (ALT) y la boda completa (BOD)
   con créditos. Se dispara en la granja al cerrar P24 y F12 con el final de Sangre visto (`cine-granja.md`).
-- Falta: las postales de los biomas dentro de Sangre y Ceniza, las 2 líneas JEF del Conde en Sangre, los modelos propios
-  de la fase B (Fuatia, Nath'Gora, Vael'Thor, el Conde humano y la cría de unicornio; hoy van armados con el clóset) y
-  las fotos de cada escena en los créditos (hoy van los títulos).
+- **Hecho después**:
+  - Las postales de los biomas dentro de Sangre (`sangre/ui/postal.ts`).
+  - El Conde habla en su pelea (JEF.C1 al aparecer, JEF.C2 con las alas).
+  - Las fotos de las 28 películas en los créditos (`public/granja/cine/fotos/`, sacadas con `scripts/_fotos_creditos.mjs`).
+  - La cría de unicornio propia (`personajes/blender/granja_cria.py`) en T03.
+- Falta de la fase B: las piezas exclusivas de Fuatia, Nath'Gora y Vael'Thor (hoy van armados con el clóset) y el Conde
+  humano.
 
 Cada escena: guion → voces → actores y escenario → animación con el motor del cine (`cine-granja.ts`) → pruebas en el
 navegador (cuadros sueltos y video) → captura revisada → commit y push. Las de Sangre y Ceniza llevan su versión de amigos

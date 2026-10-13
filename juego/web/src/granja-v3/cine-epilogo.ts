@@ -397,29 +397,35 @@ function eterna(hora: 'atardecer' | 'noche') {
 }
 
 /** Los créditos: la noche de Eterna con la constelación y los nombres de todas las escenas subiendo despacio. */
-const CAPITULOS = [
-  'Prólogo · El nacimiento de Celia', 'Dos surcos', 'El agua que escucha', 'La Noche Eterna', 'La campana y la mesa', 'El brote que puede esperar',
-  'Las Afueras', 'La firma', 'El fuego bajo la piedra', 'La cría que no quiere hablar', 'El Santuario roto', 'La copa', 'Una mañana que no basta',
-  'El descenso', 'La ayuda que no llegó', 'El día posterior al nacimiento', 'Lo que no vuelve idéntico', 'La casa que dejé esperando', 'La casa de Elián',
-  'El nombre que no se pronuncia por otro', 'El precio de una alianza', 'La cuenta que ya no se cierra sola', 'El tratado', 'El ceramista',
-  'Una estrella sin dueño', 'La parcela de mañana', 'El Altar del Lazo', 'Siempre te elegiré',
+/** Los capítulos de la película (con el id de cada una: su foto está en granja/cine/fotos/<id>.jpg). */
+const CAPITULOS: [string, string][] = [
+  ['prologo', 'Prólogo · El nacimiento de Celia'], ['C01', 'Dos surcos'], ['C11', 'El agua que escucha'], ['SC0', 'La Noche Eterna'],
+  ['C02', 'La campana y la mesa'], ['ELI', 'El brote que puede esperar'], ['SC1', 'Las Afueras'], ['C03', 'La firma'], ['SC2', 'El fuego bajo la piedra'],
+  ['T03', 'La cría que no quiere hablar'], ['SC3', 'El Santuario roto'], ['C04', 'La copa'], ['C05', 'Una mañana que no basta'], ['SC4', 'El descenso'],
+  ['S08', 'La ayuda que no llegó'], ['C12', 'El día posterior al nacimiento'], ['ENE', 'Lo que no vuelve idéntico'], ['OFE', 'La casa que dejé esperando'],
+  ['C06', 'La casa de Elián'], ['SER', 'El nombre que no se pronuncia por otro'], ['C13', 'El precio de una alianza'], ['C14', 'La cuenta que ya no se cierra sola'],
+  ['C07', 'El tratado'], ['C08', 'El ceramista'], ['C09', 'Una estrella sin dueño'], ['C10', 'La parcela de mañana'], ['ALT', 'El Altar del Lazo'], ['BOD', 'Siempre te elegiré'],
 ];
+/** Los créditos: la noche con la constelación, los capítulos subiendo despacio y, a cada lado, la foto de cada uno. */
+const PX = 1024 / 6;
 function creditos() {
-  let rollo: THREE.Mesh, constelacion: THREE.Group;
+  let rollo: THREE.Mesh, constelacion: THREE.Group, alto = 36, fin = 0;
   return escenario({
     hora: 'noche', sol: new THREE.Vector3(0.2, 0.5, -0.9), colores: null, fondo: '#03040c', exposicion: 1.3, radio: 10,
     async montar(g) {
       const { cielo } = await import('./cine-kit');
       g.add(cielo('noche', new THREE.Vector3(0.2, 0.4, -0.9)));
       const cv = document.createElement('canvas');
-      cv.width = 1024; cv.height = 4096;
+      cv.width = 1024; cv.height = 6144;
+      alto = cv.height / PX;
       const x = cv.getContext('2d')!;
       x.textAlign = 'center';
       let y = 120;
-      const linea = (txt: string, tam: number, color: string, alto: number, fuente = 'Georgia') => { x.fillStyle = color; x.font = `${tam}px ${fuente}`; x.fillText(txt, 512, y); y += alto; };
+      const filas: number[] = [];
+      const linea = (txt: string, tam: number, color: string, paso: number, fuente = 'Georgia') => { x.fillStyle = color; x.font = `${tam}px ${fuente}`; x.fillText(txt, 512, y); y += paso; };
       linea('Nuestro Hogar', 84, '#ffe2a8', 110);
-      linea('La película de Astra', 48, '#f3ead8', 170);
-      CAPITULOS.forEach((t, i) => linea(`${i === 0 ? '' : `${i}. `}${t}`, 40, i % 2 ? '#e9e4f5' : '#f6efe2', 92));
+      linea('La película de Astra', 48, '#f3ead8', 200);
+      CAPITULOS.forEach(([, t], i) => { filas.push(y - 14); linea(`${i === 0 ? '' : `${i}. `}${t}`, 40, i % 2 ? '#e9e4f5' : '#f6efe2', 150); });
       y += 80;
       linea('Con Él y con Ella', 46, '#ffe2a8', 80);
       linea('Celia · Aura · Lara · Fuatia', 40, '#f3ead8', 70);
@@ -427,9 +433,23 @@ function creditos() {
       linea('y todos los vecinos de Astra', 36, '#e9e4f5', 160);
       linea('Hecho a mano, ciclo tras ciclo,', 40, '#f6efe2', 64);
       linea('para la que siempre voy a elegir.', 40, '#f6efe2', 64);
+      fin = y / PX;
       const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-      rollo = new THREE.Mesh(new THREE.PlaneGeometry(6, 24), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, fog: false }));
-      rollo.position.set(0, -13.3, -3);
+      rollo = new THREE.Mesh(new THREE.PlaneGeometry(6, alto), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, fog: false }));
+      // Las fotos, a lado y lado, a la altura de su capítulo (si una falta, no sale)
+      const cargador = new THREE.TextureLoader();
+      CAPITULOS.forEach(([id], i) => {
+        const m = new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0, depthWrite: false, fog: false });
+        cargador.load(`./granja/cine/fotos/${id}.jpg`, (t) => { t.colorSpace = THREE.SRGBColorSpace; m.map = t; m.opacity = 1; m.needsUpdate = true; }, undefined, () => undefined);
+        const marco = new THREE.Mesh(new THREE.PlaneGeometry(2.72, 1.34), new THREE.MeshBasicMaterial({ color: '#f3e6c8', transparent: true, opacity: 0.85, depthWrite: false, fog: false }));
+        const foto = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.22), m);
+        const lado = i % 2 ? 1 : -1;
+        marco.position.set(lado * 4.6, alto / 2 - filas[i] / PX, -0.02);
+        marco.rotation.z = lado * -0.04;
+        foto.position.z = 0.01;
+        marco.add(foto);
+        rollo.add(marco);
+      });
       constelacion = constelacionAmantes();
       constelacion.userData.manual = true;
       g.add(rollo, constelacion, motasFlotantes(180, [0, 0, -8], 10, 8, [1, 0.88, 0.6], 1.8, 19));
@@ -438,7 +458,9 @@ function creditos() {
     animar(c) {
       const e = c.desde('BOD_creditos'), d = c.duracion('BOD_creditos') || 60;
       rollo.visible = c.toma.id !== 'BOD_fin';
-      rollo.position.y = -13.3 + paso(0, 1, e / d) * 24;
+      // La primera línea entra por abajo y la última termina en el centro
+      const desde = -alto / 2 - 2.2, hasta = -alto / 2 + fin + 1.6;
+      rollo.position.set(0, desde + paso(0, 1, e / d) * (hasta - desde), -3);
       constelacion.userData.actualizar(c.t, c.alto, 1);
     },
   });
@@ -484,7 +506,7 @@ export const BODA: Guion = (() => {
     { ...toma('BOD_manana2', 'manana', 4, plano([-4.4, 1.3, 3.4], [-1.6, 0.7, 1.4], 38)), linea: L['BOD.L2'], bloom: 0.6 },
     toma('BOD_manana3', 'manana', 6, plano([-3, 1.6, 5.6], [-1.6, 0.6, 1.2], 36), plano([9, 6, 16], [0, 0.8, -2], 40), { bloom: 0.6, titulo: { grande: 'Siempre te elegiré', chico: 'Epílogo' }, sale: { color: '#000', dur: 2.4 } }),
     // Créditos
-    toma('BOD_creditos', 'creditos', 70, plano([0, 1.4, 6], [0, 1.6, -3], 44), plano([0, 1.4, 5.8], [0, 1.8, -3], 44), { entra: { color: '#000', dur: 2 }, bloom: 0.9 }),
+    toma('BOD_creditos', 'creditos', 80, plano([0, 1.4, 6], [0, 1.6, -3], 44), plano([0, 1.4, 5.8], [0, 1.8, -3], 44), { entra: { color: '#000', dur: 2 }, bloom: 0.9 }),
     toma('BOD_fin', 'creditos', 7, plano([0, 1.4, 5.8], [0, 30, -100], 52), undefined, { titulo: { grande: 'Feliz aniversario', chico: 'Nuestro Hogar' }, sale: { color: '#000', dur: 3 }, bloom: 1.2 }),
   ];
   const manana = () => granja(false, { reparto: [['el', 'el', -2.1, 0.9, 0.85, 0], ['ella', 'ella', -1.2, 1.9, -0.85, 0]] });

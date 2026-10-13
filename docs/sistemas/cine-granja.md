@@ -182,3 +182,14 @@ constelación y Nath'Gora como una sombra enorme que se aleja) y C10 (los dos su
 - **Cuándo sale**: `vigilarBoda()` en `granja-v3/main.ts`. Se dispara con P24 y F12 cerradas (`astra.expedientes`) y
   el final de Sangre y Ceniza visto (`localStorage['astra-sangre-final']`, que marca `sangre/historia_pareja.ts` al ver
   «corte»). Sale una sola vez (`astra-boda-vista`); se puede repetir con `__granjaV3.pelicula('ALT' | 'BOD')`.
+- **Créditos con fotos**: cada capítulo lleva su foto a un lado (`public/granja/cine/fotos/<id>.jpg`, 480×216). Se
+  vuelven a sacar con `node scripts/_fotos_creditos.mjs <carpeta> [id:fracción,…]` (servidor en 5176), recortando las
+  franjas. Si una película cambia mucho, repetir su foto.
+
+## Sangre y Ceniza: presentaciones de lugar y la voz del Conde
+
+- `sangre/ui/postal.ts`: la primera vez que se juega solo en un bioma, el mundo se detiene en pausa de cine
+  (`Partida.pausar(true, true)`, a 30 cuadros), la cámara se aleja girando (`Escena3D.postal`) y sale el nombre del lugar
+  con la voz del narrador (`LUG.<bioma>`). En grupo no sale. En pruebas, `sangre.html?prueba=1&postal=1`.
+- `vozConde()` en `historia_pareja.ts` (la de amigos no hace nada): el HUD la llama al aparecer el Conde y cuando pasa a
+  la fase 2.
