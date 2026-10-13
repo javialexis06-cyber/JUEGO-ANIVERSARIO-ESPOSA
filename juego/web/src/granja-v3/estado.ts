@@ -15,6 +15,7 @@ import type { EstadoPueblo, Conversacion } from './aldeanos';
 import type { EstadoObras } from './construccion';
 import type { EstadoCompania, AccionCompania } from './compania';
 import type { RutinaAnimal } from './rutinas-ganado';
+import type { GestacionGanado } from './reproduccion-ganado';
 import type { EstadoGanaderia } from './ganaderia';
 import type { EstadoHabilidades, GananciaExperiencia } from './habilidades';
 import type { Frutal } from './frutales';
@@ -34,7 +35,7 @@ import type { Jornada, ResumenJornada } from './jornada';
 import type { EstadoTiempo } from './clima';
 import type { EstadoGuia } from './guia';
 
-export interface Animal {id:string;nombre:string;especie:Species;sexo:'hembra'|'macho';genoma:Genome;nacimiento:number;edadDias:number;ultimoCruce:number|null;edificioId:string;cuidado:AnimalCare;productos:number;ultimoProductoAt:number;ultimoDiaExperiencia?:number;productoLegado?:boolean;rutina?:RutinaAnimal}
+export interface Animal {id:string;nombre:string;especie:Species;sexo:'hembra'|'macho';genoma:Genome;nacimiento:number;edadDias:number;ultimoCruce:number|null;edificioId:string;cuidado:AnimalCare;productos:number;ultimoProductoAt:number;ultimoDiaExperiencia?:number;productoLegado?:boolean;rutina?:RutinaAnimal;gestacion?:GestacionGanado}
 export interface Edificio {nivel?:1|2|3;id:string;articulo:string;x:number;z:number;giro:number;especie?:Species;clima:Clima;pasto:number;ultimoPastoAt:number;portonAbierto?:boolean;puertaGanado?:boolean;pastoreoLibre?:boolean;henoReserva?:number;henoCalidades?:[number,number,number,number]}
 export interface Obstaculo {id:string;tipo:'arbol'|'roca'|'maleza'|'ruina';x:number;z:number;sectorId:number;hp:number;hpMax:number;zona?:Zona;nivelMina?:number;regeneraEn:number|null;gigante?:boolean}
 export interface Drop {id:string;articulo:string;cantidad:number;x:number;z:number;zona:Zona;nivelMina?:number}
