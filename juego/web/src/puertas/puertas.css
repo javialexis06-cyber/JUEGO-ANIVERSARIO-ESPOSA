@@ -247,7 +247,10 @@ body.puertas { background: #1d2340; }
   z-index: 25;
   background: linear-gradient(transparent 55%, rgba(29, 35, 64, 0.25));
 }
-.globo {
+/* «html .globo» y no solo «.globo»: el estilos.css del súper trae `.globo { width: 46px; display: grid }` y en el juego
+   compilado se carga DESPUÉS de este archivo, así que con el mismo peso ganaba él y el globo quedaba de 46 px (las
+   palabras se salían por un lado). Con más peso, este gana siempre, se cargue en el orden que se cargue. */
+html .globo {
   --cola: 30px;
   position: fixed;
   z-index: 26;
