@@ -93,3 +93,7 @@ Se incorporan después los iconos de Blender de `ad5a6e80`; las 18 fuentes del m
 comprobadas conservan su SHA256. Se repiten ambos builds y los diez pasos de tienda, puertas y
 mapas con esos iconos. La compilación por rama evita que los nuevos pushes del frente visual
 cancelen la verificación de instaladores de `work`.
+
+Los refugios de Blender de `7af0e4f5` se conservan. Tras integrarlos pasan ambos builds,
+el recorrido general con dibujo/fotos y los once casos de cercos y compañeros; las 18 fuentes
+del motor/navegación verificadas no cambian.

@@ -360,5 +360,53 @@
       "dispositivosFisicos": []
     },
     "workflow": "Agrupación por rama; compilación estable desde work para evitar cancelaciones del frente visual."
+  },
+  "integracionRefugios": {
+    "revision": "7af0e4f5",
+    "fuentesMotorSinCambios": 18,
+    "builds": "pareja y amigos correctos",
+    "recorridos": [
+      {
+        "checks": [
+          "Botón de la casa abre la granja V5 sobre el build actual",
+          "Teclado mueve al personaje compartido actual",
+          "Mouse abre el buzón y conserva lectura",
+          "Inventario actual accesible en horizontal",
+          "Puertas de granja → casa real → granja conservan posición, inventario y jornada",
+          "Recarga conserva progreso y viewport horizontal sin desbordamiento"
+        ],
+        "errors": [],
+        "bad": [],
+        "viewport": [
+          844,
+          390
+        ],
+        "escenariosPreparados": "Cuarto habilitado, avatar posicionado y sesión local de casa preparada en contexto nuevo aislado.",
+        "dispositivosFisicos": []
+      },
+      {
+        "checks": [
+          "Recarga restaura el portón cerrado y su colisión con el estado V5",
+          "Tocar el portón presenta su estado y el control para abrir desde el mundo",
+          "Almacenamiento rechazado conserva el portón cerrado y la partida anterior",
+          "Abrir y recargar libera las dos casillas sin cambiar la pieza ni los materiales",
+          "El teclado se detiene ante el portón cerrado",
+          "Abrir permite cruzar y cerrar sobre el personaje se rechaza",
+          "Si falla guardar la llamada, el caballo conserva su posición y la ficha sigue abierta",
+          "La ficha llama al caballo y cierra el panel; el cerco impide que atraviese la pared",
+          "Al abrir, el caballo renueva su ruta y cruza con pasos visibles",
+          "Guardar rechazado conserva la valla y no concede su pieza en la mochila",
+          "Editar y guardar una valla conserva una sola pieza tras recargar en horizontal"
+        ],
+        "errors": [],
+        "bad": [],
+        "viewport": [
+          844,
+          390
+        ],
+        "escenarioPreparado": "Terreno, recursos, recinto y caballo preparados por probar-cercos. Fotos apagadas, dibujo y reloj agrícola pausados solo en esta prueba; controles, movimiento visible, acciones y persistencia reales. No se escriben aperturas o posiciones del caballo durante la prueba.",
+        "dispositivosFisicos": []
+      }
+    ]
   }
 }
