@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'celular.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -42,11 +42,13 @@ export const PERMITIDOS_AMIGOS = [
   'src/sueltos/', 'src/casa/cohete/', 'src/casa/cohete.ts', 'src/casa/cohete.css', 'src/casa/cocina/', 'src/casa/progreso_nube.ts', 'src/casa/ropa.json',
   // los juegos de mesa (sin las escenas premium, que son de la pareja: ver SUSTITUTOS)
   'src/reacciones/', 'src/mesa/',
+  // Desaparecidos de Astra (el juego del celular encontrado: ningún caso es de la pareja)
+  'src/celular/',
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
 export const PUBLICOS_AMIGOS = ['modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/', 'datos/niveles.json',
-  'modelos/manifest_export.json'];
+  'modelos/manifest_export.json', 'celular/', 'audio/celular/'];
 
 /** Lo de Súper Manía en `modelos/` (y en `modelos-plano/`, la copia para celulares sin WebAssembly): el local en sus
  *  4 tamaños, vitrinas, letreros, productos, utilería y la gente; y los íconos de los productos. */
@@ -165,6 +167,7 @@ export default defineConfig(({ mode, command }) => {
             casa: resolve(raiz, 'index.html'), super: resolve(raiz, 'super.html'), puertas: resolve(raiz, 'puertas.html'), mesa: resolve(raiz, 'mesa.html'),
             granjaV3: resolve(raiz, 'granja-v3.html'),
             amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'),
+            celular: resolve(raiz, 'celular.html'),
           },
       },
     },

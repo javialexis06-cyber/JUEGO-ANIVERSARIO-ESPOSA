@@ -57,7 +57,7 @@ const RUTAS_PROHIBIDAS = [
   /(^|\/)recuerdos\//, /(^|\/)voces\//, /(^|\/)carga\//, /casa_[a-z]/, /(^|\/)deco_/, /(^|\/)comida_/, /(^|\/)regalo/, /(^|\/)puertas/,
   /casa\.json$/,
   // audio: solo la música de los juegos de los amigos y los efectos (nunca la de la pareja ni las voces)
-  /^(?!musica\/(super|mesa|lavado|sangre|cohete|cocina|amigos)-|sfx\/).*\.(mp3|ogg|m4a|wav)$/, /(^|\/)musica\/pareja\//,
+  /^(?!musica\/(super|mesa|lavado|sangre|cohete|cocina|amigos)-|sfx\/|audio\/celular\/).*\.(mp3|ogg|m4a|wav)$/, /(^|\/)musica\/pareja\//,
   // la pareja cuando llega a comer a la cocina y el cine de las escenas premium de la mesa (su CSS solo viene con el
   // cine de verdad: la versión para amigos lleva uno vacío, src/amigos/sin_pareja/cine.ts)
   /cocina\/gente\/pareja_/, /(^|\/)cine-[\w-]+\.css$/,

@@ -99,6 +99,8 @@ export interface Llamada {
   tipo: 'perdida' | 'entrante' | 'saliente';
   dur?: string;
   pista?: string;
+  /** Mensaje que quedó grabado en el buzón (id de `voces`). */
+  voz?: string;
 }
 
 export interface LugarMapa {

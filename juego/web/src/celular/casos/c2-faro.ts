@@ -114,7 +114,7 @@ export const CASO_FARO: Caso = {
   llamadas: [
     { quien: 'barca7', t: '19:42', dia: '7 de Verano', tipo: 'perdida' },
     { quien: 'barca7', t: '19:46', dia: '7 de Verano', tipo: 'perdida' },
-    { quien: 'barca7', t: '19:50', dia: '7 de Verano', tipo: 'entrante', dur: '0:14', pista: 'auxilio' },
+    { quien: 'barca7', t: '19:50', dia: '7 de Verano', tipo: 'entrante', dur: '0:14', pista: 'auxilio', voz: 'c2_barca_auxilio' },
     { quien: 'julian', t: '21:30', dia: '7 de Verano', tipo: 'perdida' },
     { quien: 'julian', t: '21:35', dia: '7 de Verano', tipo: 'perdida' },
     { quien: 'genaro', t: '15:28', dia: '7 de Verano', tipo: 'entrante', dur: '1:10' },
