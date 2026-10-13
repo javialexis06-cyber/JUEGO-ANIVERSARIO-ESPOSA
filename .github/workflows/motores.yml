@@ -1,0 +1,23 @@
+name: Motores de mesa y Show
+on:
+  push:
+    paths: ['juego/web/src/mesa/**', 'juego/web/src/casa/show_casa.ts', 'juego/web/src/casa/pregunta_dia.ts', 'juego/web/scripts/probar-mesa-motor.mjs', 'juego/web/scripts/probar-show-motor.mjs', 'juego/web/package*.json', '.github/workflows/motores.yml']
+  pull_request:
+    paths: ['juego/web/src/mesa/**', 'juego/web/src/casa/show_casa.ts', 'juego/web/src/casa/pregunta_dia.ts', 'juego/web/scripts/probar-mesa-motor.mjs', 'juego/web/scripts/probar-show-motor.mjs', 'juego/web/package*.json', '.github/workflows/motores.yml']
+permissions:
+  contents: read
+jobs:
+  motores:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: juego/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: juego/web/package-lock.json
+      - run: npm ci
+      - run: npm run probar:motores

@@ -1,5 +1,7 @@
 # Pedidos de Javier en cola
 
+**Encargo de motor y verificación (13 de octubre):** completar lo que falte del motor de cada juego y probar partidas de inicio a fin. Javier aprueba previamente cualquier cambio de dificultad, balance, costes, precios o recompensas. El seguimiento por juego, alcance real de las pruebas y límites pendientes está en [auditoría de motores](en-obra/auditoria-motores.md). Esta revisión no declara terminadas las campañas por usar ganchos de prueba o partidas preparadas.
+
 ## Frente de granja en paralelo
 
 **Arreglos de la granja (12 de octubre, lo siguiente que se hace):** Javier mandó una lista larga (rendimiento, menú de

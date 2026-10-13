@@ -77,6 +77,18 @@ escoge el primero que la abre ese día (sale de la fecha, de las que nadie ha co
 aviso suave si hay pregunta nueva, si el otro ya contestó o si se reveló. Código: `src/casa/pregunta_dia.ts` (lo
 interactivo, carga el banco aparte) y `src/casa/show_casa.ts` (lo liviano que usa la casa).
 
+Desde el 13 de octubre, las nuevas preguntas guardan sus respuestas dentro de `dia.respuestas`, separadas por fecha.
+Cuando se agota el banco, una pregunta repetida requiere que ambos vuelvan a contestar; las respuestas del libro no
+la revelan ni habilitan su moneda. El archivo de días conserva su propia copia y distingue fechas aunque se repita
+el mismo ID. Las partidas anteriores mantienen las respuestas y el cobro de la pregunta que ya tenían en curso.
+
+Un fallo al guardar una ronda no la marca como guardada. El final y la salida pueden reintentarla; si hay una
+escritura en curso, esperan su resultado. Almacenamiento lleno devuelve `guardado: false` en el libro suelto.
+Un diario local conserva las respuestas pendientes y las reenvía en la siguiente visita al Show, a la cabina o al
+libro. Solo contiene respuestas y calificaciones; nunca vuelve a pagar monedas o premios. Si el almacenamiento
+del dispositivo tampoco admite el diario, se informa el fallo y no se puede garantizar recuperación al cerrar.
+Regresiones: `npm run probar:motores`.
+
 ## El libro de nosotros
 
 `src/mesa/show/libro.ts`: un álbum abierto (portada con sus números y pestañas a la izquierda, fichas a la

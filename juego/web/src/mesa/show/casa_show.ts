@@ -4,10 +4,79 @@
 // mesa), se guarda aparte en este celular para que el libro igual funcione.
 import { normalizarShow, type ShowCasa, showVacio } from '../../casa/show_casa';
 import type { Rol } from './preguntas';
+import { SUPABASE_URL } from '../../casa/servidor';
 
 const CLAVE_MODO = 'nuestro-hogar-modo';
 const CLAVE_LOCAL = 'nuestro-hogar-local';
 const CLAVE_SUELTO = 'show-libro-suelto';
+const PREFIJO_PENDIENTE = 'show-ronda-pendiente:';
+type RespuestasShow = Pick<ShowCasa, 'r' | 'g' | 'c'>;
+type ResultadoCasa = DatosCasa & { guardado: boolean };
+
+function aplicarRespuestas(s: ShowCasa, cambios: RespuestasShow) {
+  for (const campo of ['r', 'g', 'c'] as const) for (const rol of ['el', 'ella'] as const) {
+    Object.assign(s[campo][rol], cambios[campo][rol]);
+  }
+}
+
+let reenvio: Promise<Map<string, ResultadoCasa>> | null = null;
+
+function destinoActual(): string {
+  const m = modo();
+  if (m?.modo !== 'linea') return m?.modo ?? 'suelto';
+  try {
+    const sesion = JSON.parse(localStorage.getItem('nuestro-hogar-sesion') ?? 'null');
+    const config = JSON.parse(localStorage.getItem('nuestro-hogar-supabase') ?? 'null');
+    return JSON.stringify(['linea', config?.url ?? SUPABASE_URL, sesion?.parejaId ?? null]);
+  } catch { return 'linea-sin-sesion'; }
+}
+
+/** Solo respuestas idempotentes: nunca se repiten monedas ni premios al recuperar una ronda. */
+async function reenviarPendientes() {
+  if (reenvio) return reenvio;
+  reenvio = (async () => {
+    const resultados = new Map<string, ResultadoCasa>();
+    const pendientes: { clave: string; json: string; t: number; cambios: RespuestasShow }[] = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const clave = localStorage.key(i);
+        if (!clave?.startsWith(PREFIJO_PENDIENTE)) continue;
+        const json = localStorage.getItem(clave);
+        if (!json) continue;
+        try {
+          const v = JSON.parse(json), cambios = normalizarShow(v.cambios);
+          if (cambios && v.destino === destinoActual()) pendientes.push({ clave, json, t: Number(v.t) || 0, cambios });
+        } catch { /* Una entrada dañada no bloquea las demás. */ }
+      }
+    } catch { return resultados; }
+    pendientes.sort((a, b) => a.t - b.t);
+    for (const p of pendientes) {
+      const d = await casaShowDirecta(s => aplicarRespuestas(s, p.cambios));
+      if (!d.guardado) break;
+      resultados.set(p.clave, d);
+      try {
+        if (localStorage.getItem(p.clave) === p.json) localStorage.removeItem(p.clave);
+      } catch { /* La siguiente visita puede repetir esta escritura idempotente. */ }
+    }
+    return resultados;
+  })().finally(() => { reenvio = null; });
+  return reenvio;
+}
+
+/** El diario local conserva la ronda hasta que el libro confirma el guardado, incluso al cerrar la página. */
+export async function guardarRespuestasShow(id: string, cambios: RespuestasShow) {
+  const clave = PREFIJO_PENDIENTE + id;
+  const json = JSON.stringify({ t: Date.now(), destino: destinoActual(), cambios });
+  try { localStorage.setItem(clave, json); } catch { /* Aún puede guardarse directamente en la casa. */ }
+  const recuperados = await reenviarPendientes();
+  const confirmado = recuperados.get(clave);
+  try { if (confirmado && localStorage.getItem(clave) === null) return confirmado; } catch { /* Guardado directo. */ }
+  const d = await casaShowDirecta(s => aplicarRespuestas(s, cambios));
+  if (d.guardado) {
+    try { if (localStorage.getItem(clave) === json) localStorage.removeItem(clave); } catch { /* Reenvío idempotente. */ }
+  }
+  return d;
+}
 
 export interface DatosCasa {
   show: ShowCasa;
@@ -20,6 +89,7 @@ type Casa = Record<string, any> & { show?: ShowCasa };
 
 /** La conexión con la casa en línea se abre una vez por visita a la mesa (no en cada guardado). */
 let conexion: Promise<Awaited<ReturnType<typeof import('../../casa/sincro').conexionPareja>>> | null = null;
+let conexionDestino = '';
 
 function modo(): { modo: 'local' | 'linea'; rol: Rol } | null {
   try {
@@ -52,6 +122,11 @@ function suelto(): ShowCasa {
  * no se pudo guardar; `guardado` dice si quedó). Nunca lanza: sin conexión responde con lo que haya.
  */
 export async function casaShow(cambio?: (s: ShowCasa, c: Casa) => void): Promise<DatosCasa & { guardado: boolean }> {
+  await reenviarPendientes();
+  return casaShowDirecta(cambio);
+}
+
+async function casaShowDirecta(cambio?: (s: ShowCasa, c: Casa) => void): Promise<DatosCasa & { guardado: boolean }> {
   const m = modo();
   const aplicar = (c: Casa) => {
     const s = normalizarShow(c.show) ?? showVacio();
@@ -74,6 +149,11 @@ export async function casaShow(cambio?: (s: ShowCasa, c: Casa) => void): Promise
     if (m?.modo === 'linea') {
       const sincro = await import('../../casa/sincro');
       const { normalizarCasa } = await import('../../casa/modelo');
+      const destino = destinoActual();
+      if (conexionDestino !== destino) {
+        conexion = null;
+        conexionDestino = destino;
+      }
       conexion ??= sincro.conexionPareja().catch((e) => {
         conexion = null;
         throw e;
@@ -96,8 +176,9 @@ export async function casaShow(cambio?: (s: ShowCasa, c: Casa) => void): Promise
       }
     }
   } catch {
-    /* sin conexión o sin casa: se sigue con el libro suelto */
+    /* La casa configurada conserva su identidad aunque falle la conexión. */
   }
+  if (m) return { show: showVacio(), perro: null, fuente: m.modo, guardado: false };
   const s = suelto();
   if (cambio) {
     const c: Casa = { show: s };
@@ -105,7 +186,7 @@ export async function casaShow(cambio?: (s: ShowCasa, c: Casa) => void): Promise
     try {
       localStorage.setItem(CLAVE_SUELTO, JSON.stringify(c.show));
     } catch {
-      /* sin espacio */
+      return { show: suelto(), perro: null, fuente: 'suelto', guardado: false };
     }
     return { show: c.show!, perro: null, fuente: 'suelto', guardado: true };
   }

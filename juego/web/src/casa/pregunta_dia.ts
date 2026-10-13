@@ -5,7 +5,7 @@
 import './pregunta_dia.css';
 import { calificar, candidatasDelDia, preguntaDelDia } from '../mesa/show/motor';
 import { armar, CATEGORIAS, NOMBRE, pregunta, type Pregunta } from '../mesa/show/preguntas';
-import { fechaHoy, MAX_DIAS, type ShowCasa, showVacio } from './show_casa';
+import { fechaHoy, MAX_DIAS, respuestaDelDia, type ShowCasa, showVacio } from './show_casa';
 
 export { fechaHoy };
 
@@ -16,8 +16,13 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 /** Pone la pregunta de hoy si todavía no hay (la de ayer pasa al libro). Devuelve true si cambió algo. */
 export function asegurarDia(s: ShowCasa, fecha = fechaHoy()): boolean {
   if (s.dia?.f === fecha) return false;
-  if (s.dia && !s.dias.some((d) => d.f === s.dia!.f)) s.dias = [...s.dias, s.dia].slice(-MAX_DIAS);
-  s.dia = { f: fecha, q: preguntaDelDia(s, fecha) };
+  if (s.dia && !s.dias.some((d) => d.f === s.dia!.f)) {
+    const anterior = s.dia;
+    s.dias = [...s.dias, { ...anterior, respuestas: {
+      el: { ...respuestaDelDia(s, anterior, 'el') }, ella: { ...respuestaDelDia(s, anterior, 'ella') },
+    } }].slice(-MAX_DIAS);
+  }
+  s.dia = { f: fecha, q: preguntaDelDia(s, fecha), respuestas: {} };
   return true;
 }
 
@@ -36,8 +41,8 @@ export function estadoDia(s: ShowCasa | undefined | null, yo: Rol): Dia | null {
   const p = pregunta(s.dia.q);
   if (!p) return null;
   const o = otro(yo);
-  const mio = { a: s.r[yo][p.id], g: s.g[yo][p.id] };
-  const suyo = { a: s.r[o][p.id], g: s.g[o][p.id] };
+  const mio = respuestaDelDia(s, s.dia, yo);
+  const suyo = respuestaDelDia(s, s.dia, o);
   const contestada = mio.a !== undefined && mio.g !== undefined;
   return { p, fecha: s.dia.f, mio, suyo, contestada, revelada: contestada && suyo.a !== undefined && suyo.g !== undefined, pagado: !!s.dia.pagado?.[yo] };
 }
@@ -138,10 +143,15 @@ export async function montarPreguntaDia(cont: HTMLElement, o: Opciones) {
 
   const guardar = async () => {
     const id = s.dia?.q;
+    const fecha = s.dia?.f;
     if (!id) return;
     const nuevo = await o.cambiar((x) => {
       asegurarDia(x);
-      if (x.dia?.q !== id) return;
+      if (x.dia?.q !== id || x.dia.f !== fecha) return;
+      const respuestas = x.dia.respuestas ??= {
+        el: { ...respuestaDelDia(x, x.dia, 'el') }, ella: { ...respuestaDelDia(x, x.dia, 'ella') },
+      };
+      respuestas[yo] = { ...respuestas[yo], ...respuesta };
       if (respuesta.a !== undefined) x.r[yo][id] = respuesta.a;
       if (respuesta.g !== undefined) x.g[yo][id] = respuesta.g;
     });
@@ -166,7 +176,7 @@ export async function montarPreguntaDia(cont: HTMLElement, o: Opciones) {
     if (!d?.revelada || d.pagado) return false;
     let pago = false;
     const nuevo = await o.cambiar((x, casa) => {
-      if (!x.dia || x.dia.q !== d.p.id || x.dia.pagado?.[yo]) return;
+      if (!x.dia || x.dia.q !== d.p.id || x.dia.f !== d.fecha || x.dia.pagado?.[yo] || !estadoDia(x, yo)?.revelada) return;
       x.dia.pagado = { ...x.dia.pagado, [yo]: 1 };
       casa.monedas = (casa.monedas ?? 0) + 1;
       pago = true;

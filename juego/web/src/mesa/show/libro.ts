@@ -141,7 +141,7 @@ export async function abrirLibro(yo: Rol) {
   const total = ROLES.reduce((n, q) => n + Object.keys(show.r[q]).length + Object.keys(show.g[q]).length, 0);
   const mejor = show.ep.reduce((m, e) => Math.max(m, e.c), 0);
   const sobre = enElSobre(show);
-  const dias = [...show.dias, ...(show.dia && !show.dias.some((d) => d.q === show.dia!.q) ? [show.dia] : [])].reverse();
+  const dias = [...show.dias, ...(show.dia && !show.dias.some((d) => d.f === show.dia!.f) ? [show.dia] : [])].reverse();
   const pintar = () => {
     let derecha = '';
     if (pestaña === 'episodios') {
@@ -155,8 +155,15 @@ export async function abrirLibro(yo: Rol) {
               const p = pregunta(d.q);
               if (!p) return '';
               const cabeza = `<header class="libro-episodio-cabeza"><span class="libro-cinta dia">Pregunta del día</span><b>${fechaDia(d.f)}</b></header>`;
-              if (p.tipo === 'prefiere') return `<section class="libro-episodio">${cabeza}${ficha(show, p)}</section>`;
-              return `<section class="libro-episodio">${cabeza}${ficha(show, p, 'el')}${ficha(show, p, 'ella')}</section>`;
+              const diario = d.respuestas ? { ...show, r: {
+                el: d.respuestas.el?.a === undefined ? {} : { [d.q]: d.respuestas.el.a },
+                ella: d.respuestas.ella?.a === undefined ? {} : { [d.q]: d.respuestas.ella.a },
+              }, g: {
+                el: d.respuestas.el?.g === undefined ? {} : { [d.q]: d.respuestas.el.g },
+                ella: d.respuestas.ella?.g === undefined ? {} : { [d.q]: d.respuestas.ella.g },
+              } } : show;
+              if (p.tipo === 'prefiere') return `<section class="libro-episodio">${cabeza}${ficha(diario, p)}</section>`;
+              return `<section class="libro-episodio">${cabeza}${ficha(diario, p, 'el')}${ficha(diario, p, 'ella')}</section>`;
             })
             .join('')
         : '<p class="libro-vacio">Aquí van quedando las preguntas del día (están en la nevera de la casa).</p>';

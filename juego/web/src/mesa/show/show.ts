@@ -6,7 +6,8 @@
 import * as sonido from '../../sonido';
 import type { ShowCasa } from '../../casa/show_casa';
 import type { Canal } from '../canal';
-import { casaShow, contarVictoria, marcarVistas, pagar, vistas } from './casa_show';
+import { casaShow, contarVictoria, guardarRespuestasShow, marcarVistas, pagar, vistas } from './casa_show';
+import { showVacio } from '../../casa/show_casa';
 import type { Estudio } from './estudio';
 import * as G from './guion';
 import {
@@ -63,6 +64,7 @@ export class Show {
   private avisos: (() => void)[] = [];
   private alPlan: ((p: Plan) => void) | null = null;
   private guardadas = new Set<number>();
+  private guardando = new Map<number, Promise<void>>();
   private perro = { nombre: 'Pelusa', pelaje: 'caramelo', hembra: false };
   private tPresencia = 0;
   private relojPresencia = 0;
@@ -800,27 +802,40 @@ export class Show {
 
   // ------------------------------------------------------------------------------------------------ Guardar
   /** Lo contestado en una ronda queda en el libro (cada celular guarda lo suyo; en el mismo celular, lo de los dos). */
-  private async guardar(ronda: number) {
+  private async guardar(ronda: number): Promise<void> {
     if (this.guardadas.has(ronda)) return;
-    this.guardadas.add(ronda);
+    const pendiente = this.guardando.get(ronda);
+    if (pendiente) {
+      await pendiente;
+      return this.guardar(ronda);
+    }
     const pasos = this.pasos.map((x, i) => ({ ...x, i })).filter((x) => x.ronda === ronda);
     const mios: Rol[] = this.modo === 'local' ? ['el', 'ella'] : [this.yo];
-    await casaShow((s) => {
-      for (const { item, i, p } of pasos) {
-        const r = this.resp.get(i);
-        for (const q of mios) {
-          const v = r?.[q];
-          if (!v) continue;
-          if (v.a !== undefined && v.a !== '-') s.r[q][item.id] = v.a.slice(0, 90);
-          if (v.g !== undefined && v.g !== '-') s.g[q][item.id] = v.g.slice(0, 90);
-        }
-        const nota = this.notas.get(i);
-        // La calificación la guarda quien la puso (el dueño de la respuesta; jugando solo, este celular)
-        if (nota !== undefined && esAbierta(p) && item.s && (this.modo !== 'linea' || item.s === this.yo)) s.c[otroRol(item.s)][item.id] = nota;
+    const cambios = showVacio();
+    for (const { item, i, p } of pasos) {
+      const r = this.resp.get(i);
+      for (const q of mios) {
+        const v = r?.[q];
+        if (!v) continue;
+        if (v.a !== undefined && v.a !== '-') cambios.r[q][item.id] = v.a.slice(0, 90);
+        if (v.g !== undefined && v.g !== '-') cambios.g[q][item.id] = v.g.slice(0, 90);
       }
-    }).then((d) => {
-      if (d.guardado) this.show = d.show;
+      const nota = this.notas.get(i);
+      // La calificación la guarda quien la puso (el dueño de la respuesta; jugando solo, este celular)
+      if (nota !== undefined && esAbierta(p) && item.s && (this.modo !== 'linea' || item.s === this.yo)) cambios.c[otroRol(item.s)][item.id] = nota;
+    }
+    const trabajo = guardarRespuestasShow(`${this.o.id}:${this.yo}:${ronda}`, cambios).then((d) => {
+      if (d.guardado) {
+        this.show = d.show;
+        this.guardadas.add(ronda);
+      } else {
+        this.ui.aviso('No se pudo guardar esta ronda. Reintentaremos al terminar el show.');
+      }
+    }).finally(() => {
+      this.guardando.delete(ronda);
     });
+    this.guardando.set(ronda, trabajo);
+    await trabajo;
   }
 
   private async guardarEpisodio(con: number) {

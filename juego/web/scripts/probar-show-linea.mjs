@@ -12,6 +12,7 @@ const url = process.argv[2] ?? 'http://localhost:5174/mesa.html';
 const carpeta = process.argv[3] ?? 'test-results/show-linea';
 mkdirSync(carpeta, { recursive: true });
 const PERDER = Number(process.env.PERDER ?? 0.08);
+const FALLAR_GUARDADOS = Number(process.env.FALLAR_GUARDADOS ?? 0);
 
 const paginas = new Set();
 const errores = [];
@@ -19,6 +20,7 @@ const presencia = new Map(); // canal → Map(pagina → clave)
 // La casa compartida (la tabla «parejas» de mentiras)
 const casa = { casa: { monedas: 40, perro: { nombre: 'Lulú', pelaje: 'manchas', hembra: true, desde: 0, hambre: 80, energia: 80, higiene: 80, alegria: 80, t: 0, xp: 0, popos: [] } }, version: 1 };
 let guardados = 0, choques = 0;
+let fallosGuardado = 0;
 
 async function entregar(desde, nombre, evento, payload) {
   for (const p of paginas) {
@@ -37,6 +39,10 @@ async function servidor(pagina, a) {
   await new Promise((ok) => setTimeout(ok, 20 + Math.random() * 120));
   if (a.op === 'rpc') {
     if (a.fn === 'guardar_casa') {
+      if (fallosGuardado < FALLAR_GUARDADOS) {
+        fallosGuardado++;
+        return { data: null, error: { message: 'Corte de red simulado al guardar' } };
+      }
       if (Number(a.args.version_leida) !== casa.version) {
         choques++;
         return { data: -1, error: null };
@@ -148,7 +154,7 @@ const BOT = () => {
   }
 };
 
-const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const PRE = process.env.CHROME_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
   executablePath: existsSync(PRE) ? PRE : undefined,
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
@@ -241,6 +247,10 @@ const show = casa.casa.show ?? {};
 const n = (r, k) => Object.keys(show[k]?.[r] ?? {}).length;
 revisar(n('el', 'r') > 10 && n('ella', 'r') > 10, `El libro tiene las respuestas de los dos (Él ${n('el', 'r')}, Ella ${n('ella', 'r')})`);
 revisar((show.ep ?? []).length === 1, `Queda un solo episodio en el libro (${(show.ep ?? []).length})`);
+if (FALLAR_GUARDADOS) {
+  revisar(fallosGuardado === FALLAR_GUARDADOS, `Se probaron ${fallosGuardado} fallos de guardado`);
+  for (const p of [el, ella]) revisar(await p.evaluate(() => !Object.keys(localStorage).some(k => k.startsWith('show-ronda-pendiente:'))), `${p.rol}: las rondas pendientes se recuperaron`);
+}
 console.log(`   la casa se guardó ${guardados} veces (${choques} choques resueltos)`);
 // El libro se abre y muestra el episodio
 await el.click('.show-final [data-f="libro"]');

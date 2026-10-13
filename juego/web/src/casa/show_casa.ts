@@ -26,6 +26,8 @@ export interface DiaShow {
   /** AAAA-MM-DD */
   f: string;
   q: string;
+  /** Respuestas de esta fecha; las del libro pueden venir de un episodio anterior. */
+  respuestas?: Partial<Record<RolShow, { a?: string; g?: string }>>;
   /** Quién ya cobró su monedita al verla revelada. */
   pagado?: Partial<Record<RolShow, 1>>;
 }
@@ -73,6 +75,18 @@ const porRol = (v: unknown) => Object.fromEntries(ROLES.map((r) => [r, mapa(esOb
 function dia(v: unknown): DiaShow | null {
   if (!esObjeto(v) || !fecha(v.f) || typeof v.q !== 'string' || !ID.test(v.q)) return null;
   const d: DiaShow = { f: v.f, q: v.q };
+  if (esObjeto(v.respuestas)) {
+    d.respuestas = {};
+    for (const rol of ROLES) {
+      const r = v.respuestas[rol];
+      if (!esObjeto(r)) continue;
+      const respuesta: { a?: string; g?: string } = {};
+      for (const campo of ['a', 'g'] as const) {
+        if (typeof r[campo] === 'string' && r[campo]) respuesta[campo] = r[campo].slice(0, MAX_TEXTO);
+      }
+      d.respuestas[rol] = respuesta;
+    }
+  }
   if (esObjeto(v.pagado)) {
     const p: Partial<Record<RolShow, 1>> = {};
     for (const r of ROLES) if (v.pagado[r]) p[r] = 1;
@@ -107,7 +121,13 @@ export function normalizarShow(v: unknown): ShowCasa | null {
     dias: Array.isArray(v.dias) ? v.dias.map(dia).filter((d): d is DiaShow => !!d).slice(-MAX_DIAS) : [],
   };
   const d = dia(v.dia);
-  if (d) s.dia = d;
+  if (d) {
+    d.respuestas ??= {
+      el: { a: s.r.el[d.q], g: s.g.el[d.q] },
+      ella: { a: s.r.ella[d.q], g: s.g.ella[d.q] },
+    };
+    s.dia = d;
+  }
   return s;
 }
 
@@ -115,6 +135,11 @@ export function normalizarShow(v: unknown): ShowCasa | null {
 // La pregunta del día, vista desde la casa (sin cargar el banco de preguntas: solo mira quién contestó)
 
 export const fechaHoy = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+/** Las partidas anteriores conservan la pregunta en curso; las nuevas separan sus respuestas por fecha. */
+export function respuestaDelDia(s: ShowCasa, d: DiaShow, rol: RolShow) {
+  return d.respuestas ? d.respuestas[rol] ?? {} : { a: s.r[rol][d.q], g: s.g[rol][d.q] };
+}
 const NOMBRE_SHOW: Record<RolShow, string> = { el: 'Él', ella: 'Ella' };
 const otroShow = (r: RolShow): RolShow => (r === 'el' ? 'ella' : 'el');
 
@@ -130,8 +155,9 @@ export function estadoDiaLigero(s: ShowCasa | undefined | null, yo: RolShow): Es
   const d = s?.dia;
   if (!s || !d) return { hoy: false, mia: false, suya: false, revelada: false, pagado: false };
   const o = otroShow(yo);
-  const mia = s.r[yo][d.q] !== undefined && s.g[yo][d.q] !== undefined;
-  const suya = s.r[o][d.q] !== undefined && s.g[o][d.q] !== undefined;
+  const propia = respuestaDelDia(s, d, yo), ajena = respuestaDelDia(s, d, o);
+  const mia = propia.a !== undefined && propia.g !== undefined;
+  const suya = ajena.a !== undefined && ajena.g !== undefined;
   return { hoy: d.f === fechaHoy(), mia, suya, revelada: mia && suya, pagado: !!d.pagado?.[yo] };
 }
 
