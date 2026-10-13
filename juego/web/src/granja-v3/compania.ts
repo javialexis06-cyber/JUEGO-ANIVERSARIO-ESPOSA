@@ -6,6 +6,8 @@ import { dentroDeZona } from './caminos-mundo';
 import { puntoTransitable, celdaTransitable } from './transito';
 import type { Zona } from './catalogo';
 import { efectosHabilidades } from './habilidades';
+import { actuarEquipoCompania,efectosEquipoCompania,equipoCompaniaValido,type AccionEquipoCompania } from './equipo-compania';
+import type { EquipoCompania } from './equipo-compania-datos';
 
 export type TipoCompania='gato'|'perro'|'tortuga'|'caballo';
 export const TIPOS_COMPANIA:TipoCompania[]=['gato','perro','tortuga','caballo'];
@@ -15,9 +17,10 @@ export const COMPANEROS:Record<TipoCompania,{nombre:string;precio:number;hogar:s
  tortuga:{nombre:'Tortuga',precio:220,hogar:'hogar_mascota',alimento:'alimento_mascota',capacidad:8,variantes:['Oliva','Bosque','Pizarra','Arena']},
  caballo:{nombre:'Caballo',precio:320,hogar:'establo',alimento:'heno',capacidad:2,variantes:['Castaño','Negro','Gris','Palomino']},
 };
-export interface Companero {id:string;tipo:TipoCompania;nombre:string;genoma:Genome;edificioId:string;cuidado:AnimalCare;amistad:number;carinoDia:number|null;aguaDia:number|null;seguir:boolean;posicion:{zona:Zona;x:number;z:number};direccion:number;actividad:'reposo'|'caminar'|'dormir';}
+export interface Companero {id:string;tipo:TipoCompania;nombre:string;genoma:Genome;edificioId:string;cuidado:AnimalCare;amistad:number;carinoDia:number|null;aguaDia:number|null;seguir:boolean;posicion:{zona:Zona;x:number;z:number};direccion:number;actividad:'reposo'|'caminar'|'dormir';equipo?:EquipoCompania;}
 export interface EstadoCompania {version:1;animales:Companero[];montada:string|null;}
 export type AccionCompania=
+ |AccionEquipoCompania
  |{tipo:'adoptar';animal:TipoCompania;variante:number;nombre:string;edificioId:string}
  |{tipo:'cuidar';id:string;metodo:ComfortMethod|'alimentar'|'medico'}
  |{tipo:'agua'|'seguir'|'llamar'|'montar'|'desmontar';id:string}
@@ -54,6 +57,7 @@ export function actuarCompania(s:EstadoGranja,a:AccionCompania,x:number,z:number
   s.monedas-=d.precio;todosCompaneros(s).push({id:puerto.id(),tipo:a.animal,nombre:a.nombre.trim(),genoma,edificioId:b.id,cuidado:crearCuidado(now),amistad:0,carinoDia:null,aguaDia:null,seguir:false,posicion:{zona:'granja',...p},direccion:0,actividad:'reposo'});puerto.contar('companeros_adoptados');return bien(a.nombre.trim()+' te espera en su hogar.');
  }
  const c=todosCompaneros(s).find(c=>c.id===a.id);if(!c)return mal('No se encontró ese compañero.');
+ if(a.tipo==='equipar'||a.tipo==='quitar_equipo')return actuarEquipoCompania(s,c,a,x,z);
  if(a.tipo==='trasladar'){
   if(s.compania.montada===c.id)return mal('Desmonta antes de cambiar el establo.');const b=s.edificios.find(b=>b.id===a.edificioId&&b.articulo===COMPANEROS[c.tipo].hogar);if(!b||todosCompaneros(s).some(a=>a.edificioId===b.id))return mal('Selecciona un hogar libre y adecuado.');const p=hogarCompania(b,c.tipo);if(!puntoTransitable(s,p.x,p.z,c.tipo==='caballo'?.45:.2,'granja'))return mal('Despeja el patio del nuevo hogar.');c.edificioId=b.id;c.posicion={zona:'granja',...p};c.actividad='reposo';return bien('Hogar cambiado; se conservan su vínculo, cuidados y genes.');
  }
@@ -98,11 +102,11 @@ export class PaseosCompania {
    if(a.posicion.zona!=='granja'||s.compania.montada===a.id||a.tipo==='caballo'&&!a.seguir)continue;
    const salud=estadoAnimal(a.cuidado,s.ultimoTiempo);if(salud.enfermo||salud.deprimido||a.tipo==='caballo'&&salud.hambriento){a.actividad='reposo';continue;}
    const b=s.edificios.find(b=>b.id===a.edificioId);if(!b)continue;const noche=s.jornada.minutos>=19*60;if(a.tipo==='caballo'&&noche){a.seguir=false;a.actividad='reposo';this.rutas.delete(a.id);continue;}const radio=a.tipo==='caballo'?.45:.18;
-   const meta=a.seguir&&!noche?jugador:hogarCompania(b,a.tipo);const distancia=Math.hypot(meta.x-a.posicion.x,meta.z-a.posicion.z);if(distancia<(a.seguir&&!noche?1.6:.3)){a.actividad=noche?'dormir':'reposo';if(a.tipo==='caballo')a.seguir=false;this.rutas.delete(a.id);continue;}
+   const equipo=efectosEquipoCompania(a),meta=a.seguir&&!noche?jugador:hogarCompania(b,a.tipo);const distancia=Math.hypot(meta.x-a.posicion.x,meta.z-a.posicion.z);if(distancia<(a.seguir&&!noche?equipo.distanciaEspera:.3)){a.actividad=noche?'dormir':'reposo';if(a.tipo==='caballo')a.seguir=false;this.rutas.delete(a.id);continue;}
    const clave=Math.floor(meta.x)+','+Math.floor(meta.z);let ruta=this.rutas.get(a.id);if(ruta)ruta.restante-=dt;
    if(!ruta||ruta.restante<=0||ruta.meta!==clave){ruta={puntos:buscarRuta(s,a.posicion,meta,(x,z)=>this.libre(s,x,z,radio)),restante:1,meta:clave};this.rutas.set(a.id,ruta);}
    const p=ruta.puntos[0];if(!p){a.actividad='reposo';continue;}
-   const dx=p.x-a.posicion.x,dz=p.z-a.posicion.z,d=Math.hypot(dx,dz),paso=Math.min(d,dt*(a.tipo==='tortuga'?.65:2.2));
+   const dx=p.x-a.posicion.x,dz=p.z-a.posicion.z,d=Math.hypot(dx,dz),paso=Math.min(d,dt*(a.tipo==='tortuga'?.65:2.2)*equipo.velocidadPaseo);
    if(d<.05){ruta.puntos.shift();continue;}const x=a.posicion.x+dx/d*paso,z=a.posicion.z+dz/d*paso;if(!this.libre(s,x,z,radio)){this.rutas.delete(a.id);a.actividad='reposo';continue;}
    a.posicion.x=x;a.posicion.z=z;a.direccion=Math.atan2(dx,dz);a.actividad='caminar';
   }
@@ -117,6 +121,7 @@ export function companiaValida(s:EstadoGranja){
  const c=s.compania;if(!c||c.version!==1||!Array.isArray(c.animales)||c.animales.length>10||c.animales.filter(a=>a?.tipo==='caballo').length>2||c.animales.filter(a=>a?.tipo!=='caballo').length>8)return false;
  const ids=new Set([...s.animales,...s.edificios,...s.obstaculos,...s.frutales,...s.drops,...s.produccion.cofres,...s.produccion.maquinas,...s.produccion.estructuras,...s.ganaderia.trufas].map(a=>a.id)),hogares=new Set<string>(),dia=s.jornada.diasCompletados,numero=(n:unknown,min:number,max:number)=>typeof n==='number'&&Number.isFinite(n)&&n>=min&&n<=max,fecha=(n:unknown)=>n===null||numero(n,0,s.ultimoTiempo),jornada=(n:unknown)=>n===null||Number.isInteger(n)&&numero(n,0,dia);
  for(const a of c.animales){
+  if(!a||!equipoCompaniaValido(a))return false;
   if(!a||typeof a.id!=='string'||!/^[a-z0-9_]{1,99}$/.test(a.id)||ids.has(a.id)||!TIPOS_COMPANIA.includes(a.tipo)||typeof a.nombre!=='string'||!a.nombre.trim()||a.nombre.length>32||typeof a.seguir!=='boolean'||!Number.isInteger(a.amistad)||!numero(a.amistad,0,1000)||!jornada(a.carinoDia)||!jornada(a.aguaDia)||!numero(a.direccion,-Math.PI,Math.PI)||!['reposo','caminar','dormir'].includes(a.actividad))return false;ids.add(a.id);
   const b=s.edificios.find(b=>b.id===a.edificioId&&b.articulo===COMPANEROS[a.tipo].hogar);if(!b||hogares.has(b.id))return false;hogares.add(b.id);
   if(!a.posicion||!['granja','pueblo','bosque','lago','bosque_ancestral'].includes(a.posicion.zona)||!dentroDeZona(a.posicion.zona,a.posicion.x,a.posicion.z)||a.tipo!=='caballo'&&a.posicion.zona!=='granja')return false;

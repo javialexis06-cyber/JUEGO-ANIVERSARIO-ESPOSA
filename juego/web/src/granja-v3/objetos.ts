@@ -8,6 +8,7 @@ import { FRUTALES } from './frutales-datos';
 import { ARTICULOS, CULTIVOS, ESPECIES, PECES, PRECIOS_VENTA } from './catalogo';
 import { RECETAS_CORRESPONDENCIA } from './correspondencia-datos';
 import { RECETAS_LIBROS } from './libros-datos';
+import { ACCESORIOS_COMPANIA } from './equipo-compania-datos';
 
 /** Un único vocabulario de objetos para mochila, cofres, cocina, equipo y botín. */
 export type RarezaObjeto='comun'|'inusual'|'raro'|'epico'|'legendario';
@@ -32,6 +33,7 @@ for(const [id,nombre,descripcion]of [['trampa_cebo','Trampa de cebo','Cuatro ceb
 objeto('conector_produccion','Conector de producción','estructura',0,{precioCompra:0,pilaMax:20,descripcion:'Un metro de conexión física; une dispositivos contiguos de la misma zona.'});
 for(const d of ACCESOS_CAMPANA)objeto(d.id,d.nombre,'estructura',0,{precioCompra:0,pilaMax:1,descripcion:'Enlace civil autorizado por '+d.permiso+'. Las expediciones de combate conservan sus dispositivos originales.'});
 objeto('alimento_mascota','Alimento para mascotas','insumo',4,{precioCompra:20,descripcion:'Una ración equilibrada para gatos, perros y tortugas.'});
+for(const a of ACCESORIOS_COMPANIA)objeto(a.id,a.nombre,'equipo',0,{precioCompra:0,pilaMax:1,descripcion:a.descripcion+' Se fabrica en el taller y se equipa desde Compañeros, junto al animal.'});
 for(const [id,nombre,precio] of [
  ['madera','Madera',2],['piedra','Piedra',2],['fibra','Fibra vegetal',2],['heno','Heno',1],['madera_ancestral','Madera ancestral',30],
  ['cristal','Cristal de Celia',20],['arcilla','Arcilla',4],['arena','Arena',2],['resina','Resina de árbol',15],['cuero','Cuero curtido',18],
@@ -116,6 +118,9 @@ function receta(id:string,estacion:EstacionProduccion,ingredientes:Record<string
  RECETAS.push({id,nombre:OBJETOS[id]?.nombre||id,estacion,ingredientes,salida:{articulo:id,cantidad},duracionMs:duracionSegundos*1000,nivel,...(requisito?{requisito}:{})});
 }
 // El combustible se consume al iniciar cada lote, junto con sus minerales.
+receta('collar_paseo','mano',{fibra:8,cobre:1},0);
+receta('brida_senda','banco_trabajo',{cuerda:3,fibra:6,lingote_cobre:1},25);
+receta('herraduras_senda','banco_trabajo',{lingote_hierro:2,piedra:4},30);
 receta('carbon','horno',{madera:8},25,0,2);
 receta('lingote_cobre','horno',{cobre:5,carbon:1},30);
 receta('lingote_hierro','horno',{hierro:5,carbon:1},45,1);
