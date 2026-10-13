@@ -505,6 +505,35 @@ Dónde está:
   adornosRefugio`) ponen paja regada, farol, ventanas, costales, escoba y aseladero. Mientras carga el modelo se ve lo
   de siempre; todo queda fundido por material (pocas llamadas de dibujo).
 
+- **Invernadero por dentro en Blender** **hecho** (13 de octubre): `granja_invernadero.glb`
+  (`personajes/blender/granja_invernadero.py`). `huerto-render.ts interiorInvernadero` cambia las cajas por el piso de
+  baldosas de barro con el caminito de lajas y musgo, las dos camas de madera con postes y estaquitas, las paredes de
+  vidrio con murito de ladrillo y arcos de hierro, el termómetro, la puerta con letrero, faroles y tapete, y lo que le
+  da vida (estantes con materas y semillero, mesa de trasplantar, regadera, costales, manguera, carretilla, matas
+  colgadas y helechos). `riegoInvernadero` usa el tubo de cobre con aspersores y su llavecita roja. Todo fundido por
+  material.
+
+- **Nodos de las minas en Blender** **hecho** (13 de octubre): `granja_nodos.glb` (`personajes/blender/granja_nodos.py`).
+  `escenas-aventura.ts rocaNodo` usa una de tres rocas redonditas con grietas y piedritas al pie y, encima, las
+  pepitas de la veta (metales, carbón, piedra y geodas) o el racimo de cristales de seis caras (gemas), pintados con el
+  color de cada mineral (`materialVeta`: un material compartido por mineral; los cristales brillan un poquito).
+
+- **Caja de envíos y casita de los compañeros en Blender** **hecho** (13 de octubre): `granja_envio.glb`
+  (`personajes/blender/granja_envio.py`). `envios-render.ts` usa el cajón con zunchos, etiqueta con sello y cuerda, la
+  tapa (dentro del mismo grupo `tapa_envio`, que se sigue abriendo) y la banderita que sube con carga;
+  `compania-render.ts hogarMascotaVista` la casita con techo de tejas, cojín con botones, cobijita y letrero con
+  huella, y el cuenco de barro con huellitas (el agua aparte, solo si está lleno).
+- **Herramientas en la mano en Blender** **hecho** (13 de octubre): `granja_herramientas.glb`
+  (`personajes/blender/granja_herramientas.py`, 10 piezas `h_*`). `herramientas3d.ts vestirConKit` cambia las piezas
+  hechas a mano por las del kit y les pone los materiales de la calidad (los nombres `h metal`, `h filo`, `h mango`,
+  `h agarre`, `h adorno` del kit se reemplazan por los de `tono(nivel)`); `avatar.ts` hace lo mismo con el cubo de
+  ordeño, las tijeras y la bolsa de semillas (pasto incluido). Mientras carga el kit se ve la versión de antes.
+- **Monstruos de las aventuras en Blender** **hecho** (13 de octubre): `granja_monstruos.glb`
+  (`personajes/blender/granja_monstruos.py`, 11 piezas `mon_<tipo>`: gelatina, escarabajo, murciélago, guardián, ascua,
+  velo nocturno, centinela y los cuatro constructos). `escenas-aventura.ts figura` cambia el cuerpo por el del kit y
+  toma las patas, brazos y alas de los vacíos `miembro_<k>` (se siguen meciendo). Si el jefe tiene su arte propio,
+  ese gana (`userData.arteJefe`). Los reguladores y las formas sin pieza siguen con la figura de antes.
+
 ## Datos útiles
 
 - El Pueblo del Sol está en las coordenadas del mundo:

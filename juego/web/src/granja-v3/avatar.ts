@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Personaje } from '../personaje';
 import { elegirModelos } from '../recursos';
 import { caja, esfera, liberar } from './suelo';
-import { crearHerramienta } from './herramientas3d';
+import { crearHerramienta, vestirConKit } from './herramientas3d';
 
 export class AvatarGranja{
  private montada=false;
@@ -34,6 +34,8 @@ export class AvatarGranja{
   else if(id==='tijeras_esquila'){for(const x of[-1,1]){const blade=caja(g,[.035,.32,.028],[x*.04,-.05,0],'#c8d5d1');blade.rotation.z=x*.2;const h=new THREE.Mesh(new THREE.TorusGeometry(.055,.012,6,12),new THREE.MeshStandardMaterial({color:'#ae8f61'}));h.position.set(x*.065,-.24,0);g.add(h);}}
   else if(id==='semillas'||id==='pasto'){esfera(g,[.14,.18,.12],[0,-.15,0],'#c4a67a');}
   else {caja(g,[.038,.66,.038],[0,-.20,0],'#926b45');if(id==='azada')caja(g,[.24,.045,.19],[0,.14,.06],'#879292');else if(id==='hacha')caja(g,[.26,.22,.055],[.09,.12,0],'#98a6a2');else if(id==='pico')caja(g,[.45,.06,.055],[0,.14,0],'#758588');else if(id==='espada'){caja(g,[.085,.58,.028],[0,.19,0],'#d7e7e6');caja(g,[.22,.045,.06],[0,-.12,0],'#c4a25a');}else if(id==='cana'){caja(g,[.025,1.35,.025],[0,.43,0],'#b69557');}else if(id==='guadana'){const s=new THREE.Mesh(new THREE.TorusGeometry(.20,.025,6,14,Math.PI*.9),new THREE.MeshStandardMaterial({color:'#abb8a7'}));s.position.set(.13,.1,0);g.add(s);}}
+  // (el balde, las tijeras y las semillas también tienen su modelo de Blender)
+  if(!fina&&['cubo_ordeno','tijeras_esquila','semillas','pasto'].includes(id)){const piezas=new THREE.Group();piezas.name='piezas';piezas.add(...g.children);g.add(piezas);vestirConKit(piezas,id,null);}
   if(nivel>0&&!fina){const tonos=['#a1aaa3','#c69265','#b7c3c9','#a99ccd','#a7ddd6'];g.traverse(o=>{if(o instanceof THREE.Mesh){const m=o.material as THREE.MeshStandardMaterial;if(m.color&&m.color.r<=m.color.g*1.2){m.color.set(tonos[nivel]??tonos[4]);m.metalness=.2;m.roughness=.5;}}});}
   const mano=(this.activo?.huesos.get('mano.R')??this.activo?.huesos.get('manoR'));
   if(mano&&this.activo){

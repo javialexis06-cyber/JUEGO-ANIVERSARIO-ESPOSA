@@ -5,6 +5,7 @@ import {JEFES} from './jefes';
 import { caja, esfera, liberar, compactar } from './suelo';
 import { destinoAventura, instanciaAventura, MINERALES, MONSTRUOS, MINA } from './aventura';
 import { terrenoMina, escaleraMina, cofreMina, paletaMina } from './mina-render';
+import { conKit } from './cuartos';
 import type { EstadoAventura, InstanciaAventura, MonstruoAventura, NodoAventura, TipoMonstruo, PuntoAventura } from './aventura';
 
 let mediosJefe:MediosAstra['modelos']={},cargarJefe:((archivo:string)=>Promise<{escena:THREE.Group;clips:THREE.AnimationClip[]}>)|undefined;
@@ -46,7 +47,16 @@ function figura(tipo:TipoMonstruo):FiguraMonstruo {
  }
  const aviso=new THREE.Mesh(new THREE.CircleGeometry(MONSTRUOS[tipo].alcance+.15,32),new THREE.MeshBasicMaterial({color:'#f2b669',transparent:true,opacity:.18,depthWrite:false,side:THREE.DoubleSide}));aviso.rotation.x=-Math.PI/2;aviso.position.y=.027;aviso.visible=false;grupo.add(aviso);
  const barra=new THREE.Group();barra.position.set(0,1.8,0);caja(barra,[.9,.07,.04],[0,0,0],'#423a53');const relleno=caja(barra,[.85,.05,.05],[0,.005,.003],'#c5df8f');grupo.add(barra);barra.visible=false;
- return {grupo,cuerpo,miembros,aviso,barra,relleno,fase:0};
+ const f:FiguraMonstruo={grupo,cuerpo,miembros,aviso,barra,relleno,fase:0};
+ // Con granja_monstruos.glb (personajes/blender/granja_monstruos.py): el bicho de plastilina con su cara; las patas,
+ // brazos y alas vienen en vacíos «miembro_<k>» que se siguen meciendo (mientras carga, lo de arriba)
+ conKit(grupo,'granja_monstruos.glb',m=>{
+  const base=m.get('mon_'+tipo);if(!base||grupo.userData.arteJefe)return;const nuevo=base.clone(true),patas:THREE.Object3D[]=[];
+  nuevo.traverse(o=>{if(/^miembro_\d+$/.test(o.name))patas.push(o);});patas.sort((x,y)=>Number(x.name.slice(8))-Number(y.name.slice(8)));
+  for(const hijo of [...cuerpo.children])liberar(hijo);cuerpo.add(nuevo);f.miembros=patas;
+  const a=grupo.userData.aventura as ObjetivoAventura|undefined;if(a)objetivo(grupo,a.tipo,a.id);
+ });
+ return f;
 }
 function rocaNodo(n:NodoAventura){
  // Roca grande y redondita con la veta a la vista: trozos de metal o cristales del color del mineral
@@ -55,7 +65,28 @@ function rocaNodo(n:NodoAventura){
  if(['carbon','piedra','hierro','cobre','oro','plata','titanio','meteorita','estano','mitrilo','geoda','geoda_helada','geoda_magma','geoda_omni'].includes(n.mineral)){
   for(let k=0;k<6;k++){const angle=k*2.399+h(2),mesh=new THREE.Mesh(new THREE.DodecahedronGeometry(.11+h(k)*.05,0),new THREE.MeshStandardMaterial({color,roughness:n.mineral==='carbon'?.9:.35,metalness:['oro','plata','hierro','titanio','cobre'].includes(n.mineral)?.55:.05}));mesh.position.set(Math.sin(angle)*.33,.3+(k%3)*.12,Math.cos(angle)*.3);mesh.rotation.set(k,k*.6,k*.3);mesh.castShadow=true;g.add(mesh);}
  }else for(let k=0;k<4;k++){const angle=k*2.399+h(3);cristal(g,color,Math.sin(angle)*.25,Math.cos(angle)*.22,.5+k*.12);}
- g.scale.setScalar(1.25);objetivo(g,'nodo',n.id);g.position.set(n.x,0,n.z);return g;
+ g.scale.setScalar(1.25);objetivo(g,'nodo',n.id);g.position.set(n.x,0,n.z);
+ // Con granja_nodos.glb (personajes/blender/granja_nodos.py): una de las tres rocas de plastilina con grietas y, encima,
+ // las pepitas de la veta o el racimo de cristales pintados del color del mineral (mientras carga, lo de arriba)
+ conKit(g,'granja_nodos.glb',m=>{
+  const roca=m.get(['nodo_roca_a','nodo_roca_b','nodo_roca_c'][Math.floor(h(4)*3)%3]),veta=m.get(PEPITAS.has(n.mineral)?'nodo_pepitas':'nodo_cristales');if(!roca||!veta)return;
+  const nuevo=new THREE.Group();nuevo.add(roca.clone(true));const v=veta.clone(true);v.rotation.y=h(5)*6;nuevo.add(v);
+  v.traverse(o=>{const x=o as THREE.Mesh;if(x.isMesh)x.material=materialVeta(n.mineral,x.material as THREE.MeshStandardMaterial);});
+  for(const c of[...g.children]){c.removeFromParent();c.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(o.material as THREE.Material).dispose();}});}
+  g.add(nuevo);objetivo(g,'nodo',n.id);
+ });
+ return g;
+}
+const PEPITAS=new Set(['carbon','piedra','hierro','cobre','oro','plata','titanio','meteorita','estano','mitrilo','geoda','geoda_helada','geoda_magma','geoda_omni']);
+/** El material de la veta de cada mineral (uno por mineral y pieza, compartido entre todos los nodos). */
+const vetas=new Map<string,THREE.MeshStandardMaterial>();
+function materialVeta(mineral:NodoAventura['mineral'],base:THREE.MeshStandardMaterial){
+ if(/brillo/.test(base.name))return base;const clave=mineral+'|'+base.name;let mt=vetas.get(clave);if(mt)return mt;
+ const color=MINERALES[mineral].color,metal=['oro','plata','hierro','titanio','cobre','estano','mitrilo'].includes(mineral);
+ mt=base.clone();mt.color.set(color);
+ if(PEPITAS.has(mineral)){mt.metalness=metal?.6:.05;mt.roughness=mineral==='carbon'?.9:.35;}
+ else if(/cristal/.test(base.name)){mt.emissive=new THREE.Color(color);mt.emissiveIntensity=.22;mt.roughness=.2;}
+ mt.userData.compartido=true;vetas.set(clave,mt);return mt;
 }
 export function ambienteAventura(e:EstadoAventura){const d=destinoAventura(e.destinoActual),i=instanciaAventura(e);if(i&&i.destinoId===MINA){const p=paletaMina(i);return{fondo:p.fondo,niebla:p.niebla,luz:p.luz,mina:true};}return{mina:false,fondo:d?.espacial?'#252439':d?.tipo==='reino'?'#3c344c':'#404044',niebla:d?.espacial?'#343249':'#696578',luz:d?.luz??'#e8cfa4'};}
 
@@ -152,7 +183,7 @@ export class EscenaAventura {
   for(const s of i.situaciones){const g=this.situaciones.get(s.id);if(g)g.visible=!s.resuelta&&visible(s);}
  }
  frame(dt:number,e?:EstadoAventura){this.update(dt,e??this.estado);}
- private arteJefe(f:FiguraMonstruo,m:MonstruoAventura){const d=mediosJefe['jefe:'+m.tipo],cargar=cargarJefe;if(!d||!cargar)return;void cargar(d.archivo.replace(/^\.\/modelos\//,'')).then(({escena,clips})=>{if(!f.grupo.parent||this.monstruos.get(m.id)!==f)return;const g=clone(escena);g.scale.setScalar(d.escala??1);g.traverse(o=>{const mesh=o as THREE.Mesh;if(!mesh.isMesh)return;mesh.geometry.userData.compartido=true;for(const mat of Array.isArray(mesh.material)?mesh.material:[mesh.material])mat.userData.compartido=true;});for(const hijo of [...f.cuerpo.children])liberar(hijo);f.miembros=[];f.cuerpo.add(g);objetivo(g,'monstruo',m.id);if(clips.length){const mixer=new THREE.AnimationMixer(g);f.grupo.userData.mixerJefe=mixer;f.grupo.userData.clipsJefe=clips;mixer.clipAction(clips.find(c=>c.name==='reposo')??clips[0]).play();}}).catch(()=>{});}
+ private arteJefe(f:FiguraMonstruo,m:MonstruoAventura){const d=mediosJefe['jefe:'+m.tipo],cargar=cargarJefe;if(!d||!cargar)return;void cargar(d.archivo.replace(/^\.\/modelos\//,'')).then(({escena,clips})=>{if(!f.grupo.parent||this.monstruos.get(m.id)!==f)return;f.grupo.userData.arteJefe=true;const g=clone(escena);g.scale.setScalar(d.escala??1);g.traverse(o=>{const mesh=o as THREE.Mesh;if(!mesh.isMesh)return;mesh.geometry.userData.compartido=true;for(const mat of Array.isArray(mesh.material)?mesh.material:[mesh.material])mat.userData.compartido=true;});for(const hijo of [...f.cuerpo.children])liberar(hijo);f.miembros=[];f.cuerpo.add(g);objetivo(g,'monstruo',m.id);if(clips.length){const mixer=new THREE.AnimationMixer(g);f.grupo.userData.mixerJefe=mixer;f.grupo.userData.clipsJefe=clips;mixer.clipAction(clips.find(c=>c.name==='reposo')??clips[0]).play();}}).catch(()=>{});}
  private animar(f:FiguraMonstruo,m:MonstruoAventura){
   const t=this.tiempo,moving=['patrulla','persecucion'].includes(m.fase),wind=m.fase==='anticipacion',attack=m.fase==='ataque';
   f.grupo.visible=m.vivo;f.grupo.position.set(m.x,0,m.z);f.cuerpo.rotation.y=Math.atan2(m.direccion.x,m.direccion.z);

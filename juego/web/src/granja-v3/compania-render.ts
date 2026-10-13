@@ -1,6 +1,7 @@
 import * as T from 'three';
 import { Objeto, type Asset, type Calidad } from '../granja-v2/biblioteca';
 import { compactar, liberar, caja, esfera } from './suelo';
+import { conKit } from './cuartos';
 import type { TipoCompania } from './compania';
 import type { ObjetivoGanado } from './ganaderia-render';
 
@@ -38,5 +39,13 @@ export function hogarMascotaVista(id:string,agua:boolean){
  const g=new T.Group();caja(g,[1.45,.12,1.35],[0,.06,-.08],'#b09a7d');caja(g,[1.2,.14,.95],[0,.2,-.1],'#a2b69a');for(const x of[-.7,.7])caja(g,[.10,.52,1.3],[x,.28,-.08],'#d9bc8e');caja(g,[1.5,.5,.10],[0,.27,-.72],'#d9bc8e');
  for(const x of[-.72,.72]){caja(g,[.07,1.1,.07],[x,.55,-.73],'#97704e');caja(g,[.07,1.1,.07],[x,.55,.49],'#97704e');}for(const x of[-1,1]){const techo=caja(g,[.95,.12,1.6],[x*.37,1.14,-.08],'#92a7a2');techo.rotation.z=-x*.22;}
  for(let i=0;i<8;i++)for(const x of[-1,1]){const tabla=caja(g,[.95,.018,.015],[x*.37,1.22,-.78+i*.20],'#c7d2bd');tabla.rotation.z=-x*.22;}caja(g,[.075,.08,1.62],[0,1.26,-.08],'#d1c09e');for(const x of[-.7,.7])for(const z of[-.69,.45])esfera(g,[.025,.025,.014],[x,.39,z],'#8b7c66');esfera(g,[.22,.09,.17],[-.27,.33,-.36],'#d5c39d');caja(g,[1.25,.03,.04],[0,.26,.44],'#c4bc8e');
- compactar(g);const cuenco=new T.Group(),m=new T.MeshStandardMaterial({color:'#b69171',roughness:.65});cuenco.name='cuenco-'+id;const aro=new T.Mesh(new T.TorusGeometry(.24,.05,6,18),m);aro.rotation.x=Math.PI/2;aro.position.y=.12;cuenco.add(aro);const base=new T.Mesh(new T.CylinderGeometry(.22,.17,.11,16),m);base.position.y=.06;cuenco.add(base);if(agua){const aguaMesh=new T.Mesh(new T.CircleGeometry(.205,16),new T.MeshStandardMaterial({color:'#8dc6cc',roughness:.2}));aguaMesh.rotation.x=-Math.PI/2;aguaMesh.position.y=.119;cuenco.add(aguaMesh);}compactar(cuenco);cuenco.position.set(.5,0,1.5);cuenco.userData.ganado={tipo:'cuenco',id} satisfies ObjetivoGanado;g.add(cuenco);return g;
+ compactar(g);const cuenco=new T.Group(),m=new T.MeshStandardMaterial({color:'#b69171',roughness:.65});cuenco.name='cuenco-'+id;const aro=new T.Mesh(new T.TorusGeometry(.24,.05,6,18),m);aro.rotation.x=Math.PI/2;aro.position.y=.12;cuenco.add(aro);const base=new T.Mesh(new T.CylinderGeometry(.22,.17,.11,16),m);base.position.y=.06;cuenco.add(base);if(agua){const aguaMesh=new T.Mesh(new T.CircleGeometry(.205,16),new T.MeshStandardMaterial({color:'#8dc6cc',roughness:.2}));aguaMesh.rotation.x=-Math.PI/2;aguaMesh.position.y=.119;cuenco.add(aguaMesh);}compactar(cuenco);cuenco.position.set(.5,0,1.5);cuenco.userData.ganado={tipo:'cuenco',id} satisfies ObjetivoGanado;g.add(cuenco);
+ // Con granja_envio.glb (personajes/blender/granja_envio.py): la casita de madera con techo de tejas, cojín con botones,
+ // cobijita y letrero con huella, y el cuenco de barro con huellitas (el agua solo si está lleno)
+ conKit(g,'granja_envio.glb',m=>{const casa=m.get('mascota_casita'),cu=m.get('mascota_cuenco'),ag=m.get('mascota_agua');if(!casa||!cu)return;
+  const quitar=(o:T.Object3D)=>{o.removeFromParent();o.traverse(x=>{if(x instanceof T.Mesh){x.geometry.dispose();for(const mt of Array.isArray(x.material)?x.material:[x.material])if(!mt.userData.compartido)mt.dispose();}});};
+  for(const c of[...g.children])if(c!==cuenco)quitar(c);for(const c of[...cuenco.children])quitar(c);
+  g.add(casa.clone(true));cuenco.add(cu.clone(true));if(agua&&ag)cuenco.add(ag.clone(true));
+  cuenco.traverse(o=>{o.userData.ganado=cuenco.userData.ganado;});});
+ return g;
 }
