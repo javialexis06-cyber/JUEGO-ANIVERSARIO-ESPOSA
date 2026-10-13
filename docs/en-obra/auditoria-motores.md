@@ -43,7 +43,7 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 | Granja / Astra | Las 48 suites pasan. Seis comprobaciones de navegador casa–granja, inventario, correo, retorno y recarga sin errores | Campaña por controles normales desde cero; cerrar capacidades pendientes de la auditoría vigente y probar dispositivos |
 | Lavarse la cara | Doce partidas simuladas desde cero en «cara», con compras pagadas y varias victorias de 30 minutos | Final de la Ducha Helada, demás escenarios y capítulos, controles táctiles, pausa y red |
 | Sangre y Ceniza | Expedición simulada de cinco etapas y victoria en cementerio, monarca, peligro 1; perfil preparado, sin experiencia/equipo previo | Perfil desbloqueado desde cero, demás biomas, jefe final, controles y red |
-| Súper Manía | Inventario de pruebas localizado | Campaña desde cero; comprobar progresión pagada, resultados y recarga, además de un día completo |
+| Súper Manía | Primer día desde progreso nuevo hasta resultado en navegador: tres estrellas, nueve clientes atendidos, ganancia 98 y ningún error | Campaña desde cero; comprobar mejoras pagadas, días avanzados y recarga |
 | Cien Puertas | Resolutor de toques/sensores y revisión de las 100 puertas localizado | Resolver campaña completa y verificar retorno, inventario, guardado y sensores de teléfono |
 | Retrete espacial | Pruebas de integración localizadas; son escenarios preparados | Vuelo normal desde progreso nuevo hasta resultado, tienda pagada y continuación tras recarga |
 | Cocina de chef: wafles, frappés y fresas | Pruebas de integración y red localizadas; algunas fuerzan el fin del día | Día completo normal de cada receta, pedidos, estaciones, propinas, guardado y continuidad |
@@ -51,6 +51,12 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 
 Las compilaciones de pareja y amigos pasan. El filtro de amigos revisó 506 archivos y no encontró contenido
 personal. Estas comprobaciones no certifican FPS, batería o memoria en Android real.
+
+Las correcciones y pruebas se publicaron en `78a034db`, en `work` y `claude/supermarket-mania-minigame-xn2it8`,
+con autorización explícita de Javier en este chat. La APK del avance está bloqueada: no se creó una ejecución
+automática para ese SHA y el intento de iniciar `apk.yml` devolvió **HTTP 422: Actions has been disabled for this
+user**. El workflow figura activo, pero la cuenta no puede ejecutarlo. No se anuncia una APK nueva ni se confunden
+los instaladores anteriores con estas correcciones. Requiere reactivar Actions en la cuenta y repetir la compilación.
 
 ## Criterio de cierre por juego
 
