@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0a1e">
+<meta name="apto-amigos" content="si">
+<title>El Escudo de las Hermanas</title>
+<link rel="icon" href="data:,">
+</head>
+<body class="escudo">
+<!-- El tower defense del Borde de Astra (docs/sistemas/escudo.md). La casa lo abre desde el Cuarto de Juegos, la granja
+     desde la misión P23 (escudo.html?mision=P23) y los amigos desde su Sala de Juegos (sin nada de la pareja). -->
+<canvas id="escudo-lienzo" aria-hidden="true"></canvas>
+<div id="escudo-textos" aria-hidden="true"></div>
+<div id="escudo-ui"></div>
+<div id="escudo-carga">
+  <div class="carga-centro">
+    <div class="carga-logo">El Escudo<br><span>de las Hermanas</span></div>
+    <div class="carga-frase" id="escudo-carga-frase">Encendiendo el escudo de luz…</div>
+    <div class="carga-barra"><i id="escudo-carga-barra"></i></div>
+  </div>
+</div>
+<script type="module" src="./src/escudo/main.ts"></script>
+</body>
+</html>

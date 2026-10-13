@@ -56,8 +56,9 @@ const LISTA = [...PALABRAS_PAREJA.filter((p) => !PLATOS_DEL_JUEGO.has(p)), ...FR
 const RUTAS_PROHIBIDAS = [
   /(^|\/)recuerdos\//, /(^|\/)voces\//, /(^|\/)carga\//, /casa_[a-z]/, /(^|\/)deco_/, /(^|\/)comida_/, /(^|\/)regalo/, /(^|\/)puertas/,
   /casa\.json$/,
-  // audio: solo la música de los juegos de los amigos y los efectos (nunca la de la pareja ni las voces)
-  /^(?!musica\/(super|mesa|lavado|sangre|cohete|cocina|amigos)-|sfx\/).*\.(mp3|ogg|m4a|wav)$/, /(^|\/)musica\/pareja\//,
+  // audio: solo la música de los juegos de los amigos y los efectos (nunca la de la pareja ni las voces), y las voces
+  // del mito del Escudo (audio/escudo/: las de la pareja van aparte en audio/escudo-pareja/) con su música de la granja
+  /^(?!musica\/(super|mesa|lavado|sangre|cohete|cocina|amigos)-|sfx\/|audio\/escudo\/|audio\/astra\/musica\/M(16|19|20)-).*\.(mp3|ogg|m4a|wav)$/, /(^|\/)musica\/pareja\//,
   // la pareja cuando llega a comer a la cocina y el cine de las escenas premium de la mesa (su CSS solo viene con el
   // cine de verdad: la versión para amigos lleva uno vacío, src/amigos/sin_pareja/cine.ts)
   /cocina\/gente\/pareja_/, /(^|\/)cine-[\w-]+\.css$/,

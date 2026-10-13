@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -28,6 +28,7 @@ const SUSTITUTOS: Record<string, string> = {
   'src/escenas/catalogo.ts': 'src/amigos/sin_pareja/escenas.ts',
   'src/escenas/cine.ts': 'src/amigos/sin_pareja/cine.ts',
   'src/reacciones/pareja.ts': 'src/amigos/sin_pareja/reacciones.ts',
+  'src/escudo/pareja.ts': 'src/amigos/sin_pareja/escudo.ts',
 };
 
 /**
@@ -42,10 +43,13 @@ export const PERMITIDOS_AMIGOS = [
   'src/sueltos/', 'src/casa/cohete/', 'src/casa/cohete.ts', 'src/casa/cohete.css', 'src/casa/cocina/', 'src/casa/progreso_nube.ts', 'src/casa/ropa.json',
   // los juegos de mesa (sin las escenas premium, que son de la pareja: ver SUSTITUTOS)
   'src/reacciones/', 'src/mesa/',
+  // El Escudo de las Hermanas (lo de la pareja va en src/escudo/pareja.ts: ver SUSTITUTOS)
+  'src/escudo/',
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
-export const PUBLICOS_AMIGOS = ['modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/', 'datos/niveles.json',
+export const PUBLICOS_AMIGOS = ['modelos/escudo_mapa.glb', 'modelos/escudo_torres.glb', 'modelos/escudo_enemigos.glb', 'audio/escudo/',
+  'modelos/granja-v3/dragon_lod.glb', 'modelos/granja-v3/grifo_lod.glb', 'modelos/granja-v3/unicornio_lod.glb', 'modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/', 'datos/niveles.json',
   'modelos/manifest_export.json'];
 
 /** Lo de Súper Manía en `modelos/` (y en `modelos-plano/`, la copia para celulares sin WebAssembly): el local en sus
@@ -132,6 +136,8 @@ function versionAmigos(): Plugin {
       }
       // Los efectos (los de la granja no: la granja no va en la versión para amigos)
       for (const f of readdirSync(resolve(pub, 'sfx'))) if (f !== 'granja') copiar(`sfx/${f}`);
+      // El Escudo: su música es la de la granja (M16 en los menús, M19 en la batalla, M20 al ganar)
+      if (existsSync(resolve(pub, 'audio/astra/musica'))) for (const f of readdirSync(resolve(pub, 'audio/astra/musica'))) if (/^M(16|19|20)-\w+\.ogg$/.test(f)) copiar(`audio/astra/musica/${f}`);
       // La app arranca en index.html: aquí lleva directo a la sala de juegos de los amigos
       writeFileSync(
         resolve(salida, 'index.html'),
@@ -165,6 +171,7 @@ export default defineConfig(({ mode, command }) => {
             casa: resolve(raiz, 'index.html'), super: resolve(raiz, 'super.html'), puertas: resolve(raiz, 'puertas.html'), mesa: resolve(raiz, 'mesa.html'),
             granjaV3: resolve(raiz, 'granja-v3.html'),
             amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'),
+            escudo: resolve(raiz, 'escudo.html'),
           },
       },
     },

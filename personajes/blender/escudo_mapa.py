@@ -4,6 +4,7 @@ madera, cristales de laca; todo redondeado. El juego reparte las piezas según e
 
   isla_a, isla_b, isla_c      trozos de plataforma (≈4,4 × 4,4 m) con musgo de luz, piedritas y raíces colgando
   isla_borde                  trozo de orilla: más roca colgando hacia el abismo
+  tierra                      la tierra pisada debajo de las losas
   losa_1 … losa_4             las piedras del camino de la ceniza (se ponen en fila a lo largo de cada ruta)
   zocalo                      el sitio para construir: círculo de piedra con runas doradas y su borde de madera
   portal                      la grieta por donde entra la ceniza (anillo de roca negra con brasas moradas)
@@ -153,6 +154,11 @@ def m_losa_3(coll):
 
 def m_losa_4(coll):
     losa(coll, 'losa 4', 4, '#A89A86')
+
+
+def m_tierra(coll):
+    """Mancha de tierra pisada (fieltro café oscuro) que va debajo de las losas: marca bien el camino."""
+    clay.blob('tierra camino', (0, 0, 0.0), (0.6, 0.52, 0.025), coll, tela('tierra pisada', '#5A4A5E'), n=5, p=2.2, shaper=ruido(5, 0.18, 4), subsurf=1)
 
 
 def m_zocalo(coll):
