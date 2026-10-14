@@ -452,7 +452,7 @@ function nido(conGente: boolean): SetFotos {
     : [
       { id: 'c3_cristales', cam: [[3, 1.6, 2], [-5, 1.4, -5], 44], salen: [] },
       { id: 'c3_huevo', cam: [[3.6, 1.1, 1.2], [2.2, 0.6, -1.6], 32], salen: [] },
-      { id: 'c3_ojo', cam: [[0.2, 3.6, 0.2], [-1.6, 4.2, -3.2], 30], salen: [], filtro: 'oscura' },
+      { id: 'c3_ojo', cam: [[2, 2.2, 1.5], [-1.4, 3.0, -2.6], 26], salen: [], filtro: 'oscura' },
       { id: 'c3_fondo_nido', cam: [[0, 2, 7], [0, 1, -3], 50], salen: [] },
     ]);
 }
