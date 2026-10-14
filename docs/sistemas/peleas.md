@@ -76,7 +76,8 @@ se funde en una malla con el color en los vértices (unas 100 llamadas de dibujo
 bola de nieve, llama, ola de nieve), un `m_<clave>` por cosa en `peleas/cosas.glb`.
 
 ```bash
-blender -b -P personajes/blender/peleas_escenarios.py -- juego/web/modelos-crudos/peleas [plaza,brasaviva,nieveclara]
+# (cada escenario en su propio Blender: al rehacer la escena quedan materiales viejos en la memoria de los kits)
+for e in plaza brasaviva nieveclara; do blender -b -P personajes/blender/peleas_escenarios.py -- juego/web/modelos-crudos/peleas $e; done
 blender -b -P personajes/blender/peleas_cosas.py -- juego/web/modelos-crudos/peleas
 cd juego/web && node scripts/peleas/optimizar.mjs      # → public/modelos/peleas/*.glb (no toca ropa.json)
 ```
@@ -165,14 +166,19 @@ const ARTE_PELEAS = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspec
   <path d="M96 58 l8 -8 l-2 7 l7 1 l-9 9 l2 -7z" fill="#fff6a0" stroke="#c98a1a"/></svg>`;
 ```
 
-«Unirme con un código» de la sala de amigos: si `averiguarJuego(código)` dice `peleas`, ir a
-`./peleas.html?unirse=CÓDIGO` (y «Crear sala»: `./peleas.html?sala`, que ya es el valor por defecto de `urlCrear`).
+Con `sala: 'peleas'` la sala de amigos ya sabe crear (`./peleas.html?sala`) y unirse con un código
+(`./peleas.html?unirse=CÓDIGO`): son los valores por defecto de `urlCrear` y `urlUnirse`.
 
 Ya está hecho en esta rama: `peleas.html` en el `input` de `vite.config.ts`, en `PAGINAS_AMIGOS`, `src/peleas/` en
 `PERMITIDOS_AMIGOS`, `modelos/peleas/` y `audio/peleas/comun/` en `PUBLICOS_AMIGOS`, el sustituto de `pareja.ts` en
 `SUSTITUTOS`, y en `scripts/verificar-amigos.mjs` el permiso para los audios de `audio/peleas/comun/`.
 
 ## Pendiente o por mejorar
+
+- **Ojo (no es de este juego):** en la base de esta rama `npm run build:amigos` falla porque
+  `src/sangre/ui/postal.ts` importa `src/granja-v3/cine-lineas-lugares.ts`, que no está en `PERMITIDOS_AMIGOS`. Con ese
+  archivo permitido (prueba local, sin subir) la versión de amigos compila y `verificar-amigos` sale limpia con el
+  torneo adentro. Lo arregla quien junte (el frente de Sangre o de la granja).
 
 - Las poses de pelea se arman sobre el esqueleto en el juego (el muñeco no trae poses de pelea propias en Blender).
 - En línea el invitado ve la pelea con el retraso de la red (no hay predicción de su propio muñeco).

@@ -90,9 +90,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .escenario { border: 0; border-radius: 16px; padding: 0 0 8px; overflow: hidden; background: var(--crema); box-shadow: 0 3px 0 #b5833f, 0 8px 18px rgba(0, 0, 0, .35); display: flex; flex-direction: column; text-align: left; }
 .escenario b { font: 700 15px/1.1 var(--display); padding: 6px 10px 0; }
 .escenario small { font-size: 10.5px; padding: 0 10px; color: var(--choco-suave); }
-.esc-arte { flex: 1; min-height: 120px; display: grid; place-items: center; font: 700 44px var(--display); color: var(--crema); }
+.esc-arte { flex: 1; min-height: 120px; background-size: cover !important; background-position: 50% 60% !important; display: grid; place-items: center; font: 700 44px var(--display); color: var(--crema); }
 .esc-plaza .esc-arte { background: linear-gradient(#7fb8ef, #ffe0a8 60%, #c99560 61%); }
-.esc-brasaviva .esc-arte { background: radial-gradient(circle at 70% 30%, #ffb070 0 12%, transparent 13%), linear-gradient(#3a2140, #ff8a4a 60%, #4a3a3a 61%); }
+.esc-brasaviva .esc-arte { background: linear-gradient(#3a2140, #ff8a4a 60%, #4a3a3a 61%); }
 .esc-nieveclara .esc-arte { background: linear-gradient(#2a3f7a, #bfe0f5 60%, #e8f2fa 61%); }
 .esc-azar .esc-arte { background: linear-gradient(135deg, #b5743f, #6b3a1a); }
 .dificultad { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 9px; width: 220px; }
@@ -202,13 +202,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .mando { position: absolute; inset: 0; pointer-events: none; }
 .mando-zona { position: absolute; pointer-events: auto; touch-action: none; }
 .mando-uno .mando-zona { left: 0; bottom: 0; width: 48%; height: 74%; }
-.mando-dos .mando-zona-0 { left: 0; bottom: 0; width: 21%; height: 70%; }
-.mando-dos .mando-zona-1 { right: 0; bottom: 0; width: 21%; height: 70%; }
+.mando-dos .mando-zona-0 { left: 0; bottom: 0; width: 24%; height: 38%; }
+.mando-dos .mando-zona-1 { right: 0; bottom: 0; width: 24%; height: 38%; }
 .mando.sin-tactil .mando-zona, .mando.sin-tactil .mando-botones { display: none; }
 .mando-joy { position: fixed; left: 90px; bottom: 70px; top: auto; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); background: rgba(255, 255, 255, .08); opacity: .45; pointer-events: none; }
 .mando-uno .mando-joy:not(.activo) { left: 96px !important; top: calc(100% - 92px) !important; }
-.mando-dos .mando-joy { display: none; }
-.mando-dos .mando-joy.activo { display: block; }
+.mando-dos .mando-joy { width: 78px; height: 78px; margin: -39px 0 0 -39px; }
+.mando-dos .mando-joy-0:not(.activo) { left: 64px !important; top: calc(100% - 62px) !important; }
+.mando-dos .mando-joy-1:not(.activo) { left: calc(100% - 64px) !important; top: calc(100% - 62px) !important; }
 .mando-joy.activo { opacity: .8; }
 .mando-joy i { position: absolute; left: 50%; top: 50%; width: 42px; height: 42px; margin: -21px; border-radius: 50%; background: rgba(255, 246, 227, .55); box-shadow: 0 2px 8px rgba(0, 0, 0, .3); }
 .mando.sin-tactil .mando-joy { display: none; }
@@ -228,8 +229,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .mando-dos .mando-botones { grid-template-columns: repeat(2, auto); gap: 4px; }
 .mando-dos .mando-btn { width: 44px; height: 44px; }
 .mando-dos .mando-btn span { display: none; }
-.mando-dos .mando-botones-0 { left: 21%; right: auto; bottom: 10px; }
-.mando-dos .mando-botones-1 { right: 21%; bottom: 10px; }
+.mando-dos .mando-botones-0 { left: max(8px, env(safe-area-inset-left)); right: auto; bottom: auto; top: 30%; }
+.mando-dos .mando-botones-1 { right: max(8px, env(safe-area-inset-right)); bottom: auto; top: 30%; }
 .mando-dos .mando-a { grid-area: 2 / 1; } .mando-dos .mando-b { grid-area: 2 / 2; } .mando-dos .mando-e { grid-area: 1 / 1; } .mando-dos .mando-g { grid-area: 1 / 2; }
 .mando-dos .mando-s { grid-area: 3 / 1 / 4 / 3; justify-self: center; width: 40px; height: 40px; }
 

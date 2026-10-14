@@ -339,7 +339,7 @@ escogerLuchador.dicho = false;
 function escogerEscenario(): Promise<IdEscenario | null> {
   return new Promise((ok) => {
     const p = pantalla(`<header class="sel-titulo"><button class="boton chico" data-volver>‹ Volver</button><h2>¿Dónde pelean?</h2></header>
-      <div class="escenarios">${ORDEN_ESCENARIOS.map((id) => `<button class="escenario esc-${id}" data-id="${id}"><span class="esc-arte"></span><b>${esc(ESCENARIOS[id].nombre)}</b><small>${esc(ESCENARIOS[id].lema)}</small></button>`).join('')}
+      <div class="escenarios">${ORDEN_ESCENARIOS.map((id) => `<button class="escenario esc-${id}" data-id="${id}"><span class="esc-arte" style="background-image:url('./modelos/peleas/postal_${id}.webp')"></span><b>${esc(ESCENARIOS[id].nombre)}</b><small>${esc(ESCENARIOS[id].lema)}</small></button>`).join('')}
       <button class="escenario esc-azar" data-id="azar"><span class="esc-arte">?</span><b>Al azar</b><small>Que decida la suerte</small></button></div>`, 'escoger-escenario');
     const fin = (r: IdEscenario | null) => {
       atrasActual = null;
@@ -758,6 +758,18 @@ async function arrancar() {
   carga(true, 'Colgando los banderines dorados…');
   await elegirModelos();
   await escena.ponerEscenario((params.get('escenario') as IdEscenario) ?? 'plaza').catch(() => undefined);
+  // Postales de los escenarios (para las tarjetas): ?prueba=postal&escenario=plaza
+  if (params.get('prueba') === 'postal') {
+    director = {
+      cuadro(dt) {
+        escena.camaraPelea(dt, new THREE.Vector3(-2.2, 0, 0), new THREE.Vector3(2.2, 0, 0), { borde: 8 });
+        escena.animar(dt, 0.4);
+      },
+    };
+    carga(false);
+    w.__listo = true;
+    return;
+  }
   // Pruebas: ?prueba=poses&p1=el (window.__pose('jab', lado) pone una pose de pelea de lado)
   if (params.get('prueba') === 'poses') {
     const d = ELENCO.find((x) => x.id === params.get('p1')) ?? ELENCO[0];

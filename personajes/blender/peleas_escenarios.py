@@ -250,8 +250,14 @@ def texto(coll, cuerpo, c, tam, cara, canto, extrude=0.06):
         p.use_smooth = True
     # El origen en el del mundo (como todo lo demás)
     me = ob.data
-    me.transform(ob.matrix_world)
-    ob.matrix_world.identity()
+    me.transform(ob.matrix_basis)
+    ob.matrix_basis.identity()
+    import bmesh
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method='BEAUTY', ngon_method='EAR_CLIP')
+    bm.to_mesh(me)
+    bm.free()
     return ob
 
 
@@ -262,8 +268,8 @@ def sol(coll, c, r, cara=None):
     o.rotation_euler = (math.radians(90), 0, 0)
     o.location = (x, y + 0.04, z)
     me = o.data
-    me.transform(o.matrix_world)
-    o.matrix_world.identity()
+    me.transform(o.matrix_basis)
+    o.matrix_basis.identity()
     for k in range(12):
         a = k / 12 * math.tau
         largo = r * (0.55 if k % 2 else 0.4)
@@ -394,9 +400,9 @@ def letrero_torneo(coll):
         cilindro(coll, f'poste letrero {s}', (s * 5.2, 0, 0), 0.18, 5.4, m, seg=10)
         bola(coll, f'remate letrero {s}', (s * 5.2, 0, 5.5), 0.26, ORO(), n=4)
     caja(coll, 'tabla letrero', (0, 0.05, 4.3), (4.9, 0.12, 0.72), madera('tabla letrero', '#6B4430'), p=8, sub=0)
-    caja(coll, 'marco letrero', (0, 0.02, 4.3), (5.0, 0.1, 0.8), ORO(), p=8, sub=0)
-    texto(coll, 'TORNEO DEL', (0, -0.14, 4.62), 0.42, ORO_CLARO(), laca('canto letras', '#C98A1A'))
-    texto(coll, 'DESPERTAR DORADO', (0, -0.14, 4.06), 0.62, ORO_CLARO(), laca('canto letras', '#C98A1A'))
+    caja(coll, 'marco letrero', (0, 0.16, 4.3), (5.0, 0.06, 0.8), ORO(), p=8, sub=0)
+    texto(coll, 'TORNEO DEL', (0, -0.2, 4.62), 0.42, ORO_CLARO(), laca('canto letras', '#C98A1A'))
+    texto(coll, 'DESPERTAR DORADO', (0, -0.2, 4.06), 0.62, ORO_CLARO(), laca('canto letras', '#C98A1A'))
     sol(coll, (0, -0.1, 5.55), 0.62)
     for s in (-1, 1):
         for k in range(5):
@@ -511,8 +517,8 @@ def columnas_basalto(coll, ancho=19.0, fondo=4.0):
             o.location = (cx, y, 0)
             o.rotation_euler = (0, 0, math.radians(30))
             me = o.data
-            me.transform(o.matrix_world)
-            o.matrix_world.identity()
+            me.transform(o.matrix_basis)
+            o.matrix_basis.identity()
             i += 1
     # La lava que brilla entre las columnas (abajito)
     caja(coll, 'lava entre columnas', (0, 0, -0.12), (ancho / 2 + 0.4, fondo / 2 + 0.4, 0.04), luz('lava piso', '#FF5A1A', 2.2), p=8, sub=0)

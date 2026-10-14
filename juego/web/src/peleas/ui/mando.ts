@@ -73,7 +73,7 @@ export class Mando {
     const zona = document.createElement('div');
     zona.className = `mando-zona mando-zona-${i}`;
     const joy = document.createElement('div');
-    joy.className = 'mando-joy';
+    joy.className = `mando-joy mando-joy-${i}`;
     joy.innerHTML = '<i></i>';
     const botones = document.createElement('div');
     botones.className = `mando-botones mando-botones-${i}`;
