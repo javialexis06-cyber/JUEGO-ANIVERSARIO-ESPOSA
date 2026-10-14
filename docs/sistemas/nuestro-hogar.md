@@ -61,6 +61,9 @@ con `CASA_SOLO=juegos,trofeos,cuna,cuarto_el,cuarto_ella,bebe,ciguena python3 ex
 | Cuarto de Él | 80 | Escritorio con computador (la pantalla escribe código), silla gamer, sillón, repisa y balón |
 | Cuarto de Ella | 80 | Tocador con espejo de bombillitos y taburete, escritorio de estudio (libros de psicología y un cerebrito rosado), sillón y repisa |
 
+La barra del Cuarto de Juegos tiene altura limitada y se desplaza hacia arriba y abajo cuando hay más botones.
+Escudo, Carreras, Desaparecidos y Torneo permanecen accesibles sin cubrir la puerta de retorno a la granja.
+
 Los cuartos propios tienen 8 o 9 sitios de decoración y **solo su dueño los decora y les pinta las paredes**
 («Pintar»: 15 colores, `casa.pintura`); el otro puede entrar y sentarse en el sillón, pero ni le sale el botón de
 decorar.

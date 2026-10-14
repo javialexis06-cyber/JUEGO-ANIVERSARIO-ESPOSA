@@ -423,6 +423,16 @@ body.hogar {
   /* Lo que dejan las pestañas de los cuartos (si no caben, los botones hacen otra fila encima) */
   max-width: min(calc(100vw - min(38vw, 420px) - 40px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)), 560px);
 }
+/* La lista de juegos puede crecer sin cubrir la puerta de la granja. */
+.acciones[data-cuarto='juegos'] {
+  flex-wrap: wrap;
+  max-height: min(120px, 30vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: thin;
+  padding: 3px 3px 5px;
+}
 .accion {
   display: grid;
   justify-items: center;

@@ -37,10 +37,14 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
   en orden y se conservan los puntos del invitado si llega otro día mientras espera. La casa marca los premios
   por rol, restaurante y día para evitar pagos repetidos; se respeta el día pagado en partidas antiguas. Los
   errores de almacenamiento de amigos se propagan al motor. Once regresiones comprueban estos casos.
+- **Cuarto de Juegos.** La barra tiene altura limitada y desplazamiento: añadir juegos ya no tapa la puerta de
+  la granja. La comprobación verifica que los cuatro juegos de Astra siguen accesibles y que el toque de la puerta
+  llega al lienzo. El modo opcional `DIBUJO_POR_CAPTURA=1` mantiene controles, movimiento y modelos activos y dibuja
+  cada captura, sin dibujar entre ellas para evitar saturar una máquina sin GPU; no mide FPS.
 - **Pruebas de motores.** `npm run probar:motores` comprueba partidas completas de Dados, Mancala, Cajas,
   Parchís, Parchís a dos colores y Clue; los dos jugadores pueden empezar y se recorren los niveles de IA.
   Se completaron 36 partidas. Cada movimiento se valida, se replica en otro estado y se serializa entre pasos; Mancala conserva sus 48
-  semillas. Incluye siete regresiones de guardado/calendario del Show. Workflow: «Motores de mesa y Show».
+  semillas. Incluye siete regresiones de guardado/calendario del Show y once de Cocina. Workflow: «Motores de mesa, Show y Cocina».
 
 No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad.
 
@@ -61,12 +65,15 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 | Súper Manía | Primer día desde progreso nuevo hasta resultado en navegador: tres estrellas, nueve clientes atendidos, ganancia 98 y ningún error | Campaña desde cero; comprobar mejoras pagadas, días avanzados y recarga |
 | Cien Puertas | Cien acertijos resueltos en orden por toques/sensores simulados; cero fallos de revisión de puerta/objetos/página; cien avances y estrellas conservados al recargar | Campaña narrativa, retorno a la casa, red, otras semillas y sensores físicos de teléfono |
 | El Escudo de las Hermanas | Juego y conexión con P23 incorporados desde la rama compartida (`d9f75b52`, 14 de octubre); sus valores de balance se conservan | Campaña de seis niveles desde cero, derrota, progreso, recibo P23, infinito y controles del navegador |
+| La Carrera de las Tres Lunas | Juego integrado desde la rama compartida (`f3475efa`, 14 de octubre) | Carrera completa y campeonato desde cero, controles, recarga, pausa y verificación propia de la red |
+| Desaparecidos de Astra | Ocho casos incorporados desde la rama compartida (`0e0f074e`, 14 de octubre) | Resolver los ocho casos desde cero, candados, estrellas, voz, persistencia y retorno |
+| El Torneo del Despertar Dorado | Juego integrado desde la rama compartida (`12c8bf29`, 14 de octubre), conservando sus reglas y valores | Combate y torneo completo desde cero, controles de ambos lados, derrota, pausa y verificación propia de la red |
 | Retrete espacial | Dos vuelos desde cero con piloto, choques normales, pausa, volver a volar, escudo pagado con 120 rollitos ganados y progreso conservado tras recarga; sin errores | Sensores/controles físicos, ciclos avanzados, guardado fallido y premio de la casa |
 | Cocina de chef: wafles, frappés y fresas | Dos días desde progreso nuevo por receta, con pedidos y estaciones normales, resultado, propinas, mejoras pagadas y recarga en día 3; dos fallos de escritura al terminar wafles y uno por compra recuperados; once regresiones de persistencia. Wafles en pareja: escenario preparado con pérdida del 8 % de mensajes, pausa, segundo plano, reconexión, mismo resultado y premio del anfitrión, sin errores | Fresas y frappés en pareja, rangos avanzados, cierre forzado mientras hay una escritura pendiente y precisión táctil |
 | Casa / mascota virtual | Entrada, retorno y persistencia del recorrido de granja comprobados | Ciclo completo de cuidado, compras, habitaciones, trofeos y sincronización en dos perfiles |
 
-Las compilaciones de pareja y amigos integradas con El Escudo pasan. El filtro de amigos revisó 518 archivos y no encontró contenido
-personal. Estas comprobaciones no certifican FPS, batería o memoria en Android real.
+Las compilaciones de pareja y amigos integradas con los cuatro juegos nuevos de Astra pasan. El filtro de amigos
+revisó 546 archivos y no encontró contenido personal. Estas comprobaciones no certifican FPS, batería o memoria en Android real.
 
 La primera tanda de mesa y Show se publicó en `78a034db`, y su registro adicional en `a3c4aa7e`, en `work` y
 `claude/supermarket-mania-minigame-xn2it8`, con autorización explícita de Javier en este chat. La APK está bloqueada: no se creó una ejecución

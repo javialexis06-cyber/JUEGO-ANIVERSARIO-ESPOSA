@@ -2198,6 +2198,7 @@ function botonesCuarto(): Boton[] {
 
 function pintarAcciones() {
   const cont = $('acciones');
+  cont.dataset.cuarto = cuartoVista();
   if (!s) return html(cont, '');
   const b = [
     ...botonesCuarto(),

@@ -5,6 +5,8 @@
 **Avance de esta revisión:** corregidos los globos de Cien Puertas y verificados los cien acertijos con progreso
 conservado al recargar. Corregida la confirmación de días y compras de Cocina, con reintento y premios únicos;
 probados dos días desde cero en cada receta y una mejora pagada, con fallos de almacenamiento y recarga en día 3.
+Al integrar los cuatro juegos nuevos de Astra, la barra del Cuarto de Juegos tiene desplazamiento para dejar libre
+la puerta de la granja. Sus campañas continúan en la cola de verificación del motor.
 La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
 
 ## Frente de granja en paralelo
