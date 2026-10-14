@@ -151,9 +151,14 @@ function pantalla(html: string, clase = '') {
 function quitarPantalla() {
   $('#pantallas').innerHTML = '';
 }
+let cargaT: ReturnType<typeof setTimeout> | null = null;
 function carga(si: boolean, texto?: string) {
   const c = $('#carga');
   c.classList.toggle('fuera', !si);
+  // (al terminar el desvanecido se quita del todo: que nunca quede un velo encima)
+  if (cargaT) clearTimeout(cargaT);
+  c.hidden = false;
+  if (!si) cargaT = setTimeout(() => (c.hidden = true), 650);
   if (texto) $('#carga-frase').textContent = texto;
 }
 
@@ -213,7 +218,7 @@ function ayuda() {
   h.className = 'hoja';
   h.innerHTML = `<div class="hoja-caja"><h2>Cómo se juega</h2>
     <div class="ayuda-cols"><div><h3>Moverse</h3><p>Joystick (o flechas / WASD): adelante y atrás caminan, <b>arriba salta</b>, <b>abajo se agacha</b>.</p>
-      <p><b>Tapar</b>: mantener hacia atrás. Lo bajo (barridas) se tapa agachado hacia atrás; lo que viene saltando, de pie.</p></div>
+      <p><b>Tapar</b>: mantener hacia atrás. Lo bajo (barridas) se tapa agachado hacia atrás; los saltos que caen encima, de pie.</p></div>
     <div><h3>Golpes</h3><p><b>Rápido</b> (J): tres seguidos son un combo. Con abajo, uno bajito.</p>
       <p><b>Fuerte</b> (K): con abajo es una barrida que tumba; con arriba, un gancho que manda a volar (y corta los saltos).</p>
       <p><b>Especial</b> (L): el golpe propio de cada luchador. <b>Agarre</b> (U): no se tapa; se escapa apretando agarre a tiempo.</p>

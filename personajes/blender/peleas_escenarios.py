@@ -228,7 +228,8 @@ def texto(coll, cuerpo, c, tam, cara, canto, extrude=0.06):
     cu.align_x = 'CENTER'
     cu.align_y = 'CENTER'
     cu.extrude = extrude
-    cu.bevel_depth = tam * 0.06
+    cu.bevel_depth = tam * 0.025
+    cu.space_character = 1.08
     cu.bevel_resolution = 3
     cu.resolution_u = 6
     ob = bpy.data.objects.new(f'texto {cuerpo}', cu)
@@ -245,7 +246,7 @@ def texto(coll, cuerpo, c, tam, cara, canto, extrude=0.06):
     ob.data.materials.append(canto)
     mw = ob.matrix_world.to_3x3()
     for p in ob.data.polygons:
-        p.material_index = 0 if (mw @ p.normal).y < -0.9 else 1
+        p.material_index = 0 if (mw @ p.normal).y < -0.6 else 1
         p.use_smooth = True
     # El origen en el del mundo (como todo lo demás)
     me = ob.data

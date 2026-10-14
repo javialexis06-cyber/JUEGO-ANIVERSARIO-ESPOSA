@@ -215,7 +215,7 @@ export class EscenaPelea {
     if (o.cerca) {
       fx = o.cerca.x;
       fy = o.cerca.y + 1.0;
-      d = 4.6;
+      d = 5.6;
     }
     // Que no se vea el final del escenario
     const anchoVisto = d * Math.tan((this.camara.fov * Math.PI) / 360) * this.camara.aspect;
