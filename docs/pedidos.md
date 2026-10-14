@@ -13,6 +13,9 @@ con recibo fallido recuperado. Las cifras de dificultad y recompensas se mantien
 Desaparecidos de Astra conserva el caso cerrado y las pistas cuando falla el guardado; un reinicio fallido no borra
 el caso anterior. Los ocho casos se resolvieron desde cero en amigos (24 estrellas), con candados normales, todas
 las pistas importantes y recarga por caso. Primer caso y retorno a casa comprobados en la compilación completa.
+Carreras ya deja tocar pausa y recupera correctamente los tiempos aún no logrados; una vuelta previa no bloquea el
+primer contrarreloj. Récord, fantasma y copa ganada se conservan tras fallos de escritura y recarga. Completados
+carrera, contrarreloj y Gran Premio de cuatro pistas desde cero, sin modificar dificultad, puntos ni premios.
 La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
 
 ## Frente de granja en paralelo

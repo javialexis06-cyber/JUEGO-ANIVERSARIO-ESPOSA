@@ -186,6 +186,13 @@ html, body.carreras {
 
 /* ------------------------------------------------------------------ mando */
 .car-mando { position: absolute; inset: 0; pointer-events: none; }
+/* La regla general de los hijos de #capa no debe convertir estas capas transparentes en botones. */
+#capa > .car-mando, #capa > .car-hud { pointer-events: none; }
+.car-guardado { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 100;
+  width: min(400px, 85vw); padding: 10px 12px; border: 2px solid #d9a952; border-radius: 14px;
+  background: #fff4dd; color: var(--car-noche); text-align: center; box-shadow: 0 4px 20px #0008; }
+.car-guardado p { margin: 0 0 6px; font-size: 13px; }
+.car-guardado.en-panel { position: static; transform: none; width: auto; margin-bottom: 12px; }
 .car-mando[hidden] { display: none; }
 .car-zona-joy { position: absolute; left: 0; bottom: 0; width: 42%; height: 62%; pointer-events: auto; touch-action: none; }
 .car-joy { position: absolute; width: 104px; height: 104px; margin: -52px 0 0 -52px; border-radius: 50%; pointer-events: none;

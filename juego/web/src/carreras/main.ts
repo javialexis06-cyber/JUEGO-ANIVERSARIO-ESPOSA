@@ -20,6 +20,7 @@ import { PASO, Sim, type Control, type Evento } from './sim';
 import { Galope, Voces, efecto } from './sonidos';
 import { Vista, type Calidad } from './vista';
 import { abrirEnLinea, type Red } from './red';
+import { GuardadoCarreras } from './progreso';
 
 const params = new URLSearchParams(location.search);
 /** Pruebas: la carrera corre más rápido (?rapido=4) y sin compilar todo antes (?sinprecalentar). */
@@ -36,18 +37,8 @@ interface Ajustes {
   aceleraSolo: boolean;
   calidad: Calidad;
 }
-interface Record_ {
-  mejor: number;
-  vuelta: number;
-  fantasma?: number[];
-}
-interface Progreso {
-  records: Partial<Record<IdPista, Record_>>;
-  copas: Partial<Record<Dificultad, number>>;
-}
 const AMIGO = esModoAmigo();
 const CLAVE_AJUSTES = AMIGO ? 'amigo-carreras-ajustes' : 'carreras-ajustes';
-const CLAVE_PROGRESO = AMIGO ? 'amigo-carreras-progreso' : 'carreras-progreso';
 const yo = yoMismo();
 const conPareja = CON_PAREJA && yo.tipo !== 'amigo';
 const miPareja = conPareja ? CORREDORES_PAREJA.find((c) => c.id === yo.tipo) : undefined;
@@ -65,13 +56,36 @@ function leerAjustes(): Ajustes {
   };
 }
 const ajustes = leerAjustes();
-const guardarAjustes = () => guardarAparato(CLAVE_AJUSTES, ajustes);
-function leerProgreso(): Progreso {
-  const p = (leerAparato(CLAVE_PROGRESO) ?? {}) as Partial<Progreso>;
-  return { records: p.records && typeof p.records === 'object' ? p.records : {}, copas: p.copas && typeof p.copas === 'object' ? p.copas : {} };
+let ajustesPendientes = false;
+const guardado = new GuardadoCarreras(AMIGO);
+const progreso = guardado.progreso;
+let navegacionPendiente: (() => void) | null = null;
+function guardarAjustes() { const ok = guardarAparato(CLAVE_AJUSTES, ajustes); ajustesPendientes = !ok; pintarGuardado(); return ok; }
+function guardarProgreso() { const ok = guardado.guardar(); pintarGuardado(); return ok; }
+function asegurarGuardado() {
+  if (ajustesPendientes) guardarAjustes();
+  const ok = guardado.confirmar() && !ajustesPendientes;
+  pintarGuardado();
+  return ok;
 }
-const progreso = leerProgreso();
-const guardarProgreso = () => guardarAparato(CLAVE_PROGRESO, progreso);
+function pintarGuardado() {
+  let aviso = document.querySelector<HTMLDivElement>('.car-guardado');
+  if (!guardado.pendiente && !ajustesPendientes) { aviso?.remove(); navegacionPendiente = null; return; }
+  if (!aviso) {
+    aviso = document.createElement('div');
+    aviso.className = 'car-guardado';
+    aviso.innerHTML = '<p role="status">No se pudo guardar. Mantén la carrera abierta y reintenta antes de continuar.</p><button class="car-boton" data-reintentar-guardado>Reintentar guardado</button>';
+    aviso.querySelector('button')!.onclick = () => {
+      const seguir = navegacionPendiente;
+      if (asegurarGuardado()) { navegacionPendiente = null; seguir?.(); }
+    };
+    document.body.append(aviso);
+  }
+  const panel = document.querySelector('.car-panel.car-fin');
+  aviso.classList.toggle('en-panel', !!panel);
+  if (panel) panel.prepend(aviso);
+  else document.body.append(aviso);
+}
 
 /** El corredor de quien juega en este aparato. */
 export function miCorredor(): Corredor {
@@ -114,6 +128,7 @@ function cargaVisible(si: boolean, texto = '', f = 0) {
 
 function pantalla(html: string, clase = '') {
   pantallas.innerHTML = `<section class="car-pantalla ${clase}">${html}</section>`;
+  pintarGuardado();
   return pantallas.firstElementChild as HTMLElement;
 }
 
@@ -152,6 +167,7 @@ function refrescarGaraje() {
 }
 
 function portada() {
+  if (!asegurarGuardado()) { navegacionPendiente = portada; return; }
   arrancarGaraje();
   sonido.musica.pista('super-cancion', { bucle: true });
   const copas = Object.values(progreso.copas).reduce((a, b) => a + (b ?? 0), 0);
@@ -187,6 +203,7 @@ function portada() {
     b.addEventListener('click', () => {
       efecto.toque();
       const ir = b.dataset.ir;
+      if (!asegurarGuardado()) return;
       if (ir === 'gp') void granPremio();
       else if (ir === 'suelta') escogerPista('suelta');
       else if (ir === 'crono') escogerPista('crono');
@@ -256,7 +273,7 @@ function escogerPista(modo: 'suelta' | 'crono') {
           return `<button class="car-carta pista" data-v="${id}" style="--tarjeta:${p.tarjeta}">
             <img src="./carreras/pistas/${id}.webp" alt="">
             <b>${p.nombre}</b><small>${p.region} · ${p.lema}</small>
-            ${rec ? `<em>Récord ${tiempoTexto(rec.mejor)}</em>` : ''}</button>`;
+            ${rec && Number.isFinite(rec.mejor) ? `<em>Récord ${tiempoTexto(rec.mejor)}</em>` : rec && Number.isFinite(rec.vuelta) ? `<em>Mejor vuelta ${tiempoTexto(rec.vuelta)}</em>` : ''}</button>`;
         }).join('')}
       </div>
       <div class="car-fila-abajo"><button class="car-boton suave" data-atras>⟵ Atrás</button><button class="car-boton suave" data-garaje>🛠️ Mi carro</button></div>
@@ -267,6 +284,7 @@ function escogerPista(modo: 'suelta' | 'crono') {
     b.addEventListener('click', async () => {
       efecto.toque();
       const id = b.dataset.v as IdPista;
+      if (!asegurarGuardado()) return;
       if (modo === 'crono') await contrarreloj(id);
       else await carreraSuelta(id);
     }),
@@ -274,6 +292,7 @@ function escogerPista(modo: 'suelta' | 'crono') {
 }
 
 function salir() {
+  if (!asegurarGuardado()) { navegacionPendiente = salir; return; }
   pararGaraje();
   sonido.musica.pista(null);
   try {
@@ -403,6 +422,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
     m.addEventListener('click', (e) => {
       const p = (e.target as HTMLElement).closest<HTMLElement>('[data-p]')?.dataset.p;
       if (!p) return;
+      if ((p === 'otra' || p === 'salir') && !asegurarGuardado()) return;
       m.remove();
       pausado = false;
       if (p === 'otra') terminar(true, true);
@@ -533,7 +553,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
 
   o.red?.empezar(sim, mio, (ev) => evento(ev), () => terminar(true));
 
-  const bucle = cuadros((dt, ahora) => {
+  const cuadroCarrera = (dt: number, ahora: number) => {
     if (!carreraViva) return;
     const inicio = performance.now();
     if (!pausado) {
@@ -607,7 +627,15 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
         terminar(false);
       }
     }
-  });
+  };
+  const bucle = cuadros(cuadroCarrera);
+  // Pruebas: el mismo cuadro conserva eventos, récords y muestras del fantasma al avanzar el reloj.
+  (window as unknown as { __carreras: unknown }).__carreras = {
+    sim, vista, hud, mio,
+    avanzar: (n: number) => {
+      for (let i = 0; i < n && carreraViva && !sim.karts[mio].terminado; i++) cuadroCarrera(PASO, performance.now());
+    },
+  };
   const r = await fin;
   if (reiniciar) return correr(o);
   return r;
@@ -639,8 +667,9 @@ async function podio(top: Corredor[], titulo: string, voces = new Voces()) {
     <button class="car-boton grande" data-seguir>Seguir</button></div>`, 'podio');
   const bucle = cuadros((dt) => vista.dibujarPodio(dt));
   await new Promise<void>((ok) => {
-    const t = setTimeout(ok, 14000);
+    const t = setTimeout(() => { if (asegurarGuardado()) ok(); }, 14000);
     r.querySelector('[data-seguir]')!.addEventListener('click', () => {
+      if (!asegurarGuardado()) return;
       clearTimeout(t);
       ok();
     });
@@ -673,7 +702,7 @@ async function contrarreloj(id: IdPista) {
     <p>Mejor vuelta: ${tiempoTexto(r.mejorVuelta)}</p>
     ${rec ? `<p>Récord: ${tiempoTexto(rec.mejor)}${rec.mejor >= t - 0.001 ? ' · <b>¡nuevo!</b>' : ''}</p>` : ''}
     <div class="car-fila-abajo"><button class="car-boton grande" data-otra>Otra vez (con fantasma)</button><button class="car-boton suave" data-menu>Menú</button></div></div>`, 'fin');
-  p.querySelector('[data-otra]')!.addEventListener('click', () => void contrarreloj(id));
+  p.querySelector('[data-otra]')!.addEventListener('click', () => { if (asegurarGuardado()) void contrarreloj(id); });
   p.querySelector('[data-menu]')!.addEventListener('click', portada);
 }
 
@@ -681,7 +710,7 @@ async function mostrarResultados(r: Resultado, titulo: string, botones: { texto:
   const top = r.orden.map((i) => r.corredores[i]);
   const p = pantalla(`<div class="car-panel car-fin"><h2>${escapar(titulo)}</h2>${tablaResultados(r, puntos, ganados)}
     <div class="car-fila-abajo"><button class="car-boton grande" data-seguir>${conPodio ? 'Ver el podio' : 'Seguir'}</button></div></div>`, 'fin');
-  await new Promise<void>((ok) => p.querySelector('[data-seguir]')!.addEventListener('click', () => ok()));
+  await new Promise<void>((ok) => p.querySelector('[data-seguir]')!.addEventListener('click', () => { if (asegurarGuardado()) ok(); }));
   if (conPodio) await podio(top, titulo);
   vista.vaciar();
   arrancarGaraje();
@@ -691,6 +720,7 @@ async function mostrarResultados(r: Resultado, titulo: string, botones: { texto:
   q.addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLElement>('[data-b]')?.dataset.b;
     if (b === undefined) return;
+    if (!asegurarGuardado()) return;
     efecto.toque();
     if (b === 'menu') portada();
     else botones[Number(b)].fn();
@@ -720,7 +750,7 @@ async function granPremio() {
         ${tablaResultados(porPuntos, puntos, ganados)}
         <div class="car-fila-abajo"><button class="car-boton grande" data-seguir>${ultima ? 'Ver el podio' : `Siguiente: ${escapar(PISTAS[ORDEN_PISTAS[n + 1]].nombre)}`}</button>
         <button class="car-boton suave" data-menu>Salir</button></div></div>`, 'fin');
-      p.querySelector('[data-seguir]')!.addEventListener('click', () => ok());
+      p.querySelector('[data-seguir]')!.addEventListener('click', () => { if (asegurarGuardado()) ok(); });
       p.querySelector('[data-menu]')!.addEventListener('click', () => {
         portada();
       });
@@ -795,4 +825,6 @@ async function iniciar() {
   portada();
 }
 
+// Fuera de la carrera no queda el controlador de pausa; atrás también espera las escrituras pendientes.
+alAtras(() => carreraViva || !asegurarGuardado());
 void iniciar();

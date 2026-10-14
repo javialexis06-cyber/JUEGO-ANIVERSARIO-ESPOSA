@@ -39,12 +39,20 @@ amigos. Página: `juego/web/carreras.html`; código: `juego/web/src/carreras/`.
 - Calidad que baja sola (mide el tiempo de cada cuadro), 30 cuadros por segundo, el contexto WebGL se suelta al salir.
   Música de las pistas existentes (`PISTAS[...].musica` en `datos.ts`).
 
+Los tiempos aún no logrados se recuperan como `Infinity` al leer el `null` que deja JSON: una vuelta previa ya no
+bloquea el primer contrarreloj ni muestra un récord falso de cero. La marca válida, la mejor vuelta, el fantasma y
+las copas anteriores se conservan. Si falla una escritura, la carrera mantiene la copia pendiente y permite
+reintentar antes de avanzar, repetir o salir; el avance automático del podio también comprueba el guardado.
+La capa transparente del mando no tapa el botón de pausa. Los fallos pendientes requieren mantener la partida
+abierta: no está cubierto un cierre forzado mientras no se puede escribir.
+
 ## Archivos
 
 | Archivo | Qué es |
 |---|---|
 | `src/carreras/main.ts` | Flujo: portada, garaje, pistas, la carrera (bucle a 60 pasos y dibujo a 30), resultados, podio, Gran Premio, contrarreloj, fotos del menú |
 | `src/carreras/sim.ts` | La física y las reglas (sin three.js): carros, derrape, saltos, rebufo, choques, cajas, objetos, vueltas, puestos y la máquina |
+| `src/carreras/progreso.ts` | Lectura compatible de récords y copas, y confirmación de escrituras pendientes |
 | `src/carreras/pista.ts` | El recorrido (una muestra por metro): dónde va cada carro, el lateral, la altura del piso |
 | `src/carreras/vista.ts` | three.js: la pista juntada por material, el cielo, los carros, cajas y objetos, partículas, cámara, podio, garaje, fantasma |
 | `src/carreras/kart3d.ts` | Un corredor en 3D: carro pintado con su color, criatura que galopa y el muñeco (`Personaje` + `Vestidor`) sentado con caras |
@@ -109,7 +117,22 @@ Presentador: «Zabra» de la biblioteca (`voces-guion/carreras-reparto.json`); l
 - `?podio`: muestra el podio. `?postal=<pista>` y `?retrato=<criatura>`: las fotos del menú.
 - `?salas=local&sala` en dos pestañas (la segunda con `?salas=local&unirse=CÓDIGO`): en línea sin Supabase.
 - Gancho: `window.__carreras` = `{ sim, vista, hud, mio }`.
+- `window.__carreras.avanzar(n)` ejecuta el mismo cuadro del juego, con física, eventos, guardado de vueltas y
+  muestras del fantasma; no entrega objetos ni fuerza resultados. Las pruebas desactivan el dibujo entre capturas.
 - Versión para amigos: `npm run build:amigos && node scripts/verificar-amigos.mjs`.
+
+```sh
+node scripts/probar-carreras-motor.mjs        # cuatro pistas, tres vueltas, puestos y puntos del Gran Premio
+node scripts/probar-carreras-guardado.mjs     # seis regresiones: null antiguo, récord, fantasma y copa pendiente
+CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-carreras-recorrido.mjs http://127.0.0.1:4184/ test-results/carreras-amigos
+CHROME_PATH=/usr/bin/chromium AMIGO=0 GRAN_PREMIO=0 FALLOS=1 node scripts/probar-carreras-recorrido.mjs http://127.0.0.1:4182/ test-results/carreras-casa
+```
+
+Verificados desde progreso nuevo: carrera suelta, pausa por botón, contrarreloj después de recargar, fantasma con
+muestras para su duración, y Gran Premio de cuatro pistas en «Carrera», con copa ganada, dos fallos de guardado
+recuperados y recarga sin duplicar el premio. Carrera, contrarreloj, fallo de escritura y retorno a casa también
+comprobados en la edición de pareja. Siguen pendientes precisión física, repetición del fantasma en pantalla y
+verificación propia de la red. Se conservan los valores de dificultad y recompensas.
 
 ## Integración (hecha el 14 de octubre de 2026: casa, Sala de Juegos con su arte y su tema `carreras`)
 
