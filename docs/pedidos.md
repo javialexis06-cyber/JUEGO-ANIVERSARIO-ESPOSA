@@ -29,7 +29,11 @@ planeación de cuatro minijuegos futuros. Plan completo en [`en-obra/pelicula-de
 las voces de la película, la música de la boda y **las 28 películas animadas de punta a punta** (prólogo, Actos I-V,
 Sangre y Ceniza, las seis secundarias, el Altar del Lazo y la boda en Eterna con créditos). Después: postales de los
 biomas en Sangre, la voz del Conde en su pelea, fotos en los créditos, la cría de unicornio y la ropa propia de Fuatia,
-Nath'Gora y Vael'Thor. También la copa del Conde en SC0. **Siguiente**: cuando Javier diga, los minijuegos (fase H). **Espera a Javier**: GitHub
+Nath'Gora y Vael'Thor. También la copa del Conde en SC0. Y la **fase H, hecha el 14 de octubre**: los cuatro minijuegos en el Cuarto de Juegos y en la Sala de Juegos de
+amigos: «El Torneo del Despertar Dorado» (`docs/sistemas/peleas.md`), «La Carrera de las Tres Lunas»
+(`carreras.md`), «Desaparecidos de Astra» (`celular.md`, 8 casos) y «El Escudo de las Hermanas» (`escudo.md`, también
+la batalla de P23 de la historia). **Siguiente**: que Javier los pruebe en el celular (balance, rendimiento y en línea
+con aparatos de verdad). **Espera a Javier**: GitHub
 Actions quedó desactivado en su cuenta («Actions has been disabled for this user»): sin eso no salen APK nuevas.
 
 

@@ -490,6 +490,8 @@ body.amigos::before {
 .am-juego.carreras .txt b { color: #b0506d; }
 .am-juego.celular { background: linear-gradient(180deg, #5a3620, #2e1c12); color: #f6e7d2; }
 .am-juego.celular .txt b { color: #ffcf8a; }
+.am-juego.peleas { background: linear-gradient(180deg, #fff1c8, #ffd37a); color: #3d2b27; }
+.am-juego.peleas .txt b { color: #c0392b; }
 .am-no-soy {
   align-self: flex-end;
   border: 0;

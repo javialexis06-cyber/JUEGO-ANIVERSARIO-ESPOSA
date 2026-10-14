@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html', 'carreras.html', 'celular.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html', 'carreras.html', 'celular.html', 'peleas.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -36,6 +36,7 @@ const SUSTITUTOS: Record<string, string> = {
   'src/mesa/show/libro.ts': 'src/amigos/sin_pareja/show.ts',
   'src/escudo/pareja.ts': 'src/amigos/sin_pareja/escudo.ts',
   'src/carreras/pareja.ts': 'src/amigos/sin_pareja/carreras.ts',
+  'src/peleas/pareja.ts': 'src/amigos/sin_pareja/peleas.ts',
 };
 
 /**
@@ -56,6 +57,8 @@ export const PERMITIDOS_AMIGOS = [
   'src/carreras/',
   // Desaparecidos de Astra (el juego del celular encontrado: ningún caso es de la pareja)
   'src/celular/',
+  // el Torneo del Despertar Dorado (peleas), con Javier y Laura aparte (ver SUSTITUTOS)
+  'src/peleas/',
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
@@ -65,7 +68,9 @@ export const PUBLICOS_AMIGOS = ['modelos/escudo_mapa.glb', 'modelos/escudo_torre
   // La carrera: pistas, carros, íconos y voces (sin las de la pareja); las criaturas ya van arriba
   'modelos/carreras/', 'carreras/', 'audio/carreras/',
   // Desaparecidos de Astra: las fotos de los casos y las notas de voz
-  'celular/', 'audio/celular/'];
+  'celular/', 'audio/celular/',
+  // el Torneo del Despertar Dorado: escenarios, utilería y voces comunes
+  'modelos/peleas/', 'audio/peleas/comun/'];
 
 /** Lo de Súper Manía en `modelos/` (y en `modelos-plano/`, la copia para celulares sin WebAssembly): el local en sus
  *  4 tamaños, vitrinas, letreros, productos, utilería y la gente; y los íconos de los productos. */
@@ -189,6 +194,7 @@ export default defineConfig(({ mode, command }) => {
             escudo: resolve(raiz, 'escudo.html'),
             carreras: resolve(raiz, 'carreras.html'),
             celular: resolve(raiz, 'celular.html'),
+            peleas: resolve(raiz, 'peleas.html'),
           },
       },
     },

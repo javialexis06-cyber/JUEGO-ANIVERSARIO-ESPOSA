@@ -12,7 +12,7 @@ export interface JuegoAmigos {
   /** Dibujo de la tarjeta (SVG). */
   arte: string;
   /** Clase de la tarjeta (colores). */
-  tema: 'lavado' | 'sangre' | 'super' | 'mesa' | 'retrete' | 'cocina' | 'escudo' | 'carreras' | 'celular';
+  tema: 'lavado' | 'sangre' | 'super' | 'mesa' | 'retrete' | 'cocina' | 'escudo' | 'carreras' | 'celular' | 'peleas';
   /** Página del juego (relativa). */
   url?: string;
   /** Juegos que se abren aquí mismo (sin cambiar de página). */
@@ -56,6 +56,15 @@ const ARTE_CELULAR = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspe
   <g transform="translate(96 30) rotate(6)"><rect width="78" height="46" rx="9" fill="#1d1d24"/><rect x="5" y="5" width="68" height="36" rx="5" fill="#2f6f9a"/>
     <path d="M40 8 L34 20 L42 26 L36 40" stroke="#fff" stroke-width="1.3" fill="none" opacity=".8"/><circle cx="20" cy="22" r="7" fill="#ffd23f"/></g>
   <circle cx="160" cy="84" r="12" fill="none" stroke="#fff3d6" stroke-width="4"/><path d="M168 92 l12 12" stroke="#fff3d6" stroke-width="5" stroke-linecap="round"/></svg>`;
+
+/** El Torneo del Despertar Dorado: dos peluches frente a frente en la tarima de la fiesta, bajo el sol. */
+const ARTE_PELEAS = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+  <defs><linearGradient id="pf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb8ef"/><stop offset="1" stop-color="#ffe0a8"/></linearGradient></defs>
+  <rect width="200" height="110" fill="url(#pf)"/><circle cx="100" cy="26" r="16" fill="#f6c445"/>
+  <rect y="78" width="200" height="32" fill="#c99560"/><rect y="78" width="200" height="6" fill="#e9a92b"/>
+  <g transform="translate(62 62)"><circle r="16" fill="#f3cfb3"/><rect x="-11" y="12" width="22" height="18" rx="7" fill="#4f8fe0"/><circle cx="20" cy="14" r="7" fill="#f3cfb3"/></g>
+  <g transform="translate(138 62)"><circle r="16" fill="#e5b48f"/><rect x="-11" y="12" width="22" height="18" rx="7" fill="#e4574b"/><circle cx="-20" cy="10" r="7" fill="#e5b48f"/></g>
+  <path d="M96 58 l8 -8 l-2 7 l7 1 l-9 9 l2 -7z" fill="#fff6a0" stroke="#c98a1a"/></svg>`;
 
 export const ARTE_SANGRE = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
   <defs><radialGradient id="sl" cx="70%" cy="30%" r="60%"><stop offset="0" stop-color="#5a1418"/><stop offset="1" stop-color="#0d0709"/></radialGradient>
@@ -128,6 +137,8 @@ export const JUEGOS: JuegoAmigos[] = [
   { id: 'carreras', nombre: 'La Carrera de las Tres Lunas', desc: 'Carros y criaturas por Astra · de 1 a 4', arte: ARTE_CARRERAS, tema: 'carreras', url: './carreras.html', sala: 'carreras',
     urlCrear: './carreras.html?sala', urlUnirse: (c) => `./carreras.html?unirse=${encodeURIComponent(c)}` },
   { id: 'celular', nombre: 'Desaparecidos de Astra', desc: 'Revisa celulares encontrados y resuelve 8 casos', arte: ARTE_CELULAR, tema: 'celular', url: './celular.html' },
+  { id: 'peleas', nombre: 'Torneo de peleas', desc: 'Uno contra uno · contra la máquina, de a dos o en línea', arte: ARTE_PELEAS, tema: 'peleas',
+    url: './peleas.html', sala: 'peleas' },
 ];
 
 const disponibles = new Map<string, Promise<boolean>>();
