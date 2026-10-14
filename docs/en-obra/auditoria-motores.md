@@ -80,6 +80,9 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 
 Las compilaciones de pareja y amigos integradas con los cuatro juegos nuevos de Astra pasan. El filtro de amigos
 revisó 546 archivos y no encontró contenido personal. Estas comprobaciones no certifican FPS, batería o memoria en Android real.
+La integración de Escudo con la sala de cine remota (`fff42485`) conserva ambas compilaciones, las 48 suites de la
+granja y las seis comprobaciones casa–granja sin errores. Los recorridos ya verificados de Escudo no se repiten
+por esa integración, que no cambia sus archivos.
 
 La primera tanda de mesa y Show se publicó en `78a034db`, y su registro adicional en `a3c4aa7e`, en `work` y
 `claude/supermarket-mania-minigame-xn2it8`, con autorización explícita de Javier en este chat. Cocina, Cien Puertas y
