@@ -18,9 +18,10 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
 ## Correcciones comprobadas
 
 - **Lavado.** Los enemigos eliminados esperan a salir de la lista antes de reutilizar su casilla; desaparecen
-  los impactos duplicados y los ciclos de la rejilla. Cuatro regresiones cubren reutilización, contadores,
-  veinte fotos de red y horda real. Repetidas 58 partidas con 25 victorias; la receta bloqueada de Cortina sigue
-  pendiente de aprobación, sin alterar vida, daño, oleadas ni recompensas.
+  los impactos duplicados y los ciclos de la rejilla. Ocho regresiones cubren aretes, receta, reutilización, contadores,
+  veinte fotos de red y horda real. Repetidas 58 partidas con 25 victorias; la distribución de ambos aretes por mapa está aprobada y aplicada, con
+  guardianes, ranuras y receta originales. Catorce recorridos adicionales consiguen la evolución y derrotan la
+  Muerte en los cuatro mapas con tienda y secretos disponibles preparados. Vida, daño, oleadas y premios conservados.
 - **Sangre y Ceniza.** Aplicado el control aprobado: 1,5 s máximos y 1 s de resistencia para todas las fuentes.
   Sigilos cobran porcentajes de vida máxima y Astral 10 % (5 % con Sangre fría), con avisos y recargas correctos.
   Cinco regresiones, cuatro comprobaciones de botones, 21 expediciones completas y dos Infinito hasta resultado
@@ -91,8 +92,9 @@ La comprobación específica de aturdimiento de Sangre y dificultad después del
 series con mejoras pagadas y expediciones de Sangre con medición de golpes y control. En la revisión previa se reproduce
 encadenamiento de aturdimiento de hasta 4,63 segundos en Caballero; Lavado conserva bajas y victorias después
 del minuto 22. Javier aprobó y se aplica el límite de 1,5 s más 1 s de resistencia, y costes sobre vida máxima. Lavado corrige
-la reutilización que duplicaba impactos: repetidas 58 partidas, 25 victorias. El acceso a ambos aretes por mapa
-sigue siendo una propuesta solo simulada que espera aprobación.
+la reutilización que duplicaba impactos: repetidas 58 partidas, 25 victorias. Javier aprobó y se aplicó el acceso a ambos aretes por mapa. Nuevas partidas consiguieron la evolución y
+derrotaron a la Muerte en los cuatro, incluida Ducha. Las [builds al minuto 30](builds-lavado-minuto30.md) también
+están registradas con rangos de tienda, cartas y patitos.
 
 | Juego o sistema | Evidencia obtenida en esta revisión | Lo que falta para cerrar su recorrido |
 |---|---|---|
@@ -104,7 +106,7 @@ sigue siendo una propuesta solo simulada que espera aprobación.
 | Clue / ¿Quién fue? | Reglas e IA hasta acusación legal y recorrido de navegador completo (11 s) | Recorrido táctil completo y cartas privadas en red |
 | El Show de Nosotros | Tres episodios locales y uno en línea completo; pausa, pérdida de mensajes, dos fallos de guardado, conflictos resueltos, mismo resultado y un episodio en el libro; sin errores | Todas las escenas y controles en dispositivos |
 | Granja / Astra | Las 48 suites pasan. Seis comprobaciones de navegador casa–granja, inventario, correo, retorno y recarga sin errores | Campaña por controles normales desde cero; cerrar capacidades pendientes de la auditoría vigente y probar dispositivos |
-| Lavarse la cara | Reutilización de enemigos corregida para evitar consultas e impactos duplicados; cuatro regresiones. 58 partidas repetidas en Cara/Lavamanos/Bañera/Ducha normales: 25 victorias, cuatro con mejoras pagadas desde cero, bajas después del minuto 22. Muerte derrotada en los cuatro con equipo final preparado. Receta de Cortina bloqueada por aretes separados; propuesta solo simulada obtuvo evolución y derrotó Muerte en tres mapas | Aprobar acceso a ambos aretes en cada mapa; recorrido legal de Ducha y muerte sin equipo entregado; otros mapas/modos/disfraces, economía completa, controles físicos, guardado, red y Android |
+| Lavarse la cara | Reutilización corregida; ocho regresiones, incluyendo ambos aretes, guardianes, ranuras, receta y fotos. 58 partidas: 25 victorias, cuatro con mejoras pagadas desde cero, bajas después del minuto 22. Acceso a ambos aretes aprobado y aplicado en los cuatro mapas normales; catorce recorridos adicionales consiguen evolución y derrotan Muerte en los cuatro con tienda y secretos disponibles preparados. Ocho hallazgos dibujados y recogidos en amigos en navegador; cuatro builds de referencia repetidas y documentadas | Desbloqueos y compras completos desde progreso cero; otros mapas/modos/disfraces, economía completa, controles físicos, guardado, red real y Android |
 | Sangre y Ceniza | Expedición inicial preparada; auditoría específica con 18 expediciones reproducibles de Monarca, Campesino y Prisionero en peligro 1 hasta cinco etapas, perfiles iniciales o arsenal preparado, compras pagadas y control medido. Diez expediciones de Caballero en peligro 2: nueve victorias y una derrota; aturdimientos encadenados de hasta 4,63 s. Ajuste aprobado de 1,5 s más 1 s aplicado, costes sobre vida máxima y 21 expediciones de cinco etapas completas; dos Infinito hasta extracción perdida en etapa 16, con golpes recibidos durante diez minutos quietos en etapa 15; botones y flujo de grupo/control táctil en Chromium | progresión completa de desbloqueos, demás biomas/peligros, clases y combinaciones, controles, red y dispositivos |
 | Súper Manía | Primer día desde progreso nuevo hasta resultado en navegador: tres estrellas, nueve clientes atendidos, ganancia 98 y ningún error | Campaña desde cero; comprobar mejoras pagadas, días avanzados y recarga |
 | Cien Puertas | Cien acertijos resueltos en orden por toques/sensores simulados; cero fallos de revisión de puerta/objetos/página; cien avances y estrellas conservados al recargar | Campaña narrativa, retorno a la casa, red, otras semillas y sensores físicos de teléfono |
@@ -134,7 +136,12 @@ La tanda del Retrete del 14 de octubre conserva ambas compilaciones, el filtro d
 el recorrido de amigos con compra pagada y fallos recuperados, y los vuelos de la casa local con Atrás nativo
 simulado, pago confirmado, retorno y recarga. No certifica un dispositivo Android ni Supabase real.
 La tanda de Sangre/Lavado está publicada en ambas ramas en `76ac6b07741cd067bb010c52aefba0749a73c710`:
-control y porcentajes aprobados, reciclaje corregido, partidas repetidas y propuesta de aretes aún sin aplicar.
+control y porcentajes aprobados, reciclaje corregido, partidas repetidas y propuesta de aretes aún sin aplicar
+en aquella tanda. La continuación aprobada añade ambos aretes en los cuatro mapas y comprueba receta, guardianes,
+ranuras y red. Catorce recorridos con tienda/secretos preparados consiguieron evolución y derrotaron a la Muerte
+en los cuatro; cuatro replays registran las builds exactas solicitadas. Pasan ambas compilaciones, el filtro de
+amigos, ocho regresiones de Lavado, 48 suites de granja y seis comprobaciones casa–granja. En amigos se verificaron
+los ocho hallazgos dibujados y recogidos en cuatro contextos aislados, con acceso y posiciones preparados.
 Ambas ramas se confirmaron con ese SHA y el árbol de trabajo quedó limpio.
 La APK sigue bloqueada al comprobar ese commit el 14 de octubre: no se creó una ejecución
 automática para ese SHA y el intento de iniciar `apk.yml` devolvió **HTTP 422: Actions has been disabled for this

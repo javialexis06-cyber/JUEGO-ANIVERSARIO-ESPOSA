@@ -1303,11 +1303,11 @@ export const PASIVAS: Record<IdPasiva, DefPasiva> = {
   },
   aretIzq: {
     id: 'aretIzq', nombre: 'Arete izquierdo', original: 'Metaglio Left', secreta: true, escondida: true,
-    desc: '+5 % de vida y recuperas 0,1 por segundo (escondido en La Bañera)', stat: 'vida', paso: 0.05, mas: { recuperacion: 0.1 }, max: 5, rareza: 0,
+    desc: '+5 % de vida y recuperas 0,1 por segundo (escondido en Cara, Lavamanos, Bañera y Ducha)', stat: 'vida', paso: 0.05, mas: { recuperacion: 0.1 }, max: 5, rareza: 0,
   },
   aretDer: {
     id: 'aretDer', nombre: 'Arete derecho', original: 'Metaglio Right', secreta: true, escondida: true,
-    desc: '+5 % de gotas doradas y +5 % de maldición (escondido en La Cara)', stat: 'codicia', paso: 0.05, mas: { maldicion: 0.05 }, max: 5, rareza: 0,
+    desc: '+5 % de gotas doradas y +5 % de maldición (escondido en Cara, Lavamanos, Bañera y Ducha)', stat: 'codicia', paso: 0.05, mas: { maldicion: 0.05 }, max: 5, rareza: 0,
   },
   bataGruesa: {
     id: 'bataGruesa', nombre: 'Bata gruesa', original: 'Parm Aegis', secreta: true,
@@ -1326,6 +1326,14 @@ export const ESCONDIDAS: { id: IdPasiva; escenario: string; x: number; y: number
   { id: 'aretDer', escenario: 'cara', x: -1900, y: 1300, pista: 'muy abajo a la izquierda de La Cara' },
   { id: 'anilloOro', escenario: 'lavamanos', x: 3200, y: -120, pista: 'bien a la derecha de El Lavamanos' },
   { id: 'aretIzq', escenario: 'banera', x: -1500, y: -1500, pista: 'muy arriba a la izquierda de La Bañera' },
+  // Conservar los índices anteriores: la calidad del tesoro viaja en las fotos de red.
+  // Ambos aretes por partida permiten la Cortina de terciopelo (aprobado el 14 de octubre).
+  { id: 'aretIzq', escenario: 'cara', x: 1750, y: 1300, pista: 'muy abajo a la derecha de La Cara' },
+  { id: 'aretIzq', escenario: 'lavamanos', x: -3200, y: 120, pista: 'bien a la izquierda de El Lavamanos' },
+  { id: 'aretDer', escenario: 'lavamanos', x: 3600, y: 120, pista: 'bien a la derecha de El Lavamanos' },
+  { id: 'aretDer', escenario: 'banera', x: 1500, y: -1500, pista: 'muy arriba a la derecha de La Bañera' },
+  { id: 'aretIzq', escenario: 'ducha', x: -1800, y: -1400, pista: 'muy arriba a la izquierda de La Ducha' },
+  { id: 'aretDer', escenario: 'ducha', x: 1800, y: 1400, pista: 'muy abajo a la derecha de La Ducha' },
 ];
 
 export const ID_PASIVAS = Object.keys(PASIVAS) as IdPasiva[];

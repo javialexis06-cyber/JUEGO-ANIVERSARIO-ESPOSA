@@ -341,8 +341,10 @@ de armas y enemigos. Ver `scripts/probar-lavado-enemigos.mjs` y el informe de co
 
 **La partida** (motor en `src/casa/lavado/motor.ts`, todo como el original):
 - **30 minutos**; al llegar, «¡Se acabó el agua caliente!» y sale la **Ducha Helada** (la Parca). La victoria ya cuenta al minuto 30; matarla no es requisito.
-  Puede morir por daño con equipo final, pero la receta de la Cortina de terciopelo está bloqueada por los
-  aretes en mapas distintos; el acceso corregido espera aprobación (ver [pruebas de combate](../en-obra/pruebas-combate-lavado-sangre.md)).
+  Puede morir por daño con equipo final. Desde el cambio aprobado del 14 de octubre, ambos aretes aparecen
+  en cada uno de los cuatro mapas normales después del Espejito, con sus guardianes. Reserva dos ranuras de
+  pasivas y evoluciona la Cortina al máximo mediante un cofre después del minuto 10 (ver
+  [pruebas de combate](../en-obra/pruebas-combate-lavado-sangre.md)).
   Pausa, retirarse y cobrar, y **modo Apurado** (todo más rápido; se abre ganando La Cara).
 - **La pausa tiene tres pestañas** (`interfaz.ts`, recetas en `evoluciones.ts`): **Mochila** (cada arma con su receta
   de evolución, sellos ✓ / ✗ / 6/8 y qué le falta en palabras; cada pasiva con el arma que hace evolucionar),

@@ -46,7 +46,7 @@ Inverso multiplica adicionalmente la vida por 4,1 al minuto 22, antes de Maldici
 escenarios especiales, capítulos, disfraces ni modos avanzados.** No se propone bajar globalmente la vida de
 los enemigos con esta evidencia.
 
-## Lavado: la Muerte y una receta inaccesible
+## Lavado: la Muerte y la receta desbloqueada
 
 Llegar a 30 minutos ya marca victoria: no exige matar a la Ducha Helada. Su vida base es 655.350 y su daño base
 65.535; la escala tardía aumenta su vida real a unos 1,13 millones al minuto 30 sin Maldición. Algunas partidas
@@ -56,26 +56,50 @@ En combate **preparado**, arrancando al minuto 30 con seis evoluciones y mejoras
 actuales derrotan a una Muerte en cada mapa normal: alrededor de **37:25–37:28**. No se reduce su vida ni se fuerza
 la muerte. Este escenario entrega las evoluciones: **no demuestra que se obtengan legalmente**.
 
-La Cortina de terciopelo pide Cortina al máximo, ambos aretes y un cofre después del minuto 10. Actualmente el
-arete derecho aparece solo en Cara y el izquierdo solo en Bañera; no salen nuevos en cartas ni en el vendedor,
-y las pasivas no pasan a la siguiente partida. Por eso esa receta está bloqueada en el recorrido normal.
+La Cortina de terciopelo pide Cortina al máximo, ambos aretes y un cofre después del minuto 10. Antes del cambio aprobado, el
+arete derecho aparecía solo en Cara y el izquierdo solo en Bañera; no salen nuevos en cartas ni en el vendedor,
+y las pasivas no pasan a la siguiente partida. Por eso esa receta estaba bloqueada en el recorrido normal.
 
-**Propuesta pendiente de aprobación:** añadir el arete que falta en Cara y Bañera y ambos en Lavamanos y Ducha,
+**Cambio aprobado y aplicado el 14 de octubre:** se añadió el arete que faltaba en Cara y Bañera y ambos en Lavamanos y Ducha,
 conservando el desbloqueo del Espejito, guardianes, ranuras, requisitos de evolución y efectos actuales:
 
-| Mapa | Hallazgos adicionales propuestos (x, y) |
+| Mapa | Hallazgos adicionales aprobados (x, y) |
 |---|---|
 | Cara | Izquierdo (1750, 1300) |
 | Lavamanos | Izquierdo (−3200, 120); derecho (3600, 120) |
 | Bañera | Derecho (1500, −1500) |
 | Ducha | Izquierdo (−1800, −1400); derecho (1800, 1400) |
 
-Se ensayó solo en el proceso de pruebas, después del arreglo de enemigos: ocho partidas, dos semillas por mapa.
+Antes de la aprobación se ensayó solo en el proceso de pruebas, después del arreglo de enemigos: ocho partidas, dos semillas por mapa.
 La tienda y disponibilidad de secretos son preparadas; armas, niveles, recogida, cofres y evolución se obtienen
 jugando, sin entregarlos. Tres partidas derrotaron a la Muerte: Cara 40:39, Lavamanos 37:54 y Bañera 37:07. Otra
 con Cortina evolucionada cayó después del minuto 34. Ambas de Ducha murieron antes del minuto 4 al buscar tesoros
-muy temprano; su ruta no está certificada. Reservar dos ranuras de pasivas forma parte de la estrategia.
-**Los hallazgos propuestos no están en los datos del juego hasta recibir aprobación.**
+muy temprano; la ruta todavía no estaba certificada en ese ensayo. Reservar dos ranuras de pasivas forma parte de la estrategia.
+**Javier aprobó el cambio y los seis hallazgos adicionales ya están en los datos del juego**, sin alterar los
+índices anteriores que viajan en las fotos de red. Las descripciones también indican los cuatro mapas.
+
+Con los datos aprobados se completaron catorce recorridos adicionales: dos semillas por mapa en Cara,
+Lavamanos y Bañera, y ocho de Ducha buscando los aretes desde el minuto 10. Hubo seis muertes de la Parca;
+cinco con la Cortina de terciopelo obtenida durante la partida. Un ejemplo por mapa:
+
+| Mapa | Semilla | Inicio de búsqueda | Muerte derrotada |
+|---|---:|---:|---|
+| Cara | 1000 | Minuto 3 | 40:39 |
+| Lavamanos | 16838 | Minuto 3 | 37:54 |
+| Bañera | 1000 | Minuto 3 | 37:07 |
+| Ducha | 32676 | Minuto 10 | 43:12 |
+
+Se prepararon **tienda y disponibilidad de secretos**; las armas, niveles, recogida de ambos aretes, cofres y
+Cortina evolucionada se obtuvieron durante las partidas. No se fuerza la Muerte ni se entregan evoluciones.
+Las derrotas restantes conservan la dificultad: buscar temprano o llenar ranuras puede arruinar la receta.
+Esto verifica una ruta con tienda avanzada por mapa; todavía no certifica conseguir todos los desbloqueos
+ni comprar toda esa tienda desde progreso cero.
+
+Cuatro regresiones adicionales (una por mapa) comprueban bloqueo inicial, guardián de cada arete, calidad del
+hallazgo en el invitado, recogida, respeto a las seis ranuras y evolución mediante cofre desde el minuto 10.
+En la compilación de amigos, cuatro recorridos visuales preparados comprobaron los ocho aretes dibujados,
+guardianes y recogida sin errores. Los personajes se posicionan para aislar esa comprobación, no para presentar
+una campaña pagada desde cero.
 
 ## Sangre: control aprobado y coste de vida
 
@@ -129,7 +153,7 @@ cifra de dificultad. La prueba confirma que algunos enemigos tardíos pueden gol
 ## Repetición y límites
 
 Comprobaciones del cierre: compilación completa y de amigos, filtro de amigos (546 archivos, 45 palabras y
-190 frases), `npm run probar:motores` con las nueve regresiones nuevas, 48 suites de granja y seis comprobaciones
+190 frases), `npm run probar:motores` con las trece regresiones nuevas, 48 suites de granja y seis comprobaciones
 casa–granja sin errores sobre el build final. La integración final dibuja solo al tomar capturas para reducir la
 carga de la GPU virtual; no certifica rendimiento físico. La edición de pareja también recorrió el flujo de
 Sangre en grupo local y los controles táctiles preparados, sin errores de página.
@@ -147,8 +171,9 @@ PERFILES=arsenal CLASES=caballero SEMILLAS=1000,8919,56433 PELIGRO=2 node script
 INFINITO=1 AFK_DESDE_ETAPA=15 AFK_HASTA=615 HASTA_ETAPA=25 CLASES=caballero,prisionero PERFILES=arsenal PELIGRO=2 SEMILLAS=8919 node scripts/auditar-combate.mjs sangre test-results/auditoria-combate/infinito
 # Leer el motor publicado anterior con git, manteniendo el árbol de trabajo actual:
 REVISION_MOTOR=5b6bc177 INFINITO=1 AFK_DESDE_ETAPA=15 AFK_HASTA=615 HASTA_ETAPA=25 CLASES=caballero,prisionero PERFILES=arsenal PELIGRO=2 SEMILLAS=8919 node scripts/auditar-combate.mjs sangre test-results/auditoria-combate/infinito-base
-# Propuesta de acceso a los aretes: solo simulada, nunca cambia los datos de producción.
-PROPUESTA_ARETES=1 SEMILLAS=1000,16838 node scripts/auditar-combate.mjs receta-muerte test-results/auditoria-combate/receta-propuesta
+# Recorrido de la receta ya aprobada, sin completar hallazgos en el proceso de prueba.
+SEMILLAS=1000,16838 ESCENARIOS=cara,lavamanos,banera node scripts/auditar-combate.mjs receta-muerte test-results/auditoria-combate/receta
+BUSCAR_DESDE=10 SEMILLAS=32676 ESCENARIOS=ducha node scripts/auditar-combate.mjs receta-muerte test-results/auditoria-combate/receta-ducha
 CHROME_PATH=/usr/bin/chromium node scripts/probar-sangre-costes-navegador.mjs http://127.0.0.1:4182 test-results/auditoria-combate/costes
 ```
 
@@ -156,3 +181,6 @@ Los pilotos y compras son entradas legales, pero los perfiles preparados se dist
 cero. No certifican la precisión de controles físicos, FPS, batería, red real, ni la APK instalada. Las pruebas
 de grupo y celular en Chromium recorren controles, pausa y flujo de Forja/resultados con escenarios preparados;
 no son una campaña humana ni una certificación Android. La auditoría general continúa abierta.
+
+Equipos, rangos de tienda y bajas del último minuto solicitados por Javier:
+[builds de los cuatro mapas al minuto 30](builds-lavado-minuto30.md).

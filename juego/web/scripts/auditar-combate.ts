@@ -31,6 +31,7 @@ const fijarAzarGlobal = (semilla: number) => { const az = new Azar(semilla ^ 0x5
 
 if (juego === 'lavado') {
   const escenario = (process.env.ESCENARIO ?? 'cara') as IdEscenario;
+  const disfraces = (process.env.DISFRACES ?? 'el_panda,ella_pulga').split(',');
   const tiendas: Record<string, Partial<Record<Stat, number>>> = {
     nada: {}, media: Object.fromEntries(PODERES.filter(p => p.precio <= 450 && p.id !== 'maldicion').map(p => [p.id, Math.ceil(p.max / 2)])),
     toda: Object.fromEntries(PODERES.filter(p => p.id !== 'maldicion').map(p => [p.id, p.max])),
@@ -73,20 +74,20 @@ if (juego === 'lavado') {
     const r = m.resumen(0), tarde = Object.entries(ventanas).filter(([n]) => +n >= 22 && +n < 30);
     const informe = { escenario, disfraz, tienda, familia, semilla, preparado: tienda !== 'nada' && !tienda.startsWith('pagada'),
       segundos: red(m.t), gano: r.gano, retiroTrasVictoria, oro: r.oro, bajas: m.eliminados, bajasDesde22: tarde.reduce((n, [, v]) => n + v.bajas, 0),
-      inventario: inventario(m.jug[0]), ventanas, muestras, poderes: { ...poderes } };
+      inventario: inventario(m.jug[0]), cartas: [...m.jug[0].cartas], patitosGanados: { ...m.jug[0].patitosGanados }, ventanas, muestras, poderes: { ...poderes } };
     informes.push(informe);
     console.log(`${tienda} · ${disfraz} · ${familia} · semilla ${semilla}: ${red(m.t / 60)} min, ${r.gano ? 'victoria' : 'derrota'}, bajas 22–30=${informe.bajasDesde22}`);
     return r;
   };
-  for (const tienda of (process.env.TIENDAS ?? 'nada,media,toda').split(',')) for (const disfraz of ['el_panda', 'ella_pulga']) {
+  for (const tienda of (process.env.TIENDAS ?? 'nada,media,toda').split(',')) for (const disfraz of disfraces) {
     for (const semilla of semillas) jugar(disfraz, tienda, 'normal', semilla, tiendas[tienda]);
   }
-  for (const familia of ['distancia', 'area']) for (const disfraz of ['el_panda', 'ella_pulga']) {
+  for (const familia of (process.env.FAMILIAS_ADICIONALES ?? 'distancia,area').split(',').filter(Boolean)) for (const disfraz of disfraces) {
     jugar(disfraz, 'toda', familia, semillas[0], tiendas.toda);
   }
   // Serie de partidas desde cero: paga cada mejora con el resultado anterior, sin entregar moneda ni poderes.
   const orden: Stat[] = ['poder', 'vida', 'recuperacion', 'armadura', 'area', 'enfriamiento', 'iman', 'crecimiento', 'movimiento', 'duracion', 'velocidad', 'codicia', 'suerte', 'cantidad', 'revivir', 'tirar'];
-  for (const disfraz of ['el_panda', 'ella_pulga']) {
+  for (const disfraz of disfraces) {
     const compras: Partial<Record<Stat, number>> = {}; let oro = 0;
     for (let k = 1; k <= Number(process.env.PARTIDAS_PAGADAS ?? 6); k++) {
       const r = jugar(disfraz, `pagada-${k}`, 'normal', 7919 + k * 104729, compras); oro += r.oro;
@@ -103,7 +104,7 @@ if (juego === 'lavado') {
   });
   writeFileSync(join(carpeta, 'lavado.json'), JSON.stringify({ alcance: 'Motor sin dibujo, piloto y cartas legales; tienda media/toda son perfiles preparados; series pagadas parten de cero. No certifica destreza ni teléfonos.', curva, partidas: informes }, null, 2));
 } else if (juego === 'receta-muerte') {
-  // Propuesta solo en este proceso: ambos aretes en cada mapa normal, con sus guardianes y desbloqueo originales.
+  // Recorrido de la receta con los datos aprobados; permite comparar revisiones anteriores sin duplicar hallazgos.
   const nuevas = [
     { id: 'aretIzq', escenario: 'cara', x: 1750, y: 1300 },
     { id: 'aretIzq', escenario: 'lavamanos', x: -3200, y: 120 },
@@ -112,7 +113,9 @@ if (juego === 'lavado') {
     { id: 'aretIzq', escenario: 'ducha', x: -1800, y: -1400 },
     { id: 'aretDer', escenario: 'ducha', x: 1800, y: 1400 },
   ] as const;
-  if (process.env.PROPUESTA_ARETES === '1') for (const t of nuevas) ESCONDIDAS.push({ ...t, pista: 'propuesta de prueba' });
+  if (process.env.PROPUESTA_ARETES === '1') for (const t of nuevas) {
+    if (!ESCONDIDAS.some(x => x.id === t.id && x.escenario === t.escenario)) ESCONDIDAS.push({ ...t, pista: 'propuesta de prueba' });
+  }
   const poderes = Object.fromEntries(PODERES.filter(p => p.id !== 'maldicion').map(p => [p.id, p.max]));
   for (const escenario of (process.env.ESCENARIOS ?? 'cara,lavamanos,banera,ducha').split(',') as IdEscenario[]) for (const semilla of semillas) {
     fijarAzarGlobal(semilla);
@@ -145,7 +148,7 @@ if (juego === 'lavado') {
     };
     while (!m.fin && !muertes && m.t < 46 * 60 && pasos++ < 46 * 60 * 30 * 1.2) {
       botLavado(m);
-      if (m.t >= 3 * 60 && m.t < 28 * 60 && !m.pausa) {
+      if (m.t >= Number(process.env.BUSCAR_DESDE ?? 3) * 60 && m.t < 28 * 60 && !m.pausa) {
         const tesoro = m.objs.filter(o => o.vivo && o.tipo === 'tesoro' && ESCONDIDAS[o.calidad]?.id.startsWith('aret'))
           .sort((a, b) => Math.hypot(a.x - j.x, a.y - j.y) - Math.hypot(b.x - j.x, b.y - j.y))[0];
         if (tesoro) { const dx = tesoro.x - j.x, dy = tesoro.y - j.y, d = Math.hypot(dx, dy) || 1; j.mx = dx / d; j.my = dy / d; }
@@ -154,11 +157,11 @@ if (juego === 'lavado') {
       m.paso(DT);
     }
     const r = { escenario, semilla, preparado: 'Disponibilidad de secretos y tienda completa; niveles, tesoros, cofres y evolución obtenidos en partida.',
-      propuestaAretes: process.env.PROPUESTA_ARETES === '1', segundos: red(m.t), gano: m.gano, fin: m.fin, muertesDerrotadas: muertes,
+      buscarDesde: Number(process.env.BUSCAR_DESDE ?? 3), propuestaAretes: process.env.PROPUESTA_ARETES === '1', segundos: red(m.t), gano: m.gano, fin: m.fin, muertesDerrotadas: muertes,
       evoluciones: m.evoluciones, inventario: inventario(j), vidaJugador: red(j.vida), muertesDetalle, danoMuerte };
     informes.push(r); console.log(`${escenario} · ${semilla}: ${red(m.t / 60)} min, ${muertes} muertes derrotadas, ${m.evoluciones.join(',')}`);
   }
-  writeFileSync(join(carpeta, 'receta-muerte.json'), JSON.stringify({ alcance: 'Recorrido con compras y secretos disponibles preparados; cartas y recogida legales. La propuesta de aretes vive solo aquí, no en el juego.', nuevas, partidas: informes }, null, 2));
+  writeFileSync(join(carpeta, 'receta-muerte.json'), JSON.stringify({ alcance: 'Recorrido con tienda y secretos disponibles preparados; cartas, recogida y evolución legales. Usa los hallazgos del motor seleccionado; PROPUESTA_ARETES solo completa revisiones anteriores en el proceso de pruebas.', nuevas, partidas: informes }, null, 2));
 } else if (juego === 'muerte') {
   // Combate diagnóstico preparado: no equivale a obtener estas evoluciones en una partida.
   const poderes = Object.fromEntries(PODERES.filter(p => p.id !== 'maldicion').map(p => [p.id, p.max]));

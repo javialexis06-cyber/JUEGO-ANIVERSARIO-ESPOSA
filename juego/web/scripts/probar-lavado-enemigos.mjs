@@ -8,14 +8,40 @@ import { pathToFileURL } from 'node:url';
 const carpeta = await mkdtemp(join(tmpdir(), 'lavado-enemigos-'));
 try {
   const archivo = join(carpeta, 'motor.mjs');
-  await build({ stdin: { contents: `export {Motor} from './src/casa/lavado/motor'; export {Rejilla} from './src/casa/lavado/rejilla'; export {botPaso} from './src/casa/lavado/bot'; export {Espejo,tomarFoto} from './src/casa/lavado/linea';`, resolveDir: resolve(import.meta.dirname, '..') }, bundle: true, platform: 'node', format: 'esm', outfile: archivo, logLevel: 'silent' });
-  const { Motor, Rejilla, botPaso, Espejo, tomarFoto } = await import(pathToFileURL(archivo));
+  await build({ stdin: { contents: `export {Motor} from './src/casa/lavado/motor'; export {Rejilla} from './src/casa/lavado/rejilla'; export {botPaso} from './src/casa/lavado/bot'; export {Espejo,tomarFoto} from './src/casa/lavado/linea'; export {ESCONDIDAS,maxNivelArma} from './src/casa/lavado/armas';`, resolveDir: resolve(import.meta.dirname, '..') }, bundle: true, platform: 'node', format: 'esm', outfile: archivo, logLevel: 'silent' });
+  const { Motor, Rejilla, botPaso, Espejo, tomarFoto, ESCONDIDAS, maxNivelArma } = await import(pathToFileURL(archivo));
   const motor = () => new Motor({ escenario: 'cara', apurado: false, semilla: 8919, jugadores: [{ rol: 'el', disfraz: 'el_panda', poderes: {}, secretos: [] }] });
   const unicos = m => {
     const indices = [...m.vivos.slice(0, m.nVivos)];
     assert.equal(new Set(indices).size, indices.length, 'Cada cupo debe figurar una sola vez en la lista');
     assert.ok(indices.every(i => i >= 0 && i < m.en.length));
   };
+  // Escenarios de reglas preparados: comprobar acceso y receta sin fingir una campaña desbloqueada.
+  for (const escenario of ['cara', 'lavamanos', 'banera', 'ducha']) {
+    const crear = secretos => new Motor({ escenario, apurado: false, semilla: 8919, jugadores: [{ rol: 'el', disfraz: 'el_panda', poderes: {}, secretos }] });
+    const ocultos = m => m.objs.filter(o => o.vivo && o.tipo === 'tesoro' && ESCONDIDAS[o.calidad].id.startsWith('aret'));
+    assert.equal(ocultos(crear([])).length, 0, 'Los aretes no deben aparecer antes del desbloqueo');
+    const m = crear(['cortina', 'aretIzq', 'aretDer']), j = m.jug[0], aretes = ocultos(m);
+    assert.deepEqual(aretes.map(o => ESCONDIDAS[o.calidad].id).sort(), ['aretDer', 'aretIzq']);
+    const recoger = (m, j, o) => { j.x = o.x; j.y = o.y; j.mx = j.my = 0; for (let k = 0; k < 10 && o.vivo; k++) m.paso(1 / 30); assert.equal(o.vivo, false); };
+    for (const o of aretes) {
+      j.x = o.x - 400; j.y = o.y; m.paso(1 / 30);
+      assert.ok(m.en.some(e => e.vivo && e.elite && e.fijo && Math.hypot(e.x - o.x, e.y - o.y) < 100), 'Cada arete debe conservar su guardián');
+      const cliente = crear([]), espejo = new Espejo(cliente, 0);
+      espejo.aplicar(tomarFoto(m, 0, 1).b);
+      assert.ok(cliente.objs.some(v => v.vivo && v.tipo === 'tesoro' && v.calidad === o.calidad), 'El invitado debe reconocer el hallazgo nuevo');
+      recoger(m, j, o); assert.equal(j.pasivas.get(ESCONDIDAS[o.calidad].id), 1);
+    }
+    m.darArma(j, 'cortina', maxNivelArma('cortina'));
+    m.t = 599; assert.equal(m.evolucionPosible(j), null, 'La receta sigue esperando al minuto 10');
+    m.t = 600; m.abrirCofre(j, 2);
+    assert.ok(j.armas.some(a => a.id === 'cortinaTerciopelo'), 'El cofre debe completar la receta con ambos aretes recogidos');
+    const llena = crear(['aretIzq', 'aretDer']), jl = llena.jug[0];
+    for (const id of ['jabonFuerte', 'relojArena', 'lupa', 'espejoDoble', 'crema', 'sales']) llena.darPasiva(jl, id);
+    const o = ocultos(llena)[0], id = ESCONDIDAS[o.calidad].id, antes = jl.pasivas.size;
+    recoger(llena, jl, o); assert.equal(jl.pasivas.has(id), false); assert.equal(jl.pasivas.size, antes, 'No se entregan ranuras extra');
+    console.log(`✓ ${escenario}: desbloqueo, guardianes, foto de red, recogida, ranuras y evolución mediante cofre`);
+  }
   {
     const m = motor(); while (m.crear('germen', [0, 0], m.jug[0])) {}
     unicos(m); const victima = m.en[m.vivos[0]], uid = victima.uid, indice = m.vivos[0];

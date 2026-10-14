@@ -30,14 +30,18 @@ La auditoría permanece abierta para los recorridos, dispositivos y modos que to
 Corregida una reutilización prematura de enemigos de Lavado que duplicaba impactos. Repetidas 58 partidas:
 25 victorias en los cuatro mapas normales, cuatro en series con mejoras pagadas desde cero; siguen muriendo
 enemigos después del minuto 22. La Muerte cae con un equipo final preparado, pero la Cortina de terciopelo
-está bloqueada porque sus aretes aparecen en mapas distintos. **Espera aprobación:** ambos aretes en cada mapa
-normal, conservando desbloqueo, guardianes, ranuras y recetas; la propuesta solo simulada derrotó a la Muerte
-obteniendo la evolución durante partidas en Cara, Lavamanos y Bañera. Ducha sigue pendiente.
+está bloqueada porque sus aretes aparecen en mapas distintos. **Aprobado y hecho:** ambos aretes aparecen en los cuatro mapas normales, conservando desbloqueo, guardianes,
+ranuras y recetas. Catorce recorridos adicionales verifican evolución conseguida y Muerte derrotada en los cuatro,
+incluida Ducha buscando los aretes desde el minuto 10. La tienda y disponibilidad de secretos son preparadas;
+los desbloqueos y compras completos desde progreso cero siguen pendientes. Cuatro regresiones nuevas cubren
+cada mapa y cuatro recorridos visuales preparados comprueban los ocho hallazgos en amigos sin errores.
+Las [builds exactas y rangos de tienda](en-obra/builds-lavado-minuto30.md) de las cuatro victorias de referencia
+se repitieron y registran también cartas y patitos ganados.
 Sangre aplica el ajuste aprobado por Javier: 1,5 s máximos de aturdimiento continuo y 1 s de resistencia.
 Astral cobra el 10 % de vida máxima (5 % con Sangre fría), Brújula el 70 % e Imán el 15 %; Paso sigue gratis.
 21 expediciones completas y dos Infinito hasta derrota por extracción perdida; en la etapa 15 los personajes
 fuertes sí recibieron golpes al permanecer quietos diez minutos. Botones, controles y flujo de grupo revisados
-en Chromium; nueve regresiones nuevas de costes/control y reciclaje. No se añadió Berserk ni se cerró la
+en Chromium; trece regresiones nuevas de costes/control, reciclaje y aretes. No se añadió Berserk ni se cerró la
 verificación de todos los biomas, combinaciones o teléfonos.
 
 ## Frente de granja en paralelo
