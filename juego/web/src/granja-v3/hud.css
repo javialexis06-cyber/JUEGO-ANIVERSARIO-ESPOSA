@@ -121,7 +121,7 @@ html body .side-panel select { border: 0; border-radius: 10px; background: var(-
 
 /* Ajustes */
 .ajustes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
-.ajuste { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; border-radius: 14px; background: var(--g-papel2); box-shadow: 0 2px 0 rgba(61, 43, 39, 0.2); text-align: left; color: var(--g-cacao); cursor: pointer; }
+.ajuste { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; border-radius: 14px; background: var(--g-papel2); box-shadow: 0 2px 0 rgba(61, 43, 39, 0.2); text-align: left; color: var(--g-cacao); cursor: pointer; text-decoration: none; }
 .ajuste i { font-style: normal; font-size: 22px; }
 .ajuste b { display: block; font: 700 13px/1.2 var(--g-display); }
 .ajuste small { font-size: 11px; color: var(--g-cacao-suave); }

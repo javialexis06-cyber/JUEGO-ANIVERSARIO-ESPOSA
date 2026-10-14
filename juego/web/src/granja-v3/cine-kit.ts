@@ -466,6 +466,17 @@ export function poner(kit: THREE.Object3D, clave: string, x: number, z: number, 
 }
 
 /** Actualiza todo lo que tenga `userData.actualizar` (cielos, luces, fuegos, motas). */
+const animables = new WeakMap<THREE.Object3D, { lista: THREE.Object3D[]; hijos: number; cuando: number }>();
 export function animarTodo(g: THREE.Object3D, t: number, altoPx: number) {
-  g.traverse((o) => { const f = o.userData.actualizar as ((t: number, a: number, b?: number) => void) | undefined; if (f && !o.userData.manual) f(t, altoPx); });
+  // La lista de lo que se anima se arma una vez (recorrer miles de piezas en cada cuadro trababa la película) y se
+  // rehace si cambian los hijos del escenario o cada pocos segundos
+  let c = animables.get(g);
+  const ahora = performance.now();
+  if (!c || c.hijos !== g.children.length || ahora - c.cuando > 4000) {
+    const lista: THREE.Object3D[] = [];
+    g.traverse((o) => { if (o.userData.actualizar) lista.push(o); });
+    c = { lista, hijos: g.children.length, cuando: ahora };
+    animables.set(g, c);
+  }
+  for (const o of c.lista) { const f = o.userData.actualizar as (t: number, a: number, b?: number) => void; if (!o.userData.manual) f(t, altoPx); }
 }

@@ -49,6 +49,7 @@ export function renderAjustes(personaje: string, calidad: string, partida = ''):
     <button class="ajuste" data-ajuste="personaje"><i>${personaje === 'ella' ? '👩' : '👨'}</i><span><b>Jugando con ${personaje === 'ella' ? 'Laura' : 'Javier'}</b><small>Toca para cambiar a ${personaje === 'ella' ? 'Javier' : 'Laura'}</small></span></button>
     <button class="ajuste" data-ajuste="calidad"><i>✨</i><span><b>Gráficos: ${calidad === 'Detalle' ? 'con detalle' : 'ligeros'}</b><small>${calidad === 'Detalle' ? 'Más bonito, gasta más batería' : 'Más fluido y fresco en el celular'}</small></span></button>
     <button class="ajuste" data-do="ver-prologo"><i>🎬</i><span><b>Ver el prólogo</b><small>Celia, Aura y Lara: cómo empezó todo</small></span></button>
+    <a class="ajuste" href="./cine.html"><i>🍿</i><span><b>Sala de cine</b><small>Todas las películas de la historia, seguidas o una por una, y en video</small></span></a>
     <button class="ajuste" data-ajuste="rejilla"><i>▦</i><span><b>Cuadrícula</b><small>Para acomodar cultivos y construcciones</small></span></button>
     ${partida}
     <div class="ajustes-ayuda"><b>Cómo se juega</b><p>Camina con la palanca (o WASD). Toca una casilla para usar lo que tienes en la mano; si está lejos, tu personaje camina hasta allá. Toca un vecino, un animal o una puerta para hablar o entrar. Duerme en la cabaña para pasar el día.</p></div>

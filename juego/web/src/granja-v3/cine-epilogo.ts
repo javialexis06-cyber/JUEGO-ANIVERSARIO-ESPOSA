@@ -13,6 +13,7 @@ import {
   poner, puntosSuaves, tomasDialogo, type Puesto,
 } from './cine-kit';
 import { LINEAS_ALTAR, LINEAS_BODA } from './cine-lineas-historia';
+import { CAPITULOS } from './cine-capitulos';
 
 const DIOSAS = ['celia', 'aura', 'lara', 'fuatia'];
 /** Las diosas respiran flotando. */
@@ -397,15 +398,6 @@ function eterna(hora: 'atardecer' | 'noche') {
 }
 
 /** Los créditos: la noche de Eterna con la constelación y los nombres de todas las escenas subiendo despacio. */
-/** Los capítulos de la película (con el id de cada una: su foto está en granja/cine/fotos/<id>.jpg). */
-const CAPITULOS: [string, string][] = [
-  ['prologo', 'Prólogo · El nacimiento de Celia'], ['C01', 'Dos surcos'], ['C11', 'El agua que escucha'], ['SC0', 'La Noche Eterna'],
-  ['C02', 'La campana y la mesa'], ['ELI', 'El brote que puede esperar'], ['SC1', 'Las Afueras'], ['C03', 'La firma'], ['SC2', 'El fuego bajo la piedra'],
-  ['T03', 'La cría que no quiere hablar'], ['SC3', 'El Santuario roto'], ['C04', 'La copa'], ['C05', 'Una mañana que no basta'], ['SC4', 'El descenso'],
-  ['S08', 'La ayuda que no llegó'], ['C12', 'El día posterior al nacimiento'], ['ENE', 'Lo que no vuelve idéntico'], ['OFE', 'La casa que dejé esperando'],
-  ['C06', 'La casa de Elián'], ['SER', 'El nombre que no se pronuncia por otro'], ['C13', 'El precio de una alianza'], ['C14', 'La cuenta que ya no se cierra sola'],
-  ['C07', 'El tratado'], ['C08', 'El ceramista'], ['C09', 'Una estrella sin dueño'], ['C10', 'La parcela de mañana'], ['ALT', 'El Altar del Lazo'], ['BOD', 'Siempre te elegiré'],
-];
 /** Los créditos: la noche con la constelación, los capítulos subiendo despacio y, a cada lado, la foto de cada uno. */
 const PX = 1024 / 6;
 function creditos() {

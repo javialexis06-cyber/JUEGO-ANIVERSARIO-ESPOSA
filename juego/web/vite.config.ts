@@ -190,6 +190,7 @@ export default defineConfig(({ mode, command }) => {
             // desde la sala de juegos de amigos (retrete.html, cocina.html)
             casa: resolve(raiz, 'index.html'), super: resolve(raiz, 'super.html'), puertas: resolve(raiz, 'puertas.html'), mesa: resolve(raiz, 'mesa.html'),
             granjaV3: resolve(raiz, 'granja-v3.html'),
+            cine: resolve(raiz, 'cine.html'),
             amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'),
             escudo: resolve(raiz, 'escudo.html'),
             carreras: resolve(raiz, 'carreras.html'),

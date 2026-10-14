@@ -193,3 +193,24 @@ constelación y Nath'Gora como una sombra enorme que se aleja) y C10 (los dos su
   con la voz del narrador (`LUG.<bioma>`). En grupo no sale. En pruebas, `sangre.html?prueba=1&postal=1`.
 - `vozConde()` en `historia_pareja.ts` (la de amigos no hace nada): el HUD la llama al aparecer el Conde y cuando pasa a
   la fase 2.
+
+## Sala de cine y fluidez (14 de octubre de 2026)
+
+- **`cine.html`** (`src/granja-v3/sala-cine.ts`, solo en la versión de la pareja; se abre desde Ajustes de la granja,
+  «Sala de cine»):
+  - Las 28 películas por actos con su foto (`cine-capitulos.ts`: orden, nombres y actos, que también usan los créditos).
+  - «Ver la película completa» las pone seguidas; «✕ Salir de la película completa» la corta.
+  - «⬇ Video» y «⬇ Descargar todas en video» graban mientras se reproduce. El video sale en WebM de 1920×1080 a 60
+    cuadros con sonido, y lleva compuestos la imagen 3D, las franjas, la viñeta, el subtítulo, el título y el fundido
+    (`CineGranja.capas` y `alDibujar`). La duración se arregla con `fix-webm-duration`.
+- **Fluidez del reproductor** (`cine-granja.ts`):
+  - En computador dibuja en cada cuadro de la pantalla (60 o más). Antes estaba topado a 30 con saltos desparejos.
+  - En celular junta el tiempo hasta 1/30 s sin saltos.
+  - Resolución automática: baja de a 0,15 si la media de 1,5 s pasa de 1,22× la meta y vuelve a subir cuando sobra.
+  - El brillo se calcula a media resolución.
+  - Antes de empezar se dibuja una vez cada escenario, así las texturas y las sombras ya están en la tarjeta y el
+    cambio de escena no se traba.
+  - Los estilos de los textos solo se escriben si cambian.
+  - `animarTodo` guarda la lista de lo que se anima en vez de recorrer todo el escenario en cada cuadro.
+- **Fluidez del juego de la granja** (`vista.ts`): la misma resolución automática. En computador busca 60 fps (baja si
+  el cuadro pasa de 1/50 s); en celular solo baja si se cae de unos 26.
