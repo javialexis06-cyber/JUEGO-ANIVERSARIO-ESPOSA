@@ -38,6 +38,8 @@ const SUSTITUTOS: Record<string, string> = {
 export const PERMITIDOS_AMIGOS = [
   'src/amigos/', 'src/salas/', 'src/sangre/', 'src/casa/lavado/', 'src/casa/lavado.ts', 'src/casa/lavado.css', 'src/casa/ropa.ts',
   'src/casa/ropa_tapa.ts', 'src/casa/servidor.ts',
+  // las presentaciones de los lugares (Sangre las usa para sus biomas; ninguna nombra a la pareja)
+  'src/granja-v3/cine-lineas-lugares.ts',
   // el retrete espacial y la cocina sin la casa (src/sueltos), con lo de la pareja en archivos aparte
   'src/sueltos/', 'src/casa/cohete/', 'src/casa/cohete.ts', 'src/casa/cohete.css', 'src/casa/cocina/', 'src/casa/progreso_nube.ts', 'src/casa/ropa.json',
   // los juegos de mesa (sin las escenas premium, que son de la pareja: ver SUSTITUTOS)
