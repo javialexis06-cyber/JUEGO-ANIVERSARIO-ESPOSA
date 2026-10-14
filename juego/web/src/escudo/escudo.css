@@ -1,0 +1,193 @@
+/* El Escudo de las Hermanas: interfaz (celular horizontal, 844×390; botones pequeños y nada tapa el mapa). */
+:root {
+  --e-noche: #14123a;
+  --e-tinta: #fdf6e8;
+  --e-oro: #ffd36b;
+  --e-lila: #c9b6ff;
+  --e-panel: rgba(24, 18, 52, 0.82);
+  --e-borde: rgba(255, 220, 160, 0.38);
+}
+html, body.escudo { margin: 0; height: 100%; overflow: hidden; background: #0b0a1e; color: var(--e-tinta);
+  font-family: 'Nunito', system-ui, sans-serif; -webkit-user-select: none; user-select: none; touch-action: none; -webkit-tap-highlight-color: transparent; }
+#escudo-lienzo { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+#escudo-ui, #escudo-textos { position: fixed; inset: 0; pointer-events: none; }
+:where(#escudo-ui) > * { pointer-events: auto; }
+button { font-family: 'Fredoka', 'Nunito', sans-serif; cursor: pointer; color: inherit; -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: default; }
+
+/* ---------------------------------------------------------------- carga */
+#escudo-carga { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; transition: opacity .6s;
+  background: radial-gradient(ellipse at 70% 30%, #3a2a70 0%, #14123a 45%, #06050f 100%); }
+#escudo-carga.fuera { opacity: 0; pointer-events: none; }
+.carga-centro { text-align: center; }
+.carga-logo { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 40px; line-height: .95; color: var(--e-oro);
+  text-shadow: 0 0 18px rgba(255, 200, 110, .55), 0 3px 0 #7a4a20; }
+.carga-logo span { font-size: 24px; color: var(--e-lila); text-shadow: 0 0 14px rgba(180, 150, 255, .6), 0 2px 0 #3a2a70; }
+.carga-frase { margin: 14px 0 10px; opacity: .85; font-size: 14px; }
+.carga-barra { width: 220px; height: 8px; border-radius: 8px; background: rgba(255, 255, 255, .12); margin: 0 auto; overflow: hidden; }
+.carga-barra i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ffb040, #ffe08a, #c9b6ff); transition: width .3s; border-radius: 8px; }
+
+/* ---------------------------------------------------------------- botones comunes */
+.eb-redondo { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--e-borde); background: var(--e-panel); font-size: 15px; font-weight: 700;
+  display: grid; place-items: center; padding: 0; box-shadow: 0 3px 0 rgba(0, 0, 0, .35); }
+.eb-redondo.activo { background: #6a3aa0; border-color: var(--e-oro); color: var(--e-oro); }
+.eb-volver { width: 38px; height: 38px; border-radius: 12px; border: 2px solid var(--e-borde); background: var(--e-panel); font-size: 26px; line-height: 1; padding: 0 0 4px; }
+.eb-grande { display: block; width: 100%; padding: 10px 14px; margin-top: 8px; border-radius: 14px; border: 0; font-size: 16px; font-weight: 700;
+  background: linear-gradient(#ffd36b, #f2a93b); color: #3a2410; box-shadow: 0 4px 0 #a8641f; }
+.eb-grande.sec { background: rgba(255, 255, 255, .1); color: var(--e-tinta); box-shadow: 0 3px 0 rgba(0, 0, 0, .35); border: 1.5px solid var(--e-borde); }
+.eb-grande:active, .eb-redondo:active { transform: translateY(2px); box-shadow: none; }
+.eb-chip { border-radius: 20px; border: 1.5px solid var(--e-borde); background: var(--e-panel); padding: 6px 12px; font-size: 13px; font-weight: 600; }
+
+/* ---------------------------------------------------------------- menú de niveles */
+.escudo-menu { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: space-between;
+  background: linear-gradient(180deg, rgba(8, 6, 24, .7) 0%, rgba(8, 6, 24, 0) 30%, rgba(8, 6, 24, 0) 55%, rgba(8, 6, 24, .85) 100%);
+  padding: max(10px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 10px max(14px, env(safe-area-inset-left)); }
+.escudo-menu header { display: flex; align-items: center; gap: 12px; }
+.em-titulo { flex: 1; display: flex; flex-direction: column; }
+.em-titulo b { font-family: 'Fredoka', sans-serif; font-size: 26px; color: var(--e-oro); text-shadow: 0 0 14px rgba(255, 200, 110, .5), 0 2px 0 #6a3a10; line-height: 1.05; }
+.em-titulo span { font-size: 13px; opacity: .85; }
+.em-estrellas { font-family: 'Fredoka', sans-serif; font-weight: 700; color: var(--e-oro); background: var(--e-panel); border: 1.5px solid var(--e-borde);
+  padding: 5px 12px; border-radius: 20px; }
+.em-niveles { display: flex; gap: 10px; overflow-x: auto; padding: 8px 2px 10px; scrollbar-width: none; touch-action: pan-x; }
+.em-niveles::-webkit-scrollbar { display: none; }
+.em-nivel { flex: 0 0 132px; height: 150px; border-radius: 18px; border: 2px solid var(--e-borde); padding: 10px 10px 8px; text-align: left;
+  background: linear-gradient(160deg, rgba(70, 50, 140, .92), rgba(24, 18, 52, .95)); display: flex; flex-direction: column; gap: 4px;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .15); position: relative; overflow: hidden; }
+.em-nivel i { font-style: normal; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 13px; color: var(--e-lila); }
+.em-nivel b { font-family: 'Fredoka', sans-serif; font-size: 16px; line-height: 1.1; flex: 1; }
+.em-nivel small { font-size: 11px; opacity: .8; }
+.em-est { color: var(--e-oro); font-size: 20px; letter-spacing: 2px; }
+.em-est em { font-style: normal; color: rgba(255, 255, 255, .2); }
+.em-est.mejor { font-size: 12px; letter-spacing: 0; }
+.em-nivel.historia { background: linear-gradient(160deg, rgba(150, 90, 40, .95), rgba(60, 24, 60, .95)); border-color: var(--e-oro); }
+.em-nivel.historia::after { content: 'P23'; position: absolute; top: 8px; right: 8px; font-size: 10px; font-weight: 800; background: var(--e-oro); color: #3a2410;
+  padding: 2px 6px; border-radius: 8px; }
+.em-nivel.infinito { background: linear-gradient(160deg, rgba(30, 80, 120, .95), rgba(18, 20, 52, .95)); }
+.em-nivel.cerrado { filter: grayscale(.8) brightness(.6); }
+.em-nivel:not(.cerrado):active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, .4); }
+.escudo-menu footer { display: flex; gap: 8px; align-items: center; }
+.em-pista { margin-left: auto; font-size: 12px; opacity: .7; }
+
+/* ---------------------------------------------------------------- HUD de la batalla */
+.escudo-hud { position: fixed; inset: 0; pointer-events: none; }
+.escudo-hud > * { pointer-events: auto; }
+.eh-arriba { position: absolute; top: max(8px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); display: flex; gap: 6px; align-items: center; }
+.eh-cifra { display: flex; align-items: center; gap: 5px; background: var(--e-panel); border: 1.5px solid var(--e-borde); border-radius: 18px; padding: 3px 11px 3px 8px;
+  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 15px; min-width: 40px; }
+.eh-cifra i { font-style: normal; font-size: 14px; }
+.eh-cifra.vidas i { color: #ff7a8a; }
+.eh-cifra.vidas.bajo { animation: latido .8s infinite; border-color: #ff7a8a; }
+.eh-cifra.luz i { color: var(--e-oro); text-shadow: 0 0 8px rgba(255, 210, 110, .8); }
+.eh-cifra.oleada i { color: var(--e-lila); }
+.eh-nombre { font-size: 12px; opacity: .7; margin-left: 4px; pointer-events: none; }
+@keyframes latido { 50% { transform: scale(1.08); background: rgba(120, 20, 40, .85); } }
+.eh-botones { position: absolute; top: max(8px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right)); display: flex; gap: 6px; }
+.eh-habilidades { position: absolute; left: max(10px, env(safe-area-inset-left)); bottom: max(8px, env(safe-area-inset-bottom)); display: flex; gap: 8px; }
+.eh-hab { position: relative; width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--e-borde); padding: 6px 6px 10px; overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, rgba(90, 60, 160, .95), rgba(20, 14, 44, .95)); box-shadow: 0 3px 0 rgba(0, 0, 0, .4); }
+.eh-hab svg { width: 100%; height: 100%; position: relative; z-index: 1; }
+.eh-hab small { position: absolute; left: 0; right: 0; bottom: 2px; font-size: 9px; font-weight: 700; z-index: 2; text-shadow: 0 1px 2px #000; }
+.eh-hab.eliana { border-color: rgba(255, 180, 80, .7); }
+.eh-hab.serena { border-color: rgba(200, 180, 255, .7); }
+.eh-hab.lazo { border-color: rgba(255, 220, 200, .7); }
+.eh-recarga { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: rgba(0, 0, 0, .62); z-index: 3; transition: height .2s linear; }
+.eh-hab.armada { border-color: #fff; box-shadow: 0 0 0 3px rgba(255, 220, 120, .7), 0 0 16px rgba(255, 220, 120, .8); }
+.eh-oleadas { position: absolute; right: max(10px, env(safe-area-inset-right)); bottom: max(8px, env(safe-area-inset-bottom)); display: flex; align-items: flex-end; gap: 6px; }
+.eh-previa { background: var(--e-panel); border: 1.5px solid var(--e-borde); border-radius: 14px; padding: 4px 8px; display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.eh-previa span { opacity: .75; font-weight: 700; margin-right: 2px; }
+.eh-previa i { font-style: normal; display: flex; align-items: center; font-weight: 800; font-size: 12px; }
+.eh-previa img { width: 28px; height: 28px; object-fit: contain; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .5)); }
+.eh-llamar { border: 0; border-radius: 16px; padding: 8px 14px; font-weight: 700; font-size: 15px; background: linear-gradient(#ff9a5a, #e8583b); color: #fff;
+  box-shadow: 0 4px 0 #8a2a1a, 0 0 18px rgba(255, 120, 80, .5); animation: invita 1.6s infinite; line-height: 1.05; }
+.eh-llamar small { display: block; font-size: 11px; opacity: .92; }
+.eh-llamar:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a2a1a; }
+@keyframes invita { 50% { transform: scale(1.05); } }
+.eh-sub, .ec-sub { position: absolute; left: 50%; bottom: 66px; transform: translateX(-50%); max-width: min(560px, 70vw); background: rgba(10, 8, 26, .78);
+  border: 1px solid rgba(255, 255, 255, .15); border-radius: 14px; padding: 6px 14px; font-size: 14px; text-align: center; pointer-events: none; }
+.eh-sub b, .ec-sub b { display: block; font-family: 'Fredoka', sans-serif; font-size: 12px; color: var(--e-oro); }
+.eh-sub b.q-serena, .ec-sub b.q-serena { color: var(--e-lila); }
+.eh-sub b.q-nathgora, .ec-sub b.q-nathgora { color: #9fb8ff; }
+.entra { animation: entra .35s ease-out; }
+@keyframes entra { from { opacity: 0; transform: translate(-50%, 8px); } }
+
+/* ---------------------------------------------------------------- menú de un sitio o torre */
+.escudo-menu-torre { position: fixed; width: 290px; background: rgba(20, 15, 46, .93); border: 2px solid var(--e-borde); border-radius: 18px; padding: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5); animation: aparece .18s ease-out; }
+@keyframes aparece { from { transform: scale(.92); } }
+.emt-fila { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.emt-torre { border: 1.5px solid rgba(255, 255, 255, .15); background: rgba(255, 255, 255, .06); border-radius: 12px; padding: 2px 0 3px; display: flex; flex-direction: column;
+  align-items: center; }
+.emt-torre img { width: 40px; height: 40px; object-fit: contain; }
+.emt-torre b { font-size: 11px; color: var(--e-oro); }
+.emt-torre.sel { border-color: var(--e-oro); background: rgba(255, 210, 110, .2); }
+.emt-torre.cara b, .emt-accion.cara b { color: #ff8a8a; }
+.emt-torre.cerrada { opacity: .4; }
+.emt-info { padding: 6px 4px 2px; }
+.emt-info b { font-family: 'Fredoka', sans-serif; font-size: 15px; }
+.emt-info small { display: block; font-size: 11px; color: var(--e-lila); }
+.emt-info p { margin: 3px 0 0; font-size: 12px; line-height: 1.25; opacity: .9; }
+.emt-cabeza { display: flex; gap: 8px; align-items: center; }
+.emt-cabeza img { width: 44px; height: 44px; object-fit: contain; }
+.emt-cabeza b { font-family: 'Fredoka', sans-serif; font-size: 15px; display: block; }
+.emt-cabeza small { font-size: 11px; opacity: .8; }
+.emt-elementos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px; }
+.emt-el { border-radius: 10px; border: 1.5px solid var(--c); background: rgba(255, 255, 255, .05); font-size: 11px; font-weight: 700; padding: 5px 0; }
+.emt-el.sel { background: var(--c); color: #1a1030; }
+.emt-acciones { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.emt-accion { text-align: left; border-radius: 12px; border: 1.5px solid rgba(255, 255, 255, .15); background: rgba(255, 255, 255, .06); padding: 5px 9px; display: grid;
+  grid-template-columns: auto 1fr; column-gap: 8px; align-items: center; }
+.emt-accion b { font-size: 13px; color: var(--e-oro); grid-column: -2; }
+.emt-accion small { font-size: 11px; opacity: .85; grid-column: -2; line-height: 1.2; }
+.emt-accion img { width: 34px; height: 34px; grid-row: span 2; object-fit: contain; }
+.emt-accion.sel { border-color: var(--e-oro); background: rgba(255, 210, 110, .18); }
+.emt-accion.vender b { color: #ffb0a0; }
+.emt-accion.vender.sel { border-color: #ff8a7a; background: rgba(255, 120, 100, .18); }
+.emt-max { font-size: 11px; opacity: .8; padding: 2px 4px; }
+.escudo-confirmar { position: fixed; transform: translate(-50%, -50%); z-index: 20; border: 0; border-radius: 16px; padding: 8px 14px; font-size: 15px; font-weight: 700;
+  background: linear-gradient(#8fe08a, #3fae5a); color: #08240f; box-shadow: 0 4px 0 #1f6a32, 0 0 18px rgba(120, 255, 140, .5); animation: aparece .15s ease-out; white-space: nowrap; }
+
+/* ---------------------------------------------------------------- avisos y textos flotantes */
+.escudo-aviso { position: fixed; left: 50%; top: 22%; transform: translateX(-50%); font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 20px; pointer-events: none;
+  color: var(--e-tinta); text-shadow: 0 2px 0 #2a1a4a, 0 0 14px rgba(0, 0, 0, .6); animation: aviso 2.6s ease-out forwards; white-space: nowrap; }
+.escudo-aviso.oleada { font-size: 24px; color: var(--e-oro); }
+.escudo-aviso.jefe { font-size: 26px; color: #b9c8ff; }
+.escudo-aviso.pista { font-size: 15px; top: 16%; background: rgba(10, 8, 26, .75); padding: 5px 14px; border-radius: 14px; text-shadow: none; }
+@keyframes aviso { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.9); } 12% { opacity: 1; transform: translate(-50%, 0) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; } }
+.escudo-flota { position: fixed; left: 0; top: 0; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 13px; color: var(--e-oro); pointer-events: none;
+  text-shadow: 0 1px 0 #3a2410, 0 0 6px rgba(0, 0, 0, .7); will-change: transform; }
+.escudo-flota.alma { color: #e9e4ff; text-shadow: 0 1px 0 #3a2a70, 0 0 8px rgba(180, 150, 255, .9); }
+.escudo-flota.cura { color: #ff9aaa; font-size: 16px; }
+.escudo-consejo { position: fixed; left: 50%; top: 56px; transform: translateX(-50%); background: rgba(20, 15, 46, .93); border: 2px solid var(--e-oro); border-radius: 16px;
+  padding: 8px 10px 8px 14px; display: flex; gap: 10px; align-items: center; font-size: 13px; max-width: 80vw; }
+.escudo-consejo button { border: 0; border-radius: 12px; background: var(--e-oro); color: #3a2410; font-weight: 700; padding: 6px 10px; }
+
+/* ---------------------------------------------------------------- velo (pausa y resultado) */
+.escudo-velo { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(6, 4, 18, .6); z-index: 30; }
+.escudo-tarjeta { width: min(340px, 80vw); max-height: 92vh; overflow: auto; background: linear-gradient(170deg, rgba(60, 44, 120, .97), rgba(20, 15, 46, .97));
+  border: 2px solid var(--e-borde); border-radius: 22px; padding: 14px 16px 16px; text-align: center; box-shadow: 0 12px 40px rgba(0, 0, 0, .6); animation: aparece .2s; }
+.escudo-tarjeta h2 { margin: 0 0 4px; font-family: 'Fredoka', sans-serif; font-size: 22px; color: var(--e-oro); }
+.escudo-tarjeta p { margin: 4px 0; font-size: 13px; opacity: .9; }
+.escudo-tarjeta.resultado { width: min(400px, 86vw); }
+.escudo-tarjeta.perdio h2 { color: #ffb0b0; }
+.er-estrellas { display: flex; justify-content: center; gap: 6px; font-size: 44px; line-height: 1; margin: 2px 0 4px; }
+.er-estrellas i { font-style: normal; color: rgba(255, 255, 255, .15); }
+.er-estrellas i.si { color: var(--e-oro); text-shadow: 0 0 16px rgba(255, 210, 110, .9); animation: estrella .5s var(--d) backwards cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes estrella { from { transform: scale(0) rotate(-90deg); } }
+.er-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; }
+.er-botones .eb-grande:first-child:nth-last-child(odd) { grid-column: span 2; }
+
+/* ---------------------------------------------------------------- la escena (30 s) */
+.escudo-cine { position: fixed; inset: 0; pointer-events: auto; }
+.ec-banda { position: absolute; left: 0; right: 0; height: 9vh; background: #000; animation: banda .8s ease-out; }
+.ec-banda.arriba { top: 0; }
+.ec-banda.abajo { bottom: 0; }
+@keyframes banda { from { height: 0; } }
+.ec-titulo { position: absolute; left: 0; right: 0; top: 30%; text-align: center; transition: opacity 1.2s; }
+.ec-titulo small { display: block; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--e-lila); }
+.ec-titulo b { font-family: 'Fredoka', sans-serif; font-size: 34px; color: var(--e-oro); text-shadow: 0 0 20px rgba(255, 200, 110, .6), 0 3px 0 #5a3010; }
+.ec-titulo.sale { opacity: 0; }
+.escudo-cine .ec-sub { bottom: calc(9vh + 10px); }
+.ec-saltar { position: absolute; right: 14px; top: calc(9vh + 8px); border: 1px solid rgba(255, 255, 255, .3); background: rgba(0, 0, 0, .4); border-radius: 14px; padding: 4px 12px;
+  font-size: 13px; }
+
+.escudo-confirmar.en-menu { position: static; transform: none; display: block; width: 100%; margin-top: 6px; }

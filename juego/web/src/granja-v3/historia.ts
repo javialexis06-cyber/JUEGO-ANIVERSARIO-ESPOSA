@@ -61,7 +61,7 @@ export function registrarHistoria(s:EstadoGranja,a:Accion,antes:EstadoGranja){
  if(a.tipo==='dormir')for(const q of MISIONES_HISTORIA){const p=h.activas[q.id];if(p&&q.pasos.some(p=>p.tipo==='jornadas')&&s.jornada.diasCompletados>p.dia&&!h.cartas.includes(q.id))h.cartas.push(q.id);}
 }
 
-export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:number,ctx:{agregar:(id:string,n:number)=>void;noche:()=>unknown}):Resultado {
+export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:number,ctx:{agregar:(id:string,n:number)=>void;noche:()=>unknown;escudo?:()=>unknown}):Resultado {
  const h=s.historia??(s.historia=crearHistoria());
  if(!Number.isFinite(x)||!Number.isFinite(z))return mal('Posición inválida.');
  if(s.astra?.escena)return mal('Escucha o deja la escena antes de continuar.');
@@ -141,7 +141,10 @@ export function actuarHistoria(s:EstadoGranja,accion:AccionHistoria,x:number,z:n
   if(!['secuencia','contraste','laberinto','circuito'].includes(p.tipo)||a.enfoques[p.id]==='combate')return mal('Este paso requiere su acción propia.');if(p.planes&&a.plan===null)return mal('Elige primero préstamo o copia in situ.');h.reto=crearReto(q.id,p);return bien('Prueba iniciada. Puedes dejarla y reiniciar sin repetir costos.');
  }
  if(accion.tipo!=='comprobar')return mal('Acción desconocida para este objetivo.');
- if(a.enfoques[p.id]==='combate'){
+ // La batalla del Borde de Astra (P23) también se gana en «El Escudo de las Hermanas» (escudo.html?mision=P23)
+ const escudoP23=q.id==='P23'&&p===q.pasos.at(-1)&&(()=>{const r=ctx.escudo?.() as {v?:number;mision?:string;ganada?:boolean}|null|undefined;return r?.v===1&&r.mision==='P23'&&r.ganada===true;})();
+ if(escudoP23){/* el recibo del Escudo cuenta como la desactivación */}
+ else if(a.enfoques[p.id]==='combate'){
   if((a.estadisticas[(p.registro==='jefe'?'jefe:':'combate:')+p.destino!]??0)<(p.registro==='jefe'?1:2))return mal(p.registro==='jefe'?'Desactiva el mecanismo de la cámara con tus armas después de aceptar esta historia.':'Desactiva dos constructos de este territorio con tus armas.');
  }else if(p.tipo==='oficio'){if((a.estadisticas[p.registro!]??0)<(p.cantidad??1))return mal('Realiza la actividad del oficio después de aceptar: '+p.texto);
  }else if(p.tipo==='cultivar'){

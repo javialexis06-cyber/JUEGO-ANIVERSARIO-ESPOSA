@@ -83,9 +83,10 @@ export class MotorGranja {
  private jornadaLluvia=-1;private revisionLluvia=-1;
  private readonly ahora:()=>number;
  private readonly noche:()=>unknown;
+ private readonly escudo:()=>unknown;
  private readonly azar:()=>number;
- constructor(opciones:{ahora?:()=>number;azar?:()=>number;estado?:EstadoGranja;noche?:()=>unknown}={}){
-  this.noche=opciones.noche??(()=>null);this.ahora=opciones.ahora||Date.now;this.azar=opciones.azar||Math.random;
+ constructor(opciones:{ahora?:()=>number;azar?:()=>number;estado?:EstadoGranja;noche?:()=>unknown;escudo?:()=>unknown}={}){
+  this.noche=opciones.noche??(()=>null);this.escudo=opciones.escudo??(()=>null);this.ahora=opciones.ahora||Date.now;this.azar=opciones.azar||Math.random;
   const now=this.ahora();this.estado=this.inicial(now);
   // La granja empieza enmontada, como en Stardew: maleza, piedras y tocones por limpiar
   if(!opciones.estado)for(let ronda=1;ronda<=9;ronda++)this.brotarMaleza(ronda);
@@ -316,7 +317,7 @@ export class MotorGranja {
    case 'regional':r=actuarRegional(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n,calidad)=>this.agregar(id,n,calidad),azar:()=>this.random()});break;
    case 'vida_astra':r=actuarVidaAstra(s,a.accion,a.xJugador,a.zJugador,(id,n,calidad)=>this.agregar(id,n,calidad));break;
    case 'premio':r=actuarPremio(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n,calidad)=>this.agregar(id,n,calidad),libre:(x,z)=>s.astra?.actual?libreAstra(s,x+.5,z+.5):s.zona==='granja'?this.celdaLibre(x,z)&&!s.parcelas.some(p=>p.x===x&&p.z===z):s.zona==='lago'?celdaTransitable(s,x,z):false});break;
-   case 'historia':r=actuarHistoria(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n)=>this.agregar(id,n),noche:this.noche});break;
+   case 'historia':r=actuarHistoria(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n)=>this.agregar(id,n),noche:this.noche,escudo:this.escudo});break;
    case 'astra':r=actuarAstra(s,a.accion,a.xJugador,a.zJugador,{agregar:(id,n)=>this.agregar(id,n),noche:this.noche});break;
    case 'festival':r=actuarFestival(s,a.accion,a.xJugador,a.zJugador);break;
    case 'correo':r=actuarCorreo(s,a.accion,a.xJugador,a.zJugador);break;

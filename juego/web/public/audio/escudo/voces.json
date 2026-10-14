@@ -1,0 +1,122 @@
+{
+ "IN1": {
+  "archivo": "./audio/escudo/IN1-425142.ogg",
+  "seg": 7.71
+ },
+ "IN2": {
+  "archivo": "./audio/escudo/IN2-3fe2e6.ogg",
+  "seg": 6.51
+ },
+ "IN3": {
+  "archivo": "./audio/escudo/IN3-00724f.ogg",
+  "seg": 4.81
+ },
+ "IN4": {
+  "archivo": "./audio/escudo/IN4-66988a.ogg",
+  "seg": 4.81
+ },
+ "IN6": {
+  "archivo": "./audio/escudo/IN6-67fe10.ogg",
+  "seg": 4.31
+ },
+ "FI1": {
+  "archivo": "./audio/escudo/FI1-8edee5.ogg",
+  "seg": 7.91
+ },
+ "FI2": {
+  "archivo": "./audio/escudo/FI2-d38507.ogg",
+  "seg": 5.21
+ },
+ "FI3": {
+  "archivo": "./audio/escudo/FI3-9cb969.ogg",
+  "seg": 3.11
+ },
+ "FI4": {
+  "archivo": "./audio/escudo/FI4-bd0c89.ogg",
+  "seg": 6.01
+ },
+ "EH1": {
+  "archivo": "./audio/escudo/EH1-345063.ogg",
+  "seg": 1.28
+ },
+ "EH2": {
+  "archivo": "./audio/escudo/EH2-59ee30.ogg",
+  "seg": 2.05
+ },
+ "SH1": {
+  "archivo": "./audio/escudo/SH1-3a74c8.ogg",
+  "seg": 2.94
+ },
+ "SH2": {
+  "archivo": "./audio/escudo/SH2-d338c2.ogg",
+  "seg": 2.42
+ },
+ "NJ1": {
+  "archivo": "./audio/escudo/NJ1-4bcf6a.ogg",
+  "seg": 3.81
+ },
+ "NJ2": {
+  "archivo": "./audio/escudo/NJ2-edf108.ogg",
+  "seg": 2.61
+ },
+ "NJ3": {
+  "archivo": "./audio/escudo/NJ3-7b1725.ogg",
+  "seg": 1.33
+ },
+ "BU1": {
+  "archivo": "./audio/escudo/BU1-7c8211.ogg",
+  "seg": 3.11
+ },
+ "BE1": {
+  "archivo": "./audio/escudo/BE1-d26784.ogg",
+  "seg": 2.49
+ },
+ "BV1": {
+  "archivo": "./audio/escudo/BV1-09d574.ogg",
+  "seg": 2.31
+ },
+ "BD1": {
+  "archivo": "./audio/escudo/BD1-46d833.ogg",
+  "seg": 5.41
+ },
+ "NV1": {
+  "archivo": "./audio/escudo/NV1-26044c.ogg",
+  "seg": 5.61
+ },
+ "NV2": {
+  "archivo": "./audio/escudo/NV2-e12cc6.ogg",
+  "seg": 5.51
+ },
+ "NV3": {
+  "archivo": "./audio/escudo/NV3-af92ba.ogg",
+  "seg": 5.41
+ },
+ "NV4": {
+  "archivo": "./audio/escudo/NV4-c1fb54.ogg",
+  "seg": 5.41
+ },
+ "NV5": {
+  "archivo": "./audio/escudo/NV5-32af88.ogg",
+  "seg": 5.81
+ },
+ "NV6": {
+  "archivo": "./audio/escudo/NV6-673874.ogg",
+  "seg": 5.21
+ },
+ "NV7": {
+  "archivo": "./audio/escudo/NV7-53b904.ogg",
+  "seg": 4.41
+ },
+ "IN5A": {
+  "archivo": "./audio/escudo/IN5A-bc7cec.ogg",
+  "seg": 6.81
+ },
+ "FI5A": {
+  "archivo": "./audio/escudo/FI5A-76a4ee.ogg",
+  "seg": 8.31
+ },
+ "LZ1A": {
+  "archivo": "./audio/escudo/LZ1A-39b6ae.ogg",
+  "seg": 3.71
+ }
+}
