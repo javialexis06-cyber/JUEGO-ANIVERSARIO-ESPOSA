@@ -682,6 +682,7 @@ async function mostrarResultados(r: Resultado, titulo: string, botones: { texto:
   await new Promise<void>((ok) => p.querySelector('[data-seguir]')!.addEventListener('click', () => ok()));
   if (conPodio) await podio(top, titulo);
   vista.vaciar();
+  arrancarGaraje();
   const q = pantalla(`<div class="car-panel car-fin"><h2>¿Y ahora?</h2>
     <div class="car-opciones">${botones.map((b, i) => `<button class="car-boton ${i ? '' : 'grande'}" data-b="${i}">${escapar(b.texto)}</button>`).join('')}
     <button class="car-boton suave" data-b="menu">Menú</button></div></div>`, 'fin');
@@ -761,6 +762,23 @@ async function iniciar() {
     }
   });
   cargaVisible(false);
+  // Fotos para las tarjetas del menú (scripts/carreras/fotos.mjs)
+  const postal = params.get('postal') as IdPista | null;
+  if (postal && postal in PISTAS) {
+    await vista.postal(postal, await cargarPista(postal));
+    document.body.dataset.foto = 'lista';
+    return;
+  }
+  const retrato = params.get('retrato') as IdCriatura | null;
+  if (retrato && retrato in CRIATURAS) {
+    await vista.retrato({ ...miCorredor(), criatura: retrato });
+    document.body.dataset.foto = 'lista';
+    return;
+  }
+  if (params.has('podio')) {
+    await podio([miCorredor(), ...rivales(2)], 'Camino del Pueblo del Sol');
+    return portada();
+  }
   const pista = params.get('pista') as IdPista | null;
   if (pista && pista in PISTAS) {
     if (params.has('crono')) await contrarreloj(pista);
@@ -768,7 +786,7 @@ async function iniciar() {
     return;
   }
   const unirse = params.get('unirse');
-  if (unirse) {
+  if (unirse || params.has('sala')) {
     await enLinea();
     return;
   }

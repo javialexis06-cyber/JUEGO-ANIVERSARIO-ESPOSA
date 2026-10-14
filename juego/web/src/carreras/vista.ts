@@ -14,6 +14,20 @@ export type Calidad = 'alta' | 'media' | 'baja';
 
 const COLOR_CHISPA = ['#ffffff', '#6fc8ff', '#ffb43a', '#ff7ae0'];
 
+/** El cielo: una esfera grande con degradado (arriba → horizonte). */
+function cieloDegradado(arriba: string, abajo: string) {
+  const geo = new THREE.SphereGeometry(1200, 24, 12);
+  const mat = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false, fog: false,
+    uniforms: { arriba: { value: new THREE.Color(arriba) }, abajo: { value: new THREE.Color(abajo) } },
+    vertexShader: 'varying float h; void main(){ h = normalize(position).y; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader: 'uniform vec3 arriba; uniform vec3 abajo; varying float h; void main(){ float t = smoothstep(-0.15, 0.6, h); gl_FragColor = vec4(mix(abajo, arriba, t), 1.0); }',
+  });
+  const m = new THREE.Mesh(geo, mat);
+  m.renderOrder = -1;
+  return m;
+}
+
 export class Vista {
   renderer: THREE.WebGLRenderer;
   escena!: THREE.Scene;
@@ -160,15 +174,7 @@ export class Vista {
     this.escena.add(obj);
     this.pistaObj = obj;
     // Cielo con degradado y niebla de la región
-    const geo = new THREE.SphereGeometry(1200, 24, 12);
-    const mat = new THREE.ShaderMaterial({
-      side: THREE.BackSide, depthWrite: false, fog: false,
-      uniforms: { arriba: { value: new THREE.Color(info.cielo[0]) }, abajo: { value: new THREE.Color(info.cielo[1]) } },
-      vertexShader: 'varying float h; void main(){ h = normalize(position).y; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-      fragmentShader: 'uniform vec3 arriba; uniform vec3 abajo; varying float h; void main(){ float t = smoothstep(-0.15, 0.6, h); gl_FragColor = vec4(mix(abajo, arriba, t), 1.0); }',
-    });
-    this.cielo = new THREE.Mesh(geo, mat);
-    this.cielo.renderOrder = -1;
+    this.cielo = cieloDegradado(info.cielo[0], info.cielo[1]);
     this.escena.add(this.cielo);
     this.escena.fog = new THREE.Fog(info.niebla[0], info.niebla[1], info.niebla[2]);
     this.escena.background = new THREE.Color(info.cielo[1]);
@@ -497,6 +503,48 @@ export class Vista {
     }
   }
 
+  // ------------------------------------------------------------------------------------------ fotos del menú
+
+  /** Postal de una pista desde el aire (para las tarjetas del menú; se hace con ?postal=<pista>). */
+  async postal(id: IdPista, pista: Pista) {
+    this.vaciar();
+    await this.cargarPista(id, pista);
+    const i = Math.floor(pista.n * 0.04);
+    const x = pista.x[i], y = pista.y[i], z = pista.z[i];
+    const h = pista.rumbo(i);
+    this.camara.fov = 55;
+    this.camara.aspect = 96 / 58;
+    this.camara.updateProjectionMatrix();
+    this.camara.position.set(x - Math.sin(h) * 26 + Math.cos(h) * 10, y + 16, z - Math.cos(h) * 26 - Math.sin(h) * 10);
+    this.camara.lookAt(x + Math.sin(h) * 30, y, z + Math.cos(h) * 30);
+    this.sol.position.set(x + 30, y + 60, z + 20);
+    this.sol.target.position.set(x, y, z);
+    if (this.cielo) this.cielo.position.copy(this.camara.position);
+    this.renderer.render(this.escena, this.camara);
+  }
+
+  /** Retrato de una criatura sola, de lado, con fondo transparente (?retrato=<criatura>). */
+  async retrato(c: Corredor) {
+    this.vaciar();
+    this.escena.background = new THREE.Color('#ffffff');
+    const k = new Kart3D(c);
+    await k.cargar(false);
+    if (k.carro) k.carro.visible = false;
+    this.escena.add(k.grupo);
+    k.actualizar(0.01, 0, 0, 0, -Math.PI / 2 + 0.5, 0, { derrape: 0, giro: 0, giroVis: 0, suelo: true, invisible: false, truco: 0, cayendo: false });
+    k.grupo.updateMatrixWorld(true);
+    const caja = new THREE.Box3().setFromObject(k.criatura!);
+    const centro = caja.getCenter(new THREE.Vector3());
+    const tam = caja.getSize(new THREE.Vector3()).length();
+    this.camara.fov = 30;
+    this.camara.aspect = 1;
+    this.camara.updateProjectionMatrix();
+    this.camara.position.set(centro.x, centro.y + tam * 0.35, centro.z + tam * 1.4);
+    this.camara.lookAt(centro);
+    this.sol.position.set(4, 8, 8);
+    this.renderer.render(this.escena, this.camara);
+  }
+
   // ------------------------------------------------------------------------------------------ fantasma
 
   private fantasma: Kart3D | null = null;
@@ -548,6 +596,11 @@ export class Vista {
     this.podioObj.rotation.y = Math.PI;
     this.escena.add(this.podioObj);
     this.escena.fog = null;
+    // Cielo de atardecer con estrellas detrás del podio
+    this.cielo?.removeFromParent();
+    this.cielo = cieloDegradado('#2a2058', '#c98ab8');
+    this.escena.add(this.cielo);
+    this.escena.background = new THREE.Color('#2a2058');
     this.podioObj.updateMatrixWorld(true);
     const puestos = [1, 2, 3].map((n) => {
       const o = this.podioObj!.getObjectByName(`puesto_${n}`);
@@ -567,12 +620,17 @@ export class Vista {
       m.grupo.parent!.position.set(0, 0, 0);
       m.grupo.parent!.scale.setScalar(1.25);
       if (k.criatura) {
-        k.criatura.position.set(i === 0 ? 0 : i === 1 ? -1.4 : 1.4, -(i === 0 ? 1.25 : i === 1 ? 0.9 : 0.65), -1.6);
-        k.criatura.scale.setScalar(0.75);
+        // La criatura al pie del podio, mirando a la cámara
+        const alto = i === 0 ? 1.25 : i === 1 ? 0.9 : 0.65;
+        k.criatura.position.set(0.35, -alto, 1.7);
+        k.criatura.scale.setScalar(0.62);
         k.criatura.rotation.y = 0;
+        // (el bicho está corrido hacia adelante dentro de su envoltura: se centra)
+        const b = k.criatura.children[0];
+        if (b) b.position.z = -0.6;
       }
       k.grupo.position.copy(puestos[i]);
-      k.grupo.rotation.y = 0;
+      k.grupo.rotation.y = Math.PI;
       this.escena.add(k.grupo);
       this.podioKarts[i] = k;
     }));

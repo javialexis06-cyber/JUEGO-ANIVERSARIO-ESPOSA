@@ -108,8 +108,11 @@ html, body.carreras {
 .car-carta.pista > :not(img) { display: block; }
 .car-fin { margin: 0 auto; width: min(560px, 80vw); }
 .car-grande { font-size: 40px; margin: 6px 0; color: var(--car-coral); }
-.car-resultados { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
-.car-resultados li { display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 12px; padding: 2px 10px 2px 4px; }
+.car-resultados { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 13.5px; }
+.car-resultados li { display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 12px; padding: 1px 10px 1px 4px; }
+.car-resultados .car-carita, .car-resultados .car-carita svg { width: 24px; height: 24px; }
+.car-fin .car-fila-abajo { margin-top: 6px; }
+.car-fin h2 { font-size: 17px; margin-bottom: 4px; }
 .car-resultados li.yo { background: #fff3c6; box-shadow: 0 0 0 2px var(--car-oro); }
 .car-resultados .pos { width: 24px; text-align: center; font-size: 17px; color: var(--car-lila); }
 .car-resultados b { flex: 1; }

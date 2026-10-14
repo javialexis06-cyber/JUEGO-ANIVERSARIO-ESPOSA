@@ -173,11 +173,12 @@ def m_carro_calesa(coll):
         verts, caras = [], []
         na, ny = 12, 5
         for j in range(ny):
-            y = 0.35 + 0.55 * j / (ny - 1)
+            # Capota plegada atrás (baja: desde atrás se ve al muñeco)
+            y = 0.62 + 0.34 * j / (ny - 1)
             esc = 1.0 - 0.15 * (j / (ny - 1)) ** 2
             for i in range(na + 1):
                 a = math.pi * i / na
-                verts.append((math.cos(a) * 0.66 * esc, y, 0.88 + math.sin(a) * 0.62 * esc))
+                verts.append((math.cos(a) * 0.66 * esc, y, 0.88 + math.sin(a) * 0.36 * esc))
         for j in range(ny - 1):
             for i in range(na):
                 a0, a1 = j * (na + 1) + i, j * (na + 1) + i + 1
@@ -185,14 +186,14 @@ def m_carro_calesa(coll):
         o = clay.make_mesh_object('capota', verts, caras, coll, material=cap)
         clay.add_solidify(o, 0.04)
         clay.add_subsurf(o, 1, 2)
-        for y in (0.35, 0.9):
-            arco = [(math.cos(a) * 0.68, y, 0.88 + math.sin(a) * 0.64) for a in np.linspace(0, math.pi, 9)]
+        for y in (0.62, 0.95):
+            arco = [(math.cos(a) * 0.68, y, 0.88 + math.sin(a) * 0.38) for a in np.linspace(0, math.pi, 9)]
             clay.sweep('costilla capota', arco, 0.03, (1, 1), coll, oro(), segments=6, samples=3, subsurf=0)
         emblema(coll, (0, -0.92, 0.66), 0.2)
         varas(coll, -0.86, 0.52)
         farol(coll, 0.55, -0.7, 0.92)
         farol(coll, -0.55, -0.7, 0.92)
-        banderin(coll, 0.0, 0.95, 1.5, alto=0.8)
+        banderin(coll, 0.45, 1.0, 0.95, alto=1.25)
         for s in (-1, 1):
             tubo(coll, 'estribo', [(s * 0.62, -0.3, 0.36), (s * 0.78, -0.3, 0.3), (s * 0.78, 0.2, 0.3), (s * 0.62, 0.2, 0.36)], 0.025, HIERRO(), seg=5)
     g = grupo(coll, 'calesa', (0, 0, 0), cuerpo)
