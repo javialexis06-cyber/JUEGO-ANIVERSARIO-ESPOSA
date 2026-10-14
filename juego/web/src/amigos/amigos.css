@@ -486,6 +486,8 @@ body.amigos::before {
 .am-juego.cocina .txt b { color: #b0506d; }
 .am-juego.escudo { background: linear-gradient(180deg, #2a2350, #14123a); color: #f3ead8; }
 .am-juego.escudo .txt b { color: #ffd98a; }
+.am-juego.carreras { background: linear-gradient(180deg, #ffe0c4, #f9b98c); color: #3d2b27; }
+.am-juego.carreras .txt b { color: #b0506d; }
 .am-no-soy {
   align-self: flex-end;
   border: 0;

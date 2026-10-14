@@ -12,7 +12,7 @@ export interface JuegoAmigos {
   /** Dibujo de la tarjeta (SVG). */
   arte: string;
   /** Clase de la tarjeta (colores). */
-  tema: 'lavado' | 'sangre' | 'super' | 'mesa' | 'retrete' | 'cocina' | 'escudo';
+  tema: 'lavado' | 'sangre' | 'super' | 'mesa' | 'retrete' | 'cocina' | 'escudo' | 'carreras';
   /** Página del juego (relativa). */
   url?: string;
   /** Juegos que se abren aquí mismo (sin cambiar de página). */
@@ -34,6 +34,18 @@ const ARTE_ESCUDO = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspec
   <rect x="156" y="32" width="20" height="52" fill="#9fd6ff" opacity=".35"/>
   <circle cx="60" cy="70" r="9" fill="#ffb040"/><circle cx="60" cy="70" r="4" fill="#fff0b0"/>
   ${[[24, 84], [36, 80], [46, 86]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#6a6372"/><circle cx="${x - 1.5}" cy="${y - 1}" r="1.2" fill="#fff"/>`).join('')}</svg>`;
+
+/** La Carrera de las Tres Lunas: un camino que serpentea por las colinas bajo tres lunas, con un carrito y su bandera. */
+const ARTE_CARRERAS = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+  <defs><linearGradient id="cr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3f86"/><stop offset="1" stop-color="#f49a6c"/></linearGradient></defs>
+  <rect width="200" height="110" fill="url(#cr)"/>
+  <circle cx="40" cy="22" r="9" fill="#fff4d6"/><circle cx="100" cy="14" r="6" fill="#d9c8ff"/><circle cx="160" cy="24" r="7.5" fill="#ffd0b0"/>
+  <path d="M0 78 Q50 58 100 72 T200 66 L200 110 L0 110z" fill="#6f9a45"/>
+  <path d="M-5 104 C40 80 70 96 105 86 S170 70 210 80" fill="none" stroke="#c9a070" stroke-width="12" stroke-linecap="round"/>
+  <path d="M-5 104 C40 80 70 96 105 86 S170 70 210 80" fill="none" stroke="#fff3d6" stroke-width="1.6" stroke-dasharray="5 6"/>
+  <rect x="96" y="70" width="22" height="11" rx="4" fill="#e4566b"/><circle cx="100" cy="83" r="3.5" fill="#3d2b27"/><circle cx="114" cy="83" r="3.5" fill="#3d2b27"/>
+  <circle cx="86" cy="72" r="7" fill="#fbf5f1"/><path d="M84 64 L86 56 L88 64z" fill="#f7e6b0"/>
+  <path d="M150 40 L150 70" stroke="#3d2b27" stroke-width="1.6"/><path d="M150 40 h14 v8 h-14z" fill="#fff"/><path d="M150 40 h7 v4 h-7z M157 44 h7 v4 h-7z" fill="#2b2422"/></svg>`;
 
 export const ARTE_SANGRE = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
   <defs><radialGradient id="sl" cx="70%" cy="30%" r="60%"><stop offset="0" stop-color="#5a1418"/><stop offset="1" stop-color="#0d0709"/></radialGradient>
@@ -103,6 +115,8 @@ export const JUEGOS: JuegoAmigos[] = [
   { id: 'retrete', nombre: 'Retrete espacial', desc: 'Despega y esquiva hasta las estrellas', arte: ARTE_RETRETE, tema: 'retrete', url: './retrete.html' },
   { id: 'cocina', nombre: 'Cocina de chef', desc: 'Pedidos y platos contra el reloj', arte: ARTE_COCINA, tema: 'cocina', url: './cocina.html' },
   { id: 'escudo', nombre: 'El Escudo de las Hermanas', desc: 'Defiende el escudo de luz · torres y estrellas', arte: ARTE_ESCUDO, tema: 'escudo', url: './escudo.html' },
+  { id: 'carreras', nombre: 'La Carrera de las Tres Lunas', desc: 'Carros y criaturas por Astra · de 1 a 4', arte: ARTE_CARRERAS, tema: 'carreras', url: './carreras.html', sala: 'carreras',
+    urlCrear: './carreras.html?sala', urlUnirse: (c) => `./carreras.html?unirse=${encodeURIComponent(c)}` },
 ];
 
 const disponibles = new Map<string, Promise<boolean>>();
