@@ -292,7 +292,7 @@ body.con-dialogo .tuto-puertas * { pointer-events: none; }
   color: var(--cacao-suave);
   animation: latido 1.2s ease-in-out infinite;
 }
-.globo-chico {
+html .globo-chico {
   max-width: min(240px, 38vw);
   font: 600 14px/1.3 var(--display);
   padding: 8px 12px;
@@ -419,7 +419,7 @@ body.con-dialogo .tuto-puertas * { pointer-events: none; }
 }
 
 /* ---------- Lo que dice quien juega y los recuerdos ---------- */
-.globo-yo {
+html .globo-yo {
   left: auto !important;
   top: auto !important;
   right: max(18px, env(safe-area-inset-right));

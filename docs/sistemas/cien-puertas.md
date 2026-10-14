@@ -346,6 +346,9 @@ Lo de siempre de la puerta:
   tamaño y no crece ni brinca mientras se escribe. Mientras el narrador habla (`body.con-dialogo`), el letrero de la
   puerta, la ficha de la pareja y el tutorial se apartan. Los globitos de los ánimos esquivan lo que haya arriba (el
   letrero, los botones, la tarjeta del tutorial): se corren a un lado o se bajan lo justo.
+  La corrección del 13 de octubre conserva el tamaño y el fondo propios de los globos chico y del jugador frente
+  a `html .globo`. El narrador reserva espacio en ambas esquinas; al esquivar botones, descarta posiciones que
+  invaden la puerta.
   `window.__puertas.narrador()` deja probarlos (`animar`, `conversar`, `susto`…).
 - Revisión automática: `window.__puertas.tapan()` pinta en una rejilla de la pantalla las hojas de la puerta y cuenta
   qué se les cruza desde la vista de siempre (objetos del cuarto y del acertijo, el desorden, el narrador contando, en
@@ -361,7 +364,11 @@ sensores de verdad) y registra lo que falle: la prueba no pasa o se traba, el pa
 algo tapa la puerta o algo importante (con los rayos de arriba, también en los acercamientos), cosas que quedaron fuera
 del cuarto o con posiciones rotas, y errores de la página. Con `--revolver` antes de resolver tira todo el desorden
 por el aire y revisa otra vez cuando se queda quieto; con `--fotos` guarda una foto de cada puerta (sin fotos corre sin
-dibujar, mucho más rápido). El informe queda en `<carpeta>/informe.json`.
+dibujar, mucho más rápido). El informe se actualiza después de cada puerta en `<carpeta>/informe.json`.
+Espera a que se registren el avance y las estrellas, además de resolver el acertijo: empezar la animación de
+apertura no basta. Al terminar recarga y compara el progreso; deja el resultado en `progreso.json`.
+`CHROME_PATH` permite usar un Chromium ya instalado. El recorrido omite historia y simula los sensores:
+no certifica la campaña narrativa, rendimiento ni sensores físicos de Android.
 
     PUERTO=5173 node scripts/revisar-puertas.mjs 1 100 --semillas=0,1,2 --revolver [--fotos]
 

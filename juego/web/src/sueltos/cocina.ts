@@ -35,7 +35,9 @@ function progresoDe(T: ModuloTipos, r: RecetaId): ProgresoCocina {
 }
 function guardarProgreso(r: RecetaId, p: ProgresoCocina) {
   const todo = (leerAparato(CLAVE_COCINA) as Record<string, unknown> | null) ?? {};
-  guardarAparato(CLAVE_COCINA, { ...(typeof todo === 'object' ? todo : {}), [r]: p });
+  if (!guardarAparato(CLAVE_COCINA, { ...(typeof todo === 'object' ? todo : {}), [r]: p })) {
+    throw new Error('No se pudo guardar el restaurante en este celular');
+  }
 }
 
 let ocupado = false;

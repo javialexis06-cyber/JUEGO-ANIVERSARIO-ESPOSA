@@ -290,6 +290,10 @@ cinco). Con mejoras de nivel medio (burbuja, segunda oportunidad, arranque, imá
   galaxia de chicle**; las estelas de corazones y pétalos tienen otra descripción; no hay monedas de la casa.
   `textosDeLaPareja()` (en `cohete.ts`) dice todo lo que el modo neutro esconde, para las pruebas.
 - Prueba: `node scripts/probar-amigos-juegos.mjs <url>` (ver la cocina).
+- Recorrido desde progreso nuevo: `CHROME_PATH=/usr/bin/chromium node scripts/probar-retrete-recorrido.mjs
+  <url> <carpeta>`. Usa el piloto normal y reloj acelerado, sin invulnerabilidad, saltos ni recursos regalados;
+  comprueba dos vuelos, pausa, otra salida, mejora pagada y recarga. Si sobrevive diez minutos simulados, termina
+  con «Aterrizar ya», el botón normal de la pausa. No certifica controles o rendimiento en un teléfono.
 
 ## Lavarse la cara (minijuego secreto: un Vampire Survivors completo)
 
@@ -831,6 +835,17 @@ mouse); en el navegador, `?botlavado` pone el bot a jugar y `window.__lavado.act
   final del día el anfitrión sigue con otro día o vuelve con todos a la sala de espera («👥 A la sala»).
 - **Dificultad por cocineros** (`POR_COCINEROS` en `motor.ts`): cada cuánto llegan ×1 / 0,8 / 0,7 / 0,62, paciencia
   ×1 / 0,85 / 0,8 / 0,75 e invitados extra por día 0 / 0 / 2 / 4.
+- **Confirmación del guardado** (13 de octubre, `cocina/guardado.ts`): un día se aplica una sola vez a puntos y
+  propinas y permanece pendiente hasta confirmar la escritura. El final permite reintentar; empezar, seguir y
+  salir esperan los cambios pendientes. Una mejora solo se instala y descuenta al confirmar su guardado; si se
+  perdió la respuesta, se reenvía la misma copia. Las escrituras de días y compras van en orden. La casa marca
+  cada pago por rol, restaurante y día en su diario; reenviarlo no repite monedas ni platos. El día ya avanzado de
+  una partida antigua se considera pagado. En amigos, un error de almacenamiento llega al motor y no se presenta
+  como éxito. No se modificaron precios, recompensas ni dificultad.
+  `npm run probar:motores` incluye once regresiones de estas condiciones; `scripts/probar-cocina-recorridos.mjs`
+  recorre dos días de pedidos, máquinas y resultado de cada restaurante mediante sus acciones normales, con
+  reloj acelerado. Compra una mejora con propinas ganadas, simula una escritura fallida y comprueba la recuperación
+  y recarga en día 3. En wafles también falla dos veces el guardado del primer día y comprueba que salir no lo borre.
 - Sincronización (`linea.ts`): objetos con versión (el día, cada máquina y cada tiquete), paquetes rápidos cada
   ~110 ms y una foto completa del anfitrión cada segundo; gana la versión más alta y, si empatan, la del anfitrión.
   Los cortes, el segundo plano y quién se fue los avisa la sala. Las ids de los wafles van por puesto (no chocan).

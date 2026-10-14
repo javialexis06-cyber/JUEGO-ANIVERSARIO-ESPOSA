@@ -36,8 +36,9 @@ export function leerAparato(clave: string): unknown {
 export function guardarAparato(clave: string, v: unknown) {
   try {
     localStorage.setItem(clave, JSON.stringify(v));
+    return true;
   } catch {
-    /* sin almacenamiento: dura lo que dure la página */
+    return false;
   }
 }
 

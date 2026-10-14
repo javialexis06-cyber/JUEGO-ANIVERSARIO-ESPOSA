@@ -6,6 +6,8 @@ Fuente activa: `juego/web/src/granja-v3/`. `src/granja-v2/biblioteca.ts` es solo
 
 Encargo vigente de Javier (13 de octubre de 2026): completar y corregir el motor de todos los juegos y probar partidas de inicio a fin. Antes de modificar dificultad, balance, precios, costes o recompensas, presentar la propuesta concreta y esperar su aprobación. Los arreglos funcionales y las pruebas continúan sin cambiar esas cifras. Registrar cobertura y pendientes en `docs/en-obra/auditoria-motores.md`; no afirmar que todo está perfecto por pasar pruebas de reglas o escenarios preparados.
 
+Javier autorizó explícitamente en este chat publicar el registro `a3c4aa7e` y los siguientes avances de motor y pruebas en `work` y `claude/supermarket-mania-minigame-xn2it8` de este mismo repositorio público. Esa autorización permanece vigente; no volver a pedir permiso para cada commit de este encargo. Mantener la aprobación previa de dificultad y balance, traer cambios remotos y no usar push forzado.
+
 Al cerrar cada avance: actualizar documentos, ejecutar las comprobaciones pertinentes y subir el commit a `claude/supermarket-mania-minigame-xn2it8`, por instrucción del usuario. Antes de publicar, traer cambios remotos y combinar trabajo paralelo sin push forzado. No abrir PR salvo petición. Comprobar el workflow «APK Android» del commit publicado.
 
 Regresión del motor: `cd juego/web && npm run probar:granja`. Integración: `npm run build` y `npm run build:amigos`; después ejecutar `scripts/granja-v3/verificar-demo.mjs` contra el build completo servido, con un contexto aislado. Las pruebas visuales no certifican rendimiento físico de los teléfonos.
