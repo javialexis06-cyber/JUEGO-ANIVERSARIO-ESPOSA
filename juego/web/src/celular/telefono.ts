@@ -250,7 +250,7 @@ export class Telefono {
           img.onclick = () => { const f = this.caso.fotos.find((x) => x.archivo === m.foto); this.verFoto(f ?? { id: m.foto!, archivo: m.foto!, fecha: m.t }); };
           b.append(img);
         }
-        if (m.voz) b.append(this.reproductor(this.caso.voces.find((v) => v.id === m.voz)!));
+        if (m.voz) b.append(this.reproductor(this.caso.voces.find((v) => v.id === m.voz)!, m.pista));
         b.append(el('small', '', esc(m.t)));
         hilo.append(b);
         if (m.pista && !m.voz) this.g.anotar(m.pista);
@@ -265,7 +265,8 @@ export class Telefono {
   }
 
   /** El reproductor de una nota de voz (con su transcripción). Al terminar de oírla, anota su pista. */
-  private reproductor(v: Voz): HTMLElement {
+  private reproductor(v: Voz, pistaChat?: string): HTMLElement {
+    const pista = v.pista ?? pistaChat;
     const r = el('div', 'cel-voz');
     r.dataset.voz = v.id;
     const b = el('button', 'cel-voz-play', ICONO.play);
@@ -279,7 +280,7 @@ export class Telefono {
     tr.hidden = true;
     const ver = el('button', 'cel-voz-ver', 'Aa');
     ver.title = 'Ver transcripción';
-    ver.onclick = (e) => { e.stopPropagation(); tr.hidden = !tr.hidden; if (!tr.hidden) { this.g.anotar(v.pista); this.g.evento('voz'); } };
+    ver.onclick = (e) => { e.stopPropagation(); tr.hidden = !tr.hidden; if (!tr.hidden) { this.g.anotar(pista); this.g.evento('voz'); } };
     const fila = el('div', 'cel-voz-fila');
     fila.append(b, onda, dur, ver);
     r.append(fila, tr);
@@ -291,7 +292,7 @@ export class Telefono {
         const k = Math.floor(u * barras.length);
         barras.forEach((x, i) => x.classList.toggle('va', i <= k));
       });
-      this.g.anotar(v.pista);
+      this.g.anotar(pista);
       this.g.evento('voz');
       if (sono) { r.classList.add('sonando'); b.innerHTML = ICONO.pausa; }
       // sin audio todavía: se abre la transcripción
