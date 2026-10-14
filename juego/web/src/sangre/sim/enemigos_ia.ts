@@ -306,7 +306,7 @@ export function moverEnemigos(sim: Sim, dt: number) {
     if (E.golpe[i] > 0) E.golpe[i] = Math.max(0, E.golpe[i] - dt * 5);
     if (E.ataque[i] > 0) E.ataque[i] = Math.max(0, E.ataque[i] - dt * 2.8);
     if (E.atqT[i] > 0) E.atqT[i] -= dt;
-    if (E.aturdido[i] > 0) E.aturdido[i] -= dt;
+    E.pasoAturdimiento(i, dt);
     if (E.miedo[i] > 0) E.miedo[i] -= dt;
     if (E.lentoT[i] > 0) {
       E.lentoT[i] -= dt;
@@ -702,7 +702,7 @@ function cargador(sim: Sim, i: number, j: { x: number; y: number }, dx: number, 
     // Chocó contra una pared: queda aturdido
     if (!def.vuela && Math.hypot(E.x[i] - ax, E.y[i] - ay) < vel * dt * 0.3) {
       E.estado[i] = EST.NORMAL;
-      E.aturdido[i] = 0.8;
+      E.aturdir(i, 0.8);
       E.atqT[i] = 3;
       sim.suc.push(S.EXPLOSION, E.x[i], E.y[i], 0.8, 6);
     }

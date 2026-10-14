@@ -26,6 +26,20 @@ normales. Doce regresiones cubren persistencia y el tope diario original. Contin
 avanzados, controles físicos y recuperación ante cierre forzado.
 La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
 
+**Prueba solicitada de Lavado y Sangre (14 de octubre):** [informe de combate](en-obra/pruebas-combate-lavado-sangre.md).
+Corregida una reutilización prematura de enemigos de Lavado que duplicaba impactos. Repetidas 58 partidas:
+25 victorias en los cuatro mapas normales, cuatro en series con mejoras pagadas desde cero; siguen muriendo
+enemigos después del minuto 22. La Muerte cae con un equipo final preparado, pero la Cortina de terciopelo
+está bloqueada porque sus aretes aparecen en mapas distintos. **Espera aprobación:** ambos aretes en cada mapa
+normal, conservando desbloqueo, guardianes, ranuras y recetas; la propuesta solo simulada derrotó a la Muerte
+obteniendo la evolución durante partidas en Cara, Lavamanos y Bañera. Ducha sigue pendiente.
+Sangre aplica el ajuste aprobado por Javier: 1,5 s máximos de aturdimiento continuo y 1 s de resistencia.
+Astral cobra el 10 % de vida máxima (5 % con Sangre fría), Brújula el 70 % e Imán el 15 %; Paso sigue gratis.
+21 expediciones completas y dos Infinito hasta derrota por extracción perdida; en la etapa 15 los personajes
+fuertes sí recibieron golpes al permanecer quietos diez minutos. Botones, controles y flujo de grupo revisados
+en Chromium; nueve regresiones nuevas de costes/control y reciclaje. No se añadió Berserk ni se cerró la
+verificación de todos los biomas, combinaciones o teléfonos.
+
 ## Frente de granja en paralelo
 
 **Arreglos de la granja (12 de octubre, lo siguiente que se hace):** Javier mandó una lista larga (rendimiento, menú de
@@ -131,7 +145,8 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
    `docs/sistemas/sangre-y-ceniza.md`. Lo que pidió:
    - pantallazo negro de 1-2 s al subir de nivel (con las mejoras del piso no pasa);
    - el Guardián debe salir apenas se cumple la misión principal (o a los pocos segundos);
-   - visión astral como pulso de 1-2 s que cuesta 10 de vida y sube por etapa;
+   - visión astral como pulso de 1-2 s que cuesta 10 de vida y sube por etapa (pedido inicial;
+     Javier lo cambió el 14 de octubre a 10 % de vida máxima);
    - textos que se ponen gigantes al pasar el ratón; reliquias del final y el premio de la misión gigantes;
    - el rango de recoger crece con el nivel; lo que se mina con bombas y demás llega solo al inventario; las bombas
      rompen paredes con y sin minerales;

@@ -2352,10 +2352,14 @@ export class Motor {
 
   crear(tipo: IdEnemigo, p: [number, number], j: Jugador | null, o: { elite?: boolean; jefe?: boolean; fijo?: boolean; cofre?: number } = {}): Enemigo | null {
     let e: Enemigo | null = null;
+    let indice = -1;
     for (let i = 0; i < POOL_EN; i++) {
-      const c = this.en[(this.sigUid + i) % POOL_EN];
-      if (!c.vivo) {
+      const k = (this.sigUid + i) % POOL_EN, c = this.en[k];
+      // Aunque ya murió, su índice sigue en vivos hasta compactar al final del cuadro.
+      // Reusarlo antes duplica la lista y crea ciclos en la rejilla de impactos.
+      if (!c.vivo && !this.enLista[k]) {
         e = c;
+        indice = k;
         break;
       }
     }
@@ -2409,7 +2413,8 @@ export class Motor {
     let desarmar = 0;
     for (const q of this.jug) if (!q.fuera) desarmar = Math.max(desarmar, q.st.desarmar);
     e.sinDientes = !def.jefe && !o.jefe && desarmar > 0 && this.az.n() < desarmar;
-    this.vivos[this.nVivos++] = this.en.indexOf(e);
+    this.enLista[indice] = 1;
+    this.vivos[this.nVivos++] = indice;
     if (!e.jefe && !e.elite) this.nComunes++;
     if (j && e.jefe) this.emitir('jefe', e.x, e.y, e.ti);
     return e;
@@ -3383,13 +3388,15 @@ export class Motor {
     this.emitir('evolucion', x, y, j.i);
   }
 
+  private enLista = new Uint8Array(POOL_EN);
+
   private compactar() {
     let n = 0;
     let comunes = 0;
     for (let k = 0; k < this.nVivos; k++) {
       const i = this.vivos[k];
       const e = this.en[i];
-      if (!e.vivo) continue;
+      if (!e.vivo) { this.enLista[i] = 0; continue; }
       this.vivos[n++] = i;
       if (!e.jefe && !e.elite && !e.luz) comunes++;
     }

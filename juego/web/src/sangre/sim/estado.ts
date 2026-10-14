@@ -3,6 +3,10 @@
 // objetos. Lo que pasa en cada paso queda en `Sucesos` (números planos) para el dibujo, los sonidos y la red.
 
 // ------------------------------------------------------------------------------------------------- Sucesos
+/** Una cadena de golpes abre una oportunidad de avanzar y atacar, sin quitar el daño ni el retroceso. */
+export const ATURDIMIENTO_MAXIMO = 1.5;
+export const RESISTENCIA_ATURDIMIENTO = 1;
+
 export const S = {
   GOLPE: 1, // x, y, daño, crítico, etiqueta
   MUERTE: 2, // x, y, tipo, uid, escala (élite si > 1), giro
@@ -117,6 +121,8 @@ export class Enemigos {
   readonly lento: Float32Array;
   readonly lentoT: Float32Array;
   readonly aturdido: Float32Array;
+  readonly aturdidoContinuo: Float32Array;
+  readonly resistenciaAturdimiento: Float32Array;
   readonly marca: Float32Array; // cazador
   readonly maldicion: Uint8Array; // bruja
   readonly condenaT: Float32Array;
@@ -148,6 +154,7 @@ export class Enemigos {
     this.et = f(); this.atqT = f(); this.fase = f(); this.ataque = f(); this.golpe = f();
     this.quema = f(); this.quemaT = f(); this.veneno = f(); this.venenoT = f(); this.sangrado = f(); this.sangradoT = f();
     this.lento = f(); this.lentoT = f(); this.aturdido = f(); this.marca = f();
+    this.aturdidoContinuo = f(); this.resistenciaAturdimiento = f();
     this.maldicion = new Uint8Array(max);
     this.condenaT = f(); this.miedo = f(); this.juzgado = f();
     this.mezcla = new Uint8Array(max);
@@ -179,6 +186,7 @@ export class Enemigos {
     this.fase[i] = Math.random() * 6;
     this.quema[i] = this.quemaT[i] = this.veneno[i] = this.venenoT[i] = this.sangrado[i] = this.sangradoT[i] = 0;
     this.lento[i] = this.lentoT[i] = this.aturdido[i] = this.marca[i] = this.miedo[i] = this.juzgado[i] = 0;
+    this.aturdidoContinuo[i] = this.resistenciaAturdimiento[i] = 0;
     this.maldicion[i] = 0;
     this.condenaT[i] = 0;
     this.mezcla[i] = 0;
@@ -190,6 +198,27 @@ export class Enemigos {
     this.dotT[i] = Math.random() * 0.25;
     this.esc[i] = 1;
     return i;
+  }
+
+  /** Todas las fuentes de aturdimiento respetan la misma racha y resistencia. */
+  aturdir(i: number, segundos: number) {
+    if (!this.vivo[i] || this.resistenciaAturdimiento[i] > 0) return;
+    this.aturdido[i] = Math.max(this.aturdido[i], Math.min(segundos, ATURDIMIENTO_MAXIMO - this.aturdidoContinuo[i]));
+  }
+
+  pasoAturdimiento(i: number, dt: number) {
+    if (this.resistenciaAturdimiento[i] > 0) {
+      this.resistenciaAturdimiento[i] = Math.max(0, this.resistenciaAturdimiento[i] - dt);
+      this.aturdido[i] = this.aturdidoContinuo[i] = 0;
+      return;
+    }
+    if (this.aturdido[i] <= 0) { this.aturdidoContinuo[i] = 0; return; }
+    this.aturdidoContinuo[i] += Math.min(dt, this.aturdido[i]);
+    this.aturdido[i] = Math.max(0, this.aturdido[i] - dt);
+    if (this.aturdidoContinuo[i] >= ATURDIMIENTO_MAXIMO - 1e-5) {
+      this.aturdido[i] = this.aturdidoContinuo[i] = 0;
+      this.resistenciaAturdimiento[i] = RESISTENCIA_ATURDIMIENTO;
+    } else if (this.aturdido[i] <= 0) this.aturdidoContinuo[i] = 0;
   }
 
   quitar(i: number) {

@@ -17,6 +17,14 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
 
 ## Correcciones comprobadas
 
+- **Lavado.** Los enemigos eliminados esperan a salir de la lista antes de reutilizar su casilla; desaparecen
+  los impactos duplicados y los ciclos de la rejilla. Cuatro regresiones cubren reutilización, contadores,
+  veinte fotos de red y horda real. Repetidas 58 partidas con 25 victorias; la receta bloqueada de Cortina sigue
+  pendiente de aprobación, sin alterar vida, daño, oleadas ni recompensas.
+- **Sangre y Ceniza.** Aplicado el control aprobado: 1,5 s máximos y 1 s de resistencia para todas las fuentes.
+  Sigilos cobran porcentajes de vida máxima y Astral 10 % (5 % con Sangre fría), con avisos y recargas correctos.
+  Cinco regresiones, cuatro comprobaciones de botones, 21 expediciones completas y dos Infinito hasta resultado
+  normal; no se declaró cerrado el balance de combinaciones, biomas y teléfonos.
 - **Show: guardado fallido.** La ronda solo se marca guardada cuando se confirma la escritura. Final y salida
   esperan la escritura en curso y reintentan cuando falla. Un diario local conserva respuestas/calificaciones
   pendientes y las recupera al volver a abrir el Show, la cabina o el libro, únicamente en la casa de origen.
@@ -78,6 +86,14 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 
 ## Cobertura y límites
 
+La comprobación específica de aturdimiento de Sangre y dificultad después del minuto 22 de Lavado está en
+[pruebas de combate](pruebas-combate-lavado-sangre.md): 58 partidas de Lavado en cuatro escenarios normales,
+series con mejoras pagadas y expediciones de Sangre con medición de golpes y control. En la revisión previa se reproduce
+encadenamiento de aturdimiento de hasta 4,63 segundos en Caballero; Lavado conserva bajas y victorias después
+del minuto 22. Javier aprobó y se aplica el límite de 1,5 s más 1 s de resistencia, y costes sobre vida máxima. Lavado corrige
+la reutilización que duplicaba impactos: repetidas 58 partidas, 25 victorias. El acceso a ambos aretes por mapa
+sigue siendo una propuesta solo simulada que espera aprobación.
+
 | Juego o sistema | Evidencia obtenida en esta revisión | Lo que falta para cerrar su recorrido |
 |---|---|---|
 | Dados Party | Reglas e IA y recorrido de navegador inicio → resultado → menú (37 s) | Precisión física de controles, persistencia, pausa y red |
@@ -88,8 +104,8 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 | Clue / ¿Quién fue? | Reglas e IA hasta acusación legal y recorrido de navegador completo (11 s) | Recorrido táctil completo y cartas privadas en red |
 | El Show de Nosotros | Tres episodios locales y uno en línea completo; pausa, pérdida de mensajes, dos fallos de guardado, conflictos resueltos, mismo resultado y un episodio en el libro; sin errores | Todas las escenas y controles en dispositivos |
 | Granja / Astra | Las 48 suites pasan. Seis comprobaciones de navegador casa–granja, inventario, correo, retorno y recarga sin errores | Campaña por controles normales desde cero; cerrar capacidades pendientes de la auditoría vigente y probar dispositivos |
-| Lavarse la cara | Doce partidas simuladas desde cero en «cara», con compras pagadas y varias victorias de 30 minutos | Final de la Ducha Helada, demás escenarios y capítulos, controles táctiles, pausa y red |
-| Sangre y Ceniza | Expedición simulada de cinco etapas y victoria en cementerio, monarca, peligro 1; perfil preparado, sin experiencia/equipo previo | Perfil desbloqueado desde cero, demás biomas, jefe final, controles y red |
+| Lavarse la cara | Reutilización de enemigos corregida para evitar consultas e impactos duplicados; cuatro regresiones. 58 partidas repetidas en Cara/Lavamanos/Bañera/Ducha normales: 25 victorias, cuatro con mejoras pagadas desde cero, bajas después del minuto 22. Muerte derrotada en los cuatro con equipo final preparado. Receta de Cortina bloqueada por aretes separados; propuesta solo simulada obtuvo evolución y derrotó Muerte en tres mapas | Aprobar acceso a ambos aretes en cada mapa; recorrido legal de Ducha y muerte sin equipo entregado; otros mapas/modos/disfraces, economía completa, controles físicos, guardado, red y Android |
+| Sangre y Ceniza | Expedición inicial preparada; auditoría específica con 18 expediciones reproducibles de Monarca, Campesino y Prisionero en peligro 1 hasta cinco etapas, perfiles iniciales o arsenal preparado, compras pagadas y control medido. Diez expediciones de Caballero en peligro 2: nueve victorias y una derrota; aturdimientos encadenados de hasta 4,63 s. Ajuste aprobado de 1,5 s más 1 s aplicado, costes sobre vida máxima y 21 expediciones de cinco etapas completas; dos Infinito hasta extracción perdida en etapa 16, con golpes recibidos durante diez minutos quietos en etapa 15; botones y flujo de grupo/control táctil en Chromium | progresión completa de desbloqueos, demás biomas/peligros, clases y combinaciones, controles, red y dispositivos |
 | Súper Manía | Primer día desde progreso nuevo hasta resultado en navegador: tres estrellas, nueve clientes atendidos, ganancia 98 y ningún error | Campaña desde cero; comprobar mejoras pagadas, días avanzados y recarga |
 | Cien Puertas | Cien acertijos resueltos en orden por toques/sensores simulados; cero fallos de revisión de puerta/objetos/página; cien avances y estrellas conservados al recargar | Campaña narrativa, retorno a la casa, red, otras semillas y sensores físicos de teléfono |
 | El Escudo de las Hermanas | Seis niveles desde cero en amigos y pareja, con presupuesto normal, pausa, guardado fallido recuperado y recarga por nivel; doce comprobaciones del motor, derrota e infinito hasta pérdida natural (41 oleadas en motor, 48 en el último recorrido de pareja). Derrota normal, reintento, cancelación y salida de pareja conservan las estrellas. Modo P23: victoria, recibo fallido recuperado y retorno a la granja sin errores | Controles físicos, escenas completas, cierre forzado mientras falla almacenamiento y recorrido de P23 desde su desbloqueo real en la campaña de la granja; derrota y salida de amigos en navegador |

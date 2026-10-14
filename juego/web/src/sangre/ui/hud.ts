@@ -1,13 +1,13 @@
 // El HUD de la expedición (DOM) y la capa 2D encima del 3D (números de daño, nombres y vida de los compañeros,
 // flechas hacia lo que está fuera de la pantalla, barras de los élites). El DOM solo se toca cuando algo cambia.
 import { CLASES } from '../datos/clases';
-import { ETAPAS, EVENTOS, JEFES, OBJETIVOS, SECUNDARIOS, costoAstral, type IdEvento } from '../datos/mundo';
+import { ETAPAS, EVENTOS, JEFES, OBJETIVOS, SECUNDARIOS, costoAstral, porcentajeAstral, type IdEvento } from '../datos/mundo';
 import { SANTOS } from '../datos/botin';
 import { NIVEL_MAX_ARMA, xpArma } from '../datos/armas';
 import { TIPOS, esJefe } from '../sim/catalogo';
 import { ENT, S, type Entidad, type Enemigos, type Recogible, type Sucesos } from '../sim/estado';
 import type { Mapa } from '../sim/mapa';
-import { DURACION_BRUJULA, SIGILOS, SIGILOS_ORDEN, TECLAS_SIGILO } from '../datos/sigilos';
+import { DURACION_BRUJULA, SIGILOS, SIGILOS_ORDEN, TECLAS_SIGILO, costoSigilo } from '../datos/sigilos';
 import { Minimapa, objetivoCercano, tesorosCerca } from './sigilos';
 import { xpPara, type Jugador } from '../sim/jugador';
 import { MINERALES_ORDEN, type IdObjetivo, type IdSecundario } from '../tipos';
@@ -213,12 +213,12 @@ export class Hud {
         <button class="boton boton-redondo boton-pausa" data-e="pausa" aria-label="Pausa">${glifo('pausa')}</button>
       </div>
       <div class="hud-armas" data-e="armas"></div>
-      <button class="hud-astral" data-e="astral" aria-label="Visión astral: cuesta vida" title="Visión astral (Q): un pulso que cuesta vida">${glifo('ojo')}<span class="costo" data-e="astralC"></span><span class="tecla">Q</span></button>
+      <button class="hud-astral" data-e="astral" aria-label="Visión astral: cuesta ${porcentajeAstral(j.sigilo('sangre_fria')) * 100} % de vida máxima" title="Visión astral (Q): cuesta ${porcentajeAstral(j.sigilo('sangre_fria')) * 100} % de vida máxima">${glifo('ojo')}<span class="costo" data-e="astralC"></span><span class="tecla">Q</span></button>
       <div class="hud-leyenda" data-e="leyenda" hidden>${LEYENDA.map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>
       ${j.sigilos.filter((id) => SIGILOS[id].activo).map((id, n) => {
         // (n: el primero o el segundo de los activos, con su tecla; la recarga va por la ranura k)
         const d = SIGILOS[id], k = j.sigilos.indexOf(id);
-        return `<button class="hud-sigilo" data-n="${n}" style="--sg:${d.color}" aria-label="${d.nombre}" title="${d.nombre} (${TECLAS_SIGILO[n]})">${medalla('sigilo', d.glifo, d.color)}<span class="recarga" data-e="sigR${k}"></span>${d.activo!.vida ? `<span class="costo">−${Math.round(d.activo!.vida * 100)}%</span>` : ''}<span class="tecla">${TECLAS_SIGILO[n]}</span></button>`;
+        return `<button class="hud-sigilo" data-n="${n}" style="--sg:${d.color}" aria-label="${d.nombre}" title="${d.nombre} (${TECLAS_SIGILO[n]}): ${d.activo!.vida ? `${Math.round(d.activo!.vida * 100)} % de vida máxima` : 'gratis'}">${medalla('sigilo', d.glifo, d.color)}<span class="recarga" data-e="sigR${k}"></span>${d.activo!.vida ? `<span class="costo">−${Math.round(d.activo!.vida * 100)}%</span>` : ''}<span class="tecla">${TECLAS_SIGILO[n]}</span></button>`;
       }).join('')}
       ${j.sigilo('cartografo') ? '<canvas class="hud-mapa" data-e="mapa" aria-label="Mapa del Cartógrafo"></canvas>' : ''}
       <button class="hud-habilidad" data-e="hab" aria-label="${def.habilidad.nombre}">${glifo(def.habilidad.glifo)}<span class="recarga" data-e="habR"></span><b data-e="habT"></b><span class="tecla">Espacio</span></button>`;
@@ -272,15 +272,20 @@ export class Hud {
       aviso(`${SIGILOS[id].nombre}: falta ${Math.ceil(this.sigRec[k])} s`, '', 1200);
       return false;
     }
+    const costo = costoSigilo(j.hpMax, id);
+    if (j.hp - costo < 1) {
+      aviso(`Te falta vida para ${SIGILOS[id].nombre} (cuesta ${costo}, ${Math.round(SIGILOS[id].activo!.vida * 100)} % de vida máxima)`, 'peligro', 1600);
+      return false;
+    }
     return true;
   }
 
   /** ¿Alcanza la vida para un pulso de visión astral? (si no, lo dice y no se pide) */
-  puedeAstral(j: Jugador, etapa: number) {
+  puedeAstral(j: Jugador) {
     if (j.estado !== 0 || j.astralT > 0) return false;
-    const costo = Math.ceil(costoAstral(etapa) * (j.sigilo('sangre_fria') ? 0.5 : 1));
+    const costo = costoAstral(j.hpMax, j.sigilo('sangre_fria'));
     if (j.hp > costo + 1) return true;
-    aviso(`Te falta vida para la visión astral (cuesta ${costo})`, 'peligro', 1600);
+    aviso(`Te falta vida para la visión astral (cuesta ${costo}, ${porcentajeAstral(j.sigilo('sangre_fria')) * 100} % de vida máxima)`, 'peligro', 1600);
     return false;
   }
 
@@ -345,9 +350,9 @@ export class Hud {
       }
     } else this.objetivo = null;
     this.minimapa?.actualizar(dt, est, this.local, this.objetivo);
-    // Visión astral: el botón prendido, lo que cuesta (vida, sube cada etapa) y la leyenda de colores
-    const costo = Math.ceil(costoAstral(est.cfg.etapa) * (j.sigilo('sangre_fria') ? 0.5 : 1));
-    this.texto('astralC', `−${costo}`);
+    // Visión astral: porcentaje de vida máxima, disponibilidad y leyenda de colores.
+    const costo = costoAstral(j.hpMax, j.sigilo('sangre_fria'));
+    this.texto('astralC', `−${porcentajeAstral(j.sigilo('sangre_fria')) * 100}%`);
     this.poner('astral!', j.hp > costo + 1 ? '' : 'no', (el, v) => el.classList.toggle('sin-vida', !!v));
     const astral = this.escena.astralFuerza > 0.5 ? 'si' : '';
     this.poner('astral?', astral, (el, v) => el.classList.toggle('activo', !!v));

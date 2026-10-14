@@ -3,7 +3,7 @@
 // en el anfitrión de una partida de hasta 4 y en Node con el bot. Cada `paso(dt)` deja lo que pasó en `suc`.
 import { Azar } from '../../casa/lavado/azar';
 import { Rejilla } from '../../casa/lavado/rejilla';
-import { DURACION_BRUJULA, SIGILOS, SIGILOS_ORDEN } from '../datos/sigilos';
+import { DURACION_BRUJULA, SIGILOS, SIGILOS_ORDEN, costoSigilo } from '../datos/sigilos';
 import { AVANCE_OBJETIVO, AVANCE_SOLO, BIOMAS, CUENTA_EXTRACCION, DESCANSO, DURACION_ASTRAL, DURACION_ETAPA, ETAPAS, MOD_ELITE, OLEADAS, PELIGROS, costoAstral, type DefBioma, type DefEnemigo } from '../datos/mundo';
 import { C, esExcavable, esSolida, type ConfigExpedicion, type IdBioma, type IdObjetivo, type IdSecundario } from '../tipos';
 import { TIPOS, TIPO_ALTAR, esJefe } from './catalogo';
@@ -575,7 +575,7 @@ export class Sim {
       E.lento[i] = Math.max(E.lento[i], Math.min(0.85, g.lento * (1 + (pot - 1) * 0.5)));
       E.lentoT[i] = 2 * durMult;
     }
-    if (g.aturde > 0 && !esJefe(t)) E.aturdido[i] = Math.max(E.aturdido[i], g.aturde * (E.elite[i] ? 0.5 : 1));
+    if (g.aturde > 0 && !esJefe(t)) E.aturdir(i, g.aturde * (E.elite[i] ? 0.5 : 1));
     if (j) {
       const real = Math.min(d, Math.max(0, antes));
       const r = j.resumen;
@@ -1387,7 +1387,7 @@ export class Sim {
   usarAstral(j: Jugador) {
     // (Sangre fría: la mitad de la vida y un segundo más)
     const fria = j.sigilo('sangre_fria');
-    const costo = Math.ceil(costoAstral(this.cfg.etapa) * (fria ? 0.5 : 1));
+    const costo = costoAstral(j.hpMax, fria);
     if (j.astralT > 0 || j.estado !== 0 || j.hp <= costo + 1) return;
     j.hp -= costo;
     j.astralT = DURACION_ASTRAL + (fria ? 1 : 0);
@@ -1399,7 +1399,7 @@ export class Sim {
     const id = j.sigilos[k];
     const act = id ? SIGILOS[id].activo : undefined;
     if (!id || !act || j.estado !== 0 || j.sigiloT[k] > 0) return;
-    const costo = Math.floor(j.hp * act.vida);
+    const costo = costoSigilo(j.hpMax, id);
     if (act.vida > 0 && j.hp - costo < 1) return;
     if (id === 'paso_sombra' && !this.pasoSombra(j)) return;
     j.hp -= costo;

@@ -334,8 +334,15 @@ varita, el cepillo, el champú, la peinilla, el secador, el jabón y el perfume/
 Los **disfraces de área** (perrito, bombero, astronauta, barbero, bata y turbante, sirena, princesa, ranita) siempre
 disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y se guarda (`manual`).
 
+
+**Corrección de enemigos de Lavado (14 de octubre):** una casilla eliminada espera a salir de la lista del cuadro
+antes de reutilizarse. Evita duplicaciones en la rejilla y múltiples impactos artificiales, manteniendo las cifras
+de armas y enemigos. Ver `scripts/probar-lavado-enemigos.mjs` y el informe de combate enlazado arriba.
+
 **La partida** (motor en `src/casa/lavado/motor.ts`, todo como el original):
-- **30 minutos**; al llegar, «¡Se acabó el agua caliente!» y sale la **Ducha Helada** (la Parca: no se le gana).
+- **30 minutos**; al llegar, «¡Se acabó el agua caliente!» y sale la **Ducha Helada** (la Parca). La victoria ya cuenta al minuto 30; matarla no es requisito.
+  Puede morir por daño con equipo final, pero la receta de la Cortina de terciopelo está bloqueada por los
+  aretes en mapas distintos; el acceso corregido espera aprobación (ver [pruebas de combate](../en-obra/pruebas-combate-lavado-sangre.md)).
   Pausa, retirarse y cobrar, y **modo Apurado** (todo más rápido; se abre ganando La Cara).
 - **La pausa tiene tres pestañas** (`interfaz.ts`, recetas en `evoluciones.ts`): **Mochila** (cada arma con su receta
   de evolución, sellos ✓ / ✗ / 6/8 y qué le falta en palabras; cada pasiva con el arma que hace evolucionar),

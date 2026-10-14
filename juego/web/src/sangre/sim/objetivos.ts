@@ -606,7 +606,7 @@ export function guardianMuerto(sim: Sim, i: number) {
   if (sim.az.n() < 0.6) sim.soltar(REC.HIERRO, x, y, 3);
   if (sim.az.n() < 0.5) sim.soltar(REC.SANGRE, x, y, 2);
   for (let k = 0; k < sim.n; k++) sim.soltar(REC.COFRE, x, y, 1);
-  for (let k = 0; k < E.max; k++) if (E.vivo[k] && k !== i && (E.x[k] - x) ** 2 + (E.y[k] - y) ** 2 < 64) E.aturdido[k] = Math.max(E.aturdido[k], 1.5);
+  for (let k = 0; k < E.max; k++) if (E.vivo[k] && k !== i && (E.x[k] - x) ** 2 + (E.y[k] - y) ** 2 < 64) E.aturdir(k, 1.5);
   sim.aviso(23);
   llamarCampana(sim);
 }

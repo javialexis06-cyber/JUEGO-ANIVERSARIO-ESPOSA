@@ -61,7 +61,7 @@ export function jefeMuerto(sim: Sim, i: number) {
   sim.jefe = -1;
   sim.obj.hecho = true;
   // Los secuaces se deshacen
-  for (let k = 0; k < E.max; k++) if (E.vivo[k] && k !== i && sim.az.n() < 0.6) E.aturdido[k] = 2;
+  for (let k = 0; k < E.max; k++) if (E.vivo[k] && k !== i && sim.az.n() < 0.6) E.aturdir(k, 2);
   llamarCampana(sim);
 }
 

@@ -68,7 +68,7 @@ export class PartidaInvitado {
     // (la visión astral la cobra el anfitrión: aquí se cuenta el pedido y va con el mando)
     const astral = () => {
       const j = this.espejo?.yo;
-      if (j && this.hud.puedeAstral(j, this.espejo!.sim.cfg.etapa)) this.astralCuenta++;
+      if (j && this.hud.puedeAstral(j)) this.astralCuenta++;
     };
     this.hud.alAstral = astral;
     o.mando.alAstral = astral;

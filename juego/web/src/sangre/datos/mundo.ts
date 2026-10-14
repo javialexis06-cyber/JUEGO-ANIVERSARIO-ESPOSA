@@ -304,9 +304,10 @@ export const AVANCE_OBJETIVO = 0.45;
  *  final, se abren los sepulcros): no hay que esperar al reloj. */
 export const PRISA_OBJETIVO = 4;
 export const PRISA_OBJETIVO_FINAL = 10;
-/** La visión astral es un pulso: deja ver lo que importa un segundo y medio y cuesta vida (más en cada etapa). */
+/** La visión astral cobra el 10 % de la vida máxima; Sangre fría reduce ese coste a la mitad. */
 export const DURACION_ASTRAL = 1.6;
-export const costoAstral = (etapa: number) => Math.min(60, 10 + 5 * Math.max(0, etapa - 1));
+export const porcentajeAstral = (sangreFria: boolean) => sangreFria ? 0.05 : 0.1;
+export const costoAstral = (vidaMaxima: number, sangreFria = false) => Math.ceil(vidaMaxima * porcentajeAstral(sangreFria));
 /** Oleadas en cada etapa (1, 2, 3, 3…); la etapa final tiene los sepulcros. */
 export const OLEADAS = [1, 2, 3, 3];
 /** Cada cuántos segundos se impacienta más la Noche desde que sale el Guardián. */

@@ -375,10 +375,10 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   encima de todo, aunque lo tape una pared: las vetas como cristales en rombo (hierro azul acero, oro dorado, sangre
   roja, huevos verdes) y con aros el botín del piso, los santuarios, las reliquias, los prisioneros, el objetivo
   (altares, carreta, campana que se defiende, el élite marcado) y la campana. Sale una leyenda de colores abajo.
-  **Es un pulso** (Javier: «que reste 10 de vida por uso, que aumente por etapa y que permita ver las cosas 1 o 2
-  segundos no más»): dura 1,6 s (`DURACION_ASTRAL`) y cuesta `costoAstral(etapa)` = 10 + 5 por etapa, hasta 60. Lo
-  cobra la simulación (`Sim.usarAstral`, suceso `S.ASTRAL`; el invitado lo pide con el mando) y nunca mata: sin vida
-  suficiente no sale y lo avisa. El botón lleva lo que cuesta; el número rojo sale sobre el personaje.
+  **Es un pulso**: dura 1,6 s (`DURACION_ASTRAL`) y, por ajuste aprobado el 14 de octubre, cobra el **10 % de
+  vida máxima**, redondeado hacia arriba (`costoAstral(hpMax)`). Sangre fría cobra el 5 % y dura 2,6 s. Lo cobra
+  la simulación (`Sim.usarAstral`, suceso `S.ASTRAL`; el invitado lo pide con el mando). Sin vida suficiente no
+  sale y lo avisa. El botón muestra el porcentaje y el número rojo sobre el personaje muestra los puntos cobrados.
 - **Recoger y minar**: el imán crece con el nivel (+4 % por nivel, hasta el doble: `Jugador.radioIman`); todo lo que
   suelta una veta (oro, hierro, sangre y los seis minerales) vuela solo a quien la rompió, con el pico, una bomba o
   un cartucho (`Sim.alRomper` pone `atraerA`). Las bombas (pólvora, racimo, polvorín, carga minera) rompen las paredes
@@ -389,14 +389,14 @@ juegos, botón «⚔️ Sangre y Ceniza». Desde la sala de amigos: `./sangre.ht
   simulación (`Sim.usarSigilo`, suceso `S.SIGILO`; el invitado los pide con el mando).
   - **Cartógrafo**: mapa en la esquina con el croquis de toda la etapa en sombra; lo que recorren (7 m alrededor de
     cada jugador) se aclara. Tocarlo lo agranda.
-  - **Brújula de sangre** (activo, 70 % de la vida que se tiene, recarga 15 s): por 15 s una flecha roja (y un rombo
+  - **Brújula de sangre** (activo, 70 % de la vida máxima, recarga 15 s): por 15 s una flecha roja (y un rombo
     encima si se ve) al objetivo pendiente más cercano, principal o secundario; cumplido el principal, al Guardián, al
     jefe o a la campana (`objetivosPendientes`). También sale en el mapa.
   - **Zahorí**: las vetas a menos de 12 m brillan siempre a media luz (la visión astral sin volver gris el mundo) y
     salen en el mapa.
   - **Ojo del cuervo**: flechitas moradas a cofres, llaves, equipo tirado, santuarios y prisioneros a menos de 25 m.
   - **Sangre fría**: el pulso astral cuesta la mitad y dura un segundo más.
-  - **Imán de tumba** (activo, 15 % de la vida, recarga 60 s): todo lo tirado en la etapa vuela hacia uno.
+  - **Imán de tumba** (activo, 15 % de la vida máxima, recarga 60 s): todo lo tirado en la etapa vuela hacia uno.
   - **La última vela**: una vez por etapa, el golpe que iba a tumbar deja con 1 de vida, 2 s intocable y una onda.
   - **Paso de sombra** (activo, gratis, recarga 10 s): 4 m hacia donde camina, sin atravesar paredes.
 - **Textos de ayuda del ratón**: los `title` se cambian por un globito del estilo del juego (`ui/ayuda.ts`); el del
@@ -622,3 +622,15 @@ sangre_atlas (2 × 2, cuatro variantes). Las de luz y fuego son para mezcla adit
 blancas para teñirlas.
 
 La guía de las figuras (piezas, materiales, alias y cómo regenerarlas) está en [`sangre-figuras.md`](sangre-figuras.md).
+
+### Control de la horda · ajuste aprobado el 14 de octubre
+
+Todas las fuentes de aturdimiento usan `Enemigos.aturdir`: una racha de hasta 1,5 s abre 1 s de resistencia,
+durante el que el enemigo recupera su movimiento y ataque. Los impactos siguen dañando y empujando. Los efectos
+cortos terminan normalmente; enemigos nuevos limpian sus relojes y los jefes conservan su inmunidad. El anfitrión
+simula estos relojes; los invitados reciben el estado visual. Sigilos y Astral cobran sobre vida máxima, con
+cálculos compartidos entre motor y HUD, rechazo por falta de vida y recargas originales.
+
+Cobertura y límites: [pruebas de combate](../en-obra/pruebas-combate-lavado-sangre.md). No se añadió Berserk ni otro
+ajuste del Infinito: la prueba con personajes fuertes quietos llegó a recibir golpes, pero no cubre todo el equipo
+permanente, biomas o combinaciones.

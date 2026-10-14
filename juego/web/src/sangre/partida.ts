@@ -74,7 +74,7 @@ export class Partida {
     // (la visión astral la cobra la simulación: aquí solo se pide, si alcanza la vida)
     const astral = () => {
       const j = this.sim?.J[o.local];
-      if (j && this.hud.puedeAstral(j, this.sim!.cfg.etapa)) j.pideAstral = true;
+      if (j && this.hud.puedeAstral(j)) j.pideAstral = true;
     };
     this.hud.alAstral = astral;
     o.mando.alAstral = astral;

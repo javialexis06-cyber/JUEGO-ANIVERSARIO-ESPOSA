@@ -259,7 +259,7 @@ export function tick(sim: Sim, j: Jugador, dt: number) {
       m.huecaT = 10;
       sim.suc.push(S.ONDA, j.x, j.y, 6, -3);
       sim.enRadio(j.x, j.y, 6, LISTA);
-      for (const i of LISTA) if (!esJefe(sim.E.tipo[i])) sim.E.aturdido[i] = Math.max(sim.E.aturdido[i], 2);
+      for (const i of LISTA) if (!esJefe(sim.E.tipo[i])) sim.E.aturdir(i, 2);
     }
   }
   if (j.tiene('eclipse_propio') && lento) {
@@ -495,7 +495,7 @@ function mezclar(sim: Sim, j: Jugador, i: number, sus: number) {
     } else if (combo & 4 && combo & 2) {
       sim.suc.push(S.REACCION, x, y, 1);
       sim.enRadio(x, y, 2.2, LISTA);
-      for (const o of LISTA) E.aturdido[o] = Math.max(E.aturdido[o], 1);
+      for (const o of LISTA) E.aturdir(o, 1);
       sim.explosion(x, y, 2.2, (10 + j.nivel) * mult, g, 3);
     } else if (combo & 1 && combo & 4) {
       sim.suc.push(S.REACCION, x, y, 2);
@@ -930,7 +930,7 @@ export function moverEmbestida(sim: Sim, j: Jugador, dt: number) {
       sim.suc.push(S.ONDA, j.x, j.y, 2.2, -4);
       sim.enRadio(j.x, j.y, 2.2, LISTA);
       for (const i of [...LISTA]) {
-        sim.E.aturdido[i] = Math.max(sim.E.aturdido[i], 1);
+        sim.E.aturdir(i, 1);
         sim.danar(i, 15 + j.nivel, g);
       }
       if (j.spec === 2) {
@@ -1105,7 +1105,7 @@ export function habilidad(sim: Sim, j: Jugador) {
       }
       sim.suc.push(S.ONDA, j.x, j.y, 5, -6);
       sim.enRadio(j.x, j.y, 5, LISTA);
-      for (const i of LISTA) if (!esJefe(E.tipo[i])) E.aturdido[i] = Math.max(E.aturdido[i], 1.5);
+      for (const i of LISTA) if (!esJefe(E.tipo[i])) E.aturdir(i, 1.5);
       break;
     }
   }
@@ -1194,7 +1194,7 @@ function juglarTick(sim: Sim, j: Jugador, dt: number) {
     sim.enRadio(j.x, j.y, 3, LISTA);
     for (const i of LISTA) {
       if (esJefe(sim.E.tipo[i])) continue;
-      sim.E.aturdido[i] = Math.max(sim.E.aturdido[i], 0.6);
+      sim.E.aturdir(i, 0.6);
       if (j.spec === 1) sim.E.miedo[i] = 1.5;
     }
   }
