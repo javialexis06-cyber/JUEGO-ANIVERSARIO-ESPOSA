@@ -51,7 +51,7 @@ export const SERENA: DefLuchador = {
 
 export const TAREK: DefLuchador = {
   id: 'tarek', nombre: 'Tarek', titulo: 'El Toro de Brasaviva', estilo: 'Pesado: aguanta golpes y embiste como sus vacas de lava', color: '#e0572e', cuerpo: 'el',
-  aspecto: { cuerpo: 'el', piel: '#a8714d', pelo: '#1f1a18', detalles: { peinado: 'pelo_rapado#1f1a18', cabeza: 'sombrero_vaquero#8a3a2a', cara: 'barba#1f1a18', arriba: 'camisa_cuadros#c4553f#2b2422', abajo: 'pantalon#6b3a2a', pies: 'botas_vaqueras#5a2a1a' } },
+  aspecto: { cuerpo: 'el', piel: '#a8714d', pelo: '#1f1a18', detalles: { peinado: 'pelo_rizos#1f1a18', cabeza: 'panoleta#c4553f#f6cf5a', cara: 'barba#1f1a18', arriba: 'camisa_cuadros#c4553f#2b2422', abajo: 'pantalon#6b3a2a', pies: 'botas_vaqueras#5a2a1a' } },
   escala: 1.08, vida: 1500, velocidad: 2.5, salto: 11.2, peso: 0.78, aguante: 520,
   golpes: { ...normales({ fuerza: 1.16, alcance: 1.06, lentitud: 3, efecto: 'fuego', armadura: 1 }), especial: embestida('Embestida volcánica', 'fuego', { dano: 96, vel: 9.5, armadura: 1 }), super: rafaga('Estampida de lava', 'fuego', 325) },
   poses: { entrada: 'musculo', victoria: ['musculo', 'jarras'], derrota: 'tirado' }, voz: 'tarek',

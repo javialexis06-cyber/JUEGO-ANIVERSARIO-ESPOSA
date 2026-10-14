@@ -6,7 +6,7 @@ import type { AspectoJugador } from '../../salas/tipos';
 import type { DefLuchador } from '../tipos';
 import { Muneco } from './muneco';
 
-const VERSION = 'peleas-retratos-3';
+const VERSION = 'peleas-retratos-4';
 const memoria = new Map<string, Promise<string>>();
 let cola: Promise<unknown> = Promise.resolve();
 
