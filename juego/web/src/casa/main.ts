@@ -1384,6 +1384,8 @@ const JUEGOS = {
   sangre: { punto: 'arcade', url: './sangre.html', nombre: 'Sangre y Ceniza' },
   granja: { punto: 'arcade', url: './granja-v3.html', nombre: 'Nuestra granjita' },
   escudo: { punto: 'arcade', url: './escudo.html', nombre: 'El Escudo de las Hermanas' },
+  carreras: { punto: 'arcade', url: './carreras.html', nombre: 'La Carrera de las Tres Lunas' },
+  celular: { punto: 'arcade', url: './celular.html', nombre: 'Desaparecidos de Astra' },
 } as const;
 let yendoAJugar = false;
 
@@ -2156,6 +2158,8 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-sangre', texto: 'Sangre y Ceniza', icono: '<span class="ico ico-emoji">⚔️</span>' },
         { id: 'jugar-granja', texto: 'Nuestra granjita', icono: '<span class="ico ico-emoji">🌱</span>' },
         { id: 'jugar-escudo', texto: 'El Escudo de las Hermanas', icono: '<span class="ico ico-emoji">🛡️</span>' },
+        { id: 'jugar-carreras', texto: 'Carrera de las Tres Lunas', icono: '<span class="ico ico-emoji">🏁</span>' },
+        { id: 'jugar-celular', texto: 'Desaparecidos de Astra', icono: '<span class="ico ico-emoji">📱</span>' },
         { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },
       );
       break;
@@ -2320,6 +2324,10 @@ async function alAccion(id: string) {
       return jugar('granja');
     case 'jugar-escudo':
       return jugar('escudo');
+    case 'jugar-carreras':
+      return jugar('carreras');
+    case 'jugar-celular':
+      return jugar('celular');
     case 'retrete':
       // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse,
       // ver quién ha volado más lejos y abrir la tienda del retrete

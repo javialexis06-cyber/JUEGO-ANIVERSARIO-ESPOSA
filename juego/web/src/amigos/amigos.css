@@ -486,6 +486,10 @@ body.amigos::before {
 .am-juego.cocina .txt b { color: #b0506d; }
 .am-juego.escudo { background: linear-gradient(180deg, #2a2350, #14123a); color: #f3ead8; }
 .am-juego.escudo .txt b { color: #ffd98a; }
+.am-juego.carreras { background: linear-gradient(180deg, #ffe0c4, #f9b98c); color: #3d2b27; }
+.am-juego.carreras .txt b { color: #b0506d; }
+.am-juego.celular { background: linear-gradient(180deg, #5a3620, #2e1c12); color: #f6e7d2; }
+.am-juego.celular .txt b { color: #ffcf8a; }
 .am-no-soy {
   align-self: flex-end;
   border: 0;

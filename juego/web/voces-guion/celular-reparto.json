@@ -1,0 +1,247 @@
+{
+ "teresa": {
+  "voz": "aYQAm4rWuigkeuRA5i92",
+  "dueno": "462b961b525b9e40ce46f4630ede3047eb01a677eb74d5ec7c1c46426af88d99",
+  "nombre": "Grandma Aurora - Warm, Deep & Loving",
+  "acento": "latin american",
+  "edad": "old"
+ },
+ "marcela": {
+  "voz": "rrErIO88ehxTnspOjKvf",
+  "dueno": "c4c78f1424f8e5c117d9c446ae388c5a4f02e8b05dae2f345063b983bc5aeb17",
+  "nombre": "Lizy - Sweet, Charming and Captivating",
+  "acento": "latin american",
+  "edad": "young"
+ },
+ "mama": {
+  "voz": "rSli4suT8lu20NR6pDkq",
+  "dueno": "7a5e774cc821aa1578ee9c274555f997bf8c663e8eed102c1f2ccd8f0f65a66a",
+  "nombre": "Ines - Natural,  Warm, Caring",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "julian": {
+  "voz": "18GZPpJvaVG53Nt3H52N",
+  "dueno": "30c84624b754ac8717d16594475d77ca16b503227b70e44c6aae42309e4e86d3",
+  "nombre": "Sam Adam - Captivating and Energetic",
+  "acento": "latin american",
+  "edad": "young"
+ },
+ "ursula": {
+  "voz": "RjnDg9S3IUlYzp0QIp3R",
+  "dueno": "9a50e68721cbcf4243b7e0057f1be4c9a6349a9885eb3dc6380ced50347400b8",
+  "nombre": "Johana - Clear, Calm, Neutral",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "eloy": {
+  "voz": "UiSSTkQfzyt8mQUKITpS",
+  "dueno": "15de372093c54c04e9f64a8cb9d0b96c7caa042bf340ff2170f64171bff8bcff",
+  "nombre": "Alberto - Deep, Serious and Commanding",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "sora": {
+  "voz": "D9MdulIxfrCUUJcGNQon",
+  "dueno": "1b013eea0767eb5d0d9ce81dfa12f1988e0a47964b6a5c65bfb3e5563faf314e",
+  "nombre": "Jhenny - Gentle, Soothing and Meditative",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "teofilo": {
+  "voz": "5z6tF6eAwkAluMyjDFJJ",
+  "dueno": "5e8fd6428c9498c23324b85ab2b82600b6ddea2940c0d0a6e6cef2af50a3aa09",
+  "nombre": "Alejo - Calm Storyteller",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "matea": {
+  "voz": "v8yzmDdBfv2jssuOTsa0",
+  "dueno": "1268706d6f35d09061557f736eb1547fe96a31b8397cf56b23d715cbf38bf5d2",
+  "nombre": "Valiente - Friendly, Kind and Confident",
+  "acento": "colombian",
+  "edad": "young"
+ },
+ "zora": {
+  "voz": "z24CeWYH9yhrPKMBKU69",
+  "dueno": "67f07a8c297852155ea12fb3ec94a45c557b3b8096429ce9e76291733331e2e4",
+  "nombre": "Carolina Navarro - Professional VA",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "orin": {
+  "voz": "yc6qrqVR9CkMb2zwb71s",
+  "dueno": "efaf289355b2368ddd7bacfc6e3d9b0fef0910c4b1b50ddf13b2f1cb4ffd4f02",
+  "nombre": "Valentin - Deep, Soft and Calm",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "maia": {
+  "voz": "qHkrJuifPpn95wK3rm2A",
+  "dueno": "a5457557280d83c0c3d591443bb3e47c4d7010eeedcbbc03b9e8b2f34e4bc9dc",
+  "nombre": "Andrea - Polite, Cheerful and Calm",
+  "acento": "latin american",
+  "edad": "young"
+ },
+ "nahuel": {
+  "voz": "dQ0C8BEdKF2odmELvNee",
+  "dueno": "2d6237506f7d86cc72d7d8f454f94d0760c71ca60d3d7ffa7cc72c1f35227db3",
+  "nombre": "David - Clear, Warm and Patient",
+  "acento": "latin american",
+  "edad": "young"
+ },
+ "joaquin": {
+  "voz": "5da4nOCHLuswM3TyAUSo",
+  "dueno": "049a49d28ca8d8be1231ba41455f26c0a116964931d209f2e122d868f766c4fd",
+  "nombre": "Diego - Casual & Friendly",
+  "acento": "argentine",
+  "edad": "middle_aged"
+ },
+ "said": {
+  "voz": "94zOad0g7T7K4oa7zhDq",
+  "dueno": "027c973dc3f5795166a060701677e1a8542f48d44104dc42fc0325deae59bf17",
+  "nombre": "Mauricio - Calm and Conversational",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "helena": {
+  "voz": "GJid0jgRsqjUy21Avuex",
+  "dueno": "fe76b1946e3176a9b3fac38ec38d738c2e70c652170b13baeef8bc91fa0d2e49",
+  "nombre": "Emma - Authoritative, Assured and Clear",
+  "acento": "chilean",
+  "edad": "middle_aged"
+ },
+ "tobias": {
+  "voz": "htFfPSZGJwjBv1CL0aMD",
+  "dueno": "b8cf26021a2ac6dc9844a696dd285d45cf08a600b354a29300f25de0ee898f4d",
+  "nombre": "Antonio - Confident, Gentle and Clear",
+  "acento": "latin american",
+  "edad": "young"
+ },
+ "abundio": {
+  "voz": "8mBRP99B2Ng2QwsJMFQl",
+  "dueno": "c2b99f1e7f3026561140b0ea88cfdc8e39dce61aae81b0f4dc033c322077d7fe",
+  "nombre": "El Faraon - Full, Clear, Mellow",
+  "acento": "latin american",
+  "edad": "old"
+ },
+ "quintero": {
+  "voz": "HIkzxzvsigFIynXHHKhU",
+  "dueno": "5fe3e61156d5d328722d9cbc113952dd177c71a9dae44f92597b35701a3daa4d",
+  "nombre": "Hugo M - Deep & Mysterious ",
+  "acento": "mexican",
+  "edad": "middle_aged"
+ },
+ "rosalba": {
+  "voz": "NKNnfxyJilN0daSOIf11",
+  "dueno": "9deaf7459184372f885b98fb0911fae2973273d6dd0a611dbd3b1d362417d968",
+  "nombre": "Runa",
+  "acento": "venezuelan",
+  "edad": "young"
+ },
+ "abril": {
+  "voz": "JYyJjNPfmNJdaby8LdZs",
+  "dueno": "058cd97fa3064ea75008a2a674a70f440e9e1149f3d5fe068f9a61a0a181e6b4",
+  "nombre": "Marlene - Melodic, Pleasant and Bright",
+  "acento": "mexican",
+  "edad": "young"
+ },
+ "esteban": {
+  "voz": "oqO5cdAzjE5Ik5xWIZRL",
+  "dueno": "fb580f4adc1c6ca6f2aabe4add40188c5e4996c36c0a2ef6bcec2850d80c08a2",
+  "nombre": "Ivan - Breathy, Wise-Sounding",
+  "acento": "latin american",
+  "edad": "old"
+ },
+ "simon": {
+  "voz": "15bJsujCI3tcDWeoZsQP",
+  "dueno": "62e806c54b4a5bda7272b248b36c46b099b77b1414b446a2ceefa7d787f94940",
+  "nombre": "Santiago - Clear, Playful, Warm",
+  "acento": "",
+  "edad": "young"
+ },
+ "ezequiel": {
+  "voz": "9TcPbUAhHnAV8mzFDAWU",
+  "dueno": "64c349917b964dd091bf8969e5e4965071c3c5f80d47c792aaff5f309f2f8dc9",
+  "nombre": "El Faraón - Powerful and Resonant",
+  "acento": "latin american",
+  "edad": "old"
+ },
+ "carmela": {
+  "voz": "gxSxrhNNXvdHpOH0EHjV",
+  "dueno": "3eec6ce1f19ff2f4be0db165cb332e3102d088909f2672a66ba7e1c3b49443b9",
+  "nombre": "Gabriela González - Bubbly, Clear, Warm",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "petra": {
+  "voz": "WJvDlvlNQAsEW1JX0xFc",
+  "dueno": "1ee7373e339334d3578aceef78ad2b47d820130d35f30463bdec330565aea96f",
+  "nombre": "Barbara - Young, Sweet and Playful",
+  "acento": "mexican",
+  "edad": "young"
+ },
+ "hugo": {
+  "voz": "Rjifxhi6k5bvVbikojgE",
+  "dueno": "b1dbf0f4a9e249262dd8748dbc2e1ecabfd5281bb2a90d34ba40d69c201a93c8",
+  "nombre": "Alex Del",
+  "acento": "mexican",
+  "edad": "middle_aged"
+ },
+ "gregoria": {
+  "voz": "UOxKeHS7lixzgw35mtAR",
+  "dueno": "45e0512fae6329c3caafbd72fd4b9d30b9965d3529dcf6a8551c2ad433e4252e",
+  "nombre": "Grandma Titina - Relaxed and Reassuring",
+  "acento": "latin american",
+  "edad": "old"
+ },
+ "iria": {
+  "voz": "1aJyZpkt0vxhGPBnPyrs",
+  "dueno": "96f4174624b1c8079c37c958b0581b30132c9618a3899114d97554c24b661255",
+  "nombre": "Fernanda Sanmiguel - Neutral and Serious",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "celestina": {
+  "voz": "9oPKasc15pfAbMr7N6Gs",
+  "dueno": "55cba8705b825a016bff97f66791aa0700e2e07e12b7bbfe17aedc068776c0c1",
+  "nombre": "Valeria - Cheerful, Youthful, Catchy",
+  "acento": "argentine",
+  "edad": "middle_aged"
+ },
+ "bernardo": {
+  "voz": "Rl2JPHsuEWSfwCD4ZHIQ",
+  "dueno": "373cb6554e29c2cd05deb8b203fc0f00d02adea21b5899c9dbfc28c037bcce19",
+  "nombre": "El Faraon - Powerful and Mysterious",
+  "acento": "latin american",
+  "edad": "old"
+ },
+ "samira": {
+  "voz": "p18tR9wFA5Ng9WhfWI0o",
+  "dueno": "edaee712bf3ecaec0f00f937505b415f66eb856c3244838d94a125460d207227",
+  "nombre": "Isabella - Natural, friendly, Inviting",
+  "acento": "latin american",
+  "edad": "young"
+ },
+ "kenzo": {
+  "voz": "tomkxGQGz4b1kE0EM722",
+  "dueno": "027c973dc3f5795166a060701677e1a8542f48d44104dc42fc0325deae59bf17",
+  "nombre": "Mario - Animated and chatty",
+  "acento": "latin american",
+  "edad": "young"
+ },
+ "mauro": {
+  "voz": "IKLHad40XVKWTKfchxh0",
+  "dueno": "db3dcba466b56eb0d4c1452f0f35ad4486c61696ae2ac448a299c1af13fd63bc",
+  "nombre": "Valentino - Deep, Raspy and Melodic",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ },
+ "boris": {
+  "voz": "TbvhqFC7AApJv7hnNvmY",
+  "dueno": "bd048e4b071f8b2b3ebeb1c364498a3a8f66eea27e81b34614e0df3cead911e3",
+  "nombre": "Victor - Deep, calm, warm, friendly",
+  "acento": "latin american",
+  "edad": "middle_aged"
+ }
+}
