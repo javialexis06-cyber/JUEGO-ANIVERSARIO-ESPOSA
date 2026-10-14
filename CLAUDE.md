@@ -198,10 +198,8 @@ npm run dev                    # http://localhost:5173 (casa), /super.html, /pue
 ## 9. Estado
 
 Lo hecho está descrito en `docs/sistemas/`; lo que falta, en orden, en **`docs/pedidos.md`** (arriba de todo,
-«Por dónde seguir», dice cuál es el siguiente y qué espera a Javier). Frente a medias en
-GitHub, sin juntar: `trabajo/show` (El Show de Nosotros). Para retomarlo:
-`git fetch origin trabajo/show && git worktree add .wt/show trabajo/show` y
-`ln -s "$PWD/juego/web/node_modules" .wt/show/juego/web/node_modules`; lo que falta está al final de su documento.
+«Por dónde seguir», dice cuál es el siguiente y qué espera a Javier). El Show de Nosotros ya está juntado (la rama
+`trabajo/show` quedó vieja: no se retoma).
 
 **Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase.
 

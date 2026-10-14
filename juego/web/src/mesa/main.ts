@@ -457,6 +457,7 @@ async function jugar(
   modo: Modo,
   opciones: { empieza?: Rol; id?: string; e?: unknown; n?: number; red?: RedMesa; sala?: Sala; otroSala?: string } = {},
 ) {
+  if (entrada.id === 'show') return jugarShow(modo, opciones);
   const juego = await entrada.cargar();
   if (!juego) {
     aviso(`${entrada.nombre} está en construcción.`);
@@ -490,12 +491,36 @@ async function jugar(
   }
 }
 
-async function elegirJuego(id: string, colores?: 1 | 2) {
+// El Show de Nosotros tiene su propio estudio de televisión (src/mesa/show): la mesa solo lo abre y le pasa el canal
+let moduloShow: typeof import('./show/show') | null = null;
+async function jugarShow(modo: Modo, opciones: { empieza?: Rol; id?: string }) {
+  partida?.abandonar();
+  partida = null;
+  const empieza = opciones.empieza ?? quienEmpieza;
+  quienEmpieza = otro(empieza);
+  moduloShow ??= await import('./show/show');
+  mostrar('menu');
+  await moduloShow.abrirShow({
+    modo, yo, empieza, canal, rapido: RAPIDO,
+    id: opciones.id ?? `${Date.now().toString(36)}${Math.floor(azar() * 1e6).toString(36)}`,
+    alSalir: () => pintarMenu(),
+    alRevancha: () => void (modo === 'linea' ? elegirJuego('show', undefined, true) : jugar(JUEGOS.find((j) => j.id === 'show')!, modo)),
+  });
+}
+
+async function elegirJuego(id: string, colores?: 1 | 2, sinCabina = false) {
   const entrada = JUEGOS.find((j) => j.id === id);
   if (!entrada) return;
   sonido.activar();
   sonido.toque();
   // El Parchís se juega con un color cada uno (un dado) o con dos (dos dados al centro)
+  // El show pasa primero por su cabina (el libro y la pregunta del día); de ahí sigue como cualquier juego
+  if (id === 'show' && prefs.modo === 'sala') {
+    // La sala con código puede ser con amigos: el show es solo de la pareja
+    hoja('<h3>El Show de Nosotros</h3><p>El show se juega en pareja: en el mismo celular, contra el presentador o en línea por la casa.</p>', [{ texto: 'Entendido', clase: 'boton-tomate' }]);
+    return;
+  }
+  if (id === 'show' && !sinCabina && !(await (await import('./show/cabina')).abrirCabina(yo, prefs.modo === 'sala' ? 'local' : prefs.modo))) return;
   if (id === 'parchis' && !colores) {
     hoja(`<h3>Parchís</h3><p>¿Cada uno con <b>un color</b> (4 fichas y un dado) o con <b>dos colores</b> (8 fichas y dos dados que caen al centro)?</p>`, [
       { texto: '1 color', alTocar: () => void elegirJuego('parchis', 1) },
@@ -614,11 +639,13 @@ function iniciarCanal() {
     alInvitacion,
     alMovimiento: (id, n, m) => {
       if (partida && partida.id === id) partida.llegaMovimiento(n, m);
+      else moduloShow?.llegaShow(id, n, m);
     },
     alEscena: (id, escena, de) => {
       if (partida && partida.id === id && !esNeutro()) void lanzarEscena(escena, de, false);
     },
     alSalir: (id) => {
+      moduloShow?.salioShow(id);
       if (partida && partida.id === id && partida.modo === 'linea') {
         partida.abandonar();
         partida = null;
@@ -719,6 +746,9 @@ document.addEventListener('click', (ev) => {
 
 // Botón «atrás» de Android (en el computador, la tecla Esc)
 const atras = () => {
+  // El Show de Nosotros: primero se cierra el libro, después el Show
+  if (document.querySelector('#libro')) return void (document.querySelector('.libro-cerrar') as HTMLElement | null)?.click();
+  if (moduloShow?.showAbierto()) return moduloShow.atrasShow();
   const espera = document.querySelector<HTMLElement>('.sala-espera.visible [data-a="salir"]');
   const juegoSala = document.querySelector<HTMLElement>('.juego-sala');
   if (juegoSala) juegoSala.remove();
@@ -1177,6 +1207,8 @@ async function vitrina() {
   });
 }
 if (params.has('vitrina')) void vitrina();
+// El libro de nosotros directo (desde la pregunta del día de la casa): ?libro
+if (params.has('libro')) void import('./show/libro').then((m) => m.abrirLibro(yo));
 
 // ---------------------------------------------------------------------------
 // Escenas premium: se compran en la tienda de la casa y se lanzan aquí con 🎭 (en línea, en los dos celulares)

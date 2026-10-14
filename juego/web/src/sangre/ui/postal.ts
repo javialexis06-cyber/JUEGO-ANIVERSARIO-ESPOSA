@@ -3,7 +3,8 @@
 // nombre del lugar y el narrador lo presenta (la misma voz de las postales de la granja, LUG.<bioma>). Se salta con un
 // toque, Escape o Espacio. Lo visto se recuerda en este teléfono. Las líneas no nombran a la pareja: también la ven los
 // amigos.
-import { POSTALES } from '../../granja-v3/cine-lineas-lugares';
+import { POSTALES_SANGRE as POSTALES } from '../datos/postales';
+import { CON_PAREJA } from '../historia_pareja';
 import { BIOMAS } from '../datos/mundo';
 import type { Escena3D } from '../vista/escena';
 
@@ -44,7 +45,8 @@ export async function verPostalBioma(bioma: string, escena: Escena3D, pausar: (s
   if (!linea || enCurso) return;
   enCurso = true;
   ponerEstilo();
-  voces ??= fetch('./granja/cine/medios.json').then((r) => (r.ok ? r.json() : {})).then((m: { voces?: Record<string, { archivo: string; seg: number }> }) => m.voces ?? {}).catch(() => ({}));
+  // Los amigos conservan las postales escritas sin solicitar medios de la granja excluidos de su paquete.
+  voces ??= CON_PAREJA ? fetch('./granja/cine/medios.json').then((r) => (r.ok ? r.json() : {})).then((m: { voces?: Record<string, { archivo: string; seg: number }> }) => m.voces ?? {}).catch(() => ({})) : Promise.resolve({});
   const voz = (await voces)[linea.id];
   const capa = document.createElement('div');
   capa.className = 'postal-sangre';

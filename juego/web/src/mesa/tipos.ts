@@ -89,7 +89,7 @@ export interface Vista<E, M> {
 }
 
 export interface JuegoMesa<E = unknown, M = unknown> {
-  id: 'dados' | 'mancala' | 'cajas' | 'parchis' | 'parchis2' | 'clue';
+  id: 'dados' | 'mancala' | 'cajas' | 'parchis' | 'parchis2' | 'clue' | 'show';
   nombre: string;
   /** Una línea para el menú. */
   resumen: string;

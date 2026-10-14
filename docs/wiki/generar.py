@@ -130,7 +130,7 @@ def main():
         content = source(path, revision) if text is None else text
         add(page, f'# {page.replace("-", " ")}\n\n{status}\n\n' + convert(content, path, revision) + f'\n\nFuente técnica: [documento de referencia]({REPO}/blob/{revision}/{path}). Esta página no certifica la versión de la APK instalada.\n')
 
-    modules = ['PUEBLO', 'VIVIENDAS', 'DORMITORIOS', 'VIDA-SOCIAL', 'ENCARGOS', 'CORREO', 'COLECCIONES', 'FESTIVALES', 'CARPINTERIA', 'COMPANIA', 'HABILIDADES', 'GANADERIA', 'NARRATIVA', 'COMUNIDAD', 'BALANCE', 'REUNIONES', 'PESCA', 'CERCOS', 'FLUIDEZ']
+    modules = ['PUEBLO', 'VIVIENDAS', 'DORMITORIOS', 'VIDA-SOCIAL', 'ENCARGOS', 'CORREO', 'COLECCIONES', 'FESTIVALES', 'CARPINTERIA', 'COMPANIA', 'HABILIDADES', 'GANADERIA', 'NARRATIVA', 'COMUNIDAD', 'BALANCE', 'REUNIONES', 'PESCA', 'CERCOS', 'FLUIDEZ', 'PASTOREO']
     source_map.update({f'juego/web/src/granja-v3/{m}-INTEGRACION.md': 'Granja-' + m.title() for m in modules})
     source_map.update({'juego/web/src/granja-v3/PLAN-MOTOR-COMPLETO.md': 'Plan-del-motor', 'juego/web/src/granja-v3/PLAN-PUEBLOS-MUNDOS.md': 'Plan-de-pueblos-y-mundos', 'juego/web/src/granja-v3/REPARTO-COMPLETO.md': 'Catalogo-tecnico-del-reparto', 'juego/web/src/granja-v3/ASTRA-INTEGRACION.md': 'Granja-Astra-Integracion', 'juego/web/src/granja-v3/HISTORIA-INTEGRACION.md': 'Granja-Campana-Integracion', 'juego/web/src/granja-v3/PREMIOS-INTEGRACION.md': 'Granja-Premios-Integracion', 'juego/web/src/granja-v3/VIDA-ASTRA-INTEGRACION.md': 'Granja-Vida-Astra', 'juego/web/src/granja-v3/REGIONES-INTEGRACION.md': 'Granja-Regiones'})
     general = {
@@ -202,7 +202,7 @@ def main():
     doors = sections(source('docs/sistemas/cien-puertas.md'))
     public_doors = '\n'.join(c for t, c in doors if not t.startswith(('La historia', 'Los recuerdos (de verdad)', 'Investigación:')))
     doc('Cien-Puertas', 'docs/sistemas/cien-puertas.md', '**Estado: cien puertas funcionales documentadas; las revisiones y cambios pendientes se indican en el texto.** El Olvido oculta fragmentos del camino de regreso. Esta guía contiene los acertijos y soluciones documentadas; los recuerdos personales no se reproducen.', text=public_doors)
-    doc('El-Show-de-Nosotros', 'docs/show.md', '**Estado: desarrollo en rama separada `trabajo/show`; integración y revisión pendientes en la rama principal.** No se da por publicado en la APK.', revision=show)
+    doc('El-Show-de-Nosotros', 'docs/sistemas/show.md', '**Estado: juego existente (en la mesa, desde el 13 de octubre de 2026).**', revision=show)
 
     for page, title in [('Dados', 'Dados'), ('Mancala', 'Mancala'), ('Puntos-y-Cajas', 'Puntos y Cajas'), ('Parchis', 'Parchís')]:
         table = source('docs/sistemas/juegos-mesa.md')

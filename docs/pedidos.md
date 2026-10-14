@@ -1,5 +1,7 @@
 # Pedidos de Javier en cola
 
+**Encargo de motor y verificación (13 de octubre):** completar lo que falte del motor de cada juego y probar partidas de inicio a fin. Javier aprueba previamente cualquier cambio de dificultad, balance, costes, precios o recompensas. El seguimiento por juego, alcance real de las pruebas y límites pendientes está en [auditoría de motores](en-obra/auditoria-motores.md). Esta revisión no declara terminadas las campañas por usar ganchos de prueba o partidas preparadas.
+
 ## Frente de granja en paralelo
 
 **Arreglos de la granja (12 de octubre, lo siguiente que se hace):** Javier mandó una lista larga (rendimiento, menú de
@@ -35,7 +37,7 @@ por las instrucciones anteriores de esta cola; los cuadernos K07 también perman
 
 Javier pidió integrar la granja existente, subir cada avance probado y repartir el trabajo: el frente de granja continúa motor, sistemas e historia; Claude hace gráficos, diseño de personajes y presentación visual. Leer [`en-obra/granja-coordinacion.md`](en-obra/granja-coordinacion.md). El motor sigue en desarrollo; cuatro festivales básicos ya conectados (ver `juego/web/src/granja-v3/FESTIVALES-INTEGRACION.md`); ofertas diarias/semanales y tres especiales de dos etapas ya integrados (ver `juego/web/src/granja-v3/ENCARGOS-INTEGRACION.md`); dos proyectos de correspondencia con cuatro ramas excluyentes, recetas útiles y decisiones persistentes ya integrados (ver `juego/web/src/granja-v3/CORREO-INTEGRACION.md`); seis lotes del archivo con donaciones, premios únicos y reserva de semillas durante todo el año ya integrados (ver `juego/web/src/granja-v3/COLECCIONES-INTEGRACION.md`); tres cuadernos recuperables con lectura persistente, prospección y recetas rápidas ya integrados (ver `juego/web/src/granja-v3/LIBROS-INTEGRACION.md`); siguiente bloque previsto: identificación y uso de hallazgos mineros (F11). Esto no reemplaza el orden de los demás pedidos de esta cola.
 
-**Gráficos de la granja (Claude, regla «todo en Blender»):** ya están en Blender los muebles de todos los interiores, la decoración de los cuatro festivales, el Pueblo del Sol entero (14 edificios, 2 altares, fuente, bancos, faroles, jardineras, vallas, árboles, molino, corral), el monte de todas las zonas, los arcos y letreros de las salidas, lo que se ve más allá de cada arco, lo hecho por mano en la cueva de la mina y el cuerpo de las máquinas de producción. Falta (en este orden; obras, refugios, invernadero por dentro, nodos de la mina, caja de envíos, cuencos, herramientas en la mano, monstruos de las aventuras e íconos 3D ya están; **hecho** el 13 de octubre). Además, también en Blender: los refugios por fuera (con la carita de cada animal), las cercas, el portón, la puerta del corral, el comedero, la pérgola, el patio de los refugios, nidos, incubadora, trufas, el letrero de ampliación y el guardián del bosque antiguo. Lo único hecho todavía con figuras: las piezas que giran en las máquinas (ruedas, engranajes) y las baldosas pintadas de los caminos. Detalle en `en-obra/granja-coordinacion.md`.
+**Gráficos de la granja (Claude, regla «todo en Blender»):** ya están en Blender los muebles de todos los interiores, la decoración de los cuatro festivales, el Pueblo del Sol entero (14 edificios, 2 altares, fuente, bancos, faroles, jardineras, vallas, árboles, molino, corral), el monte de todas las zonas, los arcos y letreros de las salidas, lo que se ve más allá de cada arco, lo hecho por mano en la cueva de la mina y el cuerpo de las máquinas de producción. Falta (en este orden; obras, refugios, invernadero por dentro, nodos de la mina, caja de envíos, cuencos, herramientas en la mano, monstruos de las aventuras e íconos 3D ya están; **hecho** el 13 de octubre). Además, también en Blender: los refugios por fuera (con la carita de cada animal), las cercas, el portón, la puerta del corral, el comedero, la pérgola, el patio de los refugios, nidos, incubadora, trufas, el letrero de ampliación y el guardián del bosque antiguo. y las piezas que giran en las máquinas. Lo único que sigue con figuras: las baldosas pintadas de los caminos (son texturas). Detalle en `en-obra/granja-coordinacion.md`.
 
 **Astra (11 de octubre, pedido de Javier):** ya son pueblos de verdad, cuatro veces más grandes.
 - Cada uno tiene calle con faroles, plaza empedrada con monumento, puestos de oficio con letrero, huertas, pozo y su hito
@@ -150,7 +152,8 @@ primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protago
      - ~~Los bichos especiales~~ **hecho** (el ratón ladrón con su cofre, el Tapón que persigue y la Llave que gotea, que
        inunda el piso).
 4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
-5. **El Show de Nosotros** (rama `trabajo/show`, en «Lo acumulado»).
+5. ~~**El Show de Nosotros**~~ **hecho** (13 de octubre): juntado a la rama principal y probado (solo, los dos en un
+   celular y en línea); en la sala con código y en la app de amigos no sale. Diseño en `docs/sistemas/show.md`.
 6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
 
 Esperan a Javier (no se empiezan solos): lo que sigue abierto de la mitología (sección 2 de `docs/mitologia.md`), las
@@ -245,11 +248,8 @@ velocidad, se siente raro…»
 - **La casa y la mitología** (cuando exista la granja): el Altar del Lazo Primordial, el Álbum y las reliquias del
   multiverso para decorar, con lo que se gana en Sangre y Ceniza y en la granja (`docs/mitologia.md`, sección 5).
 
-- **El Show de Nosotros** (rama `trabajo/show`, sin juntar; `mesa.html?juego=show`): concurso de preguntas de pareja
-  con estudio 3D, presentador perrito, seis tipos de preguntas, pregunta del día en la nevera, el libro de nosotros y en
-  línea. El último commit (`ab7d01a`, «avance en obra») quedó sin revisar. Falta: revisarlo, correr `probar-show.mjs` y
-  `probar-show-linea.mjs`, mirar capturas del estudio (Javier y Laura en la tarima, el texto de las pantallas al
-  derecho), juntar y subir. Diseño en `docs/show.md` de esa rama.
+- ~~**El Show de Nosotros**~~ **hecho** (13 de octubre): juntado a la rama principal (`mesa.html?juego=show`), con sus
+  dos pruebas en verde y el estudio revisado en capturas. Diseño en `docs/sistemas/show.md`. Falta su música.
 - Tele compartida, tocador de Laura, escenas premium (en pausa) y diseños premium.
 - ~~Música de todos los minijuegos y efectos de las escenas~~ **hecho** (11 de octubre): 60 pistas (81 min) con
   Eleven Music, 5 canciones con letra (casa, Cien Puertas, súper, cohete, cocina), metal sin letra en Sangre y Ceniza
@@ -258,3 +258,8 @@ velocidad, se siente raro…»
 - ~~Voces con IA~~ **hecho** (11 de octubre): 1.727 frases de Él y Ella con su voz y su emoción en Cien Puertas, la
   casa, la mesa, el cohete, la cocina, las cartas del súper y Sangre y Ceniza (`docs/sistemas/voces.md`). Falta
   sumar las frases sueltas que todavía no están en el guion (ver «Pendiente» allá).
+
+
+### Motor de granja · pastoreo libre (13 de octubre de 2026)
+
+**Hecho en el motor:** control desde el comedero, paseo por el terreno propio, rutas con cercas y portones, regreso, posición guardada y trufas del terreno; presupuesto de búsqueda distribuido. Se conservan los avances visuales de Claude. Contrato y alcance: `juego/web/src/granja-v3/PASTOREO-INTEGRACION.md`. Bebida, gestación y las ampliaciones pendientes de compañía continúan en el plan; esta tanda no termina todo el motor.

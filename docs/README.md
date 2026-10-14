@@ -16,6 +16,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`nuestro-hogar.md`](sistemas/nuestro-hogar.md) | La casa: cuartos, mimos, tienda, ampliación, patio, baño y retrete espacial, Lavarse la cara, cocina, tele, ropa… |
 | [`mecanicas.md`](sistemas/mecanicas.md), [`niveles.md`](sistemas/niveles.md), [`logros.md`](sistemas/logros.md) | Súper Manía: reglas, balance, los 100 niveles, logros. |
 | [`juegos-mesa.md`](sistemas/juegos-mesa.md), [`reacciones.md`](sistemas/reacciones.md) | Juegos de mesa y las reacciones de los muñequitos. |
+| [`show.md`](sistemas/show.md) | El Show de Nosotros, el libro, la pregunta diaria y la recuperación de respuestas. |
 | [`cien-puertas.md`](sistemas/cien-puertas.md) | Cien Puertas: las 100 puertas, el desorden, nada tapa lo importante, la revisión automática y el modo pareja. Tiene **la historia y los recuerdos de verdad**. |
 | [`clue.md`](sistemas/clue.md) | «¿Quién fue?», el Clue de la casona: reglas para dos, IA, cuaderno y el tablero renderizado en Blender. |
 | [`granja.md`](sistemas/granja.md) | La granja integrada: acceso desde la casa, motor y guardado, documentación de sistemas y límites actuales. |
@@ -30,13 +31,14 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 
 | Archivo | Estado |
 |---|---|
+| [`auditoria-motores.md`](en-obra/auditoria-motores.md) | Encargo vigente: motores y partidas completas por juego, pruebas verificadas, límites pendientes y aprobación previa de balance. |
 | [`pelicula-de-astra.md`](en-obra/pelicula-de-astra.md) | **Propuesta** de la película de Astra: las 28 escenas animadas en orden, la boda, Sangre y Ceniza y los minijuegos futuros. |
 | [`granja-coordinacion.md`](en-obra/granja-coordinacion.md) | Reparto pedido por Javier: motor/historia en el frente de granja; gráficos, personajes y presentación a cargo de Claude; avances probados y subidos. |
 | [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor (misiones, minerales, mapa de la Noche y, en L, armas, sobrecargas, reliquias y el familiar), para pulirla con Javier. |
 | [`lavado-propuesta.md`](en-obra/lavado-propuesta.md) | Lavarse la cara 2: lo que le falta frente a Vampire Survivors (24 armas, cartas, modos, tesoros, mercader, escenarios, disfraces), para pulirla con Javier. |
 | [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
 
-El Show de Nosotros está en la rama `trabajo/show` (con su `docs/show.md` allá).
+El Show de Nosotros: [`sistemas/show.md`](sistemas/show.md) (en la mesa, `mesa.html?juego=show`).
 
 ## `referencias/` · wikis de otros juegos (solo para consultar)
 
