@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html', 'carreras.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html', 'carreras.html', 'celular.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -54,6 +54,8 @@ export const PERMITIDOS_AMIGOS = [
   'src/escudo/',
   // La Carrera de las Tres Lunas (lo de la pareja va en src/carreras/pareja.ts, ver SUSTITUTOS)
   'src/carreras/',
+  // Desaparecidos de Astra (el juego del celular encontrado: ningún caso es de la pareja)
+  'src/celular/',
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
@@ -61,7 +63,9 @@ export const PUBLICOS_AMIGOS = ['modelos/escudo_mapa.glb', 'modelos/escudo_torre
   'modelos/granja-v3/dragon_lod.glb', 'modelos/granja-v3/grifo_lod.glb', 'modelos/granja-v3/unicornio_lod.glb', 'modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/', 'datos/niveles.json',
   'modelos/manifest_export.json',
   // La carrera: pistas, carros, íconos y voces (sin las de la pareja); las criaturas ya van arriba
-  'modelos/carreras/', 'carreras/', 'audio/carreras/'];
+  'modelos/carreras/', 'carreras/', 'audio/carreras/',
+  // Desaparecidos de Astra: las fotos de los casos y las notas de voz
+  'celular/', 'audio/celular/'];
 
 /** Lo de Súper Manía en `modelos/` (y en `modelos-plano/`, la copia para celulares sin WebAssembly): el local en sus
  *  4 tamaños, vitrinas, letreros, productos, utilería y la gente; y los íconos de los productos. */
@@ -184,6 +188,7 @@ export default defineConfig(({ mode, command }) => {
             amigos: resolve(raiz, 'amigos.html'), sangre: resolve(raiz, 'sangre.html'), retrete: resolve(raiz, 'retrete.html'), cocina: resolve(raiz, 'cocina.html'),
             escudo: resolve(raiz, 'escudo.html'),
             carreras: resolve(raiz, 'carreras.html'),
+            celular: resolve(raiz, 'celular.html'),
           },
       },
     },

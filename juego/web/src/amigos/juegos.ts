@@ -12,7 +12,7 @@ export interface JuegoAmigos {
   /** Dibujo de la tarjeta (SVG). */
   arte: string;
   /** Clase de la tarjeta (colores). */
-  tema: 'lavado' | 'sangre' | 'super' | 'mesa' | 'retrete' | 'cocina' | 'escudo' | 'carreras';
+  tema: 'lavado' | 'sangre' | 'super' | 'mesa' | 'retrete' | 'cocina' | 'escudo' | 'carreras' | 'celular';
   /** Página del juego (relativa). */
   url?: string;
   /** Juegos que se abren aquí mismo (sin cambiar de página). */
@@ -46,6 +46,16 @@ const ARTE_CARRERAS = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAsp
   <rect x="96" y="70" width="22" height="11" rx="4" fill="#e4566b"/><circle cx="100" cy="83" r="3.5" fill="#3d2b27"/><circle cx="114" cy="83" r="3.5" fill="#3d2b27"/>
   <circle cx="86" cy="72" r="7" fill="#fbf5f1"/><path d="M84 64 L86 56 L88 64z" fill="#f7e6b0"/>
   <path d="M150 40 L150 70" stroke="#3d2b27" stroke-width="1.6"/><path d="M150 40 h14 v8 h-14z" fill="#fff"/><path d="M150 40 h7 v4 h-7z M157 44 h7 v4 h-7z" fill="#2b2422"/></svg>`;
+
+/** Desaparecidos de Astra: una ficha de expediente, el celular encontrado con la pantalla rota y la lupa. */
+const ARTE_CELULAR = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+  <rect width="200" height="110" fill="#5a3620"/><rect width="200" height="110" fill="url(#cm)" opacity=".5"/>
+  <defs><radialGradient id="cm" cx="50%" cy="20%" r="70%"><stop offset="0" stop-color="#ffcf8a"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+  <g transform="translate(38 22) rotate(-8)"><rect width="56" height="72" rx="3" fill="#f0cf8e"/><rect x="6" y="8" width="26" height="30" fill="#fff"/><rect x="9" y="11" width="20" height="22" fill="#7a8a9a"/>
+    <rect x="6" y="46" width="40" height="4" rx="2" fill="#a97e3a"/><rect x="6" y="54" width="30" height="4" rx="2" fill="#a97e3a"/></g>
+  <g transform="translate(96 30) rotate(6)"><rect width="78" height="46" rx="9" fill="#1d1d24"/><rect x="5" y="5" width="68" height="36" rx="5" fill="#2f6f9a"/>
+    <path d="M40 8 L34 20 L42 26 L36 40" stroke="#fff" stroke-width="1.3" fill="none" opacity=".8"/><circle cx="20" cy="22" r="7" fill="#ffd23f"/></g>
+  <circle cx="160" cy="84" r="12" fill="none" stroke="#fff3d6" stroke-width="4"/><path d="M168 92 l12 12" stroke="#fff3d6" stroke-width="5" stroke-linecap="round"/></svg>`;
 
 export const ARTE_SANGRE = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
   <defs><radialGradient id="sl" cx="70%" cy="30%" r="60%"><stop offset="0" stop-color="#5a1418"/><stop offset="1" stop-color="#0d0709"/></radialGradient>
@@ -117,6 +127,7 @@ export const JUEGOS: JuegoAmigos[] = [
   { id: 'escudo', nombre: 'El Escudo de las Hermanas', desc: 'Defiende el escudo de luz · torres y estrellas', arte: ARTE_ESCUDO, tema: 'escudo', url: './escudo.html' },
   { id: 'carreras', nombre: 'La Carrera de las Tres Lunas', desc: 'Carros y criaturas por Astra · de 1 a 4', arte: ARTE_CARRERAS, tema: 'carreras', url: './carreras.html', sala: 'carreras',
     urlCrear: './carreras.html?sala', urlUnirse: (c) => `./carreras.html?unirse=${encodeURIComponent(c)}` },
+  { id: 'celular', nombre: 'Desaparecidos de Astra', desc: 'Revisa celulares encontrados y resuelve 8 casos', arte: ARTE_CELULAR, tema: 'celular', url: './celular.html' },
 ];
 
 const disponibles = new Map<string, Promise<boolean>>();
