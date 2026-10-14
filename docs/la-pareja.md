@@ -96,6 +96,7 @@ no son historias.
 | Escenas premium | Situaciones inventadas de la casa (el baile lento con pisotón, ¿qué pedimos?, la carta de amor escondida, la serenata…) | `src/escenas/` |
 | Sangre y Ceniza | El mito de Astra (`docs/mitologia.md`) con Javier y Laura como el Lazo Primordial: cinco escenas del mapa de la Noche (la constelación que parpadea, la grieta del Conde, por qué el escudo, los otros panteones, el Lazo); solo apodos y palabras del chat, ningún recuerdo | `src/sangre/historia_pareja.ts` |
 | La película de Astra (propuesta) | La boda del mito en el valle de la granja y los votos «siempre te elegiré» (ciclos, universos, planetas); ningún recuerdo del chat (el misterio por mesa sigue siendo de la cama) | `docs/en-obra/pelicula-de-astra.md` |
+| Desaparecidos de Astra (el celular) | Nada de la pareja: ocho casos de vecinos de Astra (también lo juegan los amigos); nunca la desaparecida es Laura | `src/celular/casos/` |
 
 Si se acaban las ideas para un juego, se le piden más historias a Javier (él ofreció contar más), nunca se toman
 las de otro juego.
