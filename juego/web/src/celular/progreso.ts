@@ -51,10 +51,15 @@ function normalizar(v: unknown): Progreso {
 }
 
 export const progreso: Progreso = normalizar(leerAparato(CLAVE));
+export let guardadoPendiente = false;
 
-export function guardar() {
-  guardarAparato(CLAVE, progreso);
+export function guardar(): boolean {
+  const ok = guardarAparato(CLAVE, progreso);
+  guardadoPendiente = !ok;
+  return ok;
 }
+
+export function confirmarGuardado(): boolean { return !guardadoPendiente || guardar(); }
 
 export function de(caso: Caso): ProgresoCaso {
   return (progreso.casos[caso.id] ??= nuevoCaso());
@@ -72,6 +77,11 @@ export function estrellasDe(caso: Caso, p: ProgresoCaso) {
 }
 
 export function reiniciar(caso: Caso) {
+  const anterior = progreso.casos[caso.id];
   progreso.casos[caso.id] = nuevoCaso();
-  guardar();
+  if (guardar()) return true;
+  // El teléfono abierto conserva la referencia al caso anterior si no se confirmó el reinicio.
+  if (anterior) progreso.casos[caso.id] = anterior;
+  else delete progreso.casos[caso.id];
+  return false;
 }

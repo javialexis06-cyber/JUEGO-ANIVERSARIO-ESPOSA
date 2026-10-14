@@ -35,6 +35,11 @@ pistas, ayudas, errores, estrellas y pasos del tutorial. Música: la pista de mi
 una voz); botón para apagarla en la mesa. Atrás de Android / Esc: cierra lo abierto, luego vuelve a la mesa y después
 sale (a `amigos.html` en modo amigo o a la casa, con `volverALaSala` de `src/sueltos/comun.ts`).
 
+Si falla una escritura, el resultado y las pistas permanecen pendientes en la partida abierta. La mesa y la salida
+requieren confirmar el guardado y el aviso permite reintentar. Un reinicio que no pudo escribirse conserva el caso
+anterior y su referencia en el teléfono abierto. Cinco regresiones verifican estas situaciones. Un cierre forzado
+mientras el almacenamiento sigue fallando no está cubierto: hay que mantener la partida abierta hasta confirmar.
+
 ## Los ocho casos (con su solución)
 
 | # | Caso | Lugar | Candados | Giro | Solución |
@@ -102,6 +107,10 @@ cd juego/web
 npx tsc --noEmit -p . && npx vite build && npm run build:amigos && node scripts/verificar-amigos.mjs
 node scripts/_celular_revisar.mjs          # coherencia de los datos (pistas alcanzables, voces, candados)
 node scripts/_celular_todos.mjs <carpeta>  # recorre los 8 casos de punta a punta y saca capturas (servidor en 5193)
+node scripts/probar-celular-guardado.mjs    # guardado fallido, recuperación y reinicio sin pérdida
+CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-celular-recorrido.mjs http://127.0.0.1:4184/ test-results/celular-amigos
+# Primera partida y retorno a casa en la compilación completa:
+CHROME_PATH=/usr/bin/chromium AMIGO=0 HASTA=1 FALLOS=1 node scripts/probar-celular-recorrido.mjs http://127.0.0.1:4182/ test-results/celular-casa
 ```
 
 La prueba de punta a punta corre Chromium sin `--use-angle=swiftshader` (el juego no usa WebGL; con swiftshader las
@@ -109,6 +118,11 @@ capturas salen con una franja duplicada que no existe en el teléfono). Las foto
 (`scripts/celular/fotos.mjs` ya lo trae).
 
 Ganchos: `window.__celular` (`abrir(id)`, `tel()`, `final(id)`, `desbloquearTodo()`, `borrar()`, `progreso`).
+El recorrido nuevo solo usa los ganchos para leer casos y progreso. Abre las apps y sus candados por botones,
+teclados y patrones con arrastre; consulta las transcripciones y adelanta las escenas mediante su botón normal.
+Se verificaron los ocho casos desde cero en amigos, con 24 estrellas, recarga después de cada cierre y recuperación
+del primer guardado fallido; también el primer caso y retorno a la casa en la compilación completa. No se cambiaron
+las soluciones, las ayudas ni la fórmula de estrellas.
 
 ## Integración (hecha el 14 de octubre de 2026: casa y Sala de Juegos con su tema `celular`)
 

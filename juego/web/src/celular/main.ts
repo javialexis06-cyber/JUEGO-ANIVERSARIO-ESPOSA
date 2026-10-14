@@ -7,7 +7,7 @@ import { alAtras, volverALaSala } from '../sueltos/comun';
 import { arrancarMusica, cargarAudio, efecto, pararVoz, ponerMusica, segundosVoz, sonarVoz } from './audio';
 import { CASOS } from './casos';
 import { ICONO } from './iconos';
-import { de, desbloqueado, estrellasDe, guardar, progreso, reiniciar, type ProgresoCaso } from './progreso';
+import { confirmarGuardado, de, desbloqueado, estrellasDe, guardar as guardarProgreso, guardadoPendiente, progreso, reiniciar, type ProgresoCaso } from './progreso';
 import { Telefono, foto } from './telefono';
 import type { Caso } from './tipos';
 
@@ -21,6 +21,14 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', html = ''):
 
 const app = el('div', 'cel-juego');
 document.body.append(app);
+const avisoGuardar = el('div', 'cel-guardado', '<p role="status">No se pudo guardar. Mantén esta partida abierta y reintenta antes de continuar.</p><button class="cel-boton" data-reintentar-guardado>Reintentar guardado</button>');
+avisoGuardar.hidden = true;
+document.body.append(avisoGuardar);
+avisoGuardar.querySelector('button')!.onclick = () => guardar();
+
+function pintarGuardado() { avisoGuardar.hidden = !guardadoPendiente; }
+function guardar() { const ok = guardarProgreso(); pintarGuardado(); return ok; }
+function asegurarGuardado() { const ok = confirmarGuardado(); pintarGuardado(); return ok; }
 
 let tel: Telefono | null = null;
 let casoActual: Caso | null = null;
@@ -30,6 +38,7 @@ let capas: (() => void)[] = [];
 // ------------------------------------------------------------------ la mesa (los ocho expedientes)
 
 function mesa() {
+  if (!asegurarGuardado()) return;
   tel?.destruir();
   tel = null;
   casoActual = null;
@@ -38,7 +47,7 @@ function mesa() {
   const cab = el('header', 'cel-mesa-cab');
   const volver = el('button', 'cel-boton redondo', ICONO.salir);
   volver.title = 'Volver';
-  volver.onclick = () => volverALaSala();
+  volver.onclick = () => { if (asegurarGuardado()) volverALaSala(); };
   const titulo = el('div', 'cel-titulo', '<b>Desaparecidos de Astra</b><span>La mesa de los perdidos · Vigilia de Ceniza</span>');
   const resueltos = CASOS.filter((c) => progreso.casos[c.id]?.resuelto).length;
   const estrellas = CASOS.reduce((a, c) => a + (progreso.casos[c.id]?.estrellas ?? 0), 0);
@@ -97,7 +106,7 @@ function expediente(c: Caso) {
   botones.append(cerrar);
   if (p.resuelto) {
     const otra = el('button', 'cel-boton', 'Empezar de cero');
-    otra.onclick = () => { reiniciar(c); capa.remove(); capas.pop(); mesa(); };
+    otra.onclick = () => { if (!reiniciar(c)) { pintarGuardado(); return; } capa.remove(); capas.pop(); mesa(); };
     botones.append(otra);
   }
   botones.append(ir);
@@ -386,7 +395,7 @@ alAtras(() => {
   const f = capas.pop();
   if (f) { f(); return true; }
   if (casoActual) { mesa(); return true; }
-  return false;
+  return !asegurarGuardado();
 });
 
 document.addEventListener('pointerdown', () => arrancarMusica(), { once: true });

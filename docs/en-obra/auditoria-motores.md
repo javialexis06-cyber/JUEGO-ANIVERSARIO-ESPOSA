@@ -46,11 +46,15 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
   conserva su fecha y estrellas y no se vuelve a emitir cuando ya está confirmado. Atrás espera a que termine la
   transición de victoria/derrota. Doce comprobaciones del motor cubren la campaña de seis niveles con presupuesto
   normal, derrota, infinito hasta derrota natural y cuatro escenarios de guardado y separación de perfiles.
+- **Desaparecidos de Astra.** Caso cerrado y pistas siguen pendientes si falla la escritura. Mesa, salida y atrás
+  reintentan antes de abandonar la partida; el aviso permite recuperarla. Reiniciar sin espacio conserva el caso
+  anterior y la referencia que utiliza el teléfono, sin borrar los otros casos. Cinco regresiones cubren estas
+  situaciones. Los ocho casos se resuelven por sus botones, candados y pistas, sin habilitar contenido por ganchos.
 - **Pruebas de motores.** `npm run probar:motores` comprueba partidas completas de Dados, Mancala, Cajas,
   Parchís, Parchís a dos colores y Clue; los dos jugadores pueden empezar y se recorren los niveles de IA.
   Se completaron 36 partidas. Cada movimiento se valida, se replica en otro estado y se serializa entre pasos; Mancala conserva sus 48
   semillas. Incluye siete regresiones de guardado/calendario del Show, once de Cocina y doce comprobaciones de
-  Escudo. Workflow: «Motores de los juegos».
+  Escudo y cinco regresiones de Desaparecidos. Workflow: «Motores de los juegos».
 
 No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad.
 
@@ -72,7 +76,7 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 | Cien Puertas | Cien acertijos resueltos en orden por toques/sensores simulados; cero fallos de revisión de puerta/objetos/página; cien avances y estrellas conservados al recargar | Campaña narrativa, retorno a la casa, red, otras semillas y sensores físicos de teléfono |
 | El Escudo de las Hermanas | Seis niveles desde cero en amigos y pareja, con presupuesto normal, pausa, guardado fallido recuperado y recarga por nivel; doce comprobaciones del motor, derrota e infinito hasta pérdida natural (41 oleadas en motor, 48 en el último recorrido de pareja). Derrota normal, reintento, cancelación y salida de pareja conservan las estrellas. Modo P23: victoria, recibo fallido recuperado y retorno a la granja sin errores | Controles físicos, escenas completas, cierre forzado mientras falla almacenamiento y recorrido de P23 desde su desbloqueo real en la campaña de la granja; derrota y salida de amigos en navegador |
 | La Carrera de las Tres Lunas | Juego integrado desde la rama compartida (`f3475efa`, 14 de octubre) | Carrera completa y campeonato desde cero, controles, recarga, pausa y verificación propia de la red |
-| Desaparecidos de Astra | Ocho casos incorporados desde la rama compartida (`0e0f074e`, 14 de octubre) | Resolver los ocho casos desde cero, candados, estrellas, voz, persistencia y retorno |
+| Desaparecidos de Astra | Ocho casos resueltos desde cero en amigos: 24 estrellas, PIN, palabras, patrones arrastrados, fotos con linterna, todas las pistas importantes y recarga por caso; primer cierre fallido recuperado. Primer caso y retorno a casa en compilación completa. Cinco regresiones de guardado y reinicio; sin errores | Reproducción completa de las voces y escenas, controles en Android, salida de amigos por controles y cierre forzado mientras falla el almacenamiento |
 | El Torneo del Despertar Dorado | Juego integrado desde la rama compartida (`12c8bf29`, 14 de octubre), conservando sus reglas y valores | Combate y torneo completo desde cero, controles de ambos lados, derrota, pausa y verificación propia de la red |
 | Retrete espacial | Dos vuelos desde cero con piloto, choques normales, pausa, volver a volar, escudo pagado con 120 rollitos ganados y progreso conservado tras recarga; sin errores | Sensores/controles físicos, ciclos avanzados, guardado fallido y premio de la casa |
 | Cocina de chef: wafles, frappés y fresas | Dos días desde progreso nuevo por receta, con pedidos y estaciones normales, resultado, propinas, mejoras pagadas y recarga en día 3; dos fallos de escritura al terminar wafles y uno por compra recuperados; once regresiones de persistencia. Wafles en pareja: escenario preparado con pérdida del 8 % de mensajes, pausa, segundo plano, reconexión, mismo resultado y premio del anfitrión, sin errores | Fresas y frappés en pareja, rangos avanzados, cierre forzado mientras hay una escritura pendiente y precisión táctil |
@@ -87,6 +91,7 @@ por esa integración, que no cambia sus archivos.
 La primera tanda de mesa y Show se publicó en `78a034db`, y su registro adicional en `a3c4aa7e`, en `work` y
 `claude/supermarket-mania-minigame-xn2it8`, con autorización explícita de Javier en este chat. Cocina, Cien Puertas y
 la barra de la casa están publicadas en ambas ramas hasta `25445e2d`, incluyendo los cuatro juegos nuevos de Astra.
+Escudo y su integración con la sala de cine están publicados en ambas ramas hasta `960e228f`.
 La APK sigue bloqueada al comprobar también ese SHA el 14 de octubre: no se creó una ejecución
 automática para ese SHA y el intento de iniciar `apk.yml` devolvió **HTTP 422: Actions has been disabled for this
 user**. El workflow figura activo, pero la cuenta no puede ejecutarlo. No se anuncia una APK nueva ni se confunden
@@ -123,6 +128,8 @@ CHROME_PATH=/usr/bin/chromium node scripts/probar-retrete-recorrido.mjs http://1
 CHROME_PATH=/usr/bin/chromium AMIGO=0 FALLOS=1 node scripts/probar-escudo-recorrido.mjs http://127.0.0.1:4182/ /tmp/escudo-pareja
 CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-escudo-recorrido.mjs http://127.0.0.1:4184/ /tmp/escudo-amigos
 CHROME_PATH=/usr/bin/chromium node scripts/probar-escudo-mision.mjs http://127.0.0.1:4182/ /tmp/escudo-p23
+CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-celular-recorrido.mjs http://127.0.0.1:4184/ /tmp/celular-amigos
+CHROME_PATH=/usr/bin/chromium AMIGO=0 HASTA=1 FALLOS=1 node scripts/probar-celular-recorrido.mjs http://127.0.0.1:4182/ /tmp/celular-casa
 # La prueba en pareja requiere el servidor de desarrollo sin HMR y usa una red falsa:
 CHROME_PATH=/usr/bin/chromium node scripts/probar-cocina-linea.mjs wafles http://127.0.0.1:4183/scripts/cocina-prueba.html /tmp/cocina-linea
 ```

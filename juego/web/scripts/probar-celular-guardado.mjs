@@ -1,0 +1,39 @@
+// El resultado pendiente y el reinicio de un caso se prueban con escrituras reales que rechazan.
+import assert from 'node:assert/strict';
+import { build } from 'esbuild';
+import { mkdtemp,rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join,resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+const dir=await mkdtemp(join(tmpdir(),'celular-guardado-')),disco=new Map();
+let cortar=false,escrituras=0;
+globalThis.localStorage={getItem:k=>disco.get(k)??null,setItem(k,v){if(cortar)throw new DOMException('Sin espacio','QuotaExceededError');escrituras++;disco.set(k,v);}};
+try{
+  const archivo=join(dir,'progreso.mjs');
+  await build({stdin:{contents:`export * from './src/celular/progreso'; export {CASOS} from './src/celular/casos';`,resolveDir:resolve(import.meta.dirname,'..')},bundle:true,platform:'node',format:'esm',outfile:archivo,logLevel:'silent'});
+  const m=await import(pathToFileURL(archivo)),c=m.CASOS[0],leer=()=>JSON.parse(disco.get('celular-astra-v1'));
+  assert.equal(m.confirmarGuardado(),true);assert.equal(escrituras,0);
+  assert.equal(m.desbloqueado(m.CASOS,0),true);assert.equal(m.desbloqueado(m.CASOS,1),false);
+  console.log('✓ Confirmar un perfil nuevo no inventa escrituras ni desbloquea el segundo caso');
+  const p=m.de(c);p.recibido=true;p.abiertos=['bloqueo'];p.pistas=['pin'];
+  assert.equal(m.guardar(),true);
+  const previo=leer();cortar=true;p.resuelto=true;p.estrellas=3;
+  assert.equal(m.guardar(),false);assert.equal(m.guardadoPendiente,true);assert.equal(m.confirmarGuardado(),false);
+  assert.deepEqual(leer(),previo);assert.equal(p.resuelto,true);assert.equal(p.estrellas,3);
+  console.log('✓ Un caso cerrado conserva su resultado pendiente cuando falla la escritura');
+  p.pistas.push('copa');cortar=false;const memoria=structuredClone(m.progreso);
+  assert.equal(m.confirmarGuardado(),true);assert.equal(m.guardadoPendiente,false);
+  assert.deepEqual(leer(),memoria);assert.deepEqual(m.progreso,memoria);
+  const veces=escrituras;assert.equal(m.confirmarGuardado(),true);assert.equal(escrituras,veces);
+  console.log('✓ Reintentar conserva las pistas más recientes y no repite una escritura confirmada');
+  const segundo=m.de(m.CASOS[1]);segundo.recibido=true;
+  assert.equal(m.guardar(),true);const completo=leer();cortar=true;
+  assert.equal(m.reiniciar(c),false);assert.equal(m.de(c),p);
+  assert.deepEqual(m.progreso,completo);assert.deepEqual(leer(),completo);
+  cortar=false;assert.equal(m.confirmarGuardado(),true);assert.deepEqual(leer(),completo);
+  console.log('✓ Reiniciar sin espacio conserva el caso anterior, su referencia y los demás casos');
+  assert.equal(m.reiniciar(c),true);assert.notEqual(m.de(c),p);
+  assert.equal(m.de(c).resuelto,false);assert.equal(m.de(c).estrellas,0);assert.deepEqual(m.de(c).pistas,[]);
+  assert.equal(m.de(m.CASOS[1]),segundo);assert.deepEqual(leer(),m.progreso);
+  console.log('✓ El reinicio confirmado afecta solo al caso elegido');
+}finally{await rm(dir,{recursive:true,force:true});}

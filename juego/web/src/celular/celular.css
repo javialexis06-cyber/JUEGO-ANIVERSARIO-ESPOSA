@@ -36,6 +36,11 @@ svg {
   color: #f6e3c0;
   font: 700 16px 'Trebuchet MS', system-ui, sans-serif;
 }
+.cel-guardado { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 200;
+  width: min(400px, 85vw); padding: 10px 12px; border: 2px solid #dda646; border-radius: 12px;
+  background: #f9edcf; color: #2b1d14; text-align: center; box-shadow: 0 4px 20px #0008; }
+.cel-guardado[hidden] { display: none; }
+.cel-guardado p { margin: 0 0 6px; font-size: 13px; }
 .suelto-carga b {
   font: 700 28px Georgia, serif;
 }

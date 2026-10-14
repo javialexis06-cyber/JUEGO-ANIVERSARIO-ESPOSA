@@ -10,6 +10,9 @@ la puerta de la granja. Sus campañas continúan en la cola de verificación del
 Escudo ya conserva pendiente el guardado fallido y el recibo P23, y permite reintentar antes de avanzar o salir.
 Verificados sus seis niveles desde cero en pareja y amigos, pausa y recarga por nivel, y la batalla directa de P23
 con recibo fallido recuperado. Las cifras de dificultad y recompensas se mantienen.
+Desaparecidos de Astra conserva el caso cerrado y las pistas cuando falla el guardado; un reinicio fallido no borra
+el caso anterior. Los ocho casos se resolvieron desde cero en amigos (24 estrellas), con candados normales, todas
+las pistas importantes y recarga por caso. Primer caso y retorno a casa comprobados en la compilación completa.
 La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
 
 ## Frente de granja en paralelo
