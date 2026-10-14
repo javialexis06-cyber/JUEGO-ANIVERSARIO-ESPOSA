@@ -228,7 +228,7 @@ def texto(coll, cuerpo, c, tam, cara, canto, extrude=0.06):
     cu.align_x = 'CENTER'
     cu.align_y = 'CENTER'
     cu.extrude = extrude
-    cu.bevel_depth = tam * 0.025
+    cu.bevel_depth = 0.0
     cu.space_character = 1.08
     cu.bevel_resolution = 3
     cu.resolution_u = 6
@@ -255,7 +255,9 @@ def texto(coll, cuerpo, c, tam, cara, canto, extrude=0.06):
     import bmesh
     bm = bmesh.new()
     bm.from_mesh(me)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=0.0005)
     bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method='BEAUTY', ngon_method='EAR_CLIP')
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
     bm.to_mesh(me)
     bm.free()
     return ob

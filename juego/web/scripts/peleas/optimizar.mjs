@@ -12,8 +12,8 @@ for (const plano of [false]) {
   mkdirSync(destino, { recursive: true });
   for (const f of readdirSync(CRUDOS).filter((f) => f.endsWith('.glb') && (!SOLO || SOLO.includes(f.replace('.glb', ''))))) {
     execFileSync('npx', ['gltf-transform', 'optimize', join(CRUDOS, f), join(destino, f), '--compress', plano ? 'quantize' : 'meshopt', '--flatten', 'false', '--instance', 'false',
-      '--palette', 'false', '--texture-compress', 'false', '--prune', 'false', '--simplify', 'true', '--join', 'true', '--join-named', 'true', '--simplify-ratio', '0',
-      '--simplify-error', '0.0015'], { stdio: 'pipe' });
+      '--palette', 'false', '--texture-compress', 'false', '--prune', 'false', '--simplify', process.env.SIMPLIFICAR === '0' ? 'false' : 'true', '--join', 'true', '--join-named', 'true', '--simplify-ratio', '0',
+      '--simplify-error', process.env.ERROR ?? '0.00012'], { stdio: 'pipe' });
     console.log(plano ? 'plano' : 'ok', f, (statSync(join(destino, f)).size / 1e6).toFixed(2), 'MB');
   }
 }

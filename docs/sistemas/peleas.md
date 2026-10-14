@@ -80,6 +80,9 @@ bola de nieve, llama, ola de nieve), un `m_<clave>` por cosa en `peleas/cosas.gl
 for e in plaza brasaviva nieveclara; do blender -b -P personajes/blender/peleas_escenarios.py -- juego/web/modelos-crudos/peleas $e; done
 blender -b -P personajes/blender/peleas_cosas.py -- juego/web/modelos-crudos/peleas
 cd juego/web && node scripts/peleas/optimizar.mjs      # → public/modelos/peleas/*.glb (no toca ropa.json)
+# (el error de simplificación es relativo al tamaño del modelo: en un escenario de 100 m el de los kits, 0,0015,
+#  son 15 cm y deshace las letras del letrero y las caras del público; aquí va 0,00012)
+# Postales de las tarjetas: peleas.html?prueba=postal&escenario=<id> → public/modelos/peleas/postal_<id>.webp (420×252)
 ```
 
 ## Voces
