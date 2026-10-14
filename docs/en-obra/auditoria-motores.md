@@ -133,7 +133,10 @@ La tanda del Retrete del 14 de octubre conserva ambas compilaciones, el filtro d
 48 suites de granja y las seis comprobaciones casa–granja sin errores. Pasan las doce regresiones de guardado,
 el recorrido de amigos con compra pagada y fallos recuperados, y los vuelos de la casa local con Atrás nativo
 simulado, pago confirmado, retorno y recarga. No certifica un dispositivo Android ni Supabase real.
-La APK sigue bloqueada al comprobar también ese SHA el 14 de octubre: no se creó una ejecución
+La tanda de Sangre/Lavado está publicada en ambas ramas en `76ac6b07741cd067bb010c52aefba0749a73c710`:
+control y porcentajes aprobados, reciclaje corregido, partidas repetidas y propuesta de aretes aún sin aplicar.
+Ambas ramas se confirmaron con ese SHA y el árbol de trabajo quedó limpio.
+La APK sigue bloqueada al comprobar ese commit el 14 de octubre: no se creó una ejecución
 automática para ese SHA y el intento de iniciar `apk.yml` devolvió **HTTP 422: Actions has been disabled for this
 user**. El workflow figura activo, pero la cuenta no puede ejecutarlo. No se anuncia una APK nueva ni se confunden
 los instaladores anteriores con estas correcciones. Requiere reactivar Actions en la cuenta y repetir la compilación.
