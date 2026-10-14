@@ -60,11 +60,12 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 | Sangre y Ceniza | Expedición simulada de cinco etapas y victoria en cementerio, monarca, peligro 1; perfil preparado, sin experiencia/equipo previo | Perfil desbloqueado desde cero, demás biomas, jefe final, controles y red |
 | Súper Manía | Primer día desde progreso nuevo hasta resultado en navegador: tres estrellas, nueve clientes atendidos, ganancia 98 y ningún error | Campaña desde cero; comprobar mejoras pagadas, días avanzados y recarga |
 | Cien Puertas | Cien acertijos resueltos en orden por toques/sensores simulados; cero fallos de revisión de puerta/objetos/página; cien avances y estrellas conservados al recargar | Campaña narrativa, retorno a la casa, red, otras semillas y sensores físicos de teléfono |
+| El Escudo de las Hermanas | Juego y conexión con P23 incorporados desde la rama compartida (`d9f75b52`, 14 de octubre); sus valores de balance se conservan | Campaña de seis niveles desde cero, derrota, progreso, recibo P23, infinito y controles del navegador |
 | Retrete espacial | Dos vuelos desde cero con piloto, choques normales, pausa, volver a volar, escudo pagado con 120 rollitos ganados y progreso conservado tras recarga; sin errores | Sensores/controles físicos, ciclos avanzados, guardado fallido y premio de la casa |
 | Cocina de chef: wafles, frappés y fresas | Dos días desde progreso nuevo por receta, con pedidos y estaciones normales, resultado, propinas, mejoras pagadas y recarga en día 3; dos fallos de escritura al terminar wafles y uno por compra recuperados; once regresiones de persistencia. Wafles en pareja: escenario preparado con pérdida del 8 % de mensajes, pausa, segundo plano, reconexión, mismo resultado y premio del anfitrión, sin errores | Fresas y frappés en pareja, rangos avanzados, cierre forzado mientras hay una escritura pendiente y precisión táctil |
 | Casa / mascota virtual | Entrada, retorno y persistencia del recorrido de granja comprobados | Ciclo completo de cuidado, compras, habitaciones, trofeos y sincronización en dos perfiles |
 
-Las compilaciones de pareja y amigos pasan. El filtro de amigos revisó 506 archivos y no encontró contenido
+Las compilaciones de pareja y amigos integradas con El Escudo pasan. El filtro de amigos revisó 518 archivos y no encontró contenido
 personal. Estas comprobaciones no certifican FPS, batería o memoria en Android real.
 
 La primera tanda de mesa y Show se publicó en `78a034db`, y su registro adicional en `a3c4aa7e`, en `work` y
