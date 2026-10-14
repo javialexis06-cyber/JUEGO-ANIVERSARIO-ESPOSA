@@ -81,8 +81,8 @@ export function normales(a: AjusteKit = {}): Omit<Record<IdGolpe, Golpe>, 'espec
 /** Un proyectil (corazón, chispa, estrella…) que sale de las manos. */
 export function proyectil(nombre: string, efecto: Efecto, o: { dano?: number; vel?: number; arranque?: number; recup?: number; vy?: number; alto?: number } = {}): Golpe {
   return {
-    id: 'especial', nombre, especial: 'proyectil', pose: 'lanzar', poseCarga: 'lanzar_carga', arranque: o.arranque ?? 12, activo: 2, recup: o.recup ?? 24,
-    dano: o.dano ?? 60, nivel: 'medio', caja: [0, 0, 0, 0], aturde: 20, bloqueo: 14, empuje: 3.5, chip: 0.15, efecto, peso: 'medio',
+    id: 'especial', nombre, especial: 'proyectil', pose: 'lanzar', poseCarga: 'lanzar_carga', arranque: o.arranque ?? 12, activo: 2, recup: o.recup ?? 30,
+    dano: o.dano ?? 55, nivel: 'medio', caja: [0, 0, 0, 0], aturde: 20, bloqueo: 14, empuje: 3.5, chip: 0.12, efecto, peso: 'medio',
     proy: { vel: o.vel ?? 7.5, vy: o.vy ?? 0, vida: 130, radio: 0.32, alto: o.alto ?? 1.2 }, cancela: ['super'],
   };
 }

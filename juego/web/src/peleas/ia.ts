@@ -165,7 +165,8 @@ export class Bot {
       const lejos = Math.abs(yo.x - x.x);
       if ((x.tipo === 'bala' && hacia2 && lejos < 3.2) || (x.tipo === 'ola' && hacia2 && lejos < 3)) {
         if (r() < this.pTapar) {
-          if (x.tipo === 'ola' || r() < 0.35) this.plan = { k: 'saltar', dir: hacia, atacar: 'b', hasta: this.t + 40 };
+          // De lejos, a veces se salta el proyectil para acercarse (si no, la pelea es solo tapar)
+          if (x.tipo === 'ola' || (lejos > 1.6 && Math.abs(dx) > 2.4 && r() < 0.5)) this.plan = { k: 'saltar', dir: hacia, atacar: 'b', hasta: this.t + 40 };
           else this.plan = { k: 'tapar', bajo: false, hasta: this.t + 20 };
           return null;
         }
@@ -204,14 +205,14 @@ export class Bot {
     const esp = yo.def.golpes.especial.especial;
     const quiere = distanciaPreferida(yo.def.id, esp);
     const ganas = this.ganas * (1 + Math.min(1, this.tapadas / 6) * 0.5);
-    if (esp === 'proyectil' && dist > 2.6 && !sim.P.some((x) => x.dueno === yo.i) && r() < ganas * 1.4) return 'e';
-    if (esp === 'trampa' && dist > 2.2 && !sim.P.some((x) => x.dueno === yo.i && x.tipo === 'trampa') && r() < ganas * 1.6) return 'e';
-    if (esp === 'cuerda' && dist > 1.6 && dist < 3.6 && r() < ganas) return 'e';
-    if (esp === 'embestida' && dist > 1.8 && dist < 4.5 && r() < ganas * 0.8) return 'e';
-    if (esp === 'niebla' && dist > 2.5 && r() < ganas * 0.5) return 'e';
-    if (esp === 'voladora' && dist > 2 && dist < 4 && r() < ganas * 0.8) return 'e';
-    if (esp === 'fuego' && dist < 2 && r() < ganas * 1.2) return 'e';
-    if (esp === 'contra' && dist < 2.4 && (o.estado === 'ataque' || r() < 0.002) && r() < this.pTapar * 0.2) return 'e';
+    if (esp === 'proyectil' && dist > 2.6 && !sim.P.some((x) => x.dueno === yo.i) && r() < ganas * 0.3) return 'e';
+    if (esp === 'trampa' && dist > 2.2 && !sim.P.some((x) => x.dueno === yo.i && x.tipo === 'trampa') && r() < ganas * 0.4) return 'e';
+    if (esp === 'cuerda' && dist > 1.6 && dist < 3.6 && r() < ganas * 0.35) return 'e';
+    if (esp === 'embestida' && dist > 1.8 && dist < 4.5 && r() < ganas * 0.3) return 'e';
+    if (esp === 'niebla' && dist > 2.5 && r() < ganas * 0.2) return 'e';
+    if (esp === 'voladora' && dist > 2 && dist < 4 && r() < ganas * 0.3) return 'e';
+    if (esp === 'fuego' && dist < 2 && r() < ganas * 0.4) return 'e';
+    if (esp === 'contra' && dist < 2.4 && o.estado === 'ataque' && o.golpe && o.t < o.golpe.arranque && r() < this.pTapar * 0.35) return 'e';
 
     if (dist < 1.25) {
       if (r() < ganas * 2.4) {

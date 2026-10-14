@@ -308,7 +308,7 @@ export class Sim {
       case 'pelea':
         if (!this.practica && this.reloj > 0) this.reloj--;
         if (this.practica) {
-          for (const p of this.L) if (p.sinGolpe > 120 && p.vida < p.def.vida) p.vida = Math.min(p.def.vida, p.vida + 8);
+          for (const p of this.L) if (p.sinGolpe > 120 && p.vida < p.def.vida) p.vida = Math.min(p.def.vida, p.vida + 10);
         }
         if (!this.practica && this.reloj <= 0) {
           this.fase = 'tiempo';

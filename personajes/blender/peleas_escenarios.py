@@ -246,7 +246,7 @@ def texto(coll, cuerpo, c, tam, cara, canto, extrude=0.06):
     ob.data.materials.append(canto)
     mw = ob.matrix_world.to_3x3()
     for p in ob.data.polygons:
-        p.material_index = 0 if (mw @ p.normal).y < -0.6 else 1
+        p.material_index = 0
         p.use_smooth = True
     # El origen en el del mundo (como todo lo demás)
     me = ob.data

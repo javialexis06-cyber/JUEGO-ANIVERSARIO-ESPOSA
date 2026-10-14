@@ -24,7 +24,7 @@ function frases(id: string, o: { entrada: [string, string?][]; especial: [string
 export const ELIANA: DefLuchador = {
   id: 'eliana', nombre: 'Eliana', titulo: 'La Santa del Alba', estilo: 'A distancia: chispas doradas y un rayo de sol', color: '#f2b632', cuerpo: 'ella',
   aspecto: { cuerpo: 'ella', piel: '#f6d7c1', pelo: '#f0d48a', detalles: { peinado: 'pelo_ondas#f0d48a', cabeza: 'aureola#ffe39a', arriba: 'vestido_princesa#f6e2a8#ffffff', pies: 'sandalias#e8c77a', espalda: 'alas_angel#ffffff', ojos: '#c9822a' } },
-  brillo: '#ffd98a', vida: 950, velocidad: 3.0, salto: 12.8, peso: 1.05, aguante: 380,
+  brillo: '#ffd98a', vida: 1240, velocidad: 3.0, salto: 12.8, peso: 1.05, aguante: 380,
   golpes: { ...normales({ fuerza: 0.92, alcance: 1.05, efecto: 'luz' }), especial: proyectil('Chispa del alba', 'luz', { dano: 58, vel: 8.8 }), super: rayo('Despertar Dorado', 'luz', 285) },
   poses: { entrada: 'saludo_a', victoria: ['celebrar', 'baile_a'], derrota: 'triste' }, voz: 'eliana',
   frases: frases('eliana', {
@@ -38,7 +38,7 @@ export const ELIANA: DefLuchador = {
 export const SERENA: DefLuchador = {
   id: 'serena', nombre: 'Serena', titulo: 'La Santa de la Calma', estilo: 'Contraataque: espera tu golpe y te lo devuelve', color: '#8a72d6', cuerpo: 'ella',
   aspecto: { cuerpo: 'ella', piel: '#e5b48f', pelo: '#2a2238', detalles: { peinado: 'pelo_flequillo#2a2238', cabeza: 'tiara#c9b6ea', arriba: 'vestido#5d4f8a#c9b6ea', pies: 'botas#3a2f4a', espalda: 'capa#3a2f5c', ojos: '#6b55a8' } },
-  brillo: '#c9b2ff', vida: 1000, velocidad: 2.9, salto: 12.2, peso: 0.95, aguante: 430,
+  brillo: '#c9b2ff', vida: 1300, velocidad: 2.9, salto: 12.2, peso: 0.95, aguante: 430,
   golpes: { ...normales({ fuerza: 0.98, efecto: 'lirio' }), especial: contra('Velo de calma', 'lirio'), super: lluvia('Lluvia de lirios', 'lirio', 275) },
   poses: { entrada: 'reverencia', victoria: ['reverencia', 'brazos_cruzados'], derrota: 'rodillas_a' }, voz: 'serena',
   frases: frases('serena', {
@@ -52,7 +52,7 @@ export const SERENA: DefLuchador = {
 export const TAREK: DefLuchador = {
   id: 'tarek', nombre: 'Tarek', titulo: 'El Toro de Brasaviva', estilo: 'Pesado: aguanta golpes y embiste como sus vacas de lava', color: '#e0572e', cuerpo: 'el',
   aspecto: { cuerpo: 'el', piel: '#a8714d', pelo: '#1f1a18', detalles: { peinado: 'pelo_rapado#1f1a18', cabeza: 'sombrero_vaquero#8a3a2a', cara: 'barba#1f1a18', arriba: 'camisa_cuadros#c4553f#2b2422', abajo: 'pantalon#6b3a2a', pies: 'botas_vaqueras#5a2a1a' } },
-  escala: 1.08, vida: 1150, velocidad: 2.5, salto: 11.2, peso: 0.78, aguante: 520,
+  escala: 1.08, vida: 1500, velocidad: 2.5, salto: 11.2, peso: 0.78, aguante: 520,
   golpes: { ...normales({ fuerza: 1.16, alcance: 1.06, lentitud: 3, efecto: 'fuego', armadura: 1 }), especial: embestida('Embestida volcánica', 'fuego', { dano: 96, vel: 9.5, armadura: 1 }), super: rafaga('Estampida de lava', 'fuego', 325) },
   poses: { entrada: 'musculo', victoria: ['musculo', 'jarras'], derrota: 'tirado' }, voz: 'tarek',
   frases: frases('tarek', {
@@ -66,7 +66,7 @@ export const TAREK: DefLuchador = {
 export const OTTO: DefLuchador = {
   id: 'otto', nombre: 'Otto', titulo: 'El Rescatista de Nieveclara', estilo: 'Control: atrapa de lejos con su cuerda de rescate', color: '#3d9be0', cuerpo: 'el',
   aspecto: { cuerpo: 'el', piel: '#e5b48f', pelo: '#a45a2a', detalles: { peinado: 'pelo_copete#a45a2a', cabeza: 'gorro_lana#e4574b', cara: 'barba#a45a2a', arriba: 'chaqueta#e4574b', abajo: 'pantalon#3e4248', pies: 'botas#3b2a22', espalda: 'mochila#e08a2a' } },
-  vida: 1000, velocidad: 3.0, salto: 12.6, peso: 1.0, aguante: 430,
+  vida: 1300, velocidad: 3.0, salto: 12.6, peso: 1.0, aguante: 430,
   golpes: { ...normales({ efecto: 'hielo' }), especial: cuerda('Cuerda de rescate', 'hielo'), super: ola('Avalancha', 'hielo', 275) },
   poses: { entrada: 'jarras', victoria: ['pulgares_a', 'celebrar'], derrota: 'desmayo' }, voz: 'otto',
   frases: frases('otto', {
@@ -80,7 +80,7 @@ export const OTTO: DefLuchador = {
 export const CONDE: DefLuchador = {
   id: 'conde', nombre: 'Máscara del Conde', titulo: 'Un vecino disfrazado de Conde', estilo: 'Tramposo: se esfuma en niebla y cada golpe le devuelve vida', color: '#c2273e', cuerpo: 'el',
   aspecto: { cuerpo: 'el', piel: '#ecdcd2', pelo: '#1a1418', detalles: { peinado: 'pelo_lado#1a1418', cabeza: 'corona#c9a03a', cara: 'antifaz#2a0a12', arriba: 'saco_corbata#5a1020#c9a03a', abajo: 'pantalon#1a1418', pies: 'zapatos#1a1418', espalda: 'capa#2a0a12#c9a03a', ojos: '#a01020' } },
-  brillo: '#ff4a5a', vida: 950, velocidad: 3.2, salto: 12.6, peso: 1.05, aguante: 380, roba: 0.15,
+  brillo: '#ff4a5a', vida: 1240, velocidad: 3.2, salto: 12.6, peso: 1.05, aguante: 380, roba: 0.15,
   golpes: { ...normales({ fuerza: 0.95, efecto: 'sombra' }), especial: niebla('Niebla de medianoche', 'sombra'), super: { ...lluvia('Banquete de murciélagos', 'sombra', 265), roba: 0.5 } },
   poses: { entrada: 'reverencia', victoria: ['presumir_a', 'reverencia'], derrota: 'desmayo' }, voz: 'conde',
   frases: frases('conde', {
@@ -94,7 +94,7 @@ export const CONDE: DefLuchador = {
 export const VAELTHOR: DefLuchador = {
   id: 'vaelthor', nombre: 'Máscara de Vael’Thor', titulo: 'Un vecino disfrazado de Ceramista', estilo: 'Trampas: deja jarrones de sombra que marean', color: '#9a5ad8', cuerpo: 'el',
   aspecto: { cuerpo: 'el', piel: '#d9c7b8', pelo: '#2a1f33', detalles: { peinado: 'pelo_lado#2a1f33', cabeza: 'sombrero_copa#2a1f33', cara: 'antifaz#f4efe6', arriba: 'saco_corbata#3a2350#b07cff', abajo: 'pantalon#2a1f33', pies: 'zapatos#1d1d24', espalda: 'capa#4b2468#e0c46a', ojos: '#b07cff' } },
-  brillo: '#b07cff', vida: 980, velocidad: 2.9, salto: 12.2, peso: 1.0, aguante: 400,
+  brillo: '#b07cff', vida: 1270, velocidad: 2.9, salto: 12.2, peso: 1.0, aguante: 400,
   golpes: { ...normales({ alcance: 1.05, efecto: 'porcelana' }), especial: trampa('Jarrón de sombras', 'porcelana'), super: lluvia('Laberinto de porcelana', 'porcelana', 250, 90) },
   poses: { entrada: 'brazos_cruzados', victoria: ['reverencia', 'aplauso_a'], derrota: 'rodillas_a' }, voz: 'vaelthor',
   frases: frases('vaelthor', {
@@ -108,7 +108,7 @@ export const VAELTHOR: DefLuchador = {
 export const DRAGON: DefLuchador = {
   id: 'dragon', nombre: 'Dragón de Trapo', titulo: 'Un vecino con disfraz de dragón', estilo: 'Fuego de cerca: un aliento que pega varias veces', color: '#4fae5a', cuerpo: 'el',
   aspecto: { cuerpo: 'el', piel: '#e5b48f', pelo: '#3b2a22', detalles: { peinado: 'pelo_copete#3b2a22', cabeza: 'capucha_dragon#4fae5a#f2c94c', arriba: 'enterizo_dragon#4fae5a#f2c94c', pies: 'pantuflas_dragon#4fae5a', cola: 'cola_dragon#4fae5a#f2c94c', espalda: 'alas_dragon#3f8f4a' } },
-  vida: 980, velocidad: 3.0, salto: 12.6, peso: 1.05, aguante: 410,
+  vida: 1270, velocidad: 3.0, salto: 12.6, peso: 1.05, aguante: 410,
   golpes: { ...normales({ fuerza: 1.02, efecto: 'fuego' }), especial: aliento('Aliento de dragón', 'fuego'), super: rayo('Rugido de fuego', 'fuego', 280) },
   poses: { entrada: 'enojo_a', victoria: ['baile_a', 'celebrar'], derrota: 'llorar_a' }, voz: 'dragon',
   frases: frases('dragon', {
@@ -123,7 +123,7 @@ export const DRAGON: DefLuchador = {
 export function retador(nombre: string): DefLuchador {
   return {
     id: 'retador', nombre, titulo: 'El retador', estilo: 'Equilibrado: de todo un poco y una ráfaga de estrellas', color: '#ff7aa8', cuerpo: 'el', aspecto: 'jugador',
-    vida: 1000, velocidad: 3.3, salto: 13, peso: 1.0, aguante: 430,
+    vida: 1300, velocidad: 3.3, salto: 13, peso: 1.0, aguante: 430,
     golpes: { ...normales({}), especial: proyectil('Estrella fugaz', 'estrella', { dano: 60, vel: 8.2 }), super: rafaga('Ráfaga estelar', 'estrella', 300) },
     poses: { entrada: 'saludo_a', victoria: ['celebrar', 'trofeo'], derrota: 'triste' },
     frases: { entrada: [], especial: [], super: [], victoria: [], derrota: [] },

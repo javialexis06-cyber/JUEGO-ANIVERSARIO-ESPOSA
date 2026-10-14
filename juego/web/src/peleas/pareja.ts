@@ -9,7 +9,7 @@ const f = (id: string, t: string, d: string): Frase => ({ id, t, d });
 
 const JAVIER: DefLuchador = {
   id: 'el', nombre: 'Javier', titulo: 'El Panda del Valle', estilo: 'Equilibrado: corazones voladores y un abrazo de oso', color: '#4f8fe0', cuerpo: 'el', aspecto: null,
-  vida: 1000, velocidad: 3.3, salto: 13, peso: 1.0, aguante: 430,
+  vida: 1300, velocidad: 3.3, salto: 13, peso: 1.0, aguante: 430,
   golpes: { ...normales({}), especial: proyectil('Muak volador', 'corazon', { dano: 60, vel: 8 }), super: rafaga('Abrazo de oso', 'corazon', 305) },
   poses: { entrada: 'musculo', victoria: ['celebrar', 'trofeo'], derrota: 'triste' }, voz: 'el',
   frases: {
@@ -31,7 +31,7 @@ const JAVIER: DefLuchador = {
 
 const LAURA: DefLuchador = {
   id: 'ella', nombre: 'Laura', titulo: 'La Mejor Guerrera de Dios', estilo: 'Rápida: doble salto, patadas voladoras y combos largos', color: '#ff7aa8', cuerpo: 'ella', aspecto: null,
-  vida: 920, velocidad: 3.75, salto: 13.4, peso: 1.1, aguante: 380, dobleSalto: true,
+  vida: 1200, velocidad: 3.75, salto: 13.4, peso: 1.1, aguante: 380, dobleSalto: true,
   golpes: { ...normales({ fuerza: 0.93, lentitud: -1 }), especial: voladora('Patada voladora', 'estrella'), super: rafaga('Furia de guerrera', 'estrella', 315) },
   poses: { entrada: 'presumir_a', victoria: ['baile_a', 'celebrar'], derrota: 'puchero' }, voz: 'ella',
   frases: {

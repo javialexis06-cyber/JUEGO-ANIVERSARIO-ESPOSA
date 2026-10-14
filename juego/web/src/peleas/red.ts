@@ -236,7 +236,10 @@ async function enSala(g: Ganchos, sala: Sala) {
     const esconder = (si: boolean) => e.raiz.classList.toggle('escondida', si);
     e = esperarEnSala({
       sala, titulo: 'El Torneo del Despertar Dorado', tema: 'burbujas', subtitulo: `Uno contra uno · ${ESCENARIOS[escenario].nombre}`,
-      detalle: (j) => defDe(j).nombre === j.nombre ? 'Su propio muñeco' : defDe(j).nombre,
+      detalle: (j) => {
+        const d = g.elenco().find((x) => x.id === (j.datos?.luchador as string));
+        return !d ? '' : d.aspecto === 'jugador' ? 'Su propio muñeco' : d.nombre;
+      },
       extras: [
         { id: 'luchador', texto: '🥊 Mi luchador', alTocar: async () => {
           esconder(true);

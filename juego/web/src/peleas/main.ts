@@ -171,6 +171,7 @@ function volverAfuera() {
 }
 
 async function titulo() {
+  soltarPeleaVieja();
   atrasActual = () => confirmarSalir();
   hud.mostrar(false);
   mando.mostrar(false);
@@ -275,6 +276,8 @@ interface OpcionesEscoger {
 
 function escogerLuchador(o: OpcionesEscoger): Promise<DefLuchador | null> {
   return new Promise((ok) => {
+    soltarPeleaVieja();
+    director = vitrina;
     let sel = ELENCO.find((d) => d.id === o.inicial) ?? ELENCO[o.lado === 0 ? 0 : 1] ?? ELENCO[0];
     void vitrina.poner(o.lado, sel);
     void vitrina.poner(1 - o.lado, o.otro ?? null);
@@ -398,10 +401,17 @@ export interface Resultado {
 
 let pausado = false;
 let peleaActual: { sim: Sim; vista: VistaPelea } | null = null;
+/** La pelea que acaba de terminar: sigue viéndose (quien ganó celebra) mientras sale la pantalla del resultado. */
+let peleaVieja: VistaPelea | null = null;
+function soltarPeleaVieja() {
+  peleaVieja?.liberar();
+  peleaVieja = null;
+}
 
 async function pelear(cfg: ConfigPelea): Promise<Resultado> {
   quitarPantalla();
   carga(true, 'Armando el escenario…');
+  soltarPeleaVieja();
   vitrina.limpiar();
   director = null;
   mando.liberar();
@@ -430,13 +440,18 @@ async function pelear(cfg: ConfigPelea): Promise<Resultado> {
     const terminar = (r: Resultado) => {
       if (terminado) return;
       terminado = true;
-      director = null;
       hud.mostrar(false);
       mando.mostrar(false);
       peleaActual = null;
+      if (r.salir || r.revancha) {
+        director = null;
+        vista.liberar();
+      } else {
+        // (se sigue viendo hasta la pantalla siguiente)
+        peleaVieja = vista;
+        director = { cuadro: (dt) => vista.cuadro(dt, sim) };
+      }
       ok(r);
-      // (la vista se suelta después de mostrar el resultado)
-      setTimeout(() => vista.liberar(), 0);
     };
     hud.alPausa = () => void pausar(cfg, terminar);
     mando.alPausar = () => void pausar(cfg, terminar);
@@ -556,6 +571,7 @@ async function modoArcade() {
 
 function escaleraPantalla(elegido: DefLuchador, rivales: DefLuchador[], k: number): Promise<boolean> {
   return new Promise((ok) => {
+    soltarPeleaVieja();
     director = vitrina;
     void vitrina.poner(0, elegido);
     void vitrina.poner(1, rivales[k]);
@@ -584,6 +600,7 @@ function escaleraPantalla(elegido: DefLuchador, rivales: DefLuchador[], k: numbe
 }
 
 async function campeon(d: DefLuchador) {
+  soltarPeleaVieja();
   director = vitrina;
   void vitrina.poner(0, d);
   void vitrina.poner(1, null);
@@ -665,6 +682,7 @@ async function modoLinea(codigo?: string) {
 async function mirarComoInvitado(cfg: { defs: [DefLuchador, DefLuchador]; escenario: IdEscenario; nombres: [string, string]; aspectos: [AspectoJugador | undefined, AspectoJugador | undefined]; linea: Linea }): Promise<Resultado> {
   quitarPantalla();
   carga(true, 'Armando el escenario…');
+  soltarPeleaVieja();
   vitrina.limpiar();
   director = null;
   mando.liberar();
@@ -688,11 +706,16 @@ async function mirarComoInvitado(cfg: { defs: [DefLuchador, DefLuchador]; escena
     const terminar = (r: Resultado) => {
       if (terminado) return;
       terminado = true;
-      director = null;
       hud.mostrar(false);
       mando.mostrar(false);
+      if (r.salir) {
+        director = null;
+        vista.liberar();
+      } else {
+        peleaVieja = vista;
+        director = { cuadro: (dt) => { espejo.avanzar(dt); vista.cuadro(dt, espejo); } };
+      }
       ok(r);
-      setTimeout(() => vista.liberar(), 0);
     };
     const cfgPausa = { ...cfg, controles: [{ k: 'red' }, { k: 'mando', i: 0 }], linea: cfg.linea } as unknown as ConfigPelea;
     hud.alPausa = () => void pausar(cfgPausa, terminar);
