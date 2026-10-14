@@ -253,8 +253,8 @@ svg {
 }
 .cel-estrellas {
   position: absolute;
-  left: 92px;
-  bottom: 8px;
+  right: 8px;
+  top: 4px;
   display: flex;
   gap: 1px;
   font-size: 15px;
@@ -956,8 +956,7 @@ svg {
   pointer-events: none;
 }
 .cel-bloqueo.pidiendo::before {
-  background: #000a;
-  backdrop-filter: blur(6px);
+  background: #000c;
 }
 
 /* Inicio: la rejilla de apps */
@@ -1815,8 +1814,7 @@ svg {
   position: absolute;
   inset: 0;
   z-index: 7;
-  background: color-mix(in srgb, var(--fondo-app) 94%, transparent);
-  backdrop-filter: blur(4px);
+  background: var(--fondo-app);
 }
 .cel-candado {
   position: absolute;
