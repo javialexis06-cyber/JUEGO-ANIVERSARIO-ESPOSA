@@ -104,6 +104,10 @@ node scripts/_celular_revisar.mjs          # coherencia de los datos (pistas alc
 node scripts/_celular_todos.mjs <carpeta>  # recorre los 8 casos de punta a punta y saca capturas (servidor en 5193)
 ```
 
+La prueba de punta a punta corre Chromium sin `--use-angle=swiftshader` (el juego no usa WebGL; con swiftshader las
+capturas salen con una franja duplicada que no existe en el teléfono). Las fotos sí necesitan swiftshader
+(`scripts/celular/fotos.mjs` ya lo trae).
+
 Ganchos: `window.__celular` (`abrir(id)`, `tel()`, `final(id)`, `desbloquearTodo()`, `borrar()`, `progreso`).
 
 ## Integración (para el coordinador)

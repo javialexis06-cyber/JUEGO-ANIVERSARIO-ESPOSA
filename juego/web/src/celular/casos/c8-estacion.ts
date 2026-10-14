@@ -68,7 +68,7 @@ export const CASO_ESTACION: Caso = {
         { de: 'valentina', t: '18:00', dia: 'Domingo 3 de Primavera', texto: 'Aviso: la cúpula del invernadero queda SELLADA por fumigación hasta el martes. Las cámaras de adentro se apagan para que no se empañen. No entren 🌿', pista: 'cupula' },
         { de: 'rita', t: '18:05', texto: 'Recibido. Mañana subo los costales de sustrato.' },
         { de: 'rita', t: '18:20', texto: 'Por cierto: esta semana la estación cumple cuatro años. ¡Fundada en AV 308! 🎉 Torta en el comedor de Marisol.', pista: 'fundada' },
-        { de: 'said', t: '19:00', texto: 'Les recuerdo: el que salga al casco con más de 14 horas despierto, a mi consultorio primero.' },
+        { de: 'said', t: '19:00', texto: 'Ojo: el que salga al casco con más de 14 horas despierto, a mi consultorio primero.' },
       ],
     },
     {
