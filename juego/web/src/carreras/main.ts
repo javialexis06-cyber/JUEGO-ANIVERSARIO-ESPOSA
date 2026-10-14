@@ -324,7 +324,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
   const bot = params.has('bot');
   const vueltas = Number(params.get('vueltas')) || undefined;
   const sim = new Sim({
-    pista, corredores: o.corredores.map((x, i) => ({ ...x, control: i === o.mio && bot && x.control === 'local' ? 'ia' : x.control })),
+    pista, corredores: o.corredores,
     ia: DIFICULTADES[ajustes.dificultad].ia, semilla: o.semilla ?? (Math.random() * 1e9) | 0, contrarreloj: o.contrarreloj, vueltas,
     autoridad: o.red ? o.red.soyAnfitrion : true,
   });
@@ -539,7 +539,9 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
     if (!pausado) {
       const k = sim.karts[mio];
       if (k && k.control === 'local') {
-        mando.leer(k.entrada);
+        // (?bot=1: la máquina maneja el carro de quien juega, también en línea)
+        if (bot) sim.pilotar(k);
+        else mando.leer(k.entrada);
         if (sim.t < 0) k.entrada.acel = mando.aceleraDeVerdad() ? 1 : 0;
       }
       acumulado += dt * RAPIDO;

@@ -816,7 +816,7 @@ export class Sim {
     return base * f;
   }
 
-  private pilotar(k: Kart) {
+  pilotar(k: Kart) {
     const p = this.pista;
     const ia = k.ia ?? (k.ia = { carril: 0, fase: 0, habilidad: 0.95, esperaObjeto: 0, derrapando: 0, atascado: 0 });
     const e = k.entrada;

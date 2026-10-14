@@ -124,7 +124,7 @@ async function lobby(ctx: Contexto, sala: Sala) {
     detalle: (j) => `${CRIATURAS[corredorDe(j).criatura].nombre}`,
     extras: sala.soyAnfitrion && modoSala === 'suelta' ? [{ id: 'pista', texto: '🗺️ Cambiar pista', alTocar: () => {
       pistaSala = ORDEN_PISTAS[(ORDEN_PISTAS.indexOf(pistaSala) + 1) % ORDEN_PISTAS.length];
-      const sub = document.querySelector('.sala-espera .sub, .sala-espera p');
+      const sub = document.querySelector('.sala-espera .se-sub');
       if (sub) sub.textContent = `Carrera · ${PISTAS[pistaSala].nombre}`;
       avisoSuelto(`Pista: ${PISTAS[pistaSala].nombre}`, 1600);
     } }] : [],
