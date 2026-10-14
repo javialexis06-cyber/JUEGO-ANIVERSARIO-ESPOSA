@@ -135,30 +135,31 @@ export class Globo {
     let estorbos: DOMRect[] | null = null;
     for (const el of [this.el, this.chico]) {
       if (el.hidden) continue;
-      // Si el narrador está a un lado de la puerta, el globo cabe entre el borde y la puerta
-      const lado = e && x < e.x0 ? e.x0 - 22 : 0;
-      const tope = lado > 150 ? `${Math.round(lado)}px` : '';
+      // En cualquiera de las dos esquinas, reservar el espacio entre el borde y la puerta.
+      const izquierda = !!e && x < e.x0;
+      const lado = e ? izquierda ? e.x0 - 22 : w - e.x1 - 22 : 0;
+      const tope = lado > 150 ? `${Math.round(Math.min(lado, el === this.chico ? 240 : 380))}px` : '';
       if (el.style.maxWidth !== tope) el.style.maxWidth = tope;
       const ancho = el.offsetWidth || 260;
       const alto = el.offsetHeight || 60;
-      const derecha = lado > 150 ? e!.x0 - 10 : w - 12;
-      let izq = lado > 150 ? Math.min(Math.max(12, x - ancho * 0.35), derecha - ancho) : Math.min(Math.max(12, x + 18), derecha - ancho);
+      const derecha = lado > 150 && izquierda ? e!.x0 - 10 : w - 12;
+      let izq = lado > 150 && izquierda ? Math.min(Math.max(12, x - ancho * 0.35), derecha - ancho) : Math.min(Math.max(lado > 150 ? e!.x1 + 10 : 12, x + 18), derecha - ancho);
       let arriba = Math.max(12, y - alto - 8);
       // Si se monta sobre algo de la interfaz, se corre a un lado o se baja lo justo (lo que menos lo aleje)
       estorbos ??= this.estorbos();
       for (let vuelta = 0; vuelta < 3; vuelta++) {
         const r = estorbos.find((o) => izq < o.right + 6 && izq + ancho > o.left - 6 && arriba < o.bottom + 6 && arriba + alto > o.top - 6);
         if (!r) break;
+        const tapa = (o: { izq: number; arriba: number }, z: { x0: number; y0: number; x1: number; y1: number } | null) =>
+          !!z && o.izq < z.x1 && o.izq + ancho > z.x0 && o.arriba < z.y1 && o.arriba + alto > z.y0;
         const opciones = [
           { izq: r.right + 8, arriba }, // a la derecha
           { izq: r.left - 8 - ancho, arriba }, // a la izquierda
           { izq, arriba: r.bottom + 8 }, // debajo
-        ].filter((o) => o.izq >= 8 && o.izq + ancho <= Math.max(derecha, w - 8) && o.arriba + alto <= h - 8);
-        // Ni la cara del narrador (bajarse debajo del tutorial le tapaba la cabeza) ni, si se puede, la puerta
-        const tapa = (o: { izq: number; arriba: number }, z: { x0: number; y0: number; x1: number; y1: number } | null) =>
-          !!z && o.izq < z.x1 && o.izq + ancho > z.x0 && o.arriba < z.y1 && o.arriba + alto > z.y0;
+        ].filter((o) => o.izq >= 8 && o.izq + ancho <= Math.max(derecha, w - 8) && o.arriba + alto <= h - 8 && !tapa(o, e));
+        // Con la puerta libre, preferir también apartarse de la cara del narrador.
         const cara = { x0: x - 70, y0: y - 10, x1: x + 70, y1: y + 120 };
-        const costo = (o: { izq: number; arriba: number }) => Math.hypot(o.izq - izq, o.arriba - arriba) + (tapa(o, cara) ? 2000 : 0) + (tapa(o, e) ? 500 : 0);
+        const costo = (o: { izq: number; arriba: number }) => Math.hypot(o.izq - izq, o.arriba - arriba) + (tapa(o, cara) ? 2000 : 0);
         const mejor = opciones.sort((a, b) => costo(a) - costo(b))[0];
         if (!mejor) break;
         izq = mejor.izq;

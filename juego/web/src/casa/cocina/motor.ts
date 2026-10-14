@@ -15,6 +15,7 @@ import { NOMBRE_ROL, type Rol } from '../modelo';
 import { imagenChefAmigo, chefAmigoListo, prepararChefAmigo, type PoseChef } from './chef_amigo';
 import { boton, dentro, G, Rect, rr, texto } from './dibujo';
 import { Efectos } from './efectos';
+import { GuardadoCocina } from './guardado';
 import {
   Animo, FRASES, frasePareja, Invitado, invitadoPareja, invitadoPorId, INVITADOS, invitadosDelDia, POSES, Pose,
 } from './invitados';
@@ -274,6 +275,9 @@ export class Motor {
   colgados = new Map<number, number>();
   /** Lo que ya se guardó (para no guardar dos veces un día). */
   private guardadoN = -1;
+  private guardado: GuardadoCocina;
+  private escenasFin = new Map<number, Promise<void>>();
+  private comprando = false;
   private nJuicio = 0;
   /** Calidad automática según cómo va el celular. */
   private medidas = { suma: 0, n: 0 };
@@ -286,6 +290,7 @@ export class Motor {
 
   constructor(public receta: Receta, private o: OpcionesCocina, private alSalir: (s: SalidaCocina) => void) {
     this.progreso = structuredClone(o.progreso);
+    this.guardado = new GuardadoCocina(this.progreso, o.guardar);
     this.yo = o.yo ?? { id: o.rol, nombre: NOMBRE_ROL[o.rol], tipo: o.rol, rol: o.rol, puesto: 0 };
     this.jugadores = o.linea ? o.linea.config.jugadores : [this.yo];
     this.neutro = !!o.neutro || this.yo.tipo === 'amigo' || this.jugadores.some((j) => j.tipo === 'amigo');
@@ -827,9 +832,10 @@ export class Motor {
     else if (c.startsWith('comprar:')) void this.comprar(c.slice(8), b.dataset.volver ?? 'dia');
     else if (c === 'volver-dia' || c === 'volver-fin') this.pintarCapa();
     else if (c === 'seguir') this.anfitrion ? this.seguir() : this.sync?.pedir('seguir');
-    else if (c === 'salir') this.salir('salir');
-    else if (c === 'sala') this.salir('sala');
-    else if (c === 'siguiente') this.siguienteDia();
+    else if (c === 'salir') void this.salir('salir');
+    else if (c === 'sala') void this.salir('sala');
+    else if (c === 'siguiente') void this.siguienteDia();
+    else if (c === 'reintentar') void this.alFinDelDia();
     else if (c === 'solo') this.seguirSinLosCortados();
   }
 
@@ -840,8 +846,17 @@ export class Motor {
     else this.pintarCapa();
   }
 
-  private jugar() {
+  private async jugar() {
     if (this.s.fase !== 'espera') return;
+    if (!(await this.guardado.esperar())) {
+      this.aviso('Hay cambios pendientes de guardar. Intenta otra vez antes de empezar.', 5);
+      return;
+    }
+    if (this.s.fase !== 'espera' || this.terminado) return;
+    if (JSON.stringify(this.s.mejoras) !== JSON.stringify(this.progreso.mejoras)) {
+      this.s.mejoras = { ...this.progreso.mejoras };
+      this.reiniciarCocina();
+    }
     this.s.fase = 'jugando';
     this.pico = false;
     musica.pista(`cocina-${this.receta.id}`);
@@ -905,6 +920,7 @@ export class Motor {
   }
 
   private async comprar(id: string, volver: string) {
+    if (this.comprando) return;
     const m = this.receta.mejoras.find((x) => x.id === id);
     if (!m) return;
     const nv = this.progreso.mejoras[id] ?? 0;
@@ -913,8 +929,13 @@ export class Motor {
       sonidos.mal();
       return;
     }
-    this.progreso.propinas -= precio;
-    this.progreso.mejoras[id] = nv + 1;
+    this.comprando = true;
+    const comprada = await this.guardado.comprar(id, nv, precio);
+    this.comprando = false;
+    if (!comprada) {
+      this.aviso('No se pudo confirmar la compra. Intenta otra vez antes de seguir o salir.', 5);
+      return;
+    }
     sonidos.caja();
     // Si el día no ha empezado, la mejora se estrena hoy mismo
     if (this.s.fase === 'espera' && this.anfitrion) {
@@ -924,7 +945,6 @@ export class Motor {
     }
     this.fondos.clear();
     this.tienda(volver);
-    await this.o.guardar(structuredClone(this.progreso)).catch(() => {});
   }
 
   // ------------------------------------------------------------------------------------------- Durante el día
@@ -1188,39 +1208,46 @@ export class Motor {
   }
 
   /** Cada uno guarda lo suyo (el anfitrión el día y el premio de la casa; el invitado sus puntos y propinas). */
-  private async alFinDelDia() {
+  private async alFinDelDia(): Promise<boolean> {
     const s = this.s;
     const r = s.resultado;
-    if (!r || this.guardadoN === s.n) return;
-    this.guardadoN = s.n;
+    if (!r) return true;
+    if (this.guardadoN === s.n) {
+      const confirmado = await this.guardado.esperar();
+      if (!confirmado) this.aviso('Hay cambios pendientes de guardar. Intenta otra vez antes de seguir o salir.', 5);
+      await this.escenasFin.get(s.n);
+      this.pintarCapa();
+      return confirmado;
+    }
+    const n = s.n;
+    const { rangoAntes, mio, nuevo } = this.guardado.registrar(n, r, this.anfitrion, !!this.o.premioCasa);
     const p = this.progreso;
-    const rangoAntes = rangoDe(p.xp);
-    p.xp += r.xp;
-    p.propinas += r.propinas;
-    p.servidos += r.servidos;
-    p.perfectos += r.perfectos;
-    p.mejor = Math.max(p.mejor, r.promedio);
-    if (this.anfitrion) p.dia = s.dia + 1;
-    this.rangoAntesFin = rangoAntes;
-    // El premio de la casa es del dueño de la cocina (y solo si es Javier o Laura en su casa)
-    const mio: ResultadoDia = this.anfitrion && this.o.premioCasa ? r : { ...r, monedas: 0, platos: 0 };
-    void this.o.guardar(structuredClone(p), mio).catch(() => {});
-    [523, 659, 784, 1046, 1318].forEach((f, i) => nota(f, 0.2, i * 0.1, 'triangle', 0.05));
+    if (nuevo) this.rangoAntesFin = rangoAntes;
+    if (!(await this.guardado.guardarPendientes())) {
+      this.aviso('No se pudo guardar el día. Intenta otra vez antes de seguir o salir.', 5);
+      this.pintarCapa();
+      return false;
+    }
+    if (n === this.s.n) this.guardadoN = n;
     // Gancho para escenas especiales (se pintan encima; la tarjeta del final sale después)
     const info: InfoFinDia = {
       receta: this.receta.id, rol: this.rol, enPareja: this.juntos, jugadores: this.jugadores, anfitrion: this.anfitrion, rangoAntes, rango: rangoDe(p.xp),
       raiz: this.raiz,
     };
-    const ganchos = [this.o.alTerminarDia, ...ganchosFin];
-    for (const f of ganchos) {
-      if (!f) continue;
-      try {
-        await f(mio, info);
-      } catch {
-        /* una escena que falla no tumba la cocina */
-      }
+    let escena = this.escenasFin.get(n);
+    if (!escena) {
+      escena = (async () => {
+        [523, 659, 784, 1046, 1318].forEach((f, i) => nota(f, 0.2, i * 0.1, 'triangle', 0.05));
+        for (const f of [this.o.alTerminarDia, ...ganchosFin]) {
+          if (!f) continue;
+          try { await f(mio, info); } catch { /* una escena que falla no tumba la cocina */ }
+        }
+      })();
+      this.escenasFin.set(n, escena);
     }
+    await escena;
     this.pintarCapa();
+    return true;
   }
   private rangoAntesFin = 1;
 
@@ -1261,12 +1288,15 @@ export class Motor {
         <div class="rango-barra"><span>${nombreRango(rango)} · rango ${rango}${rango > this.rangoAntesFin ? ' <b>¡SUBISTE!</b>' : ''}</span><i style="--v:${avance}%"></i></div>
         ${subio.length ? `<div class="nuevo">${subio.map((d) => `<p>✨ ${d.texto}</p>`).join('')}</div>` : ''}
         ${premio}
+        ${this.guardado.pendiente ? `<p role="status">${this.guardado.fallo ? 'Hay cambios pendientes de guardar. Reintenta antes de seguir o salir.' : 'Guardando…'}</p>${this.guardado.fallo ? '<button class="boton-cocina" data-c="reintentar">Reintentar guardado</button>' : ''}` : ''}
         <div class="botones">${botones}</div>
       </div>`, 'fin');
   }
 
-  private siguienteDia() {
-    if (!this.anfitrion) return;
+  private async siguienteDia() {
+    if (!this.anfitrion || this.s.fase !== 'fin') return;
+    const n = this.s.n;
+    if (!(await this.alFinDelDia()) || !(await this.guardado.esperar()) || this.s.n !== n || this.terminado) return;
     this.nuevoDia();
     this.pintarCapa();
   }
@@ -1275,8 +1305,9 @@ export class Motor {
    * Se cierra la cocina: `salir` (a la casa o a la sala de juegos; quien la abrió decide qué pasa con la sala) o `sala`
    * (de vuelta a la sala de espera; si lo decide el anfitrión, se van todos con él).
    */
-  private salir(como: SalidaCocina = 'salir', avisar = true) {
+  private async salir(como: SalidaCocina = 'salir', avisar = true) {
     if (this.terminado) return;
+    if (!(await this.alFinDelDia()) || !(await this.guardado.esperar()) || this.terminado) return;
     if (como === 'sala' && avisar && this.anfitrion) this.sync?.volverTodosALaSala();
     this.sync?.cerrar();
     for (const q of this.quitarSala.splice(0)) q();

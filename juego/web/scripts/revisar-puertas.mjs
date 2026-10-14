@@ -35,13 +35,14 @@ const FOTOS = bandera('fotos');
 const ESPERA_PRUEBA = Number(opcion('espera', '150')) * 1000;
 mkdirSync(carpeta, { recursive: true });
 
-const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const PRE = process.env.CHROME_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
   executablePath: existsSync(PRE) ? PRE : undefined,
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 
 const informe = [];
+const progresos = [];
 const fallas = [];
 const anotar = (r, texto) => {
   r.fallas.push(texto);
@@ -66,6 +67,9 @@ for (const semilla of semillas) {
     console.log(`Puerta ${n} · semilla ${semilla}`);
     const t0 = Date.now();
     try {
+      if (desde === 1 && (await pagina.evaluate(() => window.__puertas.estado().progreso.hasta)) < n - 1) {
+        throw new Error('la puerta anterior no desbloqueó este nivel');
+      }
       await pagina.evaluate((n) => void window.__puertas.jugar(n), n);
       await pagina.waitForFunction((n) => window.__puertas.estado().jugando === n && window.__puertas.estado().listo, n, { timeout: 90000 });
       // (lo que todavía va rodando o saltando a un sitio libre no cuenta: se mira cuando todo queda quieto, y otra
@@ -105,12 +109,16 @@ for (const semilla of semillas) {
       if (res !== 'ok') anotar(r, `la prueba no pasó: ${res}`);
       else {
         const abierta = await pagina
-          .waitForFunction((n) => window.__puertas.estado().abierta || window.__puertas.estado().progreso.hasta >= n, n, { timeout: 60000 })
+          .waitForFunction((n) => {
+            const p = window.__puertas.estado().progreso;
+            return p.hasta >= n && p.estrellas[n] > 0;
+          }, n, { timeout: 60000 })
           .then(() => true, () => false);
-        if (!abierta) anotar(r, 'la prueba terminó pero la puerta no se abrió');
+        if (!abierta) anotar(r, 'la prueba terminó pero la puerta no registró su avance');
       }
       const vistas = await pagina.evaluate(() => window.__puertas.revision().then((x) => x?.vistas ?? []));
       for (const t of resumenTapados(vistas)) anotar(r, `tapado en acercamiento: ${t}`);
+      r.progreso = await pagina.evaluate(() => window.__puertas.estado().progreso);
     } catch (e) {
       anotar(r, `se trabó: ${String(e.message ?? e).split('\n')[0]}`);
     }
@@ -118,7 +126,19 @@ for (const semilla of semillas) {
     r.segundos = Math.round((Date.now() - t0) / 100) / 10;
     if (r.fallas.length && FOTOS) await pagina.screenshot({ path: `${carpeta}/p${String(n).padStart(3, '0')}-s${semilla}-falla.png` }).catch(() => {});
     console.log(`  ${r.fallas.length ? `${r.fallas.length} fallas` : 'bien'} · ${r.segundos} s`);
+    writeFileSync(`${carpeta}/informe.json`, JSON.stringify(informe, null, 1));
   }
+  const antes = await pagina.evaluate(() => window.__puertas.estado().progreso);
+  const monedasAntes = await pagina.evaluate(() => localStorage.getItem('nuestro-hogar-sueldo'));
+  await pagina.reload();
+  await pagina.waitForFunction(() => window.__listo, null, { timeout: 180000 });
+  const despues = await pagina.evaluate(() => window.__puertas.estado().progreso);
+  const monedasDespues = await pagina.evaluate(() => localStorage.getItem('nuestro-hogar-sueldo'));
+  const conserva = JSON.stringify(antes) === JSON.stringify(despues);
+  if (!conserva) fallas.push(`semilla ${semilla}: la recarga no conserva el progreso`);
+  if (monedasAntes !== monedasDespues) fallas.push(`semilla ${semilla}: la recarga cambió el pago de las puertas`);
+  progresos.push({ semilla, antes, despues, conserva, monedasAntes, monedasDespues });
+  writeFileSync(`${carpeta}/progreso.json`, JSON.stringify(progresos, null, 1));
   await pagina.close();
 }
 await navegador.close();

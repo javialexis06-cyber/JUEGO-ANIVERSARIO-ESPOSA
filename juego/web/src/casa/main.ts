@@ -33,6 +33,7 @@ import { conGenero, EVENTOS_BANO, type EventoBano, eventoDe } from './bano_frase
 import { escogerMimo, escogerSaludo, mimoDe, SALUDOS, type TipoCarino, type VarianteMimo } from './mimos';
 import { Bichos } from './bichos';
 import { nombreRango, progresoNuevo, rangoDe, RESTAURANTES, type ProgresoCocina, type RecetaId, type ResultadoDia } from './cocina/tipos';
+import { aplicarGuardadoCocina } from './cocina/guardado';
 import { idAparato } from '../salas/perfil';
 import { type EstadoTele, Tele } from './tele';
 import { Patio } from './patio';
@@ -1237,14 +1238,8 @@ async function cocinar(receta: RecetaId, juntos?: SalaCocina) {
 
 /** Guarda el progreso del restaurante y paga el día (monedas y platos de chef a la despensa). */
 async function guardarCocina(receta: RecetaId, p: ProgresoCocina, dia?: ResultadoDia) {
-  const plato = RESTAURANTES.find((x) => x.id === receta)!.plato;
-  await cambiarCasa((c) => {
-    c.cocina = { ...(c.cocina ?? {}), [yo]: { ...(c.cocina?.[yo] ?? {}), [receta]: p } };
-    if (dia) {
-      c.monedas += dia.monedas;
-      if (dia.platos) c.inventario[plato] = (c.inventario[plato] ?? 0) + dia.platos;
-    }
-  });
+  const guardado = await cambiarCasa((c) => aplicarGuardadoCocina(c, yo, receta, p, dia));
+  if (!guardado) throw new Error('No se pudo guardar el restaurante');
 }
 
 /** Qué pasa al tocar cada mueble (por el nombre del mueble en el modelo del cuarto). */
@@ -2203,6 +2198,7 @@ function botonesCuarto(): Boton[] {
 
 function pintarAcciones() {
   const cont = $('acciones');
+  cont.dataset.cuarto = cuartoVista();
   if (!s) return html(cont, '');
   const b = [
     ...botonesCuarto(),

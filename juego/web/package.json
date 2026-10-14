@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "optimizar": "node scripts/optimizar-modelos.mjs",
     "probar:granja": "node scripts/granja-v3/probar-todo.mjs",
-    "probar:motores": "node scripts/probar-mesa-motor.mjs && node scripts/probar-show-motor.mjs"
+    "probar:motores": "node scripts/probar-mesa-motor.mjs && node scripts/probar-show-motor.mjs && node scripts/probar-cocina-guardado.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",

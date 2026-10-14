@@ -18,7 +18,7 @@ mkdirSync(carpeta, { recursive: true });
 const red = new SupabaseFalso({ perder: Number(process.env.PERDER ?? 0.08), demora: 200 });
 const errores = [];
 
-const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const PRE = process.env.CHROME_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
   executablePath: existsSync(PRE) ? PRE : undefined,
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],

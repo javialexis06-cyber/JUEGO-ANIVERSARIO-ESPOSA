@@ -143,7 +143,8 @@ export interface OpcionesCocina {
   premioCasa?: boolean;
   /** El botón de salir (volver a la casa o a la sala de juegos de amigos). */
   textoSalir?: string;
-  /** Se llama al terminar cada día y al comprar mejoras: guarda (en la casa o, un amigo, en el aparato). */
+  /** Se llama al terminar cada día y al comprar mejoras. Solo resuelve al confirmar la escritura; rechaza si
+   *  falla, para conservar el día pendiente y permitir reintentar sin repetir puntos o premios. */
   guardar: (p: ProgresoCocina, dia?: ResultadoDia) => Promise<void>;
   /** Cocinar juntos en una sala (si no viene, se cocina solo). */
   linea?: LineaCocina;

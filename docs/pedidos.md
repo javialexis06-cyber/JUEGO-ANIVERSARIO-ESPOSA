@@ -2,6 +2,13 @@
 
 **Encargo de motor y verificación (13 de octubre):** completar lo que falte del motor de cada juego y probar partidas de inicio a fin. Javier aprueba previamente cualquier cambio de dificultad, balance, costes, precios o recompensas. El seguimiento por juego, alcance real de las pruebas y límites pendientes está en [auditoría de motores](en-obra/auditoria-motores.md). Esta revisión no declara terminadas las campañas por usar ganchos de prueba o partidas preparadas.
 
+**Avance de esta revisión:** corregidos los globos de Cien Puertas y verificados los cien acertijos con progreso
+conservado al recargar. Corregida la confirmación de días y compras de Cocina, con reintento y premios únicos;
+probados dos días desde cero en cada receta y una mejora pagada, con fallos de almacenamiento y recarga en día 3.
+Al integrar los cuatro juegos nuevos de Astra, la barra del Cuarto de Juegos tiene desplazamiento para dejar libre
+la puerta de la granja. Sus campañas continúan en la cola de verificación del motor.
+La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
+
 ## Frente de granja en paralelo
 
 **Arreglos de la granja (12 de octubre, lo siguiente que se hace):** Javier mandó una lista larga (rendimiento, menú de
