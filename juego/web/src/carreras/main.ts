@@ -22,6 +22,8 @@ import { Vista, type Calidad } from './vista';
 import { abrirEnLinea, type Red } from './red';
 
 const params = new URLSearchParams(location.search);
+/** Pruebas: la carrera corre más rápido (?rapido=4) y sin compilar todo antes (?sinprecalentar). */
+const RAPIDO = Math.max(1, Math.min(8, Number(params.get('rapido')) || 1));
 const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector(s) as T;
 
 // ------------------------------------------------------------------------------------------ ajustes guardados
@@ -333,7 +335,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
   const grabacion: number[] = [];
   let grabarT = 0;
   cargaVisible(true, 'Encendiendo las lunas…', 0.92);
-  await vista.precalentar();
+  if (!params.has('sinprecalentar')) await vista.precalentar();
   if (o.red) {
     cargaVisible(true, 'Esperando a los demás…', 1);
     await o.red.esperarListos();
@@ -540,9 +542,9 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
         mando.leer(k.entrada);
         if (sim.t < 0) k.entrada.acel = mando.aceleraDeVerdad() ? 1 : 0;
       }
-      acumulado += dt;
+      acumulado += dt * RAPIDO;
       let pasos = 0;
-      while (acumulado >= PASO && pasos < 6) {
+      while (acumulado >= PASO && pasos < 6 * RAPIDO) {
         sim.paso();
         acumulado -= PASO;
         pasos++;
@@ -577,7 +579,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
     // Dibuja a 30 cuadros por segundo como mucho
     dibujo += dt;
     if (dibujo >= 1 / 31 || pausado) {
-      vista.dibujar(sim, dibujo, mio);
+      vista.dibujar(sim, dibujo * RAPIDO, mio);
       hud.actualizar(sim, mio, dibujo);
       dibujo = 0;
       if (vista.medir(performance.now() - inicio)) {

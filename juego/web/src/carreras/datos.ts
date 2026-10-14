@@ -32,11 +32,11 @@ export interface Criatura {
 
 export const CRIATURAS: Record<IdCriatura, Criatura> = {
   unicornio: { id: 'unicornio', nombre: 'Unicornio', rasgo: 'Equilibrado', stats: { vmax: 1, acel: 1, giro: 1, peso: 1 },
-    modelo: { glb: 'granja-v3/unicornio_lod.glb', animada: true }, escala: 0.78, paso: 0.33 },
+    modelo: { glb: 'granja-v3/unicornio_lod.glb', animada: true }, escala: 0.92, paso: 0.33 },
   grifo: { id: 'grifo', nombre: 'Grifo', rasgo: 'Mejor manejo', stats: { vmax: 0.975, acel: 1.05, giro: 1.13, peso: 0.9 },
-    modelo: { glb: 'granja-v3/grifo_lod.glb', animada: true }, escala: 0.74, paso: 0.33 },
+    modelo: { glb: 'granja-v3/grifo_lod.glb', animada: true }, escala: 0.88, paso: 0.33 },
   dragon: { id: 'dragon', nombre: 'Dragón', rasgo: 'Más veloz, pesado', stats: { vmax: 1.045, acel: 0.9, giro: 0.92, peso: 1.3 },
-    modelo: { glb: 'granja-v3/dragon_lod.glb', animada: true }, escala: 0.7, paso: 0.3 },
+    modelo: { glb: 'granja-v3/dragon_lod.glb', animada: true }, escala: 0.86, paso: 0.3 },
   cria: { id: 'cria', nombre: 'Cría de unicornio', rasgo: 'Arranca rapidísimo', stats: { vmax: 0.965, acel: 1.2, giro: 1.08, peso: 0.75 },
     modelo: { pieza: 'm_criatura_cria' }, escala: 1.45, paso: 0.5 },
   zorro: { id: 'zorro', nombre: 'Zorro de Brasaviva', rasgo: 'Ágil', stats: { vmax: 1.015, acel: 1.07, giro: 1.0, peso: 0.9 },

@@ -11,7 +11,7 @@ import { CRIATURAS, type Corredor } from './datos';
 /** Cuánto se corre todo hacia atrás para que el centro físico quede entre el carro y la criatura. */
 const ATRAS = -1.25;
 /** Altura del muñeco sentado. */
-const ALTO_MUNECO = 1.05;
+const ALTO_MUNECO = 1.25;
 
 const buscar = (raiz: THREE.Object3D, rx: RegExp) => {
   let r: THREE.Object3D | null = null;
@@ -20,6 +20,28 @@ const buscar = (raiz: THREE.Object3D, rx: RegExp) => {
   });
   return r as THREE.Object3D | null;
 };
+
+/** Caja del muñeco con la pose puesta (solo lo visible, con el esqueleto aplicado). */
+function cajaVisible(raiz: THREE.Object3D) {
+  const caja = new THREE.Box3();
+  const v = new THREE.Vector3();
+  const visita = (o: THREE.Object3D) => {
+    if (!o.visible) return;
+    const m = o as THREE.SkinnedMesh;
+    if (m.isMesh && m.geometry.getAttribute('position')) {
+      const pos = m.geometry.getAttribute('position');
+      const paso = Math.max(1, Math.floor(pos.count / 400));
+      for (let i = 0; i < pos.count; i += paso) {
+        m.getVertexPosition(i, v);
+        v.applyMatrix4(m.matrixWorld);
+        caja.expandByPoint(v);
+      }
+    }
+    for (const h of o.children) visita(h);
+  };
+  visita(raiz);
+  return caja;
+}
 
 /** Copia de una pieza «m_<clave>» de carreras_cosas.glb (comparte geometría; los materiales se copian si se pintan). */
 export async function pieza(clave: string): Promise<THREE.Object3D> {
@@ -167,12 +189,14 @@ export class Kart3D {
     p.pose(p.tienePose('sentado') ? 'sentado' : 'reposo', true);
     p.cara('concentrado');
     p.update(0.01);
+    p.grupo.updateMatrixWorld(true);
+    // Sentado: se mide la pose de verdad (con el esqueleto) y se apoya la cola en el cojín y la espalda en el espaldar
+    const sentado = cajaVisible(p.grupo);
     const soporte = new THREE.Group();
     soporte.add(p.grupo);
-    // Sentado: las caderas sobre el cojín (la pose «sentado» baja el cuerpo ≈ 0,42 de su alto)
     soporte.position.copy(this.asiento);
-    soporte.position.y -= ALTO_MUNECO * 0.24;
-    soporte.position.z -= 0.08;
+    soporte.position.y += -sentado.min.y - 0.02;
+    soporte.position.z += -sentado.min.z - 0.3;
     this.cuerpo.add(soporte);
     p.grupo.traverse((o) => {
       if ((o as THREE.Mesh).isMesh) o.castShadow = true;

@@ -129,8 +129,8 @@ export class Vista {
     // Cámara: el carro a la derecha de la pantalla (el menú va a la izquierda)
     this.camara.fov = 40;
     this.camara.aspect = (this.lienzo.clientWidth || 1) / (this.lienzo.clientHeight || 1);
-    this.camara.position.set(-3.2, 3.4, 9.5);
-    this.camara.lookAt(-2.0, 0.9, 0);
+    this.camara.position.set(-4.4, 2.9, 7.6);
+    this.camara.lookAt(-3.1, 0.95, 0);
     this.camara.updateProjectionMatrix();
     this.sol.position.set(6, 12, 8);
     this.sol.target.position.set(0, 0, 0);
@@ -201,9 +201,17 @@ export class Vista {
     g.traverse((o) => {
       const m = o as THREE.Mesh;
       if (!m.isMesh || Array.isArray(m.material)) return;
-      const geo = m.geometry.clone();
+      // (las posiciones vienen cuantizadas: se pasan a números de verdad antes de moverlas al mundo)
+      const geo = new THREE.BufferGeometry();
+      for (const k of ['position', 'normal'] as const) {
+        const a = m.geometry.getAttribute(k);
+        if (!a) continue;
+        const arr = new Float32Array(a.count * 3);
+        for (let i = 0; i < a.count; i++) arr.set([a.getX(i), a.getY(i), a.getZ(i)], i * 3);
+        geo.setAttribute(k, new THREE.BufferAttribute(arr, 3));
+      }
+      if (m.geometry.index) geo.setIndex(Array.from(m.geometry.index.array as ArrayLike<number>));
       geo.applyMatrix4(m.matrixWorld);
-      for (const k of Object.keys(geo.attributes)) if (k !== 'position' && k !== 'normal') geo.deleteAttribute(k);
       if (!geo.attributes.normal) geo.computeVertexNormals();
       const lista = porMat.get(m.material) ?? [];
       lista.push(geo);
