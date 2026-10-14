@@ -12,7 +12,7 @@ export interface JuegoAmigos {
   /** Dibujo de la tarjeta (SVG). */
   arte: string;
   /** Clase de la tarjeta (colores). */
-  tema: 'lavado' | 'sangre' | 'super' | 'mesa' | 'retrete' | 'cocina';
+  tema: 'lavado' | 'sangre' | 'super' | 'mesa' | 'retrete' | 'cocina' | 'escudo';
   /** Página del juego (relativa). */
   url?: string;
   /** Juegos que se abren aquí mismo (sin cambiar de página). */
@@ -23,6 +23,17 @@ export interface JuegoAmigos {
   urlCrear?: string;
   urlUnirse?: (codigo: string) => string;
 }
+
+/** El Escudo de las Hermanas: el Borde de Astra, el escudo de luz entre dos pilares y la ceniza que llega. */
+const ARTE_ESCUDO = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+  <defs><linearGradient id="es" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2350"/><stop offset="1" stop-color="#0b0a1e"/></linearGradient></defs>
+  <rect width="200" height="110" fill="url(#es)"/>
+  ${Array.from({ length: 20 }, (_, k) => `<circle cx="${(k * 41) % 200}" cy="${(k * 23) % 60}" r="${k % 3 ? 0.9 : 1.6}" fill="#fff" opacity=".8"/>`).join('')}
+  <path d="M10 92 Q60 70 100 84 T190 80 L190 110 L10 110z" fill="#5e8f86"/>
+  <rect x="150" y="30" width="6" height="56" rx="3" fill="#ffe0a0"/><rect x="176" y="30" width="6" height="56" rx="3" fill="#d9c8ff"/>
+  <rect x="156" y="32" width="20" height="52" fill="#9fd6ff" opacity=".35"/>
+  <circle cx="60" cy="70" r="9" fill="#ffb040"/><circle cx="60" cy="70" r="4" fill="#fff0b0"/>
+  ${[[24, 84], [36, 80], [46, 86]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#6a6372"/><circle cx="${x - 1.5}" cy="${y - 1}" r="1.2" fill="#fff"/>`).join('')}</svg>`;
 
 export const ARTE_SANGRE = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
   <defs><radialGradient id="sl" cx="70%" cy="30%" r="60%"><stop offset="0" stop-color="#5a1418"/><stop offset="1" stop-color="#0d0709"/></radialGradient>
@@ -91,6 +102,7 @@ export const JUEGOS: JuegoAmigos[] = [
   { id: 'mesa', nombre: 'Juegos de mesa', desc: 'Dados, fichas y piedritas', arte: ARTE_MESA, tema: 'mesa', url: './mesa.html?amigo' },
   { id: 'retrete', nombre: 'Retrete espacial', desc: 'Despega y esquiva hasta las estrellas', arte: ARTE_RETRETE, tema: 'retrete', url: './retrete.html' },
   { id: 'cocina', nombre: 'Cocina de chef', desc: 'Pedidos y platos contra el reloj', arte: ARTE_COCINA, tema: 'cocina', url: './cocina.html' },
+  { id: 'escudo', nombre: 'El Escudo de las Hermanas', desc: 'Defiende el escudo de luz · torres y estrellas', arte: ARTE_ESCUDO, tema: 'escudo', url: './escudo.html' },
 ];
 
 const disponibles = new Map<string, Promise<boolean>>();
