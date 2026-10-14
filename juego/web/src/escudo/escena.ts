@@ -560,8 +560,13 @@ export class EscenaEscudo {
     this.objetivoMeta.x = Math.min(10 * holgura + 3, Math.max(-10 * holgura - 3, this.objetivoMeta.x));
     this.objetivoMeta.z = Math.min(6 * holgura + 2.5, Math.max(-6 * holgura - 1, this.objetivoMeta.z));
   }
-  mirarA(x: number, z: number, dist: number) {
-    this.objetivoMeta.set(x, 0, z);
+  /** Salta de una al plano pedido (las escenas: cortes de cámara). */
+  fijar() {
+    this.objetivo.copy(this.objetivoMeta);
+    this.distancia = this.distanciaMeta;
+  }
+  mirarA(x: number, z: number, dist: number, y = 0) {
+    this.objetivoMeta.set(x, y, z);
     this.distanciaMeta = dist;
   }
 

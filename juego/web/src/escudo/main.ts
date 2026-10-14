@@ -816,20 +816,20 @@ async function correrCine(ids: string[], cual: 'inicio' | 'final') {
   saltarCine = () => { cortado = true; despertarEspera?.(); };
   el.querySelector('.ec-saltar')!.addEventListener('click', () => saltarCine?.());
   const esperar = (seg: number) => new Promise<void>((r) => { const t = setTimeout(r, seg * 1000); despertarEspera = () => { clearTimeout(t); r(); }; });
-  const plano = (x: number, z: number, d: number, giro: number, incl: number) => { escena.mirarA(x, z, d); escena.giroCam = giro; escena.inclinacion = incl; };
+  const plano = (x: number, z: number, d: number, giro: number, incl: number) => { escena.mirarA(x, z, d, d < 12 ? 1.1 : 0); escena.giroCam = giro; escena.inclinacion = incl; escena.fijar(); };
   // Planos por línea: quién habla manda la cámara
   const planos: Record<string, () => void> = {
     IN1: () => plano(-6, 0, 30, -0.35, 0.55),
-    IN5: () => plano(fin[0] - 1, fin[1], 9, 0.9, 0.42),
+    IN5: () => plano(fin[0] - 0.5, fin[1], 10, -1.57, 0.32),
     IN2: () => { plano(-14, 0, 22, -0.5, 0.35); sombra.position.set(-30, -4, 0); },
-    IN3: () => plano(fin[0] - 1.5, fin[1] - 2.6, 5.5, 0.9, 0.3),
-    IN4: () => plano(fin[0] - 1.5, fin[1] + 2.6, 5.5, 1.1, 0.3),
+    IN3: () => plano(fin[0] - 1.5, fin[1] - 2.6, 5, -1.35, 0.22),
+    IN4: () => plano(fin[0] - 1.5, fin[1] + 2.6, 5, -1.8, 0.22),
     IN6: () => plano(2, 1, 24, 0.15, 0.85),
     FI1: () => { plano(-14, 0, 22, -0.5, 0.35); sombra.position.set(-30, -4, 0); },
-    FI2: () => plano(fin[0] - 1.5, fin[1] + 2.6, 5.5, 1.1, 0.3),
-    FI3: () => plano(fin[0] - 1.5, fin[1] - 2.6, 5.5, 0.9, 0.3),
+    FI2: () => plano(fin[0] - 1.5, fin[1] + 2.6, 5, -1.8, 0.22),
+    FI3: () => plano(fin[0] - 1.5, fin[1] - 2.6, 5, -1.35, 0.22),
     FI4: () => plano(-4, 0, 30, -0.2, 0.5),
-    FI5: () => { defensa?.estado('mano'); plano(fin[0] - 0.9, fin[1], 7, 1.2, 0.25); },
+    FI5: () => { defensa?.estado('mano'); plano(fin[0] - 0.9, fin[1], 6, -1.57, 0.2); },
   };
   await esperar(1.6);
   el.querySelector('.ec-titulo')!.classList.add('sale');
@@ -842,13 +842,14 @@ async function correrCine(ids: string[], cual: 'inicio' | 'final') {
     await esperar(seg + 0.45);
   }
   if (cual === 'final' && !cortado) {
-    plano(fin[0] + 2, fin[1], 14, 1.35, 0.15);
+    plano(fin[0] + 1, fin[1], 12, -1.57, 0.12);
     await esperar(2.5);
   }
   callarVoz();
   escena.extras.remove(sombra);
   escena.inclinacion = 0.98;
   escena.giroCam = 0;
+  escena.encuadrar(true);
   el.remove();
   saltarCine = null;
 }
