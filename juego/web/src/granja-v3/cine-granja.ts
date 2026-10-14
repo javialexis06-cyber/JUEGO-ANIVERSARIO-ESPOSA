@@ -116,6 +116,20 @@ export class CineGranja {
   private voz?: HTMLAudioElement;
   private musica?: HTMLAudioElement;
   private musicaId = '';
+  /** Resolución que se ajusta sola (sube y baja según cuánto tarda cada cuadro) y su tope. */
+  private pr = 1;
+  private prMax = 1;
+  private medida = { suma: 0, n: 0, buenas: 0 };
+  /** En celular se dibuja a 30 cuadros; en computador, a lo que dé la pantalla (60 o más). */
+  private readonly movil = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  /** Último valor escrito en el DOM (para no reescribir estilos en cada cuadro). */
+  private escrito: Record<string, string> = {};
+  /** Avisa cada audio que suena (la sala de cine lo usa para grabar el video con sonido). */
+  alAudio?: (a: HTMLAudioElement) => void;
+  /** Avisa después de dibujar cada cuadro (la sala de cine compone ahí el video con los textos). */
+  alDibujar?: () => void;
+  /** Lo que muestran las capas de texto ahora mismo (subtítulo, título y fundido), para grabarlo en el video. */
+  readonly capas = { sub: { nombre: '', texto: '', visible: false }, titulo: { grande: '', chico: '', op: 0 }, fundido: { color: '#000', op: 0 } };
 
   constructor(readonly guion: Guion, private medios: MediosCine = {}, readonly grabando = false) {
     this.capa = document.createElement('div');
@@ -128,7 +142,9 @@ export class CineGranja {
     this.fundido = this.capa.querySelector('.cg-fundido')!;
     const lienzo = this.capa.querySelector('canvas')!;
     this.renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, preserveDrawingBuffer: grabando, powerPreference: 'high-performance' });
-    this.renderer.setPixelRatio(grabando ? 1 : Math.min(window.devicePixelRatio, matchMedia('(pointer: coarse)').matches ? 1.25 : 1.5));
+    this.prMax = grabando ? 1 : Math.min(window.devicePixelRatio || 1, this.movil ? 1.25 : 1.5);
+    this.pr = this.prMax;
+    this.renderer.setPixelRatio(this.pr);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.05;
@@ -159,8 +175,12 @@ export class CineGranja {
 
   private ajustar = () => {
     const w = this.grabando ? 1280 : window.innerWidth, h = this.grabando ? 720 : window.innerHeight;
+    this.renderer.setPixelRatio(this.pr);
     this.renderer.setSize(w, h, !this.grabando);
+    this.composer.setPixelRatio(this.pr);
     this.composer.setSize(w, h);
+    // El brillo se calcula a media resolución: se ve igual (es borroso) y cuesta la cuarta parte
+    this.bloom.setSize(Math.max(64, Math.round(w * this.pr * 0.5)), Math.max(64, Math.round(h * this.pr * 0.5)));
     this.camara.aspect = w / h;
     this.camara.updateProjectionMatrix();
   };
@@ -178,6 +198,20 @@ export class CineGranja {
     for (const e of this.escenarios.values()) e.grupo.visible = true;
     this.renderer.compile(this.escena, this.camara);
     for (const e of this.escenarios.values()) e.grupo.visible = false;
+    // Y se dibuja cada escenario una vez desde su primera toma: así las texturas y las sombras ya están en la tarjeta
+    // de video y el cambio de escena no se traba
+    for (const [id, e] of this.escenarios) {
+      const toma = this.guion.tomas.find((x) => x.escena === id);
+      if (!toma) continue;
+      e.grupo.visible = true;
+      this.escena.background = e.fondo;
+      this.escena.fog = e.niebla ?? null;
+      this.moverCamara(toma, 0);
+      this.composer.render(1 / 60);
+      e.grupo.visible = false;
+      await new Promise((r) => setTimeout(r, 0));
+    }
+    this.actual = null;
     this.irA(0, 0);
   }
 
@@ -187,17 +221,47 @@ export class CineGranja {
       this.terminar = listo;
       requestAnimationFrame(() => this.capa.classList.add('visible'));
       this.ultimo = performance.now();
+      let acum = 0;
+      const paso = this.movil ? 1 / 30 : 0;
       const cuadro = (ahora: number) => {
         if (this.fin) return;
         requestAnimationFrame(cuadro);
-        const dt = Math.min(0.1, (ahora - this.ultimo) / 1000);
-        if (dt < 1 / 32) return; // 30 cuadros por segundo
+        const real = Math.min(0.1, Math.max(0, (ahora - this.ultimo) / 1000));
         this.ultimo = ahora;
+        // En celular se junta el tiempo hasta completar un cuadro de 30 (sin saltos desparejos); en computador, cada
+        // cuadro de la pantalla avanza la película exactamente lo que pasó
+        acum += real;
+        if (acum < paso * 0.92) return;
+        const dt = Math.min(0.1, acum);
+        acum = 0;
         this.irA(this.t + dt, dt);
+        this.medirCuadro(dt);
         if (this.t >= this.total) this.acabar();
       };
       requestAnimationFrame(cuadro);
     });
+  }
+
+  /** Baja la resolución si los cuadros tardan más de la cuenta y la sube de nuevo cuando sobra tiempo. */
+  private medirCuadro(dt: number) {
+    if (this.grabando) return;
+    const m = this.medida;
+    m.suma += dt;
+    m.n++;
+    if (m.suma < 1.5) return;
+    const media = m.suma / m.n, meta = this.movil ? 1 / 30 : 1 / 60;
+    m.suma = 0;
+    m.n = 0;
+    if (media > meta * 1.22 && this.pr > 0.7) { this.pr = Math.max(0.7, this.pr - 0.15); m.buenas = 0; this.ajustar(); }
+    else if (media < meta * 1.06 && this.pr < this.prMax) { if (++m.buenas >= 3) { this.pr = Math.min(this.prMax, this.pr + 0.1); m.buenas = 0; this.ajustar(); } }
+    else m.buenas = 0;
+  }
+
+  /** Escribe un estilo solo si cambió. */
+  private estilo(el: HTMLElement, clave: string, prop: 'opacity' | 'background', valor: string) {
+    if (this.escrito[clave] === valor) return;
+    this.escrito[clave] = valor;
+    el.style[prop] = valor;
   }
 
   /** Grabación y pruebas: avanza `seg` segundos en pasos fijos y deja dibujado el cuadro. */
@@ -236,7 +300,7 @@ export class CineGranja {
     const antes = this.guion.tomas[i - 1]?.bloom ?? toma.bloom ?? 0.6, ahora = toma.bloom ?? antes;
     this.bloom.strength = THREE.MathUtils.lerp(antes, ahora, suavizar(Math.min(1, local / 1.2)));
     this.textos(toma, local, dur, voz);
-    if (dibujar) this.composer.render(dt);
+    if (dibujar) { this.composer.render(dt); this.alDibujar?.(); }
   }
 
   private moverCamara(toma: Toma, u: number) {
@@ -256,22 +320,30 @@ export class CineGranja {
   private textos(toma: Toma, local: number, dur: number, voz: { url: string; seg: number } | null) {
     const l = toma.linea;
     const desde = l?.desde ?? 0.4, hasta = voz ? desde + voz.seg + 0.5 : dur - 0.35;
-    this.sub.classList.toggle('visible', !!l && local >= desde && local < hasta);
+    const subVisible = !!l && local >= desde && local < hasta;
+    if (this.capas.sub.visible !== subVisible) { this.capas.sub.visible = subVisible; this.sub.classList.toggle('visible', subVisible); }
     // Títulos: aparecen y se van solos dentro de la toma
     const tt = toma.titulo ? THREE.MathUtils.clamp(Math.min((local - 0.6) / 1.4, (dur - 0.8 - local) / 1.2), 0, 1) : 0;
-    this.titulo.style.opacity = String(tt);
+    this.capas.titulo.op = tt;
+    this.estilo(this.titulo, 'titulo', 'opacity', tt.toFixed(3));
     // Fundidos de entrada y salida
     let f = 0, color = '#000';
     if (toma.entra && local < toma.entra.dur) { f = 1 - local / toma.entra.dur; color = toma.entra.color; }
     if (toma.sale && local > dur - toma.sale.dur) { f = Math.max(f, (local - (dur - toma.sale.dur)) / toma.sale.dur); color = toma.sale.color; }
-    this.fundido.style.background = color;
-    this.fundido.style.opacity = String(THREE.MathUtils.clamp(f, 0, 1));
+    this.capas.fundido.color = color;
+    this.capas.fundido.op = THREE.MathUtils.clamp(f, 0, 1);
+    this.estilo(this.fundido, 'fondoFundido', 'background', color);
+    this.estilo(this.fundido, 'fundido', 'opacity', THREE.MathUtils.clamp(f, 0, 1).toFixed(3));
   }
 
   private empezarToma(i: number, voz: { url: string; seg: number } | null) {
     this.iToma = i;
     const toma = this.guion.tomas[i];
     const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+    this.capas.sub.nombre = toma.linea?.nombre ?? '';
+    this.capas.sub.texto = toma.linea?.texto ?? '';
+    this.capas.titulo.grande = toma.titulo?.grande ?? '';
+    this.capas.titulo.chico = toma.titulo?.chico ?? '';
     this.sub.innerHTML = toma.linea ? `<b>${esc(toma.linea.nombre)}</b>${esc(toma.linea.texto)}` : '';
     this.titulo.innerHTML = toma.titulo ? `<strong>${esc(toma.titulo.grande)}</strong>${toma.titulo.chico ? `<small>${esc(toma.titulo.chico)}</small>` : ''}` : '';
     if (this.grabando) return;
@@ -282,6 +354,7 @@ export class CineGranja {
       const a = new Audio(voz.url);
       a.volume = 0.95;
       this.voz = a;
+      this.alAudio?.(a);
       const retraso = (toma.linea?.desde ?? 0.4) * 1000;
       window.setTimeout(() => { if (this.voz === a && !this.fin) void a.play().catch(() => undefined); }, retraso);
       // Debajo de la voz la música baja poquito: Javier quiere seguir oyéndola (12 de octubre de 2026)
@@ -300,6 +373,7 @@ export class CineGranja {
     a.loop = true;
     a.volume = 0;
     this.musica = a;
+    this.alAudio?.(a);
     void a.play().catch(() => undefined);
     const subir = window.setInterval(() => { if (this.musica !== a) { window.clearInterval(subir); return; } a.volume = Math.min(0.42, a.volume + 0.03); if (a.volume >= 0.42) window.clearInterval(subir); }, 90);
   }

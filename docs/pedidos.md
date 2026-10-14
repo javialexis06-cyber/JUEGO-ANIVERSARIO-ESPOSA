@@ -28,7 +28,11 @@ Nath'Gora y Vael'Thor. También la copa del Conde en SC0. Y la **fase H, hecha e
 amigos: «El Torneo del Despertar Dorado» (`docs/sistemas/peleas.md`), «La Carrera de las Tres Lunas»
 (`carreras.md`), «Desaparecidos de Astra» (`celular.md`, 8 casos) y «El Escudo de las Hermanas» (`escudo.md`, también
 la batalla de P23 de la historia). **Siguiente**: que Javier los pruebe en el celular (balance, rendimiento y en línea
-con aparatos de verdad). **Espera a Javier**: GitHub
+con aparatos de verdad).
+
+**Sala de cine y fluidez (14 de octubre, hecho):** `cine.html` (Ajustes de la granja → «Sala de cine») con las 28
+películas, «la película completa» seguida y descarga en video (WebM 1080p con sonido y subtítulos). Las películas y el
+juego de la granja corren a 60 en computador con resolución automática (`docs/sistemas/cine-granja.md`). **Espera a Javier**: GitHub
 Actions quedó desactivado en su cuenta («Actions has been disabled for this user»): sin eso no salen APK nuevas.
 
 
