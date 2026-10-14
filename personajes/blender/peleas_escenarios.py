@@ -48,6 +48,7 @@ class Escena:
     """Junta lo que se construye: piezas quietas (que después van bajo «estatico») y piezas vivas."""
 
     def __init__(self, nombre):
+        _FAMILIAS.clear()
         self.coll = clay.collection(f'Peleas {nombre}')
         self.raiz = bpy.data.objects.new(nombre, None)
         clay.link(self.raiz, self.coll)
@@ -466,7 +467,7 @@ def plaza():
     for f in range(3):
         fila_publico(e, -12.2 + (f % 2) * 0.4, 12.2, 6.0 + f * 0.9, -0.42 + 0.5 + f * 0.5, colores[f:] + colores[:f], ('brazos', 'banderin', 'gorro', 'brazos', 'sombrero', 'banderin'), 0.95)
     # El letrero del torneo y la fiesta: arco, postes con guirnaldas
-    e.pieza(letrero_torneo, (0, 10.5, -0.42), 0, 1.3)
+    e.pieza(letrero_torneo, (0, 10.5, -1.9), 0, 1.3)
     for s in (-1, 1):
         e.pieza(fest.m_poste_verano, (s * 8.6, 10.0, -0.42))
         e.pieza(fest.m_poste_primavera, (s * 16.6, 10.0, -0.42))
@@ -556,7 +557,7 @@ def brasaviva():
         e.pieza(con(faroles, -5, 5, 0), (s * 10.5, 9.5, 3.6))
         for x in (s * 5.5, s * 15.5):
             e.pieza(lambda coll: cilindro(coll, 'poste faroles', (0, 0, 0), 0.12, 4.0, madera('poste faroles', '#4A2E22'), seg=8), (x, 9.5, -0.5))
-    e.pieza(letrero_torneo, (0, 10.0, -0.5), 0, 1.15)
+    e.pieza(letrero_torneo, (0, 10.0, -1.6), 0, 1.15)
     for x, y, r in ((-6, 11, 0.4), (6.5, 11.5, 1.3), (-24, 9, 2.2), (20, 8, 0.8), (-13, 19, 1.0), (15, 20, 2.0)):
         e.pieza(paisaje.m_roca_volcanica, (x, y, -0.5), r, 1.6)
     # El volcán y los cerros de ceniza
@@ -619,7 +620,7 @@ def nieveclara():
     colores = ('#3B6FB6', '#E4574B', '#F2F4F8', '#7FB0D9', '#E8C66A', '#A3443A')
     fila_publico(e, -12.2, 12.2, 6.0, 0.05, colores, ('bufanda', 'brazos', 'bufanda', 'banderin'), 0.95)
     fila_publico(e, -11.8, 11.8, 6.9, 0.55, colores[3:] + colores[:3], ('brazos', 'bufanda', 'banderin', 'bufanda'), 0.95)
-    e.pieza(letrero_torneo, (0, 10.0, -0.45), 0, 1.15)
+    e.pieza(letrero_torneo, (0, 10.0, -1.6), 0, 1.15)
     for s in (-1, 1):
         e.pieza(fest.m_poste_invierno, (s * 8.6, 9.6, -0.45))
         for k in range(3):

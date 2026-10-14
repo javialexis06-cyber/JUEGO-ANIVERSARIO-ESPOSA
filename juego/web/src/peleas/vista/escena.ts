@@ -40,12 +40,12 @@ const AMBIENTES: Record<IdEscenario, Ambiente> = {
     aire: { color: '#ffe27a', color2: '#fff6c8', n: 90, cae: -0.15, tam: 0.07 }, piso: '#c99560',
   },
   brasaviva: {
-    cieloArriba: '#3a2140', cieloAbajo: '#ff8a4a', niebla: '#a8503a', densidad: 0.02, hemiCielo: '#ffb68a', hemiSuelo: '#5a2a24', hemi: 0.95,
-    sol: '#ffb070', solFuerza: 2.3, solDir: [5, 8, 6], relleno: '#ff5a2a', exposicion: 1.18,
+    cieloArriba: '#3a2140', cieloAbajo: '#ff8a4a', niebla: '#8a4a3a', densidad: 0.009, hemiCielo: '#ffc8a0', hemiSuelo: '#3a2220', hemi: 0.85,
+    sol: '#ffd0a0', solFuerza: 2.3, solDir: [5, 8, 6], relleno: '#ff5a2a', exposicion: 1.1,
     aire: { color: '#ff8a2a', color2: '#ffd070', n: 110, cae: -0.6, tam: 0.06 }, piso: '#4a3a3a',
   },
   nieveclara: {
-    cieloArriba: '#2a3f7a', cieloAbajo: '#bfe0f5', niebla: '#d8ecf8', densidad: 0.018, hemiCielo: '#e8f4ff', hemiSuelo: '#8aa8c8', hemi: 1.25,
+    cieloArriba: '#2a3f7a', cieloAbajo: '#bfe0f5', niebla: '#d8ecf8', densidad: 0.012, hemiCielo: '#e8f4ff', hemiSuelo: '#8aa8c8', hemi: 1.25,
     sol: '#f4f8ff', solFuerza: 2.1, solDir: [-4, 9, 8], relleno: '#a8d0ff', exposicion: 1.1,
     aire: { color: '#ffffff', color2: '#dff0ff', n: 160, cae: 0.9, tam: 0.06 }, piso: '#e8f2fa',
   },
@@ -207,7 +207,7 @@ export class EscenaPelea {
     const sep = Math.abs(a.x - b.x);
     let fx = (a.x + b.x) / 2;
     let fy = 1.15 + Math.max(a.y, b.y) * 0.35;
-    let d = Math.min(12.5, Math.max(7.2, 5.6 + sep * 0.62));
+    let d = Math.min(11.5, Math.max(6.3, 4.6 + sep * 0.65));
     if (o.menu) {
       fy = 1.05;
       d = 7.4;
