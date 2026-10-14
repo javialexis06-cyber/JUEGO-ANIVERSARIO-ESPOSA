@@ -16,6 +16,9 @@ las pistas importantes y recarga por caso. Primer caso y retorno a casa comproba
 Carreras ya deja tocar pausa y recupera correctamente los tiempos aún no logrados; una vuelta previa no bloquea el
 primer contrarreloj. Récord, fantasma y copa ganada se conservan tras fallos de escritura y recarga. Completados
 carrera, contrarreloj y Gran Premio de cuatro pistas desde cero, sin modificar dificultad, puntos ni premios.
+Torneo completó su arcade de seis rivales desde cero con Tarek, a los niveles originales, hasta campeón y retorno
+al menú. Se verificaron pausa y dieciocho combates del motor con réplica por entradas serializadas, sin cambiar
+vida, daño, golpes ni dificultad. Controles físicos, otros modos y red continúan en la auditoría.
 La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
 
 ## Frente de granja en paralelo

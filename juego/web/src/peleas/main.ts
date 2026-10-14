@@ -427,7 +427,11 @@ async function pelear(cfg: ConfigPelea): Promise<Resultado> {
   void son.precargar([...Object.values(PRESENTADOR).map((f) => f.id), ...cfg.defs.flatMap((d) => [...d.frases.entrada, ...d.frases.super, ...d.frases.victoria, ...d.frases.derrota, ...d.frases.especial].map((f) => f.id)), 'almohadazo', 'palmada', 'plaf', 'pisoton']);
   const sim = new Sim({ luchadores: cfg.defs, borde: ESCENARIOS[cfg.escenario].borde, semilla: cfg.semilla ?? Date.now() % 100000, practica: cfg.practica, sinPresentacion: cfg.practica || params.has('sin-presentacion') });
   peleaActual = { sim, vista };
-  const bots = cfg.controles.map((c, i) => (c.k === 'bot' ? new Bot(i, c.nivel, (cfg.semilla ?? 7) + i * 31) : null));
+  // El piloto de pruebas también puede manejar el jugador local del arcade; solo elige entradas legales.
+  const bots = cfg.controles.map((c, i) => {
+    const nivel = c.k === 'bot' ? c.nivel : c.k === 'mando' && i === 0 && params.has('bot1') ? Number(params.get('bot1')) || 7 : null;
+    return nivel === null ? null : new Bot(i, nivel, (cfg.semilla ?? 7) + i * 31);
+  });
   hud.mostrar(true);
   hud.sinReloj(!!cfg.practica);
   mando.mostrar(cfg.controles.some((c) => c.k === 'mando'));
@@ -464,7 +468,7 @@ async function pelear(cfg: ConfigPelea): Promise<Resultado> {
           acc += dt * vel;
           while (acc >= DT) {
             acc -= DT;
-            const ent = cfg.controles.map((c, i): Entrada => (c.k === 'mando' ? mando.leer(c.i) : c.k === 'bot' ? bots[i]!.decidir(sim) : cfg.linea!.entrada())) as [Entrada, Entrada];
+            const ent = cfg.controles.map((c, i): Entrada => (c.k === 'mando' ? bots[i]?.decidir(sim) ?? mando.leer(c.i) : c.k === 'bot' ? bots[i]!.decidir(sim) : cfg.linea!.entrada())) as [Entrada, Entrada];
             sim.paso(ent);
           }
           cfg.linea?.mandarFoto(sim);
@@ -753,6 +757,10 @@ w.__peleas = () => peleaActual?.sim ?? null;
 w.__peleasVista = () => peleaActual?.vista ?? null;
 w.__peleasEscena = () => escena;
 w.__peleasFrases = () => frasesComunes();
+w.__peleasAvanzar = (n: number) => {
+  const actual = peleaActual;
+  for (let i = 0; i < n && actual && peleaActual === actual; i++) director?.cuadro(DT);
+};
 
 async function arrancar() {
   carga(true, 'Colgando los banderines dorados…');

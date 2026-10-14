@@ -56,12 +56,17 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
   fallidos quedan pendientes y se reintentan antes de avanzar, reiniciar o salir. El podio comprueba la escritura
   también al acabar su plazo automático; el aviso integrado en resultados no tapa el tiempo. Seis regresiones y
   cuatro carreras del motor comprueban estas condiciones, los puestos únicos y los puntos del Gran Premio.
+- **Torneo.** Se completaron los seis rivales del arcade desde progreso nuevo con Tarek, utilizando entradas
+  legales y los niveles originales. Se verificaron campeón, pausa y retorno al menú sin errores. Dieciocho
+  combates y sus réplicas reciben entradas serializadas y conservan estado y resultado. No se cambiaron golpes,
+  vida, daño, rondas ni dificultad; el piloto y el avance del director solo sirven para repetir estas pruebas.
 - **Pruebas de motores.** `npm run probar:motores` comprueba partidas completas de Dados, Mancala, Cajas,
   Parchís, Parchís a dos colores y Clue; los dos jugadores pueden empezar y se recorren los niveles de IA.
   Se completaron 36 partidas. Cada movimiento se valida, se replica en otro estado y se serializa entre pasos; Mancala conserva sus 48
   semillas. Incluye siete regresiones de guardado/calendario del Show, once de Cocina y doce comprobaciones de
   Escudo, cinco regresiones de Desaparecidos y seis de Carreras más sus cuatro carreras completas.
   Workflow: «Motores de los juegos».
+  Incluye también los dieciocho combates y réplicas del Torneo.
 
 No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad.
 
@@ -84,7 +89,7 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 | El Escudo de las Hermanas | Seis niveles desde cero en amigos y pareja, con presupuesto normal, pausa, guardado fallido recuperado y recarga por nivel; doce comprobaciones del motor, derrota e infinito hasta pérdida natural (41 oleadas en motor, 48 en el último recorrido de pareja). Derrota normal, reintento, cancelación y salida de pareja conservan las estrellas. Modo P23: victoria, recibo fallido recuperado y retorno a la granja sin errores | Controles físicos, escenas completas, cierre forzado mientras falla almacenamiento y recorrido de P23 desde su desbloqueo real en la campaña de la granja; derrota y salida de amigos en navegador |
 | La Carrera de las Tres Lunas | Carrera normal, contrarreloj y Gran Premio de cuatro pistas desde cero en «Carrera»; tres vueltas por pista, pausa real, puntos conservados, copa ganada y dos fallos de escritura recuperados. Récord, muestras del fantasma y copa única conservados al recargar. Carrera, contrarreloj y retorno a casa en edición de pareja; sin errores | Precisión física, repetición visible del fantasma, otras criaturas/dificultades y verificación propia de la red |
 | Desaparecidos de Astra | Ocho casos resueltos desde cero en amigos: 24 estrellas, PIN, palabras, patrones arrastrados, fotos con linterna, todas las pistas importantes y recarga por caso; primer cierre fallido recuperado. Primer caso y retorno a casa en compilación completa. Cinco regresiones de guardado y reinicio; sin errores | Reproducción completa de las voces y escenas, controles en Android, salida de amigos por controles y cierre forzado mientras falla el almacenamiento |
-| El Torneo del Despertar Dorado | Juego integrado desde la rama compartida (`12c8bf29`, 14 de octubre), conservando sus reglas y valores | Combate y torneo completo desde cero, controles de ambos lados, derrota, pausa y verificación propia de la red |
+| El Torneo del Despertar Dorado | Arcade completo desde cero con Tarek: seis rivales a sus niveles originales, campeón, pausa y retorno al menú sin errores; dieciocho combates de motor con tres luchadores, derrota y réplicas por entradas serializadas | Otros luchadores y escenarios por controles físicos, dos jugadores en el aparato y verificación propia de la red; el arcade no tiene guardado de etapa implementado |
 | Retrete espacial | Dos vuelos desde cero con piloto, choques normales, pausa, volver a volar, escudo pagado con 120 rollitos ganados y progreso conservado tras recarga; sin errores | Sensores/controles físicos, ciclos avanzados, guardado fallido y premio de la casa |
 | Cocina de chef: wafles, frappés y fresas | Dos días desde progreso nuevo por receta, con pedidos y estaciones normales, resultado, propinas, mejoras pagadas y recarga en día 3; dos fallos de escritura al terminar wafles y uno por compra recuperados; once regresiones de persistencia. Wafles en pareja: escenario preparado con pérdida del 8 % de mensajes, pausa, segundo plano, reconexión, mismo resultado y premio del anfitrión, sin errores | Fresas y frappés en pareja, rangos avanzados, cierre forzado mientras hay una escritura pendiente y precisión táctil |
 | Casa / mascota virtual | Entrada, retorno y persistencia del recorrido de granja comprobados | Ciclo completo de cuidado, compras, habitaciones, trofeos y sincronización en dos perfiles |
@@ -100,6 +105,7 @@ La primera tanda de mesa y Show se publicó en `78a034db`, y su registro adicion
 la barra de la casa están publicadas en ambas ramas hasta `25445e2d`, incluyendo los cuatro juegos nuevos de Astra.
 Escudo y su integración con la sala de cine están publicados en ambas ramas hasta `960e228f`.
 Desaparecidos y sus ocho casos verificados están publicados en ambas ramas en `9d36ea65`.
+Carreras, sus récords compatibles, pausa y resultados pendientes están publicados en ambas ramas en `a284dd0d`.
 La APK sigue bloqueada al comprobar también ese SHA el 14 de octubre: no se creó una ejecución
 automática para ese SHA y el intento de iniciar `apk.yml` devolvió **HTTP 422: Actions has been disabled for this
 user**. El workflow figura activo, pero la cuenta no puede ejecutarlo. No se anuncia una APK nueva ni se confunden
@@ -140,6 +146,7 @@ CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-celular-recorrido.mjs
 CHROME_PATH=/usr/bin/chromium AMIGO=0 HASTA=1 FALLOS=1 node scripts/probar-celular-recorrido.mjs http://127.0.0.1:4182/ /tmp/celular-casa
 CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-carreras-recorrido.mjs http://127.0.0.1:4184/ /tmp/carreras-amigos
 CHROME_PATH=/usr/bin/chromium AMIGO=0 GRAN_PREMIO=0 FALLOS=1 node scripts/probar-carreras-recorrido.mjs http://127.0.0.1:4182/ /tmp/carreras-casa
+CHROME_PATH=/usr/bin/chromium node scripts/probar-peleas-arcade.mjs http://127.0.0.1:4184/ /tmp/peleas-arcade
 # La prueba en pareja requiere el servidor de desarrollo sin HMR y usa una red falsa:
 CHROME_PATH=/usr/bin/chromium node scripts/probar-cocina-linea.mjs wafles http://127.0.0.1:4183/scripts/cocina-prueba.html /tmp/cocina-linea
 ```

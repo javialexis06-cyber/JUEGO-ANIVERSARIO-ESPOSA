@@ -99,6 +99,22 @@ Las frases de Javier y Laura son de juego, con apodos y palabras del chat («esp
 
 ## Archivos
 
+La revisión de motor del 14 de octubre completó el arcade desde cero con Tarek: seis rivales, sus niveles
+originales, campeón, pausa por botón y retorno al menú sin errores. El piloto selecciona entradas legales y no
+cambia vida, daño, rondas ni nivel del rival. Dieciocho combates del motor con Eliana, Tarek y el retador terminan
+correctamente; una réplica que recibe las entradas empaquetadas y serializadas conserva el mismo estado y resultado.
+
+```sh
+cd juego/web
+node scripts/probar-peleas-motor.mjs
+CHROME_PATH=/usr/bin/chromium node scripts/probar-peleas-arcade.mjs http://127.0.0.1:4184/ test-results/peleas-arcade
+```
+
+El parámetro de pruebas `bot1=7` también puede pilotar al jugador local del arcade. `__peleasAvanzar(n)` ejecuta el
+director del combate y conserva eventos, rondas y transiciones; el dibujo se desactiva entre capturas. Siguen
+pendientes controles físicos, otros luchadores, dos jugadores en un aparato y comprobación propia de la red.
+El arcade no tiene un guardado de etapa implementado: la prueba termina sus seis combates en una misma sesión.
+
 | Archivo | Qué es |
 |---|---|
 | `tipos.ts` | Entrada (9 bits para la red), golpes, luchadores, escenarios |
