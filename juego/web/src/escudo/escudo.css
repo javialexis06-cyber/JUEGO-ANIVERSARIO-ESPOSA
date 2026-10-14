@@ -175,6 +175,11 @@ button:disabled { cursor: default; }
 @keyframes estrella { from { transform: scale(0) rotate(-90deg); } }
 .er-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; }
 .er-botones .eb-grande:first-child:nth-last-child(odd) { grid-column: span 2; }
+.escudo-guardado { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); width: min(340px, 85vw);
+  padding: 8px 12px; background: #20152f; border: 1px solid #ffce84; border-radius: 14px; text-align: center; z-index: 40; pointer-events: auto; }
+.escudo-guardado p { margin: 0 0 5px; font-size: 13px; }
+.escudo-guardado .eb-grande { margin: 4px 0 0; }
+.escudo-tarjeta .escudo-guardado { position: static; transform: none; width: auto; margin: 10px 0; }
 
 /* ---------------------------------------------------------------- la escena (30 s) */
 .escudo-cine { position: fixed; inset: 0; pointer-events: auto; }

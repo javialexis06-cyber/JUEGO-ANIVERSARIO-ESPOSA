@@ -31,7 +31,7 @@ import { callarVoz, decir, despertar, fx, poner as ponerMusica, refrescarVolumen
 import { NOMBRES, VOZ_NIVEL, type Linea } from './guion';
 import { CON_PAREJA, ESCENA_FINAL, ESCENA_INICIO, LAZO, constelacion, defensores, type Defensores } from './pareja';
 import { actuar, animarMuneco, santas, type Muneco } from './actores';
-import { CLAVE_MISION, desbloqueado, guardarMision, guardarProgreso, leerProgreso, totalEstrellas, type Progreso } from './progreso';
+import { CLAVE_MISION, desbloqueado, GuardadoEscudo, leerProgreso, totalEstrellas, type Progreso } from './progreso';
 
 const params = new URLSearchParams(location.search);
 const MISION = params.get('mision') === 'P23';
@@ -44,6 +44,8 @@ const carga = $('#escudo-carga');
 let escena: EscenaEscudo;
 let iconos: Iconos;
 let progreso: Progreso = leerProgreso(AMIGO);
+const guardado = new GuardadoEscudo(AMIGO, progreso);
+let terminando = false;
 let motor: Motor | null = null;
 let bot: Bot | null = null;
 let velocidad: 1 | 2 = progreso.velocidad;
@@ -97,7 +99,7 @@ async function arrancar() {
     await montarFondo(n);
     await correrCine(ESCENA_INICIO, 'inicio');
     progreso.inicioVisto = true;
-    guardarProgreso(AMIGO, progreso);
+    guardarActual();
     return jugarNivel(n);
   }
   const directo = params.get('nivel');
@@ -185,6 +187,7 @@ function camaraMenu(dt: number) {
 // ------------------------------------------------------------------------------------------------- el menú
 
 async function menu() {
+  if (terminando || !asegurarGuardado()) return;
   pantalla = 'menu';
   motor = null;
   bot = null;
@@ -245,7 +248,7 @@ async function menu() {
         await montarFondo(NIVELES[5]);
         await correrCine(ESCENA_INICIO, 'inicio');
         progreso.inicioVisto = true;
-        guardarProgreso(AMIGO, progreso);
+        guardarActual();
       }
       jugarNivel(n);
     }
@@ -258,9 +261,36 @@ function limpiarCapa() {
   escena?.mostrarAlcance(null);
 }
 
+function pintarGuardado() {
+  let aviso = capa.querySelector<HTMLDivElement>('.escudo-guardado');
+  if (!guardado.pendiente) { aviso?.remove(); return; }
+  if (!aviso) {
+    aviso = document.createElement('div');
+    aviso.className = 'escudo-guardado';
+    aviso.innerHTML = '<p role="status">No se pudo guardar. Mantén el juego abierto, libera espacio y reintenta antes de continuar.</p><button class="eb-grande sec" data-reintentar-guardado>Reintentar guardado</button>';
+    aviso.querySelector('button')!.onclick = () => guardarActual();
+  }
+  const tarjeta = capa.querySelector('.escudo-tarjeta.resultado');
+  if (tarjeta) tarjeta.insertBefore(aviso, tarjeta.querySelector('.er-botones'));
+  else capa.append(aviso);
+}
+
+function guardarActual() {
+  const ok = guardado.guardar();
+  pintarGuardado();
+  return ok;
+}
+
+function asegurarGuardado() {
+  const ok = guardado.confirmar();
+  pintarGuardado();
+  return ok;
+}
+
 // ------------------------------------------------------------------------------------------------- la batalla
 
 async function jugarNivel(n: Nivel) {
+  if (terminando || (motor?.terminado && !asegurarGuardado())) return;
   limpiarCapa();
   const infinito = n.id === 'infinito';
   motor = new Motor(n, { infinito, luzExtra: MISION ? 60 : 0, semilla: Math.floor(Math.random() * 1e9), torres: MISION ? ORDEN_TORRES : undefined });
@@ -274,6 +304,7 @@ async function jugarNivel(n: Nivel) {
   escena.encuadrar(true);
   ponerMusica('batalla');
   armarHud();
+  pintarGuardado();
   const primera = n === NIVELES[0] && !progreso.consejos.includes('construir');
   void decir(primera ? 'IN6' : VOZ_NIVEL[n.id], subtitulo);
   if (primera) consejo('Toca un círculo de piedra para construir una torre. Después, «¡Que venga!».', 'construir');
@@ -319,7 +350,7 @@ function armarHud() {
     if (b.dataset.vel !== undefined) {
       velocidad = velocidad === 1 ? 2 : 1;
       progreso.velocidad = velocidad;
-      guardarProgreso(AMIGO, progreso);
+      guardarActual();
       b.textContent = `x${velocidad}`;
       b.classList.toggle('activo', velocidad === 2);
       fx.toque();
@@ -330,7 +361,7 @@ function armarHud() {
       const premio = motor.llamarOleada();
       fx.oleada();
       if (premio > 0) avisar(`+${premio} ✦ por adelantarla`);
-      if (!progreso.consejos.includes('construir')) { progreso.consejos.push('construir'); guardarProgreso(AMIGO, progreso); }
+      if (!progreso.consejos.includes('construir')) { progreso.consejos.push('construir'); guardarActual(); }
     } else if (b.dataset.hab) armarHabilidad(b.dataset.hab as 'eliana' | 'serena' | 'lazo');
   });
   hud.vel.classList.toggle('activo', velocidad === 2);
@@ -406,7 +437,7 @@ function consejo(texto: string, id: string) {
   c.querySelector('button')!.onclick = () => {
     c.remove();
     if (!progreso.consejos.includes(id)) progreso.consejos.push(id);
-    guardarProgreso(AMIGO, progreso);
+    guardarActual();
   };
 }
 
@@ -699,7 +730,7 @@ function abrirPausa() {
     fx.toque();
     if (b.dataset.seguir !== undefined) { el.remove(); pausado = false; }
     else if (b.dataset.reiniciar !== undefined) { el.remove(); void jugarNivel(motor!.nivel); }
-    else if (b.dataset.niveles !== undefined) { el.remove(); fondoDe = null; void menu(); }
+    else if (b.dataset.niveles !== undefined) { fondoDe = null; void menu(); }
     else if (b.dataset.sonido !== undefined) { alternarSonido(); refrescarVolumen(); b.textContent = silenciado() ? 'Prender el sonido' : 'Apagar el sonido'; }
     else if (b.dataset.musica !== undefined) { musicaCasa.alternar(); refrescarVolumen(); b.textContent = musicaCasa.apagada() ? 'Prender la música' : 'Apagar la música'; }
     else if (b.dataset.salir !== undefined) salir();
@@ -707,6 +738,8 @@ function abrirPausa() {
 }
 
 async function terminar(gano: boolean) {
+  if (terminando || !motor || pantalla === 'fin') return;
+  terminando = true;
   const m = motor!;
   pantalla = 'fin';
   cerrarMenuTorre();
@@ -718,17 +751,18 @@ async function terminar(gano: boolean) {
   if (m.infinito) {
     progreso.infinito = Math.max(progreso.infinito, m.oleada - 1);
   } else if (gano) progreso.estrellas[n.id] = Math.max(progreso.estrellas[n.id] ?? 0, est);
-  guardarProgreso(AMIGO, progreso);
+  guardarActual();
   if (gano) { fx.ganar(); ponerMusica('final'); void decir('BV1', subtitulo); } else { fx.perder(); void decir('BD1', subtitulo); }
   await new Promise((r) => setTimeout(r, 2200));
   // Ganar la batalla de la historia: la escena del final (y el recibo para la granja)
   if (gano && n.historia) {
-    if (MISION) guardarMision(est);
+    if (MISION) { guardado.registrarMision(est); guardarActual(); }
     capa.querySelector('.escudo-hud')?.remove();
     await correrCine(ESCENA_FINAL, 'final');
     progreso.finalVisto = true;
-    guardarProgreso(AMIGO, progreso);
+    guardarActual();
   }
+  terminando = false;
   mostrarResultado(gano, est);
 }
 
@@ -753,9 +787,12 @@ function mostrarResultado(gano: boolean, est: number) {
       <button class="eb-grande sec" data-niveles>Niveles</button>`}
     </div></div>`;
   capa.append(el);
+  pintarGuardado();
   el.addEventListener('click', (ev) => {
     const b = (ev.target as HTMLElement).closest('button');
     if (!b) return;
+    if (b.dataset.reintentarGuardado !== undefined) return;
+    if (!asegurarGuardado()) return;
     fx.toque();
     if (b.dataset.siguiente !== undefined && sig) void jugarNivel(sig);
     else if (b.dataset.otra !== undefined) void jugarNivel(n);
@@ -765,6 +802,7 @@ function mostrarResultado(gano: boolean, est: number) {
 }
 
 function salir() {
+  if (terminando || !asegurarGuardado()) return;
   callarVoz();
   ponerMusica(null);
   const destino = MISION ? `./granja-v3.html${localStorage.getItem(CLAVE_MISION) ? '?escudo=P23' : ''}` : AMIGO ? './amigos.html' : './index.html';

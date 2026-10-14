@@ -7,6 +7,9 @@ conservado al recargar. Corregida la confirmación de días y compras de Cocina,
 probados dos días desde cero en cada receta y una mejora pagada, con fallos de almacenamiento y recarga en día 3.
 Al integrar los cuatro juegos nuevos de Astra, la barra del Cuarto de Juegos tiene desplazamiento para dejar libre
 la puerta de la granja. Sus campañas continúan en la cola de verificación del motor.
+Escudo ya conserva pendiente el guardado fallido y el recibo P23, y permite reintentar antes de avanzar o salir.
+Verificados sus seis niveles desde cero en pareja y amigos, pausa y recarga por nivel, y la batalla directa de P23
+con recibo fallido recuperado. Las cifras de dificultad y recompensas se mantienen.
 La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
 
 ## Frente de granja en paralelo

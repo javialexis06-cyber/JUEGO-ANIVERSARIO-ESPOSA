@@ -24,6 +24,11 @@ la película **C09 «Una estrella sin dueño»** (`src/granja-v3/cine-acto4.ts`)
   infinito se abre al ganar el III. Todo se guarda en el aparato (`escudo-progreso`; los amigos en
   `amigo-escudo-progreso`).
 
+El resultado y el recibo de P23 permanecen pendientes si falla el almacenamiento. «Reintentar guardado» conserva
+las estrellas y la fecha del recibo; continuar, ir a niveles o salir requiere confirmar la escritura. Mientras
+termina la escena de victoria o derrota, atrás no desmonta la partida antes de mostrar el resultado. Si no hay
+espacio para escribir, hay que mantener el juego abierto y liberarlo: un cierre forzado sigue fuera de la garantía.
+
 ## Torres (6, cada una con 3 niveles y una rama final a escoger)
 
 | Torre | Qué hace | Rama A | Rama B |
@@ -112,6 +117,11 @@ resolución y luego las sombras. Al salir suelta el WebGL (`forceContextLoss`).
 ```bash
 cd juego/web
 npx tsc --noEmit -p . && npx vite build && npm run build:amigos && node scripts/verificar-amigos.mjs
+node scripts/probar-escudo-motor.mjs                 # seis niveles, derrota, infinito y fallos de escritura
+# Servir dist y dist-amigos en puertos distintos; los navegadores se ejecutan de a uno:
+CHROME_PATH=/usr/bin/chromium AMIGO=0 FALLOS=1 node scripts/probar-escudo-recorrido.mjs http://127.0.0.1:4182/ test-results/escudo-pareja
+CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-escudo-recorrido.mjs http://127.0.0.1:4184/ test-results/escudo-amigos
+CHROME_PATH=/usr/bin/chromium node scripts/probar-escudo-mision.mjs http://127.0.0.1:4182/ test-results/escudo-p23
 node scripts/_escudo_balance.mjs                     # balance (SEMILLAS=n, NIVEL=id, TORPE=1, F=multiplicador de vida)
 ```
 
@@ -119,6 +129,9 @@ node scripts/_escudo_balance.mjs                     # balance (SEMILLAS=n, NIVE
   enemigos en fila. Ganchos: `window.__escudo` (`motor()`, `escena()`, `jugar(id)`, `saltar()`).
 - Pruebas temporales: `scripts/_escudo_foto.mjs` (captura) y `scripts/_escudo_menu.mjs` (construir con
   confirmación, mejorar, oleada, habilidad).
+- Los recorridos nuevos usan el piloto normal, los recursos del modo elegido y el paso fijo; las escenas se saltan.
+  Los errores de almacenamiento son escrituras reales que rechazan. No certifican los controles físicos ni la campaña
+  previa de la granja al entrar directamente al modo P23. No modifican el balance.
 
 ## Integración (hecha el 14 de octubre de 2026)
 

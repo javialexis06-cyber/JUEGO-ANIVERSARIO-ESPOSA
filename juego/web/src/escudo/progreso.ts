@@ -41,8 +41,8 @@ export function leerProgreso(amigo: boolean): Progreso {
   };
 }
 
-export function guardarProgreso(amigo: boolean, p: Progreso) {
-  try { localStorage.setItem(clave(amigo), JSON.stringify(p)); } catch { /* sin almacenamiento */ }
+export function guardarProgreso(amigo: boolean, p: Progreso): boolean {
+  try { localStorage.setItem(clave(amigo), JSON.stringify(p)); return true; } catch { return false; }
 }
 
 /** ¿Se puede jugar este nivel? (el primero siempre; los demás al ganar el anterior). */
@@ -55,8 +55,31 @@ export function totalEstrellas(p: Progreso) {
 }
 
 /** La granja lee esto para dar por cumplida la batalla de P23. */
-export function guardarMision(estrellas: number) {
+export function guardarMision(estrellas: number, fecha = Date.now()): boolean {
   try {
-    localStorage.setItem(CLAVE_MISION, JSON.stringify({ v: 1, mision: 'P23', ganada: true, estrellas, fecha: Date.now() }));
-  } catch { /* sin almacenamiento */ }
+    localStorage.setItem(CLAVE_MISION, JSON.stringify({ v: 1, mision: 'P23', ganada: true, estrellas, fecha }));
+    return true;
+  } catch { return false; }
+}
+
+/** Una escritura fallida sigue pendiente, incluido el recibo de P23, hasta poder confirmarla. */
+export class GuardadoEscudo {
+  private progresoPendiente = false;
+  private mision: { estrellas: number; fecha: number } | null = null;
+
+  constructor(private amigo: boolean, private progreso: Progreso) {}
+
+  get pendiente() { return this.progresoPendiente || this.mision !== null; }
+
+  registrarMision(estrellas: number) {
+    this.mision ??= { estrellas, fecha: Date.now() };
+  }
+
+  guardar(): boolean {
+    this.progresoPendiente = !guardarProgreso(this.amigo, this.progreso);
+    if (this.mision && guardarMision(this.mision.estrellas, this.mision.fecha)) this.mision = null;
+    return !this.pendiente;
+  }
+
+  confirmar(): boolean { return !this.pendiente || this.guardar(); }
 }
