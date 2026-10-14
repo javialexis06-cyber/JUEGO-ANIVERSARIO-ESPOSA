@@ -445,7 +445,7 @@ lunas) y Confluencia (los cuatro elementos girando).
     de Fuatia, la corona de esquirlas con la estrella muerta de Nath'Gora y la máscara de porcelana rajada con oro de
     Vael'Thor.
   - La copa del Conde en SC0 (`granja_cria.py`, colgada del hueso «comida»: sube a la boca cuando bebe).
-- Queda: los minijuegos de la fase H, cuando Javier los pida.
+- **Fase H hecha (14 de octubre)**: los cuatro minijuegos (peleas, carreras, celular y Escudo), cada uno con su documento en `docs/sistemas/`.
 
 Cada escena: guion → voces → actores y escenario → animación con el motor del cine (`cine-granja.ts`) → pruebas en el
 navegador (cuadros sueltos y video) → captura revisada → commit y push. Las de Sangre y Ceniza llevan su versión de amigos

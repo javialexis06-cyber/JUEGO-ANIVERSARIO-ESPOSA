@@ -1391,6 +1391,7 @@ const JUEGOS = {
   escudo: { punto: 'arcade', url: './escudo.html', nombre: 'El Escudo de las Hermanas' },
   carreras: { punto: 'arcade', url: './carreras.html', nombre: 'La Carrera de las Tres Lunas' },
   celular: { punto: 'arcade', url: './celular.html', nombre: 'Desaparecidos de Astra' },
+  peleas: { punto: 'arcade', url: './peleas.html', nombre: 'El Torneo del Despertar Dorado' },
 } as const;
 let yendoAJugar = false;
 
@@ -2165,6 +2166,7 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-escudo', texto: 'El Escudo de las Hermanas', icono: '<span class="ico ico-emoji">🛡️</span>' },
         { id: 'jugar-carreras', texto: 'Carrera de las Tres Lunas', icono: '<span class="ico ico-emoji">🏁</span>' },
         { id: 'jugar-celular', texto: 'Desaparecidos de Astra', icono: '<span class="ico ico-emoji">📱</span>' },
+        { id: 'jugar-peleas', texto: 'Torneo de peleas', icono: '<span class="ico ico-emoji">🥊</span>' },
         { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },
       );
       break;
@@ -2333,6 +2335,8 @@ async function alAccion(id: string) {
       return jugar('carreras');
     case 'jugar-celular':
       return jugar('celular');
+    case 'jugar-peleas':
+      return jugar('peleas');
     case 'retrete':
       // El retrete espacial es secreto (sale solo cuando algo le cae pesado): el cohete de adorno es para sentarse,
       // ver quién ha volado más lejos y abrir la tienda del retrete

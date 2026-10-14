@@ -21,6 +21,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`clue.md`](sistemas/clue.md) | «¿Quién fue?», el Clue de la casona: reglas para dos, IA, cuaderno y el tablero renderizado en Blender. |
 | [`granja.md`](sistemas/granja.md) | La granja integrada: acceso desde la casa, motor y guardado, documentación de sistemas y límites actuales. |
 | [`cine-granja.md`](sistemas/cine-granja.md) | Las películas de la historia de la granja (el prólogo con Celia, Aura y Lara): motor, actores, escenarios, voces celestiales y música. |
+| [`peleas.md`](sistemas/peleas.md) | El Torneo del Despertar Dorado: peleas 1 contra 1 con los muñecos (arcade, contra la máquina, de a dos, en línea), escenarios de Blender y voces. |
 | [`salas.md`](sistemas/salas.md) | Salas de hasta 4, modo amigo y la app «Sala de Juegos» para amigos. |
 | [`sangre-y-ceniza.md`](sistemas/sangre-y-ceniza.md), [`sangre-figuras.md`](sistemas/sangre-figuras.md) | El survivors oscuro: diseño, código, contrato de arte y figuras. |
 | [`musica.md`](sistemas/musica.md) | La música de cada juego y los efectos de sonido (Eleven Music): qué suena dónde, el guion y cómo se generan. |
