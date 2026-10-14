@@ -4,6 +4,8 @@
 export type Rol = 'el' | 'ella';
 export const NOMBRE_ROL: Record<Rol, string> = { el: 'Javier', ella: 'Laura' };
 export const otro = (r: Rol): Rol => (r === 'el' ? 'ella' : 'el');
+/** Fecha local del vuelo, también cuando su guardado se reintenta al día siguiente. */
+export const hoy = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 export type Ranura = 'pelo' | 'cabeza' | 'cara' | 'arriba' | 'abajo' | 'pies' | 'espalda' | 'cola';
 export const RANURAS: Ranura[] = ['pelo', 'cabeza', 'cara', 'arriba', 'abajo', 'pies', 'espalda', 'cola'];
 export type Ropa = Partial<Record<Ranura, string>>;

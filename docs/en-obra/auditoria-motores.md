@@ -60,13 +60,19 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
   legales y los niveles originales. Se verificaron campeón, pausa y retorno al menú sin errores. Dieciocho
   combates y sus réplicas reciben entradas serializadas y conservan estado y resultado. No se cambiaron golpes,
   vida, daño, rondas ni dificultad; el piloto y el avance del director solo sirven para repetir estas pruebas.
+- **Retrete.** La escritura confirma el vuelo y las monedas de la casa juntos. El recibo conserva el día y
+  permite recuperar una respuesta perdida sin pagar otra vez. Vuelos, compras y cosméticos fallidos quedan
+  pendientes; resultado y tienda esperan antes de avanzar, comprar o salir, con un botón de reintento. El
+  adaptador de amigos devuelve el fallo al motor. «Atrás» en la casa usa los controles del Retrete y espera su
+  guardado, en lugar de alcanzar la salida nativa de la app. Doce regresiones cubren rechazos, doble toque, copia estable,
+  compras/misiones, pagos únicos, datos antiguos y el tope original por persona y día, incluso si se limpia el diario al cambiar de fecha.
 - **Pruebas de motores.** `npm run probar:motores` comprueba partidas completas de Dados, Mancala, Cajas,
   Parchís, Parchís a dos colores y Clue; los dos jugadores pueden empezar y se recorren los niveles de IA.
   Se completaron 36 partidas. Cada movimiento se valida, se replica en otro estado y se serializa entre pasos; Mancala conserva sus 48
   semillas. Incluye siete regresiones de guardado/calendario del Show, once de Cocina y doce comprobaciones de
   Escudo, cinco regresiones de Desaparecidos y seis de Carreras más sus cuatro carreras completas.
   Workflow: «Motores de los juegos».
-  Incluye también los dieciocho combates y réplicas del Torneo.
+  Incluye también los dieciocho combates y réplicas del Torneo y las doce regresiones del Retrete.
 
 No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad.
 
@@ -90,7 +96,7 @@ No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad
 | La Carrera de las Tres Lunas | Carrera normal, contrarreloj y Gran Premio de cuatro pistas desde cero en «Carrera»; tres vueltas por pista, pausa real, puntos conservados, copa ganada y dos fallos de escritura recuperados. Récord, muestras del fantasma y copa única conservados al recargar. Carrera, contrarreloj y retorno a casa en edición de pareja; sin errores | Precisión física, repetición visible del fantasma, otras criaturas/dificultades y verificación propia de la red |
 | Desaparecidos de Astra | Ocho casos resueltos desde cero en amigos: 24 estrellas, PIN, palabras, patrones arrastrados, fotos con linterna, todas las pistas importantes y recarga por caso; primer cierre fallido recuperado. Primer caso y retorno a casa en compilación completa. Cinco regresiones de guardado y reinicio; sin errores | Reproducción completa de las voces y escenas, controles en Android, salida de amigos por controles y cierre forzado mientras falla el almacenamiento |
 | El Torneo del Despertar Dorado | Arcade completo desde cero con Tarek: seis rivales a sus niveles originales, campeón, pausa y retorno al menú sin errores; dieciocho combates de motor con tres luchadores, derrota y réplicas por entradas serializadas | Otros luchadores y escenarios por controles físicos, dos jugadores en el aparato y verificación propia de la red; el arcade no tiene guardado de etapa implementado |
-| Retrete espacial | Dos vuelos desde cero con piloto, choques normales, pausa, volver a volar, escudo pagado con 120 rollitos ganados y progreso conservado tras recarga; sin errores | Sensores/controles físicos, ciclos avanzados, guardado fallido y premio de la casa |
+| Retrete espacial | Amigos: dos vuelos desde cero con piloto, choques normales, pausa, otra salida, escudo pagado con 120 rollitos ganados, fallos al aterrizar/comprar recuperados, recarga y retorno a la sala. Casa local: ruta nativa de Atrás simulada en navegador y dos vuelos normales con acceso preparado, rechazo de escritura y respuesta perdida después de pagar, reintentos sin repetir monedas, retorno y recarga. Doce regresiones de persistencia | Descubrimiento desde el baño, sensores/controles físicos, ciclos avanzados, Supabase real y cierre forzado mientras falla el almacenamiento |
 | Cocina de chef: wafles, frappés y fresas | Dos días desde progreso nuevo por receta, con pedidos y estaciones normales, resultado, propinas, mejoras pagadas y recarga en día 3; dos fallos de escritura al terminar wafles y uno por compra recuperados; once regresiones de persistencia. Wafles en pareja: escenario preparado con pérdida del 8 % de mensajes, pausa, segundo plano, reconexión, mismo resultado y premio del anfitrión, sin errores | Fresas y frappés en pareja, rangos avanzados, cierre forzado mientras hay una escritura pendiente y precisión táctil |
 | Casa / mascota virtual | Entrada, retorno y persistencia del recorrido de granja comprobados | Ciclo completo de cuidado, compras, habitaciones, trofeos y sincronización en dos perfiles |
 
@@ -106,6 +112,11 @@ la barra de la casa están publicadas en ambas ramas hasta `25445e2d`, incluyend
 Escudo y su integración con la sala de cine están publicados en ambas ramas hasta `960e228f`.
 Desaparecidos y sus ocho casos verificados están publicados en ambas ramas en `9d36ea65`.
 Carreras, sus récords compatibles, pausa y resultados pendientes están publicados en ambas ramas en `a284dd0d`.
+Torneo y su arcade completo están publicados en ambas ramas en `b05f942f`.
+La tanda del Retrete del 14 de octubre conserva ambas compilaciones, el filtro de amigos (546 archivos), las
+48 suites de granja y las seis comprobaciones casa–granja sin errores. Pasan las doce regresiones de guardado,
+el recorrido de amigos con compra pagada y fallos recuperados, y los vuelos de la casa local con Atrás nativo
+simulado, pago confirmado, retorno y recarga. No certifica un dispositivo Android ni Supabase real.
 La APK sigue bloqueada al comprobar también ese SHA el 14 de octubre: no se creó una ejecución
 automática para ese SHA y el intento de iniciar `apk.yml` devolvió **HTTP 422: Actions has been disabled for this
 user**. El workflow figura activo, pero la cuenta no puede ejecutarlo. No se anuncia una APK nueva ni se confunden
@@ -139,6 +150,8 @@ CHROME_PATH=/usr/bin/chromium node scripts/probar-mesa-recorridos.mjs http://127
 CHROME_PATH=/usr/bin/chromium PUERTO=4182 node scripts/revisar-puertas.mjs 1 100 --semillas=0 --carpeta=/tmp/puertas
 CHROME_PATH=/usr/bin/chromium node scripts/probar-cocina-recorridos.mjs http://127.0.0.1:4182/ /tmp/cocina
 CHROME_PATH=/usr/bin/chromium node scripts/probar-retrete-recorrido.mjs http://127.0.0.1:4182/ /tmp/retrete
+CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-retrete-recorrido.mjs http://127.0.0.1:4184/ /tmp/retrete-amigos
+CHROME_PATH=/usr/bin/chromium node scripts/probar-retrete-casa.mjs http://127.0.0.1:4182/ /tmp/retrete-casa
 CHROME_PATH=/usr/bin/chromium AMIGO=0 FALLOS=1 node scripts/probar-escudo-recorrido.mjs http://127.0.0.1:4182/ /tmp/escudo-pareja
 CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-escudo-recorrido.mjs http://127.0.0.1:4184/ /tmp/escudo-amigos
 CHROME_PATH=/usr/bin/chromium node scripts/probar-escudo-mision.mjs http://127.0.0.1:4182/ /tmp/escudo-p23

@@ -56,7 +56,7 @@ export function pintarPremioCasa(capa: HTMLElement, pc: PremioCasa) {
     : 'Por hoy el retrete ya dio sus monedas para la casa. ¡Los rollitos sí siguen!';
 }
 
-export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tienda: () => void; casa: () => void; otra: () => void }) {
+export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tienda: () => Promise<boolean>; casa: () => Promise<boolean>; otra: () => Promise<boolean> }) {
   capa.querySelector('.cohete-resultado')?.remove();
   const p = d.progreso;
   const titulo = d.record ? elegir(TITULOS.record) : d.metros > 600 ? elegir(TITULOS.bien) : elegir(TITULOS.corto);
@@ -144,25 +144,15 @@ export function mostrarResultado(capa: HTMLElement, d: DatosResultado, al: { tie
   setTimeout(contar, 450);
   // (un solo toque cuenta: si el dedo rebota no se sale dos veces)
   let hecho = false;
-  s.querySelector('[data-tienda]')!.addEventListener('click', () => {
+  const ejecutar = async (accion: () => Promise<boolean>, sonido: () => void) => {
     if (hecho) return;
     hecho = true;
-    nota(880, 0.06, 0, 'triangle', 0.05);
+    if (!await accion()) { hecho = false; return; }
+    sonido();
     s.classList.remove('abierta');
     setTimeout(() => s.remove(), 250);
-    al.tienda();
-  });
-  s.querySelector('[data-casa]')!.addEventListener('click', () => {
-    if (hecho) return;
-    hecho = true;
-    nota(660, 0.08, 0, 'triangle', 0.05);
-    s.classList.remove('abierta');
-    al.casa();
-  });
-  s.querySelector('[data-otra]')!.addEventListener('click', () => {
-    if (hecho) return;
-    hecho = true;
-    [523, 784, 1046].forEach((f, k) => nota(f, 0.1, k * 0.06, 'triangle', 0.05));
-    al.otra();
-  });
+  };
+  s.querySelector('[data-tienda]')!.addEventListener('click', () => { void ejecutar(al.tienda, () => nota(880, 0.06, 0, 'triangle', 0.05)); });
+  s.querySelector('[data-casa]')!.addEventListener('click', () => { void ejecutar(al.casa, () => nota(660, 0.08, 0, 'triangle', 0.05)); });
+  s.querySelector('[data-otra]')!.addEventListener('click', () => { void ejecutar(al.otra, () => { [523, 784, 1046].forEach((f, k) => nota(f, 0.1, k * 0.06, 'triangle', 0.05)); }); });
 }

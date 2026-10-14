@@ -23,7 +23,8 @@ const iconosEstela = new Map<string, string>();
 
 export interface AlTienda {
   probar: (tipo: TipoCosmetico, id: string) => void;
-  comprado: () => void;
+  antesDeCambiar: () => Promise<boolean>;
+  comprado: () => Promise<boolean>;
   cerrar: () => void;
 }
 
@@ -32,6 +33,7 @@ export class Tienda {
   private pestana: Pestana = 'mejoras';
   /** Lo que se está probando (sin comprar) en cada tipo. */
   private probando: Partial<Record<TipoCosmetico, string>> = {};
+  private ocupada = false;
 
   constructor(private capa: HTMLElement, private p: ProgresoCohete, private rol: Rol, private al: AlTienda) {
     this.raiz = document.createElement('section');
@@ -48,31 +50,43 @@ export class Tienda {
         <div class="ct-lista"></div>
       </div>`;
     capa.append(this.raiz);
-    this.raiz.addEventListener('click', (e) => this.clic(e));
+    this.raiz.addEventListener('click', (e) => { void this.clic(e); });
     requestAnimationFrame(() => this.raiz.classList.add('abierta'));
     this.repintar();
   }
 
-  private clic(e: Event) {
+  private async clic(e: Event) {
+    if (this.ocupada || this.cerrada) return;
     const t = e.target as HTMLElement;
     const b = (sel: string) => t.closest(sel) as HTMLElement | null;
     let el: HTMLElement | null;
-    if (b('.ct-cerrar')) return this.cerrar();
+    if (b('.ct-cerrar')) {
+      this.ocupada = true;
+      try { if (await this.al.antesDeCambiar()) this.cerrar(); }
+      finally { this.ocupada = false; }
+      return;
+    }
     if ((el = b('[data-pestana]'))) {
       this.pestana = el.dataset.pestana as Pestana;
       nota(880, 0.05, 0, 'triangle', 0.04);
       return this.repintar(true);
     }
-    if ((el = b('[data-mejora]'))) return this.comprarMejora(el.dataset.mejora as IdMejora, el);
-    if ((el = b('[data-patico]'))) return this.comprarPatico(el);
-    if ((el = b('[data-usar]'))) {
-      const [tipo, id] = el.dataset.usar!.split(':') as [TipoCosmetico, string];
-      this.p.puesto[tipo] = id;
-      delete this.probando[tipo];
-      this.al.probar(tipo, id);
-      this.al.comprado();
-      nota(1046, 0.08, 0, 'triangle', 0.05);
-      return this.repintar();
+    if ((el = b('[data-mejora], [data-patico], [data-usar]'))) {
+      this.ocupada = true;
+      try {
+        if (!await this.al.antesDeCambiar()) return;
+        if (el.dataset.mejora) await this.comprarMejora(el.dataset.mejora as IdMejora, el);
+        else if (el.hasAttribute('data-patico')) await this.comprarPatico(el);
+        else {
+          const [tipo, id] = el.dataset.usar!.split(':') as [TipoCosmetico, string];
+          this.p.puesto[tipo] = id;
+          delete this.probando[tipo];
+          this.al.probar(tipo, id);
+          if (await this.al.comprado()) nota(1046, 0.08, 0, 'triangle', 0.05);
+          this.repintar();
+        }
+      } finally { this.ocupada = false; }
+      return;
     }
     if ((el = b('[data-probar]'))) {
       const [tipo, id] = el.dataset.probar!.split(':') as [TipoCosmetico, string];
@@ -94,7 +108,10 @@ export class Tienda {
     this.al.cerrar();
   }
 
-  private pagado(boton: HTMLElement) {
+  private async pagado(boton: HTMLElement) {
+    // La compra cuenta una sola vez, incluso si hay que reintentar la misma copia.
+    revisarMisiones(this.p, cuentasNuevas(), this.p.misiones.map((m) => m.avance), true);
+    if (!await this.al.comprado()) return false;
     // Los rollitos vuelan del saldo al botón y suena la caja
     [1318, 1760, 2093].forEach((f, i) => nota(f, 0.1, i * 0.06, 'triangle', 0.06));
     const r = boton.getBoundingClientRect();
@@ -109,9 +126,7 @@ export class Tienda {
       this.capa.append(s);
       setTimeout(() => s.remove(), 900);
     }
-    // La compra cuenta para las misiones de la tienda
-    revisarMisiones(this.p, cuentasNuevas(), this.p.misiones.map((m) => m.avance), true);
-    this.al.comprado();
+    return true;
   }
 
   private sinPlata(boton: HTMLElement) {
@@ -121,21 +136,21 @@ export class Tienda {
     nota(220, 0.2, 0, 'triangle', 0.05);
   }
 
-  private comprarMejora(id: IdMejora, boton: HTMLElement) {
+  private async comprarMejora(id: IdMejora, boton: HTMLElement) {
     const precio = precioMejora(this.p, id);
     if (precio === null) return;
     if (!comprar(this.p, { mejora: id })) return this.sinPlata(boton);
-    this.pagado(boton);
+    const ok = await this.pagado(boton);
     this.repintar();
-    this.raiz.querySelector(`[data-tarjeta="m-${id}"]`)?.classList.add('recien');
+    if (ok) this.raiz.querySelector(`[data-tarjeta="m-${id}"]`)?.classList.add('recien');
   }
 
-  private comprarPatico(boton: HTMLElement) {
+  private async comprarPatico(boton: HTMLElement) {
     if (!comprar(this.p, { patico: true })) return this.sinPlata(boton);
-    nota(1568, 0.06, 0.2, 'square', 0.03, 2400);
-    this.pagado(boton);
+    const ok = await this.pagado(boton);
+    if (ok) nota(1568, 0.06, 0.2, 'square', 0.03, 2400);
     this.repintar();
-    this.raiz.querySelector('[data-tarjeta="patico"]')?.classList.add('recien');
+    if (ok) this.raiz.querySelector('[data-tarjeta="patico"]')?.classList.add('recien');
   }
 
   /** Vuelve a dibujar la lista (y el saldo). */

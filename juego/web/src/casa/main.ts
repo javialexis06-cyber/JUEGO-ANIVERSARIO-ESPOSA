@@ -45,7 +45,8 @@ import {
 } from './modelo';
 import { NOMBRE_ROL } from './modelo';
 import { logrosLocales, METAL, nivel, nivelAmor, niveles, PREMIO_TROFEO, salaTrofeos, TROFEOS } from './trofeos';
-import { mejorDistancia, monedasVuelo, TOPE_MONEDAS_DIA, yaDescubrio, type ProgresoCohete } from './cohete/datos';
+import { mejorDistancia, yaDescubrio, type ProgresoCohete } from './cohete/datos';
+import { PremiosCohete, type VueloGuardado } from './cohete/guardado';
 import { ranurasDe } from './ropa';
 import { avisoDia, estadoDiaLigero, showVacio, tarjetaDia } from './show_casa';
 import {
@@ -654,35 +655,19 @@ async function volarEnRetrete(donde: 'bano' | 'juegos') {
 
 /** Lo que el retrete espacial necesita de la casa (y cómo guarda los rollitos, las compras y las misiones). */
 function opcionesCohete() {
+  const premios = new PremiosCohete();
   return {
     rol: yo,
     ropa: s!.personajes[yo].ropa,
     colorPelo: s!.personajes[yo].colorPelo,
     progreso: s!.casa.cohete?.[yo],
     recordPareja: mejorDistancia(s!.casa.cohete, s!.casa.retrete, otro(yo)),
-    guardar: (p: ProgresoCohete) => cambiarCasa((c) => (c.cohete = { ...(c.cohete ?? {}), [yo]: p })),
-    premio: premioVuelo,
+    guardar: async (p: ProgresoCohete, vuelo?: VueloGuardado) => {
+      let premio = { monedas: 0, tope: false };
+      const ok = await cambiarCasa((c) => { premio = premios.aplicar(c, yo, p, vuelo); });
+      return ok ? premio : false;
+    },
   };
-}
-
-/**
- * Las monedas de la casa por un vuelo (1 cada 15 s, hasta 3) apenas aterriza. Como ahora se puede volver a volar sin
- * salir, hay un tope por persona y por día (queda anotado en la casa: no se repite en el otro celular).
- */
-async function premioVuelo(segundos: number) {
-  const quiere = monedasVuelo(segundos);
-  const clave = `${hoy()}|${yo}|retrete`;
-  let dadas = 0, tope = false;
-  if (!s || !quiere) return { monedas: 0, tope: false };
-  const ok = await cambiarCasa((c) => {
-    const ya = c.diario[clave] ?? 0;
-    dadas = Math.max(0, Math.min(quiere, TOPE_MONEDAS_DIA - ya));
-    tope = ya + dadas >= TOPE_MONEDAS_DIA;
-    if (!dadas) return;
-    c.diario[clave] = ya + dadas;
-    c.monedas += dadas;
-  });
-  return ok ? { monedas: dadas, tope } : { monedas: 0, tope: false };
 }
 
 /** El vuelo: la casa se deja de dibujar mientras tanto y al volver cae al baño (o al cuarto de juegos) con el ¡KABOOM! */
@@ -3450,6 +3435,17 @@ function controles() {
   // Botón «atrás» de Android (en el computador, la tecla Esc): cierra lo que esté abierto encima
   const atras = () => {
     const aLaVista = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].find((b) => b.offsetParent !== null);
+    if (enCohete) {
+      const cerrar = aLaVista('.cohete-tienda .ct-cerrar');
+      const salir = aLaVista('.cohete-resultado [data-casa]');
+      if (cerrar) cerrar.click();
+      else if (salir) salir.click();
+      // Esc ya pone/quita la pausa desde el propio vuelo; el botón físico necesita hacerlo aquí.
+      else if (Capacitor.isNativePlatform()) {
+        (aLaVista('.ch-pausa-capa:not([hidden]) [data-seguir]') ?? aLaVista('.cohete-hud:not([hidden]) .ch-pausa'))?.click();
+      }
+      return;
+    }
     const salirLavado = aLaVista('.lv-pausa') ?? aLaVista('.lv-menu [data-v="volver"]') ?? aLaVista('.lv-menu [data-m="salir"]');
     const pausaCocina = document.querySelector<HTMLElement>('.cocina .cocina-pausa');
     if (salirLavado) salirLavado.click();

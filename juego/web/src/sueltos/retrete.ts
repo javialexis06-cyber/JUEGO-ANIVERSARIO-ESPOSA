@@ -35,7 +35,7 @@ async function arrancar() {
     const opciones = {
       rol: amigo.cuerpo,
       progreso: normalizarCohete(leerAparato(CLAVE_RETRETE)),
-      guardar: (p: unknown) => { guardarAparato(CLAVE_RETRETE, p); },
+      guardar: (p: unknown) => guardarAparato(CLAVE_RETRETE, p),
       amigo: { nombre: amigo.nombre, aspecto: amigo.aspecto },
       textoSalir: '🎮 Mis juegos',
     };

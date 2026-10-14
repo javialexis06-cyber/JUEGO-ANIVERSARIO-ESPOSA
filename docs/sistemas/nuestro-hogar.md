@@ -229,6 +229,14 @@ bañarse, irse a dormir) también se ve en el celular del otro si está mirando 
   aterriza cada vuelo** (la pantalla dice «+N monedas para la casa») y con **tope de 6 por persona al día**
   (`casa.diario["AAAA-MM-DD|rol|retrete"]`); pasado el tope la pantalla lo avisa y los rollitos siguen. Los
   rollitos son para su tienda.
+- Vuelo y monedas se confirman en una sola escritura. El recibo del vuelo permite reintentar una respuesta
+  perdida sin repetir el pago; se conservan el día del aterrizaje y su cupo pendiente aunque se limpie el diario al cambiar de fecha, y se reconocen los vuelos de partidas antiguas.
+  Si falla el guardado, el resultado muestra «Reintentar» y espera antes de abrir la tienda, volver a volar o
+  salir. Las compras pendientes mantienen su coste y mejora una sola vez; no se abandona la tienda ni se hace
+  otra compra hasta confirmar. El aviso pide mantener el juego abierto: el cierre forzado sin almacenamiento
+  disponible todavía no tiene recuperación certificada.
+  «Atrás» en la casa usa los botones del Retrete y espera este guardado antes de salir; durante el vuelo activa
+  su pausa, sin cerrar la app por detrás del juego.
 
 ### Misiones y multiplicador
 
@@ -268,8 +276,10 @@ cinco). Con mejoras de nivel medio (burbuja, segunda oportunidad, arranque, imá
 - Código: `src/casa/cohete.ts` (el juego, `otraVez()` para volver a volar) y `src/casa/cohete/` (datos y catálogos,
   escenario y tramos, obstáculos, poderes, rollitos y figuras, partículas, efectos, música, tienda, pantalla del
   vuelo, `resaltar.ts` con el rojo y el dorado). En `main.ts`: `irAlBano()` (la primera vez), `volarEnRetrete()`
-  (el botón 🚀 del inodoro y del retrete en miniatura), `volarCohete()`, `premioVuelo()` (monedas con tope),
+  (el botón 🚀 del inodoro y del retrete en miniatura), `volarCohete()`, `opcionesCohete()` (guardado y monedas con tope),
   `abrirTiendaRetrete()` y `terminarCohete()`.
+- Persistencia: `cohete/guardado.ts` conserva la copia pendiente y aplica progreso y premio de forma conjunta;
+  `scripts/probar-retrete-guardado.mjs` comprueba fallos, respuesta perdida, compras y topes por día y persona.
 - Modelos: `personajes/blender/cohete_piezas.py` (retretes, poderes, rollito, basura espacial, ovni, avión, pájaro,
   ayudante e íconos), exportados con `blender -b -P cohete_exportar.py -- juego/web/modelos-crudos` a
   `cohete_retretes.glb` y `cohete_cosas.glb`; los cascos con `cohete_cascos.py` (maquinaria de la ropa) a
@@ -297,6 +307,10 @@ cinco). Con mejoras de nivel medio (burbuja, segunda oportunidad, arranque, imá
   <url> <carpeta>`. Usa el piloto normal y reloj acelerado, sin invulnerabilidad, saltos ni recursos regalados;
   comprueba dos vuelos, pausa, otra salida, mejora pagada y recarga. Si sobrevive diez minutos simulados, termina
   con «Aterrizar ya», el botón normal de la pausa. No certifica controles o rendimiento en un teléfono.
+- `FALLOS=1` agrega cuota agotada al aterrizar y comprar, intentos de salir y recuperación antes de recargar.
+  `scripts/probar-retrete-casa.mjs` comprueba el adaptador real de la casa local: usa acceso preparado al vuelo,
+  física normal, rechazo de escritura y una respuesta perdida después de pagar. No certifica el descubrimiento
+  del retrete desde el baño ni Supabase real.
 
 ## Lavarse la cara (minijuego secreto: un Vampire Survivors completo)
 

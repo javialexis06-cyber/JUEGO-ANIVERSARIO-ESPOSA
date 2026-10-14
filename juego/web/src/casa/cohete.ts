@@ -32,7 +32,8 @@ import { Poderes } from './cohete/poderes';
 import { mostrarResultado, pintarPremioCasa, type DatosResultado, type PremioCasa } from './cohete/resultado';
 import { FIGURAS, Rollitos, figura } from './cohete/rollitos';
 import { Tienda } from './cohete/tienda';
-import { NOMBRE_ROL, otro, type Rol, type Ropa } from './modelo';
+import { GuardadoCohete, type GuardarCohete, type VueloGuardado } from './cohete/guardado';
+import { hoy, NOMBRE_ROL, otro, type Rol, type Ropa } from './modelo';
 import { Vestuario } from './ropa';
 import { teñirModelo } from '../salas/tinte';
 import type { AspectoJugador } from '../salas/tipos';
@@ -66,14 +67,12 @@ interface Opciones {
   progreso?: ProgresoCohete;
   /** Récord de la pareja (metros) para ponerle su banderita en el camino. */
   recordPareja?: number;
-  /** Guarda el progreso en la casa (después del vuelo y en cada compra). */
-  guardar?: (p: ProgresoCohete) => Promise<unknown> | void;
+  /** Confirma progreso y, al aterrizar, el premio de la casa en la misma escritura. */
+  guardar?: GuardarCohete;
   /** Solo la tienda (desde el cuarto de juegos), sin vuelo. */
   soloTienda?: boolean;
   /** Despegue corto (ya lo había descubierto: sale del inodoro sin tanto drama). */
   corto?: boolean;
-  /** La casa da sus monedas por cada vuelo apenas termina (con el tope del día) y dice cuántas fueron. */
-  premio?: (segundos: number) => Promise<PremioCasa>;
   /** Juega un amigo (sin casa, en modo neutro): su nombre y cómo se ve. */
   amigo?: { nombre: string; aspecto: AspectoJugador };
   /** El botón de salir de la pantalla del vuelo (volver a la casa o a la sala de juegos). */
@@ -176,6 +175,8 @@ class RetreteEspacial {
   private marcas: { g: THREE.Group; metros: number }[] = [];
   // Progreso (copia de trabajo; se guarda al terminar y en cada compra)
   private p: ProgresoCohete;
+  private guardado: GuardadoCohete;
+  private cambiando = false;
   private inicioMisiones: number[];
   private cuentas: Cuentas = cuentasNuevas();
   // Estado del vuelo
@@ -244,6 +245,7 @@ class RetreteEspacial {
     this.neutro = !!o.amigo;
     ponerNeutroCohete(this.neutro);
     this.p = copiaProgreso(normalizarCohete(o.progreso));
+    this.guardado = new GuardadoCohete(this.p, o.guardar);
     this.inicioMisiones = this.p.misiones.map((m) => m.avance);
     this.record = this.p.mejor;
     this.capa = document.createElement('section');
@@ -1215,7 +1217,6 @@ class RetreteEspacial {
     if (record) p.mejor = metros;
     const recordPuntaje = this.puntaje > p.mejorPuntaje;
     if (recordPuntaje) p.mejorPuntaje = Math.floor(this.puntaje);
-    void this.o.guardar?.(copiaProgreso(p));
     this.vuelosSesion++;
     this.resultado = {
       metros, puntaje: Math.floor(this.puntaje), rollitos: this.rollitosVuelo, extraTriple: extra, record, recordPuntaje,
@@ -1223,15 +1224,8 @@ class RetreteEspacial {
       progreso: p, rol: this.o.rol, recordPareja: this.neutro ? 0 : this.o.recordPareja ?? 0, casa: null, textoSalir: this.o.textoSalir,
       cosmeticos,
     };
-    // Las monedas de la casa se dan apenas aterriza (si se cierra la app en la pantalla del vuelo, no se pierden)
-    const res = this.resultado;
-    void this.o.premio?.(this.tJuego)
-      .then((pc) => {
-        this.monedasSesion += pc.monedas;
-        res.casa = pc;
-        if (this.resultado === res) pintarPremioCasa(this.capa, pc);
-      })
-      .catch(() => undefined);
+    // El vuelo y las monedas de la casa se guardan en la misma escritura, con un recibo estable para reintentar.
+    void this.guardarActual({ numero: p.vuelos, segundos: this.tJuego, dia: hoy() });
     // Cae con un paracaídas de papel higiénico
     this.fase = 'resultado';
     this.tFase = 0;
@@ -1249,10 +1243,51 @@ class RetreteEspacial {
   private mostrarResultado() {
     if (!this.resultado || this.fase === 'fin') return;
     mostrarResultado(this.capa, this.resultado, {
-      tienda: () => this.entrarTaller(),
-      casa: () => this.terminar(),
-      otra: () => this.otraVez(),
+      tienda: () => this.antesDeCambiar(() => this.entrarTaller()),
+      casa: () => this.antesDeCambiar(() => this.terminar()),
+      otra: () => this.antesDeCambiar(() => this.otraVez()),
     });
+    this.pintarGuardado();
+  }
+
+  private async guardarActual(vuelo?: VueloGuardado) {
+    this.guardado.registrar(vuelo);
+    return this.confirmarGuardado();
+  }
+
+  private async confirmarGuardado() {
+    const ok = await this.guardado.confirmar();
+    const pc = this.guardado.premio;
+    if (ok && pc && this.resultado && !this.resultado.casa) {
+      this.monedasSesion += pc.monedas;
+      this.resultado.casa = pc;
+      pintarPremioCasa(this.capa, pc);
+    }
+    this.pintarGuardado();
+    return ok;
+  }
+
+  private async antesDeCambiar(cambio: () => void) {
+    if (this.cambiando) return false;
+    this.cambiando = true;
+    try {
+      if (!await this.confirmarGuardado()) return false;
+      cambio();
+      return true;
+    } finally { this.cambiando = false; }
+  }
+
+  private pintarGuardado() {
+    this.capa.querySelector('.ch-guardado')?.remove();
+    if (!this.guardado.pendiente) return;
+    const cont = this.capa.querySelector('.cr-cuerpo, .ct-pestanas');
+    if (!cont) return;
+    const aviso = document.createElement('div');
+    aviso.className = 'ch-guardado';
+    aviso.setAttribute('role', 'alert');
+    aviso.innerHTML = '<span>Falta guardar tu avance. Mantén el juego abierto y vuelve a intentar.</span><button class="cb-boton" data-reintentar-guardado>Reintentar</button>';
+    aviso.querySelector('button')!.onclick = () => { void this.confirmarGuardado(); };
+    cont.before(aviso);
   }
 
   /** La vitrina: el retrete flotando grande (resultado) o dando vueltas para la tienda. */
@@ -1389,11 +1424,13 @@ class RetreteEspacial {
     this.cara('feliz', 99);
     this.tienda = new Tienda(this.capa, this.p, this.o.rol, {
       probar: (tipo, id) => this.probar(tipo, id),
-      comprado: () => {
-        void this.o.guardar?.(copiaProgreso(this.p));
+      antesDeCambiar: () => this.confirmarGuardado(),
+      comprado: async () => {
+        if (!await this.guardarActual()) return false;
         this.cara('carcajada', 1.4);
         const n = this.nave.position;
         this.fx.estallido(n.x, n.y + 1.2, CUADRO.estrella, ['#FFD23F', '#FFFFFF', '#FF9F1C'], 18, 5, 0.45, true);
+        return true;
       },
       cerrar: () => {
         this.tienda = null;
@@ -1410,6 +1447,7 @@ class RetreteEspacial {
         }
       },
     });
+    this.pintarGuardado();
   }
 
   private cascoProbado = '';
@@ -1766,8 +1804,9 @@ class RetreteEspacial {
     this.poderes.sacar(id, this.nave.position.x + 4, this.nave.position.y + 0.5);
   }
   pruebaRollitos(n: number) {
+    if (this.guardado.pendiente) return;
     this.p.rollitos += n;
-    void this.o.guardar?.(copiaProgreso(this.p));
+    void this.guardarActual();
     this.tienda?.repintar();
   }
   pruebaMejoras(m: Partial<Record<IdMejora, number>>) {

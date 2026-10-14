@@ -19,6 +19,11 @@ carrera, contrarreloj y Gran Premio de cuatro pistas desde cero, sin modificar d
 Torneo completó su arcade de seis rivales desde cero con Tarek, a los niveles originales, hasta campeón y retorno
 al menú. Se verificaron pausa y dieciocho combates del motor con réplica por entradas serializadas, sin cambiar
 vida, daño, golpes ni dificultad. Controles físicos, otros modos y red continúan en la auditoría.
+Retrete conserva vuelos y compras pendientes ante fallos de escritura, y guarda vuelo y monedas de la casa
+juntos, con reintento sin doble pago. Verificados dos vuelos desde cero en amigos, compra pagada, pausa,
+fallos recuperados, recarga y retorno; el adaptador de la casa local se comprueba con acceso preparado y vuelos
+normales. Doce regresiones cubren persistencia y el tope diario original. Continúan descubrimiento, ciclos
+avanzados, controles físicos y recuperación ante cierre forzado.
 La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
 
 ## Frente de granja en paralelo
