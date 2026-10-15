@@ -445,11 +445,11 @@ export class Interfaz {
    * Dónde están los demás en la pantalla: si se ven, su nombre encima de la cabeza; si no, una flecha de su color
    * en el borde, apuntando hacia ellos. `aPantalla` convierte del mapa a píxeles.
    */
-  companeros(m: Motor, aPantalla: (x: number, y: number) => [number, number]) {
+  companeros(m: Motor, aPantalla: (x: number, y: number) => [number, number], jugadores: readonly Jugador[] = m.jug) {
     if (!this.otros.length) return;
     const w = this.raiz.clientWidth, h = this.raiz.clientHeight;
     for (const o of this.otros) {
-      const q = m.jug[o.i];
+      const q = jugadores[o.i];
       if (!q || q.fuera) {
         o.flecha.classList.remove('si');
         o.nombre.classList.remove('si');

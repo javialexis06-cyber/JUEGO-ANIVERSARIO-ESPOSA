@@ -115,6 +115,9 @@ export class Dibujo {
   private colorBicho = new Map<number, [number, number, number]>();
   private texturas: THREE.Texture[] = [];
   readonly jugadores: (Jugador3D | null)[] = [];
+  /** La posición visual del compañero se comparte con sus armas, barra y sombra. */
+  private vistaJugadores: readonly Jugador[] = [];
+  jugadorEnVista(i: number) { return this.vistaJugadores[i]; }
   private leidos = 0;
   private t = 0;
   private cx = 0;
@@ -557,7 +560,7 @@ export class Dibujo {
         break;
       }
       case 'nivel': {
-        for (const j of m.jug) {
+        for (const j of this.vistaJugadores) {
           for (let q = 0; q < 3; q++) P.crear('anillo', CAPA_PISO, j.x, j.y, 0, 0, 0, 0, 0.6 + q * 0.15, 20, 140 + q * 40, 0.6, 0.9, 1, 0.9);
           for (let q = 0; q < 14; q++) {
             const a = (q / 14) * Math.PI * 2;
@@ -570,7 +573,7 @@ export class Dibujo {
         const p = this.jugadores[e.c];
         p?.golpe();
         if (e.c === this.o.yo) this.sacudir(0.35);
-        const j = m.jug[e.c];
+        const j = this.vistaJugadores[e.c];
         if (j && this.numerosVisibles) this.numero(j.x, j.y - 40, e.d, 2);
         break;
       }
@@ -760,8 +763,9 @@ export class Dibujo {
   }
 
   // ------------------------------------------------------------------------------------------------- Cada cuadro
-  dibujar(m: Motor, dt: number, pausa: boolean) {
+  dibujar(m: Motor, dt: number, pausa: boolean, jugadores: readonly Jugador[] = m.jug) {
     const t0 = performance.now();
+    this.vistaJugadores = jugadores;
     if (!pausa) this.t += dt;
     const yo = m.jug[this.o.yo] ?? m.jug[0];
     // La cámara sigue a quien juega en este celular
@@ -801,7 +805,7 @@ export class Dibujo {
     // Personajes (con varios, cada uno con el anillo de su color en el piso; los que se fueron no se ven)
     const varios = m.jug.length > 1;
     for (let i = 0; i < m.jug.length; i++) {
-      const j = m.jug[i];
+      const j = jugadores[i];
       const p = this.jugadores[i];
       if (p) p.raiz.visible = !j.fuera;
       if (j.fuera) continue;
@@ -1605,7 +1609,7 @@ export class Dibujo {
   /** Lo que el jugador tiene alrededor: espuma, esponjas, paticos, el perfume del amor. */
   private dibujarArmas(m: Motor) {
     const t = this.t;
-    for (const j of m.jug) {
+    for (const j of this.vistaJugadores) {
       if (j.caido) continue;
       // La burbuja protectora, el aura del guante dorado y el brillo del espejo de la verdad
       if (j.burbuja) {

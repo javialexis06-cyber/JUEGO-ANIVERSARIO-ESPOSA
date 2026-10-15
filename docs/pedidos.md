@@ -26,6 +26,14 @@ normales. Doce regresiones cubren persistencia y el tope diario original. Contin
 avanzados, controles físicos y recuperación ante cierre forzado.
 La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
 
+**Fluidez de Lavado con amigos (15 de octubre):** corregidos el salto directo del invitado en la pantalla del
+anfitrión y la marcha irregular entre fotos. Ambos lados usan una trayectoria visual separada del combate,
+con orden de mandos, predicción acotada, frenada y recuperación de cortes. El personaje propio conserva el
+movimiento directo. Doce grupos de regresión cubren red variable, pérdidas, estados y límites; detalles y
+cobertura de navegador en [movimiento en línea](en-obra/lavado-movimiento-en-linea.md). Pasan siete
+comprobaciones con dos amigos y modelos 3D y 36 con cuatro jugadores, incluidos cortes, rescate y retorno.
+Son escenarios preparados con red simulada; falta comprobarlo en teléfonos y redes reales.
+
 **Prueba solicitada de Lavado y Sangre (14 de octubre):** [informe de combate](en-obra/pruebas-combate-lavado-sangre.md).
 Corregida una reutilización prematura de enemigos de Lavado que duplicaba impactos. Repetidas 58 partidas:
 25 victorias en los cuatro mapas normales, cuatro en series con mejoras pagadas desde cero; siguen muriendo

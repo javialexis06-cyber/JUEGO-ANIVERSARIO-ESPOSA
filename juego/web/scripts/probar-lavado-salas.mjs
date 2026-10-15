@@ -67,13 +67,16 @@ window.__pagina = true;
 
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PRE) ? PRE : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 const NOMBRES = ['Javier', 'Laura', 'Pipe', 'Caro'];
 async function celular(k) {
   const ctx = await navegador.newContext({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
+  // Sin recarga de módulos durante la partida. Atiende solo el canal local de Vite para que las restricciones
+  // de WebSocket del navegador de pruebas no se confundan con errores del juego o del Supabase simulado.
+  await p.routeWebSocket(u => u.host === new URL(url).host && u.searchParams.has('token'), socket => socket.send(JSON.stringify({ type: 'connected' })));
   p.nombre = NOMBRES[k];
   p.on('pageerror', (e) => { if (!errores.some((x) => x === `${p.nombre}: ${e}`)) console.log('      error en', p.nombre, String(e).slice(0, 300)); errores.push(`${p.nombre}: ${e}`); });
   p.on('console', (m) => m.type() === 'error' && !/Failed to load resource|403/.test(m.text()) && errores.push(`${p.nombre}: ${m.text()}`));

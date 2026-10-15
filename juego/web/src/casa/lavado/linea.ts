@@ -8,6 +8,8 @@
 // cartas al subir de nivel y los cofres viajan aparte, en JSON, cuando cambian.
 import { ID_ARMAS, ID_PASIVAS, baseEnNivel } from './armas';
 import { ID_ENEMIGOS, ENEMIGOS } from './enemigos';
+import { puedeApuntar } from './disfraces';
+import { VistaJugadoresRemotos } from './movimiento_remoto';
 import { LIMITE_COFRE, LIMITE_ESCOGER, MAX_ENEMIGOS, RADIO_INUNDA, type CofreAbierto, type Jugador, type Motor, type Opcion, type OpcionesJugador } from './motor';
 import type { ResumenPartida } from './progreso';
 import type { IdVenta } from './vendedor';
@@ -77,6 +79,9 @@ export const MSJ = {
 } as const;
 
 export interface Mando {
+  /** Opcionales para aceptar celulares con la versión anterior. Reloj del emisor, en segundos. */
+  n?: number;
+  t?: number;
   x: number;
   y: number;
   vx: number;
@@ -86,6 +91,31 @@ export interface Mando {
   ax: number;
   ay: number;
   man: boolean;
+}
+
+/** El anfitrión conserva las posiciones reales y descarta mandos viejos que llegan tarde. */
+export class MandosRemotos {
+  readonly vistas = new VistaJugadoresRemotos();
+  private ultimos = new Map<number, number>();
+
+  aplicar(m: Motor, i: number, x: Mando, ahora = performance.now() / 1000) {
+    const j = m.jug[i];
+    if (!j || i === 0 || !Number.isFinite(x.x) || !Number.isFinite(x.y)) return false;
+    if (x.n !== undefined) {
+      if (!Number.isSafeInteger(x.n) || x.n <= (this.ultimos.get(i) ?? -1)) return false;
+      this.ultimos.set(i, x.n);
+    }
+    if (!j.caido && !j.fuera) { j.x = x.x; j.y = x.y; }
+    j.vx = Number.isFinite(x.vx) ? x.vx : 0;
+    j.vy = Number.isFinite(x.vy) ? x.vy : 0;
+    j.vistaW = Math.max(300, Math.min(1400, Number(x.w) || 780));
+    j.vistaH = Math.max(200, Math.min(1400, Number(x.h) || 360));
+    const l = Math.hypot(x.ax, x.ay);
+    if (l > 0.1 && Number.isFinite(l)) { j.ax = x.ax / l; j.ay = x.ay / l; }
+    j.manual = !!x.man && puedeApuntar(j.disfraz.id);
+    this.vistas.recibir(j, ahora, x.t);
+    return true;
+  }
 }
 export interface Accion {
   a: 'escoger' | 'tirar' | 'saltar' | 'vetar' | 'cofre' | 'carta' | 'comprar' | 'tienda' | 'girar';
@@ -409,11 +439,11 @@ export class Espejo {
   /** Lo que dice el anfitrión: en pausa por un corte, en pausa (alguien la puso), cargando, y quién está cortado. */
   banderas = 0;
   cortados = 0;
-  private metas: ([number, number] | null)[] = [];
+  readonly vistas = new VistaJugadoresRemotos();
 
   constructor(readonly m: Motor, readonly yo: number) {}
 
-  aplicar(b64: string) {
+  aplicar(b64: string, tiempo?: number) {
     const bin = atob(b64);
     const n = bin.length;
     if (n > u8.length) return;
@@ -471,9 +501,10 @@ export class Espejo {
         anclaY[i] = Math.round(y);
       }
       if (!j) continue;
-      // El propio se mueve aquí; los demás, como llegan
+      // El propio se mueve aquí; los demás guardan el estado real. La vista interpola aparte.
       if (i !== this.yo) {
-        this.metas[i] = [x, y];
+        j.x = x;
+        j.y = y;
         j.vx = vx;
         j.vy = vy;
         j.dx = dx;
@@ -502,6 +533,7 @@ export class Espejo {
       j.guante = bj & 64 ? 1 : 0;
       j.espejo = bj & 128 ? 1 : 0;
       j.rescate = rescate;
+      if (i !== this.yo) this.vistas.recibir(j, this.ultimaFoto / 1000, tiempo);
       j.aji = aji;
       j.oro = oro;
       j.tEscoger = tEscoger;
@@ -689,14 +721,6 @@ export class Espejo {
       p.t += dt;
     }
     for (const z of m.zonas) if (z.vivo) z.t += dt;
-    for (const j of m.jug) {
-      if (j.i === this.yo) continue;
-      const meta = this.metas[j.i];
-      if (!meta) continue;
-      const kk = 1 - Math.exp(-dt * 12);
-      j.x += (meta[0] - j.x) * kk;
-      j.y += (meta[1] - j.y) * kk;
-    }
   }
 }
 

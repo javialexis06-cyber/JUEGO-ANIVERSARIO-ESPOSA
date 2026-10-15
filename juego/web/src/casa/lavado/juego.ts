@@ -19,7 +19,7 @@ import { Dibujo } from './dibujo/dibujo';
 import { cargarIconos } from './iconos';
 import { Interfaz, type Acciones } from './interfaz';
 import {
-  Espejo, FOTO_CARGANDO, FOTO_CORTE, MSJ, aplicarInventario, inventarioDe, restanteEspejo, tomarFoto, type Accion, type ConfigPartida, type Mando,
+  Espejo, MandosRemotos, FOTO_CARGANDO, FOTO_CORTE, MSJ, aplicarInventario, inventarioDe, restanteEspejo, tomarFoto, type Accion, type ConfigPartida, type Mando,
 } from './linea';
 import { Menu, retrato } from './menu';
 import { Motor, xpPara, type OpcionesJugador } from './motor';
@@ -605,6 +605,7 @@ export class Lavado {
       ui.efecto(e, m);
     };
     const espejo = papel === 'invitado' ? new Espejo(m, yo) : null;
+    const mandos = papel === 'anfitrion' ? new MandosRemotos() : null;
     if (papel === 'invitado') {
       for (const j of m.jug) j.remoto = j.i !== yo;
       ui.restante = (_m, j) => restanteEspejo(j);
@@ -759,6 +760,7 @@ export class Lavado {
     let claveInv = '';
     let tInvRepetir = -1;
     let tMando = 0;
+    let nMando = 0;
     let ultimoMando = '';
     let resumenLlegado: ResumenPartida | null = null;
     let notaFin = '';
@@ -819,22 +821,7 @@ export class Lavado {
             const i = indice.get(de.id);
             if (i === undefined || i === 0) return;
             const x = d as Mando;
-            const j = m.jug[i];
-            cargados.add(i);
-            if (!j.caido && !j.fuera && Number.isFinite(x.x) && Number.isFinite(x.y)) {
-              j.x = x.x;
-              j.y = x.y;
-            }
-            j.vx = Number(x.vx) || 0;
-            j.vy = Number(x.vy) || 0;
-            j.vistaW = Math.max(300, Math.min(1400, Number(x.w) || 780));
-            j.vistaH = Math.max(200, Math.min(1400, Number(x.h) || 360));
-            const l = Math.hypot(x.ax, x.ay);
-            if (l > 0.1) {
-              j.ax = x.ax / l;
-              j.ay = x.ay / l;
-            }
-            j.manual = !!x.man && puedeApuntar(j.disfraz.id);
+            if (mandos!.aplicar(m, i, x)) cargados.add(i);
           }),
           sala.al(MSJ.accion, (d, de) => {
             const i = indice.get(de.id);
@@ -865,7 +852,10 @@ export class Lavado {
         );
       } else {
         quitar.push(
-          sala.al(MSJ.foto, (d) => espejo?.aplicar((d as { b: string }).b)),
+          sala.al(MSJ.foto, (d) => {
+            const f = d as { b: string; t?: number };
+            espejo?.aplicar(f.b, f.t);
+          }),
           sala.al(MSJ.inv, (d) => aplicarInventario(m, (d as { jug: ReturnType<typeof inventarioDe> }).jug)),
           sala.al(MSJ.fin, (d) => {
             const x = d as { resumenes?: ResumenPartida[] };
@@ -983,11 +973,11 @@ export class Lavado {
           }
           // Le cuento al anfitrión dónde estoy y hacia dónde apunto (más seguido si me muevo)
           tMando += dt;
-          const clave = `${Math.round(yoJ.x)},${Math.round(yoJ.y)},${Math.round(yoJ.ax * 20)},${Math.round(yoJ.ay * 20)},${yoJ.manual}`;
+          const clave = `${Math.round(yoJ.x)},${Math.round(yoJ.y)},${Math.round(yoJ.vx)},${Math.round(yoJ.vy)},${Math.round(yoJ.ax * 20)},${Math.round(yoJ.ay * 20)},${yoJ.manual}`;
           if (tMando >= (clave !== ultimoMando ? 0.08 : 0.3)) {
             tMando = 0;
             ultimoMando = clave;
-            const x: Mando = { x: yoJ.x, y: yoJ.y, vx: yoJ.vx, vy: yoJ.vy, w: dib.vistaW, h: dib.vistaH, ax: yoJ.ax, ay: yoJ.ay, man: yoJ.manual };
+            const x: Mando = { n: nMando++, t: ahora / 1000, x: yoJ.x, y: yoJ.y, vx: yoJ.vx, vy: yoJ.vy, w: dib.vistaW, h: dib.vistaH, ax: yoJ.ax, ay: yoJ.ay, man: yoJ.manual };
             mandar(MSJ.mando, x, true);
           }
         }
@@ -1001,7 +991,7 @@ export class Lavado {
             for (const [i] of cortados) mascara |= 1 << i;
             const f = tomarFoto(m, efDesde, seq++, { banderas: (esperaCorte ? FOTO_CORTE : 0) | (cargando ? FOTO_CARGANDO : 0), cortados: mascara });
             efDesde = f.efHasta;
-            mandar(MSJ.foto, { b: f.b }, true);
+            mandar(MSJ.foto, { b: f.b, t: ahora / 1000 }, true);
           }
           const inv = inventarioDe(m);
           // (el daño de cada arma cambia todo el tiempo: no cuenta como cambio, viaja en los repasos)
@@ -1017,10 +1007,12 @@ export class Lavado {
             mandar(MSJ.inv, { jug: inv }, true);
           }
         }
-        dib.dibujar(m, dt, quieto || !!m.pausa);
+        const pausaVista = quieto || !!m.pausa;
+        const vistas = (espejo?.vistas ?? mandos?.vistas)?.ver(m, yo, ahora / 1000, pausaVista) ?? m.jug;
+        dib.dibujar(m, dt, pausaVista, vistas);
         ui.actualizar(m, dt, (i) => !sala || salieron.has(i) || sala.conectado(ids[i]));
         ui.revisar(m);
-        if (varios) ui.companeros(m, (x, y) => dib.aPantalla(x, y));
+        if (varios) ui.companeros(m, (x, y) => dib.aPantalla(x, y), vistas);
         ui.flechasTesoros(m, yoJ, (x, y) => dib.aPantalla(x, y));
         // Música: se anima con los minutos y se pone seria con los jefes
         tJefe += dt;

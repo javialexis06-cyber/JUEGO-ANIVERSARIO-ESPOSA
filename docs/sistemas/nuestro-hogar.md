@@ -339,6 +339,13 @@ disparan solitos. Se cambia en el menú, en la sala de espera o en la pausa, y s
 antes de reutilizarse. Evita duplicaciones en la rejilla y múltiples impactos artificiales, manteniendo las cifras
 de armas y enemigos. Ver `scripts/probar-lavado-enemigos.mjs` y el informe de combate enlazado arriba.
 
+**Movimiento en sala (15 de octubre):** anfitrión e invitados dibujan a los compañeros mediante una reserva
+visual de 160 ms, con predicción breve y frenada cuando faltan mensajes. Los mandos llevan secuencia para
+descartar posiciones atrasadas. El personaje propio responde directamente al control; el motor conserva sus
+posiciones de combate, velocidades y balance. Modelo, nombre, sombra, barra y auras siguen la misma vista.
+Caída, rescate y reconexión reinician recorridos antiguos. Alcance, pruebas y demora visual en
+[movimiento en línea](../en-obra/lavado-movimiento-en-linea.md).
+
 **La partida** (motor en `src/casa/lavado/motor.ts`, todo como el original):
 - **30 minutos**; al llegar, «¡Se acabó el agua caliente!» y sale la **Ducha Helada** (la Parca). La victoria ya cuenta al minuto 30; matarla no es requisito.
   Puede morir por daño con equipo final. Desde el cambio aprobado del 14 de octubre, ambos aretes aparecen
