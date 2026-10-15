@@ -3,6 +3,7 @@
 import { OBJETOS, type IdObjeto } from './datos';
 import type { Pista } from './pista';
 import type { Sim } from './sim';
+import { MINIJUEGOS } from './minijuegos';
 
 const ICONOS: IdObjeto[] = ['chispa', 'semilla', 'velo', 'ceniza', 'pluma', 'lluvia', 'lucero', 'brasa'];
 export const icono = (o: IdObjeto) => `./carreras/iconos/${o}.webp`;
@@ -81,6 +82,7 @@ export class Hud {
       z0 = Math.min(z0, p.z[i]);
       z1 = Math.max(z1, p.z[i]);
     }
+    if(p.d.arena){x0=z0=-p.d.arena.radio;x1=z1=p.d.arena.radio;}
     this.escala = Math.min((W - 16) / (x1 - x0), (H - 16) / (z1 - z0));
     this.cx = (x0 + x1) / 2;
     this.cz = (z0 + z1) / 2;
@@ -88,6 +90,12 @@ export class Hud {
     c.width = W;
     c.height = H;
     const g = c.getContext('2d')!;
+    if(p.d.arena){
+      g.fillStyle='rgba(255,246,230,.88)';g.beginPath();g.arc(W/2,H/2,p.d.arena.radio*this.escala,0,Math.PI*2);g.fill();
+      g.fillStyle='rgba(70,50,90,.55)';
+      for(const o of p.d.arena.obstaculos){const [x,y]=this.aMapa(o.x,o.z);g.beginPath();g.arc(x,y,o.r*this.escala,0,Math.PI*2);g.fill();}
+      return;
+    }
     const camino = () => {
       g.beginPath();
       for (let i = 0; i <= p.n; i += 3) {
@@ -134,8 +142,12 @@ export class Hud {
       this.puesto.classList.add('salta');
     }
     const v = Math.max(1, Math.min(sim.vueltasTotal, k.vuelta));
-    this.vuelta.textContent = `Vuelta ${v}/${sim.vueltasTotal}`;
-    this.reloj.textContent = tiempoTexto(k.terminado ? k.tiempo : Math.max(0, sim.t));
+    const mini=sim.mini;
+    this.vuelta.textContent = mini ? (mini.tipo==='globos' ? `${'●'.repeat(mini.globos[mio])}${'○'.repeat(3-mini.globos[mio])} · ${mini.puntos[mio]} reventados`
+      : `${MINIJUEGOS[mini.tipo].nombre} · ${mini.puntos[mio]} puntos`) : `Vuelta ${v}/${sim.vueltasTotal}`;
+    this.reloj.textContent = tiempoTexto(mini ? mini.restante : k.terminado ? k.tiempo : Math.max(0, sim.t));
+    this.objeto.hidden=!!mini&&!mini.esArena;
+    if(mini?.eliminado(k))this.vuelta.textContent='Sin globos · Observando';
     // Objeto (con ruleta mientras sale)
     if (k.objeto) {
       this.objeto.classList.add('lleno');
@@ -183,7 +195,8 @@ export class Hud {
     // Tabla de puestos (cortica)
     const filas = sim.orden.map((i, idx) => {
       const x = sim.karts[i];
-      return `<li class="${i === mio ? 'yo' : ''}"><i style="background:${x.c.color}"></i>${idx + 1}. ${escapar(x.c.nombre)}</li>`;
+      const puntos=mini?` · ${mini.tipo==='globos'?`${mini.globos[i]} ●`:`${mini.puntos[i]}`}`:'';
+      return `<li class="${i === mio ? 'yo' : ''}"><i style="background:${x.c.color}"></i>${idx + 1}. ${escapar(x.c.nombre)}${puntos}</li>`;
     });
     const html = filas.join('');
     if (this.tabla.innerHTML !== html) this.tabla.innerHTML = html;

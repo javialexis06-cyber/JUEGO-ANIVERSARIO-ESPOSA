@@ -1,6 +1,6 @@
 // La Carrera de las Tres Lunas (carreras.html): carreras tipo Mario Kart por las regiones de Astra, con carros de
-// madera y fieltro tirados por criaturas. Modos: Gran Premio (las 4 pistas, puntos), carrera suelta, contrarreloj (con
-// fantasma) y en línea por sala (src/carreras/red.ts). Ver docs/sistemas/carreras.md.
+// madera y fieltro tirados por criaturas. Cuatro copas, 16 circuitos, contrarreloj con fantasma, salas y desafíos.
+// Ver docs/sistemas/carreras.md.
 import './carreras.css';
 import * as sonido from '../sonido';
 import { cuadros } from '../segundo_plano';
@@ -9,7 +9,7 @@ import { caritaSvg } from '../salas/carita';
 import { alAtras, guardarAparato, leerAparato, volverALaSala } from '../sueltos/comun';
 import { esModoAmigo } from '../salas/perfil';
 import {
-  CARROS, COLORES, CRIATURAS, DIFICULTADES, LISTA_CARROS, LISTA_CRIATURAS, ORDEN_PISTAS, PISTAS, PUNTOS, VECINOS,
+  ARENAS, CARROS, CIRCUITOS, COPAS, COLORES, CRIATURAS, DIFICULTADES, LISTA_CARROS, LISTA_CRIATURAS, PISTAS, PUNTOS, VECINOS,
   type Corredor, type Dificultad, type IdCarro, type IdCriatura, type IdPista,
 } from './datos';
 import { CON_PAREJA, CORREDORES_PAREJA } from './pareja';
@@ -21,6 +21,7 @@ import { Galope, Voces, efecto } from './sonidos';
 import { Vista, type Calidad } from './vista';
 import { abrirEnLinea, type Red } from './red';
 import { GuardadoCarreras } from './progreso';
+import { MINIJUEGOS, type OpcionesMinijuego, type ResumenMinijuego, type TipoMinijuego } from './minijuegos';
 
 const params = new URLSearchParams(location.search);
 /** Pruebas: la carrera corre más rápido (?rapido=4) y sin compilar todo antes (?sinprecalentar). */
@@ -176,9 +177,10 @@ function portada() {
       <h1 class="car-logo"><small>La Carrera de las</small>Tres Lunas</h1>
       <p class="car-sub">${conPareja ? `¡${escapar(yo.nombre)} al volante!` : `Corre por Astra, ${escapar(yo.nombre)}`}${copas ? ` · 🏆 ${copas}` : ''}</p>
       <div class="car-opciones">
-        <button class="car-boton grande" data-ir="gp">🏆 Gran Premio<small>Las 4 pistas, por puntos</small></button>
+        <button class="car-boton grande" data-ir="gp">🏆 Gran Premio<small>Cuatro copas · 16 circuitos · ocho corredores</small></button>
         <button class="car-boton" data-ir="suelta">🏁 Carrera suelta</button>
         <button class="car-boton" data-ir="crono">⏱️ Contrarreloj</button>
+        <button class="car-boton suave" data-ir="minijuegos">🎈 Batallas y desafíos<small>Globos, monedas, anillos y trucos contra la máquina</small></button>
         <button class="car-boton" data-ir="linea">👥 En línea<small>Hasta 4 en una sala</small></button>
         <button class="car-boton suave" data-ir="garaje">🛠️ Mi carro y criatura</button>
       </div>
@@ -204,9 +206,10 @@ function portada() {
       efecto.toque();
       const ir = b.dataset.ir;
       if (!asegurarGuardado()) return;
-      if (ir === 'gp') void granPremio();
+      if (ir === 'gp') escogerCopa();
       else if (ir === 'suelta') escogerPista('suelta');
       else if (ir === 'crono') escogerPista('crono');
+      else if (ir === 'minijuegos') escogerMinijuego();
       else if (ir === 'garaje') garaje(portada);
       else if (ir === 'linea') void enLinea();
       else salir();
@@ -267,13 +270,13 @@ function escogerPista(modo: 'suelta' | 'crono') {
     <div class="car-panel car-pistas">
       <h2>${modo === 'crono' ? 'Contrarreloj' : 'Carrera suelta'}</h2>
       <div class="car-cartas pistas">
-        ${ORDEN_PISTAS.map((id) => {
+        ${CIRCUITOS.map((id) => {
           const p = PISTAS[id];
           const rec = progreso.records[id];
           return `<button class="car-carta pista" data-v="${id}" style="--tarjeta:${p.tarjeta}">
             <img src="./carreras/pistas/${id}.webp" alt="">
-            <b>${p.nombre}</b><small>${p.region} · ${p.lema}</small>
-            ${rec && Number.isFinite(rec.mejor) ? `<em>Récord ${tiempoTexto(rec.mejor)}</em>` : rec && Number.isFinite(rec.vuelta) ? `<em>Mejor vuelta ${tiempoTexto(rec.vuelta)}</em>` : ''}</button>`;
+            <span class="car-ficha"><b>${p.nombre}</b><small>${p.region} · ${p.lema}</small>
+            ${rec && Number.isFinite(rec.mejor) ? `<em>Récord ${tiempoTexto(rec.mejor)}</em>` : rec && Number.isFinite(rec.vuelta) ? `<em>Mejor vuelta ${tiempoTexto(rec.vuelta)}</em>` : ''}</span></button>`;
         }).join('')}
       </div>
       <div class="car-fila-abajo"><button class="car-boton suave" data-atras>⟵ Atrás</button><button class="car-boton suave" data-garaje>🛠️ Mi carro</button></div>
@@ -284,6 +287,7 @@ function escogerPista(modo: 'suelta' | 'crono') {
     b.addEventListener('click', async () => {
       efecto.toque();
       const id = b.dataset.v as IdPista;
+      if (carreraViva) return;
       if (!asegurarGuardado()) return;
       if (modo === 'crono') await contrarreloj(id);
       else await carreraSuelta(id);
@@ -312,6 +316,7 @@ export interface Resultado {
   corredores: Corredor[];
   mio: number;
   mejorVuelta: number;
+  minijuego?: ResumenMinijuego;
   salio?: boolean;
 }
 
@@ -323,6 +328,7 @@ export interface OpcionesCarrera {
   semilla?: number;
   titulo?: string;
   red?: Red;
+  minijuego?: OpcionesMinijuego;
 }
 
 let carreraViva = false;
@@ -340,12 +346,14 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
   await vista.cargarPista(o.pista, pista);
   cargaVisible(true, 'Enganchando las criaturas…', 0.3);
   await vista.cargarKarts(o.corredores.map((x) => x.c), (f) => cargaVisible(true, '', 0.3 + f * 0.55));
+  if (o.minijuego) await vista.cargarMinijuego(o.minijuego.tipo);
   const bot = params.has('bot');
   const vueltas = Number(params.get('vueltas')) || undefined;
   const sim = new Sim({
     pista, corredores: o.corredores,
     ia: DIFICULTADES[ajustes.dificultad].ia, semilla: o.semilla ?? (Math.random() * 1e9) | 0, contrarreloj: o.contrarreloj, vueltas,
     autoridad: o.red ? o.red.soyAnfitrion : true,
+    minijuego: o.minijuego,
   });
   // Fantasma del contrarreloj
   const rec = progreso.records[o.pista];
@@ -444,6 +452,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
     resolver({
       orden, tiempos: sim.karts.map((k) => k.tiempo), corredores: sim.karts.map((k) => k.c), mio,
       mejorVuelta: Math.min(...(sim.karts[mio]?.vueltas.length ? sim.karts[mio].vueltas : [Infinity])), salio: salio || undefined,
+      ...(sim.mini ? { minijuego: sim.mini.resumen() } : {}),
     });
   };
 
@@ -479,6 +488,13 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
         if (esMio || near(ev.k)) efecto.golpe();
         if (k) voces.corredor(k.c.voz, 'golpe');
         break;
+      case 'globo':
+        if (k) vista.efectos.explosion(k.x,k.y+3.5,k.z,['#f08098','#85c5ed','#f2d47e'],20,6,.14,.65);
+        if (esMio) hud.avisar(ev.quedan ? `¡Quedan ${ev.quedan} globos!` : 'Sin globos · Observando la batalla','',1800);
+        break;
+      case 'recoge':
+        if (esMio) efecto.toque();
+        break;
       case 'muro':
         if (esMio) efecto.muro();
         break;
@@ -508,6 +524,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
         if (k && Math.random() < 0.5) voces.corredor(k.c.voz, 'adelanta');
         break;
       case 'vuelta':
+        if (o.minijuego) break;
         if (esMio && ev.vuelta === sim.vueltasTotal && !ultimaVueltaDicha) {
           ultimaVueltaDicha = true;
           efecto.ultima();
@@ -528,7 +545,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
         }
         if (esMio) {
           efecto.meta();
-          hud.avisar(`¡Meta! ${ev.puesto}º`, 'meta', 3000);
+          hud.avisar(`${o.minijuego ? '¡Tiempo!' : '¡Meta!'} ${ev.puesto}º`, 'meta', 3000);
           sonido.musica.remate(ev.puesto <= 3 ? 'mesa-ganar' : 'mesa-perder');
           terminoT = performance.now();
           o.red?.meta(ev.tiempo);
@@ -601,7 +618,8 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
     // Dibuja a 30 cuadros por segundo como mucho
     dibujo += dt;
     if (dibujo >= 1 / 31 || pausado) {
-      vista.dibujar(sim, dibujo * RAPIDO, mio);
+      const camara = sim.mini?.eliminado(sim.karts[mio]) ? sim.orden.find(i => !sim.mini!.eliminado(sim.karts[i])) ?? mio : mio;
+      vista.dibujar(sim, dibujo * RAPIDO, camara);
       hud.actualizar(sim, mio, dibujo);
       dibujo = 0;
       if (vista.medir(performance.now() - inicio)) {
@@ -647,7 +665,8 @@ function tablaResultados(r: Resultado, puntos?: Map<string, number>, ganados?: M
   return `<ol class="car-resultados">${r.orden.map((i, idx) => {
     const c = r.corredores[i];
     const pts = puntos ? `<em>${ganados?.get(c.id) ? `+${ganados.get(c.id)}` : ''}</em><strong>${puntos.get(c.id) ?? 0}</strong>` : '';
-    return `<li class="${i === r.mio ? 'yo' : ''}"><span class="pos">${idx + 1}</span>${carita(c)}<b>${escapar(c.nombre)}</b><span class="t">${tiempoTexto(r.tiempos[i])}</span>${pts}</li>`;
+    const marca=r.minijuego ? `${r.minijuego.tipo==='globos'?`${r.minijuego.globos[i]} ● · `:''}${r.minijuego.puntos[i]} puntos` : tiempoTexto(r.tiempos[i]);
+    return `<li class="${i === r.mio ? 'yo' : ''}"><span class="pos">${idx + 1}</span>${carita(c)}<b>${escapar(c.nombre)}</b><span class="t">${marca}</span>${pts}</li>`;
   }).join('')}</ol>`;
 }
 function carita(c: Corredor) {
@@ -727,12 +746,53 @@ async function mostrarResultados(r: Resultado, titulo: string, botones: { texto:
   });
 }
 
-async function granPremio() {
+function escogerCopa() {
+  arrancarGaraje();
+  const r=pantalla(`<div class="car-panel car-pistas"><h2>Gran Premio · Elige una copa</h2><p class="car-nota">Cuatro carreras, tres vueltas cada una. La máquina completa los ocho corredores.</p>
+    <div class="car-copas">${COPAS.map(c=>`<button class="car-boton" data-copa="${c.id}"><b>🏆 ${c.nombre}</b><small>${c.pistas.map(id=>PISTAS[id].nombre).join(' · ')}</small><small>Victorias en ${DIFICULTADES[ajustes.dificultad].nombre}: ${progreso.campeonatos[`${c.id}:${ajustes.dificultad}`]??0}</small></button>`).join('')}</div>
+    <div class="car-fila-abajo"><button class="car-boton suave" data-atras>⟵ Atrás</button></div></div>`,'copas');
+  r.querySelector('[data-atras]')!.addEventListener('click',portada);
+  r.querySelectorAll<HTMLElement>('[data-copa]').forEach(b=>b.onclick=()=>{if(!carreraViva&&asegurarGuardado())void granPremio(b.dataset.copa);});
+}
+
+function escogerMinijuego(tipo?:TipoMinijuego) {
+  arrancarGaraje();
+  if(!tipo){
+    const r=pantalla(`<div class="car-panel car-pistas"><h2>Batallas y desafíos</h2><p class="car-nota">Tú y siete rivales de la máquina. Elige partidas de uno, dos o tres minutos.</p><div class="car-copas">${Object.entries(MINIJUEGOS).map(([id,m])=>`<button class="car-boton" data-mini="${id}"><b>${m.nombre}</b><small>${m.reglas}</small></button>`).join('')}</div><div class="car-fila-abajo"><button class="car-boton suave" data-atras>⟵ Atrás</button></div></div>`,'minijuegos');
+    r.querySelector('[data-atras]')!.addEventListener('click',portada);
+    r.querySelectorAll<HTMLElement>('[data-mini]').forEach(b=>b.onclick=()=>escogerMinijuego(b.dataset.mini as TipoMinijuego));return;
+  }
+  const pistas=tipo==='globos'||tipo==='monedas'?ARENAS:CIRCUITOS;
+  const r=pantalla(`<div class="car-panel car-pistas"><h2>${MINIJUEGOS[tipo].nombre}</h2><p class="car-nota">${MINIJUEGOS[tipo].reglas}</p>
+    <label class="car-chip">Duración <select data-duracion><option value="60">1 minuto</option><option value="120" selected>2 minutos</option><option value="180">3 minutos</option></select></label>
+    <div class="car-cartas pistas">${pistas.map(id=>`<button class="car-carta pista" data-mini-pista="${id}" style="--tarjeta:${PISTAS[id].tarjeta}"><img src="./carreras/pistas/${id}.webp" alt=""><span class="car-ficha"><b>${PISTAS[id].nombre}</b><small>${PISTAS[id].lema}</small><em data-marca="${id}"></em></span></button>`).join('')}</div>
+    <div class="car-fila-abajo"><button class="car-boton suave" data-atras>⟵ Desafíos</button></div></div>`,'minijuegos');
+  r.querySelector('[data-atras]')!.addEventListener('click',()=>escogerMinijuego());
+  const duracion=r.querySelector<HTMLSelectElement>('[data-duracion]')!;
+  const marcas=()=>r.querySelectorAll<HTMLElement>('[data-marca]').forEach(el=>{
+    const marca=progreso.retos[`${tipo}:${el.dataset.marca}:${ajustes.dificultad}:${duracion.value}`];
+    el.textContent=marca===undefined?'Sin marca en esta duración':`Mejor marca: ${marca} puntos`;
+  });
+  duracion.onchange=marcas;marcas();
+  r.querySelectorAll<HTMLElement>('[data-mini-pista]').forEach(b=>b.onclick=()=>{if(!carreraViva&&asegurarGuardado())void correrMinijuego(tipo,b.dataset.miniPista as IdPista,Number(r.querySelector<HTMLSelectElement>('[data-duracion]')!.value));});
+}
+
+async function correrMinijuego(tipo:TipoMinijuego,id:IdPista,duracion=120) {
+  const corredores=[...rivales(7).map(c=>({c,control:'ia' as Control,humano:false})),{c:miCorredor(),control:'local' as Control,humano:true}];
+  const r=await correr({pista:id,corredores,mio:7,minijuego:{tipo,duracion}});
+  if(r.salio)return portada();
+  const clave=`${tipo}:${id}:${ajustes.dificultad}:${duracion}`,puntos=r.minijuego!.puntos[r.mio];
+  progreso.retos[clave]=Math.max(progreso.retos[clave]??0,puntos);guardarProgreso();
+  await mostrarResultados(r,MINIJUEGOS[tipo].nombre,[{texto:'Revancha',fn:()=>void correrMinijuego(tipo,id,duracion)},{texto:'Otro escenario',fn:()=>escogerMinijuego(tipo)}]);
+}
+
+async function granPremio(copaId='clasica') {
+  const copa=COPAS.find(c=>c.id===copaId)??COPAS[0],pistas=copa.pistas;
   const corredores = [{ c: miCorredor(), control: 'local' as Control, humano: true }, ...rivales(7).map((c) => ({ c, control: 'ia' as Control, humano: false }))];
   const puntos = new Map<string, number>(corredores.map((x) => [x.c.id, 0]));
   let orden = [...corredores.slice(1), corredores[0]];
-  for (let n = 0; n < ORDEN_PISTAS.length; n++) {
-    const id = ORDEN_PISTAS[n];
+  for (let n = 0; n < pistas.length; n++) {
+    const id = pistas[n];
     const mio = orden.findIndex((x) => x.control === 'local');
     const r = await correr({ pista: id, corredores: orden, mio });
     if (r.salio) return portada();
@@ -744,32 +804,37 @@ async function granPremio() {
     });
     // Tabla del Gran Premio (ordenada por puntos)
     const porPuntos = { ...r, orden: [...r.orden].sort((a, b) => (puntos.get(r.corredores[b].id) ?? 0) - (puntos.get(r.corredores[a].id) ?? 0)) };
-    const ultima = n === ORDEN_PISTAS.length - 1;
-    await new Promise<void>((ok) => {
-      const p = pantalla(`<div class="car-panel car-fin"><h2>Gran Premio · ${n + 1}/4 · ${escapar(PISTAS[id].nombre)}</h2>
+    const ultima = n === pistas.length - 1;
+    const seguir = await new Promise<boolean>((ok) => {
+      const p = pantalla(`<div class="car-panel car-fin"><h2>${escapar(copa.nombre)} · ${n + 1}/${pistas.length} · ${escapar(PISTAS[id].nombre)}</h2>
         ${tablaResultados(porPuntos, puntos, ganados)}
-        <div class="car-fila-abajo"><button class="car-boton grande" data-seguir>${ultima ? 'Ver el podio' : `Siguiente: ${escapar(PISTAS[ORDEN_PISTAS[n + 1]].nombre)}`}</button>
+        <div class="car-fila-abajo"><button class="car-boton grande" data-seguir>${ultima ? 'Ver el podio' : `Siguiente: ${escapar(PISTAS[pistas[n + 1]].nombre)}`}</button>
         <button class="car-boton suave" data-menu>Salir</button></div></div>`, 'fin');
-      p.querySelector('[data-seguir]')!.addEventListener('click', () => { if (asegurarGuardado()) ok(); });
+      p.querySelector('[data-seguir]')!.addEventListener('click', () => { if (asegurarGuardado()) ok(true); });
       p.querySelector('[data-menu]')!.addEventListener('click', () => {
-        portada();
+        if (asegurarGuardado()) ok(false);
       });
     });
-    if (!pantallas.querySelector('.car-fin')) return;
+    if (!seguir) return portada();
     // La siguiente carrera sale en orden inverso a los puntos (el líder atrás)
     orden = [...orden].sort((a, b) => (puntos.get(a.c.id) ?? 0) - (puntos.get(b.c.id) ?? 0));
     if (ultima) {
-      const final = [...corredores].sort((a, b) => (puntos.get(b.c.id) ?? 0) - (puntos.get(a.c.id) ?? 0)).map((x) => x.c);
+      const final = porPuntos.orden.map(i => r.corredores[i]);
       const puesto = final.findIndex((c) => c.id === corredores[0].c.id);
       if (puesto === 0) {
-        progreso.copas[ajustes.dificultad] = (progreso.copas[ajustes.dificultad] ?? 0) + 1;
-        guardarProgreso();
+        ganarCopa(copa.id);
       }
-      await podio(final, `Campeones del Gran Premio`);
+      await podio(final, `Campeones del Gran Premio · ${copa.nombre}`);
       vista.vaciar();
       portada();
     }
   }
+}
+
+function ganarCopa(copa:string,dificultad=ajustes.dificultad){
+  progreso.copas[dificultad]=(progreso.copas[dificultad]??0)+1;
+  const clave=`${copa}:${dificultad}`;
+  progreso.campeonatos[clave]=(progreso.campeonatos[clave]??0)+1;guardarProgreso();
 }
 
 async function enLinea() {
@@ -777,7 +842,7 @@ async function enLinea() {
   await abrirEnLinea({
     pantalla, miCorredor, rivales, ajustes: () => ajustes, garaje: (luego: () => void) => garaje(luego, 'Listo'), correr,
     resultados: (r: Resultado, titulo: string, puntos?: Map<string, number>, ganados?: Map<string, number>, conPodio?: boolean) => mostrarResultados(r, titulo, [], puntos, ganados, conPodio),
-    podio, portada, vaciar: () => vista.vaciar(), arrancarGaraje,
+    podio, portada, vaciar: () => vista.vaciar(), arrancarGaraje, ganarCopa,
   });
 }
 
@@ -811,8 +876,10 @@ async function iniciar() {
     await podio([miCorredor(), ...rivales(2)], 'Camino del Pueblo del Sol');
     return portada();
   }
+  const mini=params.get('mini') as TipoMinijuego|null;
+  if(mini&&mini in MINIJUEGOS){const id=params.get('pista') as IdPista|null,opciones=mini==='globos'||mini==='monedas'?ARENAS:CIRCUITOS;await correrMinijuego(mini,id&&opciones.includes(id)?id:opciones[0],Number(params.get('duracion'))||120);return;}
   const pista = params.get('pista') as IdPista | null;
-  if (pista && pista in PISTAS) {
+  if (pista && CIRCUITOS.includes(pista)) {
     if (params.has('crono')) await contrarreloj(pista);
     else await carreraSuelta(pista);
     return;

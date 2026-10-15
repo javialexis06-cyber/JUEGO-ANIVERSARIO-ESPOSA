@@ -31,4 +31,14 @@ try{
  const viejo=normalizarProgreso({records:{valle:{mejor:77,vuelta:24,fantasma:[1,2,3,0]},brasa:{mejor:null,vuelta:null}},copas:{carrera:2}});
  assert.deepEqual(viejo.records.valle,{mejor:77,vuelta:24,fantasma:[1,2,3,0]});assert.equal(viejo.records.brasa.mejor,Infinity);assert.equal(viejo.records.brasa.vuelta,Infinity);assert.equal(viejo.copas.carrera,2);
  console.log('✓ Las marcas válidas, los fantasmas y las copas antiguas se conservan');
+ assert.equal(viejo.campeonatos['clasica:carrera'],2);
+ const nuevo=normalizarProgreso({copas:{carrera:3},campeonatos:{'senderos:carrera':1,'clasica:carrera':2},retos:{'monedas:arena_plaza:carrera:120':48}});
+ assert.deepEqual(nuevo.campeonatos,{'senderos:carrera':1,'clasica:carrera':2});assert.equal(nuevo.retos['monedas:arena_plaza:carrera:120'],48);
+ assert.deepEqual(normalizarProgreso({...nuevo,campeonatos:{}}).campeonatos,{},'No atribuir las copas nuevas a la clásica');
+ console.log('✓ Las copas antiguas migran a la clásica y los campeonatos nuevos conservan su identidad');
+ p.campeonatos['senderos:carrera']=1;p.retos['monedas:arena_plaza:carrera:120']=48;cortar=true;
+ assert.equal(g.guardar(),false);p.retos['monedas:arena_plaza:carrera:120']=50;cortar=false;assert.equal(g.confirmar(),true);
+ assert.equal(leerProgreso(true).campeonatos['senderos:carrera'],1);assert.equal(leerProgreso(true).retos['monedas:arena_plaza:carrera:120'],50);
+ assert.equal(leerProgreso(false).retos['monedas:arena_plaza:carrera:120'],undefined);
+ console.log('✓ Los récords de desafíos y copas por circuito sobreviven a reintentos y mantienen los perfiles separados');
 }finally{await rm(dir,{recursive:true,force:true});}

@@ -6,6 +6,8 @@ export interface RecordCarrera { mejor: number; vuelta: number; fantasma?: numbe
 export interface ProgresoCarreras {
   records: Partial<Record<IdPista, RecordCarrera>>;
   copas: Partial<Record<Dificultad, number>>;
+  campeonatos: Record<string, number>;
+  retos: Record<string, number>;
 }
 const clave = (amigo: boolean) => amigo ? 'amigo-carreras-progreso' : 'carreras-progreso';
 const tiempo = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : Infinity;
@@ -17,7 +19,9 @@ export function normalizarProgreso(v: unknown): ProgresoCarreras {
     fantasma: Array.isArray(r.fantasma) && r.fantasma.length % 4 === 0 && r.fantasma.every(Number.isFinite) ? r.fantasma : undefined,
   }]));
   const copas = Object.fromEntries(Object.entries(p.copas ?? {}).filter(([, n]) => typeof n === 'number' && Number.isFinite(n) && n >= 0).map(([id, n]) => [id, Math.floor(n)]));
-  return { records, copas };
+  const contadores = (v: unknown) => Object.fromEntries(Object.entries(v && typeof v === 'object' ? v : {}).filter(([k,n]) => k.length <= 100 && typeof n === 'number' && Number.isFinite(n) && n >= 0).map(([k,n]) => [k,Math.floor(n as number)]));
+  const campeonatos = p.campeonatos ? contadores(p.campeonatos) : Object.fromEntries(Object.entries(copas).map(([d,n]) => [`clasica:${d}`,n]));
+  return { records, copas, campeonatos, retos: contadores(p.retos) };
 }
 export function leerProgreso(amigo: boolean) { return normalizarProgreso(leerAparato(clave(amigo))); }
 

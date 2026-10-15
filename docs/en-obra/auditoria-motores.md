@@ -17,6 +17,24 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
 
 ## Correcciones comprobadas
 
+- **Carreras: circuitos, copas y desafíos (15 de octubre).** Dieciséis circuitos originales (cuatro clásicos sin
+  regenerar y doce nuevos), cuatro copas, tres arenas y cuatro desafíos contra siete bots. Batalla de globos,
+  monedas con pérdidas recuperables, aros por corredor/vuelta y trucos/miniturbos puntuados por eventos del motor.
+  Las marcas se separan por escenario, dificultad y duración; las copas antiguas migran a la clásica sin borrar
+  récords ni fantasmas. Ocho grupos de guardado cubren reintentos y separación de perfiles. La tabla y el podio
+  comparten el ganador incluso al empatar en puntos. Las copas en línea conservan sus ocho inscritos entre pistas,
+  en lugar de volver a sortear bots y perder parte de los puntos.
+  El motor completa 96 carreras de tres vueltas (16 × 3 dificultades × 2 semillas) y 38 desafíos de dos minutos.
+  Los cuatro tiempos clásicos de referencia coinciden exactamente. En el build de amigos completan las tres
+  copas nuevas y ocho desafíos: 20 partidas por interfaz, pausa, un fallo de guardado de marca, podios, recarga y
+  retorno; cero errores de página. Se inspeccionan las postales y capturas de las doce pistas y los cuatro modos.
+  Una copa completa en dos pestañas conserva los mismos ocho inscritos y clasificaciones idénticas tras cada
+  carrera, con el mismo podio y regreso a sala/salida para ambos. Transporte local real de salas y reloj ×4;
+  no hay posiciones ni resultados forzados. No se reutilizan mapas de Nintendo.
+  Los desafíos nuevos son locales contra la máquina; todavía no se sincronizan
+  en salas. No se certifican controles, rendimiento ni internet real en Android. Registros locales en
+  `juego/web/test-results/carreras-ampliacion-2026-10-15/`; instrucciones en [Carreras](../sistemas/carreras.md).
+
 - **Desaparecidos: investigación manual (15 de octubre).** Por petición de Javier, se retiran pistas automáticas,
   contador de importantes, giros destacados, tutorial, ayudas de contraseña y sugerencias de linterna. La libreta
   guarda texto escrito por el jugador; presentar conclusiones no exige entradas concretas. Los historiales de los
@@ -110,8 +128,9 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
 - **Pruebas de motores.** `npm run probar:motores` comprueba partidas completas de Dados, Mancala, Cajas,
   Parchís, Parchís a dos colores y Clue; los dos jugadores pueden empezar y se recorren los niveles de IA.
   Se completaron 36 partidas. Cada movimiento se valida, se replica en otro estado y se serializa entre pasos; Mancala conserva sus 48
-  semillas. Incluye siete regresiones de guardado/calendario del Show, once de Cocina y doce comprobaciones de
-  Escudo, cinco regresiones de Desaparecidos y seis de Carreras más sus cuatro carreras completas.
+  semillas. Incluye once grupos de guardado/calendario/reglas del Show, once de Cocina y doce comprobaciones de
+  Escudo, seis regresiones de Desaparecidos y ocho de Carreras, sus cuatro carreras clásicas, 96 carreras
+  adicionales y 38 desafíos completos.
   Workflow: «Motores de los juegos».
   Incluye también los dieciocho combates y réplicas del Torneo y las doce regresiones del Retrete.
 
@@ -145,7 +164,7 @@ están registradas con rangos de tienda, cartas y patitos.
 | Súper Manía | Primer día desde progreso nuevo hasta resultado en navegador: tres estrellas, nueve clientes atendidos, ganancia 98 y ningún error | Campaña desde cero; comprobar mejoras pagadas, días avanzados y recarga |
 | Cien Puertas | Cien acertijos resueltos en orden por toques/sensores simulados; cero fallos de revisión de puerta/objetos/página; cien avances y estrellas conservados al recargar | Campaña narrativa, retorno a la casa, red, otras semillas y sensores físicos de teléfono |
 | El Escudo de las Hermanas | Seis niveles desde cero en amigos y pareja, con presupuesto normal, pausa, guardado fallido recuperado y recarga por nivel; doce comprobaciones del motor, derrota e infinito hasta pérdida natural (41 oleadas en motor, 48 en el último recorrido de pareja). Derrota normal, reintento, cancelación y salida de pareja conservan las estrellas. Modo P23: victoria, recibo fallido recuperado y retorno a la granja sin errores | Controles físicos, escenas completas, cierre forzado mientras falla almacenamiento y recorrido de P23 desde su desbloqueo real en la campaña de la granja; derrota y salida de amigos en navegador |
-| La Carrera de las Tres Lunas | Carrera normal, contrarreloj y Gran Premio de cuatro pistas desde cero en «Carrera»; tres vueltas por pista, pausa real, puntos conservados, copa ganada y dos fallos de escritura recuperados. Récord, muestras del fantasma y copa única conservados al recargar. Carrera, contrarreloj y retorno a casa en edición de pareja; sin errores | Precisión física, repetición visible del fantasma, otras criaturas/dificultades y verificación propia de la red |
+| La Carrera de las Tres Lunas | 16 circuitos, cuatro copas, tres arenas y cuatro desafíos. 96 carreras y 38 minijuegos completos del motor; tiempos clásicos idénticos. Tres copas nuevas y ocho desafíos completos en navegador de amigos, con guardado fallido de una marca, podios y recarga. Copa de cuatro carreras en dos pestañas: ocho inscritos constantes, tablas y podio idénticos, retorno y salida para ambos. Se conservan los recorridos previos de carrera, contrarreloj, fantasma y copa clásica | Controles y FPS físicos, internet entre dispositivos, demás criaturas; los desafíos nuevos aún no tienen sincronización en salas |
 | Desaparecidos de Astra | Ocho casos cerrados de nuevo desde cero en amigos: 24 estrellas, cero pistas automáticas, apuntes escritos y recarga por caso; primer guardado fallido recuperado. Primer caso y retorno a casa en build final. 6.111 mensajes y 96 audios adicionales; 152 audios decodificados con señal, búsqueda, archivo, fechas y paginación por controles. Seis regresiones de notas/guardado/partidas anteriores | Deducción humana sin conocer soluciones, Android físico y cierre forzado mientras el aparato rechaza escrituras |
 | El Torneo del Despertar Dorado | Arcade completo desde cero con Tarek: seis rivales a sus niveles originales, campeón, pausa y retorno al menú sin errores; dieciocho combates de motor con tres luchadores, derrota y réplicas por entradas serializadas | Otros luchadores y escenarios por controles físicos, dos jugadores en el aparato y verificación propia de la red; el arcade no tiene guardado de etapa implementado |
 | Retrete espacial | Amigos: dos vuelos desde cero con piloto, choques normales, pausa, otra salida, escudo pagado con 120 rollitos ganados, fallos al aterrizar/comprar recuperados, recarga y retorno a la sala. Casa local: ruta nativa de Atrás simulada en navegador y dos vuelos normales con acceso preparado, rechazo de escritura y respuesta perdida después de pagar, reintentos sin repetir monedas, retorno y recarga. Doce regresiones de persistencia | Descubrimiento desde el baño, sensores/controles físicos, ciclos avanzados, Supabase real y cierre forzado mientras falla el almacenamiento |
@@ -177,7 +196,8 @@ en los cuatro; cuatro replays registran las builds exactas solicitadas. Pasan am
 amigos, ocho regresiones de Lavado, 48 suites de granja y seis comprobaciones casa–granja. En amigos se verificaron
 los ocho hallazgos dibujados y recogidos en cuatro contextos aislados, con acceso y posiciones preparados.
 Ambas ramas se confirmaron con ese SHA y el árbol de trabajo quedó limpio.
-La APK sigue bloqueada al comprobar ese commit el 14 de octubre: no se creó una ejecución
+La APK sigue bloqueada en las comprobaciones de esta revisión, repetidas el 15 de octubre con el cierre del Show
+y los teléfonos de Astra: no se creó una ejecución
 automática para ese SHA y el intento de iniciar `apk.yml` devolvió **HTTP 422: Actions has been disabled for this
 user**. El workflow figura activo, pero la cuenta no puede ejecutarlo. No se anuncia una APK nueva ni se confunden
 los instaladores anteriores con estas correcciones. Requiere reactivar Actions en la cuenta y repetir la compilación.

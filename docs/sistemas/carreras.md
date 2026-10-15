@@ -7,12 +7,16 @@ amigos. Página: `juego/web/carreras.html`; código: `juego/web/src/carreras/`.
 ## Cómo se juega
 
 - **Modos** (menú de la portada):
-  - **Gran Premio**: las 4 pistas seguidas, puntos por puesto (15, 12, 10, 8, 6, 4, 2, 1), tabla después de cada
-    carrera y podio de campeones al final. Ganarlo suma una copa por dificultad (se ve en la portada).
+  - **Gran Premio**: cuatro copas de cuatro pistas, puntos por puesto (15, 12, 10, 8, 6, 4, 2, 1), tabla después de cada
+    carrera y podio de campeones al final. Ganarlo suma una copa por dificultad y una victoria en esa copa. Las copas
+    anteriores se atribuyen a la clásica, conservando el total y las marcas.
   - **Carrera suelta**: una pista, 3 vueltas, resultados y podio.
   - **Contrarreloj**: solo, sin cajas, con tres chispas de turbo al salir. Guarda el récord de cada pista, la mejor
     vuelta y un **fantasma** de la mejor carrera, que corre transparente la próxima vez.
-  - **En línea**: sala de hasta 4 (código corto), carrera suelta o Gran Premio; la máquina completa los ocho.
+  - **En línea**: sala de hasta 4 (código corto), carrera suelta en cualquiera de los 16 circuitos o una de las cuatro
+    copas; la máquina completa los ocho.
+  - **Batallas y desafíos**: cuatro minijuegos locales contra siete rivales de la máquina; partidas de uno, dos o tres
+    minutos, tabla y podio. Las marcas se guardan por modo, escenario, dificultad y duración. No dan monedas de la casa.
 - **Quién corre**: en la versión de la pareja, Javier o Laura (quien juega) y el otro como rival de la máquina, más
   seis vecinos de Astra. Con amigos (o en la app de amigos), el muñeco de perfil del amigo y siete vecinos.
 - **Garaje** («Mi carro y criatura»): criatura (cambia velocidad, aceleración, manejo y peso), carro y color. El carro
@@ -32,7 +36,7 @@ amigos. Página: `juego/web/carreras.html`; código: `juego/web/src/carreras/`.
   río con puente, gradas con público), Hornos de Brasaviva (lava a la orilla: caerse es volver con un grifo; hornos,
   cristales, volcán), Pista de Nieveclara (pinos, muñecos de nieve, arcos de hielo y el lago que resbala) y Anillos de
   las Tres Lunas (cinta flotante entre Aurelia, Nocturna y Esmeralda, sin baranda en las rectas, anillos de turbo).
-- **Voces**: un presentador (bienvenida, cada pista, «¡En sus marcas!», «¡A correr!», última vuelta, ganador,
+- **Voces**: un presentador (bienvenida, las cuatro pistas clásicas, «¡En sus marcas!», «¡A correr!», última vuelta, ganador,
   remontada, caídas, podio, campeón, récord) y cinco frases por corredor (al salir, al adelantar, al recibir un golpe,
   al lanzar un objeto y al ganar). Javier y Laura con sus voces clonadas (solo en la versión de la pareja; con amigos
   en la sala se callan). Todo sale también escrito en un globito abajo.
@@ -46,12 +50,49 @@ reintentar antes de avanzar, repetir o salir; el avance automático del podio ta
 La capa transparente del mando no tapa el botón de pausa. Los fallos pendientes requieren mantener la partida
 abierta: no está cubierto un cierre forzado mientras no se puede escribir.
 
+## Circuitos y desafíos añadidos (15 de octubre de 2026)
+
+Son **16 circuitos originales**, organizados así. Las cuatro pistas clásicas conservan sus modelos, recorridos,
+objetos, tres vueltas y valores de dificultad. Ningún mapa ni recurso de Nintendo se descarga ni se distribuye.
+
+| Copa | Circuitos |
+|---|---|
+| Tres Lunas (clásica) | Camino del Pueblo del Sol · Hornos de Brasaviva · Pista de Nieveclara · Anillos de las Tres Lunas |
+| Senderos | Senderos de Brumaverde · Muelle de los Lirios · Jardines del Eco · Mercado de Vigilia |
+| Horizontes | Dunas de Ambarina · Galerías de Piedralumbre · Pasarelas de Senda · Murallas de Valdemora |
+| Firmamento | Espiras de Iridalia · Cornisas del Viento · Balizas de Nocturna · Órbita de Celia |
+
+Hay curvas, cambios de altura, rampas, puentes y tramos flotantes; cada región trae utilería de Blender y postal
+propia. Cornisas mantiene las montañas fuera del recorrido y la cámara; Piedralumbre incluye una galería techada.
+Las arenas Plaza de los Molinos, Patio de los Hornos y Patio de Cristales tienen piso libre, valla y obstáculos reales;
+el minimapa representa sus colisiones, en vez de dibujar un circuito ficticio.
+
+- **Batalla de globos:** tres por corredor; los impactos de objetos los revientan. Se ordena por
+  globos conservados y globos reventados a rivales; se acaba al agotarse el reloj o quedar uno. Quien pierde los tres
+  pasa a observar a un corredor vivo. El kart eliminado no recoge cajas ni sigue chocando como participante activo.
+- **Caza de monedas:** 36 monedas repartidas por la arena; vuelven a aparecer después de recogerse. Cada golpe suelta
+  hasta tres de las acumuladas. Las monedas soltadas se pueden recuperar y caducan; no se reproducen indefinidamente.
+- **Carrera de anillos:** 20 aros con distintos laterales por circuito. Cada corredor puede puntuar una vez por aro
+  y vuelta; los de los demás permanecen disponibles. La prueba se rige por el reloj, sin detenerse a la tercera vuelta.
+- **Festival de trucos:** tres puntos por truco aterrizado y el nivel de chispas al soltar un miniturbo. Sigue el
+  reloj y conserva rampas y derrape reales; no puntúa por solo tocar el botón ni por recoger un turbo de pista.
+
+Los bots buscan cajas, rivales y monedas, esquivan obstáculos de las arenas y apuntan a los aros en los circuitos.
+Las reglas nuevas usan `Sim`, sus objetos y su movimiento; no hay un motor físico separado. Las marcas y copas se
+mantienen pendientes ante un fallo de escritura, con reintento antes de repetir o salir.
+
+Referencia de mecánicas: las [batallas de Mario Kart Tour](https://faq.mariokarttour.com/hc/en-us/articles/11021845024921-How-do-battles-work)
+y su [clasificación](https://faq.mariokarttour.com/hc/en-us/articles/11035214624153-How-is-placement-decided-in-battles).
+La competición por puntos, globos y pruebas de monedas/anillos/trucos se adapta a las criaturas, objetos y regiones
+propias de Astra; no se anuncia paridad completa con Mario Kart.
+
 ## Archivos
 
 | Archivo | Qué es |
 |---|---|
 | `src/carreras/main.ts` | Flujo: portada, garaje, pistas, la carrera (bucle a 60 pasos y dibujo a 30), resultados, podio, Gran Premio, contrarreloj, fotos del menú |
 | `src/carreras/sim.ts` | La física y las reglas (sin three.js): carros, derrape, saltos, rebufo, choques, cajas, objetos, vueltas, puestos y la máquina |
+| `src/carreras/minijuegos.ts` | Batallas, recogibles, clasificación, reloj y decisiones de la máquina en las arenas; comparte la física de `Sim` |
 | `src/carreras/progreso.ts` | Lectura compatible de récords y copas, y confirmación de escrituras pendientes |
 | `src/carreras/pista.ts` | El recorrido (una muestra por metro): dónde va cada carro, el lateral, la altura del piso |
 | `src/carreras/vista.ts` | three.js: la pista juntada por material, el cielo, los carros, cajas y objetos, partículas, cámara, podio, garaje, fantasma |
@@ -64,7 +105,9 @@ abierta: no está cubierto un cierre forzado mientras no se puede escribir.
 | `src/carreras/pareja.ts` | Javier y Laura como corredores y sus frases (versión vacía: `src/amigos/sin_pareja/carreras.ts`) |
 | `personajes/blender/carreras_comun.py` | Herramientas (juntar por material, emblema de las tres lunas, letras) |
 | `personajes/blender/carreras_cosas.py` | Carros (carreta, calesa, cesta, calabaza), zorro de Brasaviva, carnero de Nieveclara, cría, caja de objetos, objetos, turbo, rampa, podio, copa y tapete del garaje → `carreras_cosas.glb` |
-| `personajes/blender/carreras_pistas.py` | Las 4 pistas: curva → modelo (`carreras_<id>.glb`) y recorrido (`carreras_<id>.json`) |
+| `personajes/blender/carreras_pistas.py` | Exportador de circuitos: curva → modelo (`carreras_<id>.glb`) y recorrido (`carreras_<id>.json`) |
+| `personajes/blender/carreras_circuitos.py` | Doce recorridos nuevos y utilería de sus regiones: puestos, barcas, palmas, galerías, torres y observatorios |
+| `personajes/blender/carreras_arenas.py` | Tres arenas con colisiones exportadas, globos, monedas y aros → `carreras_minijuegos.glb` |
 | `personajes/blender/carreras_iconos.py` | Íconos de los objetos (`public/carreras/iconos/`) y hoja de revisión |
 | `scripts/carreras/voces.mjs` | Las voces con ElevenLabs (`public/audio/carreras/`, las de la pareja en `public/audio/carreras-pareja/`) |
 | `scripts/carreras/fotos.mjs` | Las fotos de las tarjetas del menú (`public/carreras/pistas/`, `public/carreras/criaturas/`) |
@@ -77,7 +120,8 @@ Las criaturas unicornio, grifo y dragón son las de la granja (`public/modelos/g
 ```bash
 cd personajes/blender
 blender -b -P carreras_cosas.py -- ../../juego/web/modelos-crudos/carreras
-blender -b -P carreras_pistas.py -- ../../juego/web/modelos-crudos/carreras [valle,brasa,nieve,cielo] [--plano]
+blender -b --threads 2 --python-exit-code 1 -P carreras_pistas.py -- ../../juego/web/modelos-crudos/carreras puerto,mina,bosque,desierto,jardines,cristal,fortaleza,pantano,mercado,acantilado,observatorio,estacion --plano
+blender -b --threads 2 --python-exit-code 1 -P carreras_arenas.py -- ../../juego/web/modelos-crudos/carreras
 blender -b -P carreras_iconos.py -- iconos ../../juego/web/public/carreras/iconos
 cd ../../juego/web
 for f in modelos-crudos/carreras/*.glb; do npx gltf-transform optimize $f public/modelos/carreras/$(basename $f) --compress meshopt \
@@ -106,7 +150,9 @@ Presentador: «Zabra» de la biblioteca (`voces-guion/carreras-reparto.json`); l
   quien usa un objeto se lo cuenta al anfitrión (`usa`), que lo lanza desde donde va ese carro.
 - Antes de la salida todos esperan a que todos carguen (`cargado` → `arranca`, máximo 30 s).
 - Meta: cada uno avisa su tiempo (`meta`); cuando llegan todas las personas, el anfitrión cierra (`fin`).
-- Gran Premio en línea: el anfitrión arma la siguiente pista (`sig`). Si alguien se va, su carro lo maneja la máquina.
+- Gran Premio en línea: el anfitrión escoge la copa en la sala y arma cada siguiente pista (`sig`). La victoria final
+  registra esa copa para el ganador humano bajo la dificultad del anfitrión. Los ocho inscritos se conservan
+  durante las cuatro carreras; si alguien se va, su carro lo maneja la máquina.
 - Con amigos en la sala, la máquina corre solo con vecinos y no suena ninguna voz de la pareja.
 
 ## Cómo se prueba
@@ -114,6 +160,7 @@ Presentador: «Zabra» de la biblioteca (`voces-guion/carreras-reparto.json`); l
 - `carreras.html?rol=el` (o `ella`): el menú. `?pista=valle` entra directo a una carrera suelta (`&crono`: contrarreloj).
 - `?bot=1`: la máquina maneja el carro de quien juega (la cámara lo sigue). `?vueltas=1`, `?rapido=4` (la física corre
   más rápido), `?sinprecalentar` (no compila los sombreadores antes: el Chromium de pruebas tarda mucho).
+- `?mini=globos&pista=arena_plaza&duracion=120` (también `monedas`, `anillos`, `trucos`): entrada directa al desafío.
 - `?podio`: muestra el podio. `?postal=<pista>` y `?retrato=<criatura>`: las fotos del menú.
 - `?salas=local&sala` en dos pestañas (la segunda con `?salas=local&unirse=CÓDIGO`): en línea sin Supabase.
 - Gancho: `window.__carreras` = `{ sim, vista, hud, mio }`.
@@ -123,7 +170,10 @@ Presentador: «Zabra» de la biblioteca (`voces-guion/carreras-reparto.json`); l
 
 ```sh
 node scripts/probar-carreras-motor.mjs        # cuatro pistas, tres vueltas, puestos y puntos del Gran Premio
-node scripts/probar-carreras-guardado.mjs     # seis regresiones: null antiguo, récord, fantasma y copa pendiente
+node scripts/probar-carreras-guardado.mjs     # ocho grupos: compatibilidad, fantasma, copa pendiente, campeonatos y desafíos
+node scripts/probar-carreras-variedad.mjs    # 96 carreras y 38 desafíos completos, tiempos clásicos idénticos
+CHROME_PATH=/usr/bin/chromium node scripts/probar-carreras-ampliacion.mjs http://127.0.0.1:4184/ test-results/carreras-ampliacion
+CHROME_PATH=/usr/bin/chromium node scripts/probar-carreras-linea.mjs http://127.0.0.1:4182/ test-results/carreras-linea
 CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-carreras-recorrido.mjs http://127.0.0.1:4184/ test-results/carreras-amigos
 CHROME_PATH=/usr/bin/chromium AMIGO=0 GRAN_PREMIO=0 FALLOS=1 node scripts/probar-carreras-recorrido.mjs http://127.0.0.1:4182/ test-results/carreras-casa
 ```
@@ -133,6 +183,16 @@ muestras para su duración, y Gran Premio de cuatro pistas en «Carrera», con c
 recuperados y recarga sin duplicar el premio. Carrera, contrarreloj, fallo de escritura y retorno a casa también
 comprobados en la edición de pareja. Siguen pendientes precisión física, repetición del fantasma en pantalla y
 verificación propia de la red. Se conservan los valores de dificultad y recompensas.
+
+Comprobación de la ampliación: 96 carreras completas (16 circuitos × tres dificultades × dos semillas) y 38
+minijuegos completos del motor. Los cuatro tiempos clásicos de referencia permanecen idénticos. El navegador de
+amigos completa las tres copas nuevas y ocho desafíos con resultados, un fallo de guardado recuperado, podios y
+recarga. Dos pestañas completan la Copa de los Senderos con la misma plantilla de ocho corredores, clasificaciones
+idénticas en las cuatro carreras, el mismo podio y retorno a sala. Se usa el transporte local real de salas y el
+reloj acelerado ×4; no se inyectan posiciones ni se fuerzan victorias. Capturas inspeccionadas de los doce circuitos
+nuevos y los cuatro modos. La pareja completa los cuatro desafíos en el build final; se verifica teclado y joystick
+por puntero en arena sin piloto automático. Se repiten carrera suelta y contrarreloj con escritura fallida recuperada
+y fantasma conservado. Evidencia local: `test-results/carreras-ampliacion-2026-10-15/`.
 
 ## Integración (hecha el 14 de octubre de 2026: casa, Sala de Juegos con su arte y su tema `carreras`)
 
@@ -166,4 +226,5 @@ pareja). La música usa pistas que la app de amigos ya trae (súper, lavado, ret
 ## Pendiente o por mejorar
 
 - Una tarjeta propia para la sala de amigos (arte SVG de la carrera) y un ícono propio en el cuarto de juegos.
-- Más pistas (Piedralumbre, Puerto de los Lirios) reutilizando `carreras_pistas.py`.
+- Los cuatro desafíos nuevos tienen competición local contra la máquina; su sincronización multijugador queda pendiente.
+- Pruebas de rendimiento, controles físicos y conexiones entre teléfonos Android.

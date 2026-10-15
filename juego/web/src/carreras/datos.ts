@@ -5,7 +5,9 @@ import type { AspectoJugador } from '../salas/tipos';
 
 export type IdCriatura = 'unicornio' | 'grifo' | 'dragon' | 'cria' | 'zorro' | 'carnero';
 export type IdCarro = 'carreta' | 'calesa' | 'cesta' | 'calabaza';
-export type IdPista = 'valle' | 'brasa' | 'nieve' | 'cielo';
+export type IdPista = 'valle' | 'brasa' | 'nieve' | 'cielo' | 'puerto' | 'mina' | 'bosque' | 'desierto'
+  | 'jardines' | 'cristal' | 'fortaleza' | 'pantano' | 'mercado' | 'acantilado' | 'observatorio' | 'estacion'
+  | 'arena_plaza' | 'arena_hornos' | 'arena_cristal';
 export type IdObjeto = 'chispa' | 'tres' | 'semilla' | 'velo' | 'ceniza' | 'pluma' | 'lluvia' | 'lucero' | 'brasa';
 
 export interface Stats {
@@ -135,8 +137,9 @@ export interface InfoPista {
   sol: string;
   /** Color de la tarjeta del menú. */
   tarjeta: string;
+  arena?: boolean;
 }
-export const PISTAS: Record<IdPista, InfoPista> = {
+const BASE: Record<'valle' | 'brasa' | 'nieve' | 'cielo', InfoPista> = {
   valle: { id: 'valle', nombre: 'Camino del Pueblo del Sol', region: 'Valle de Celia', lema: 'Trigales, girasoles y el puente del río.',
     musica: ['super-dia', 'lavado-partida', 'cohete-tramo1'], cielo: ['#7fc4f0', '#e8f4ff'], niebla: ['#cfe6f5', 120, 420], sol: '#fff2d6', tarjeta: '#7db857' },
   brasa: { id: 'brasa', nombre: 'Hornos de Brasaviva', region: 'Brasaviva', lema: 'Lava a la orilla: no te caigas.',
@@ -146,7 +149,34 @@ export const PISTAS: Record<IdPista, InfoPista> = {
   cielo: { id: 'cielo', nombre: 'Anillos de las Tres Lunas', region: 'El cielo de Astra', lema: 'Una cinta entre las lunas. Sin baranda.',
     musica: ['cohete-tramo5', 'cohete-tramo6', 'lavado-intensa2'], cielo: ['#0b0f2e', '#3b2e6e'], niebla: ['#2a2558', 160, 620], sol: '#fff2d6', tarjeta: '#7a5bb8' },
 };
+export const PISTAS: Record<IdPista, InfoPista> = {
+  ...BASE,
+  puerto: { ...BASE.valle, id:'puerto', nombre:'Muelle de los Lirios', region:'Puerto de los Lirios', lema:'Pasarelas de madera, barcas y curvas sobre el agua.', tarjeta:'#4cabb5', cielo:['#66b5dd','#e5f6f2'] },
+  mina: { ...BASE.brasa, id:'mina', nombre:'Galerías de Piedralumbre', region:'Piedralumbre', lema:'Túneles, cristales y una subida bajo las vigas.', tarjeta:'#b1905e', cielo:['#38314c','#91817d'], sol:'#e8cdff' },
+  bosque: { ...BASE.valle, id:'bosque', nombre:'Senderos de Brumaverde', region:'Brumaverde', lema:'Un bosque de curvas enlazadas y árboles enormes.', tarjeta:'#4e9264', cielo:['#749d9d','#d6e8d5'], niebla:['#a6c9b7',100,350] },
+  desierto: { ...BASE.valle, id:'desierto', nombre:'Dunas de Ambarina', region:'Ambarina', lema:'Crestas, oasis y rampas entre las dunas.', tarjeta:'#dcac64', cielo:['#8ab4dd','#ffdfaa'], sol:'#fff0c2' },
+  jardines: { ...BASE.valle, id:'jardines', nombre:'Jardines del Eco', region:'Verdia', lema:'Horquillas entre setos, flores y arcos de madera.', tarjeta:'#b98dbc', cielo:['#9eacd9','#f6ddec'] },
+  cristal: { ...BASE.cielo, id:'cristal', nombre:'Espiras de Iridalia', region:'Iridalia', lema:'Curvas de altura entre cristales luminosos.', tarjeta:'#ab8adc', cielo:['#31405d','#bd9cca'], niebla:['#a5a1cd',110,430], sol:'#eedbff' },
+  fortaleza: { ...BASE.valle, id:'fortaleza', nombre:'Murallas de Valdemora', region:'Valdemora', lema:'Dos patios, torres y un puente de piedra.', tarjeta:'#ab7d81', cielo:['#7b86ac','#dcc6b8'], sol:'#ffe2b8' },
+  pantano: { ...BASE.valle, id:'pantano', nombre:'Pasarelas de Senda', region:'Senda', lema:'Tablas elevadas entre árboles y aguas verdes.', tarjeta:'#6f9e89', cielo:['#6e9c9a','#d5e6d0'], niebla:['#b2cec0',80,300] },
+  mercado: { ...BASE.valle, id:'mercado', nombre:'Mercado de Vigilia', region:'Vigilia de Ceniza', lema:'Chicanas de adoquín entre toldos y faroles.', tarjeta:'#ce9467', cielo:['#694e76','#e6a687'], sol:'#ffd5b4' },
+  acantilado: { ...BASE.cielo, id:'acantilado', nombre:'Cornisas del Viento', region:'Cumbres de Astra', lema:'Curvas amplias, barrancos y un salto sobre las nubes.', tarjeta:'#8da1b6', cielo:['#7aa6ce','#e2edf8'], niebla:['#d4dfed',140,500], sol:'#fff5e2' },
+  observatorio: { ...BASE.brasa, id:'observatorio', nombre:'Balizas de Nocturna', region:'Nocturna', lema:'Una ruta técnica entre cúpulas y señales lunares.', tarjeta:'#777eb4', cielo:['#111933','#5a5f8a'], niebla:['#515778',120,420], sol:'#c8dcff' },
+  estacion: { ...BASE.cielo, id:'estacion', nombre:'Órbita de Celia', region:'Estación de Celia', lema:'Paneles, pórticos y anillos sobre el planeta.', tarjeta:'#59b7c7', cielo:['#091425','#253c64'], niebla:['#263958',160,640], sol:'#e2f5ff' },
+  arena_plaza: { ...BASE.valle, id:'arena_plaza', nombre:'Plaza de los Molinos', region:'Valle de Celia', lema:'Una fuente central y ocho caminos para perseguirse.', tarjeta:'#7db857', arena:true },
+  arena_hornos: { ...BASE.brasa, id:'arena_hornos', nombre:'Patio de los Hornos', region:'Brasaviva', lema:'Columnas de basalto y cajas en cuatro esquinas.', tarjeta:'#df8456', arena:true },
+  arena_cristal: { ...BASE.valle, id:'arena_cristal', nombre:'Patio de Cristales', region:'Iridalia', lema:'Cristales centrales y mucho espacio para esquivar.', tarjeta:'#aa8bd2', cielo:['#8fa0cd','#ecddf4'], arena:true },
+};
+/** La copa clásica conserva sus cuatro circuitos y sus IDs. */
 export const ORDEN_PISTAS: IdPista[] = ['valle', 'brasa', 'nieve', 'cielo'];
+export const CIRCUITOS: IdPista[] = [...ORDEN_PISTAS,'bosque','puerto','jardines','mercado','desierto','mina','pantano','fortaleza','cristal','acantilado','observatorio','estacion'];
+export const ARENAS: IdPista[] = ['arena_plaza','arena_hornos','arena_cristal'];
+export const COPAS = [
+  {id:'clasica',nombre:'Copa de las Tres Lunas',pistas:ORDEN_PISTAS},
+  {id:'senderos',nombre:'Copa de los Senderos',pistas:['bosque','puerto','jardines','mercado'] as IdPista[]},
+  {id:'horizontes',nombre:'Copa de los Horizontes',pistas:['desierto','mina','pantano','fortaleza'] as IdPista[]},
+  {id:'firmamento',nombre:'Copa del Firmamento',pistas:['cristal','acantilado','observatorio','estacion'] as IdPista[]},
+];
 
 /** Puntos del Gran Premio por puesto (8 corredores). */
 export const PUNTOS = [15, 12, 10, 8, 6, 4, 2, 1];

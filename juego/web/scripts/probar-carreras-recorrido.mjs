@@ -54,6 +54,7 @@ try{
   process.exitCode=0;
  }else{
  await p.locator('[data-ir="gp"]').click();
+ await p.locator('[data-copa="clasica"]').click();
  const puntosTotales=[];let gana=false;
  for(let n=0;n<4;n++){
   const id=['valle','brasa','nieve','cielo'][n];await listo(id);const fin=await meta();

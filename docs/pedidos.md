@@ -16,7 +16,17 @@ chats archivados y búsqueda, fechas, citas, reacciones y vida cotidiana. 96 not
 La libreta solo conserva lo que escriba quien juega; se retiraron las pistas automáticas, contadores, tutorial y
 ayudas de desbloqueo. Se mantienen casos, claves, soluciones y partidas anteriores. Los ocho casos pasan de inicio
 a cierre por controles normales, con notas y recarga; las respuestas de las pruebas se leen de los datos.
-Continúa Carreras; los demás juegos y la granja siguen en pausa.
+**Carreras, ampliación hecha:** 16 circuitos originales en cuatro copas, tres arenas y cuatro desafíos contra
+siete bots (globos, monedas, anillos y trucos). La carrera suelta y las copas en línea admiten los circuitos nuevos;
+la copa conserva los ocho inscritos, puntos y ganador del podio. Marcas por dificultad/duración y partidas antiguas
+conservadas. El motor completa 96 carreras y 38 desafíos; el navegador completa las tres copas nuevas y ocho
+desafíos en amigos, cuatro desafíos en pareja y una copa de cuatro carreras con dos jugadores. También pasan
+mando manual de arena, pausa, guardado fallido recuperado, recarga y retornos; valores clásicos sin cambios.
+Los desafíos nuevos siguen siendo locales contra la máquina; no se presenta paridad total con Mario Kart.
+
+Los tres avances solicitados están terminados en código y verificados en navegador. Preguntarle a Javier con qué
+continuar; la granja y los demás juegos siguen en pausa. La APK nueva requiere reactivar GitHub Actions en la
+cuenta: los instaladores anteriores no contienen estos cambios.
 
 **Encargo de motor y verificación (13 de octubre):** completar lo que falte del motor de cada juego y probar partidas de inicio a fin. Javier aprueba previamente cualquier cambio de dificultad, balance, costes, precios o recompensas. El seguimiento por juego, alcance real de las pruebas y límites pendientes está en [auditoría de motores](en-obra/auditoria-motores.md). Esta revisión no declara terminadas las campañas por usar ganchos de prueba o partidas preparadas.
 

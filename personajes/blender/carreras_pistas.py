@@ -68,6 +68,10 @@ TEMAS = {
     'cielo': dict(camino='#2E3A78', camino2='#24306A', hombro='#3B2E6E', suelo=None, talud='#1E2450', piano=('#F2C14E', '#7A5BB8'), costura='#F2C14E'),
 }
 
+from carreras_circuitos import NUEVAS, TEMAS_NUEVOS, decorar as decorar_nuevo
+PISTAS.update(NUEVAS)
+TEMAS.update(TEMAS_NUEVOS)
+
 PASO = 1.0
 TROZO = 250.0
 
@@ -484,6 +488,7 @@ def piano_meta(lote, P, N, hw, mats):
 
 def construir(pid, plano=None):
     cfg = PISTAS[pid]
+    bioma = cfg.get('base', pid)
     tema = TEMAS[pid]
     P, T, N, curv, L = muestrear(cfg['puntos'])
     n = len(P)
@@ -497,7 +502,7 @@ def construir(pid, plano=None):
         for i in rango(fr, n):
             flags[i] |= LAVA
             hombro[i] = 2.0
-    if pid == 'cielo':
+    if bioma == 'cielo':
         flags |= CAIDA
         # baranda solo en las curvas cerradas
         for i in range(n):
@@ -505,10 +510,10 @@ def construir(pid, plano=None):
                 for k in range(-12, 13):
                     flags[(i + k) % n] &= ~CAIDA
     puente = []
-    if pid == 'valle':
-        puente = rango((0.52, 0.565), n)
-        for i in puente:
-            flags[i] |= PUENTE
+    for fr in cfg.get('puentes', ((0.52, 0.565),) if pid == 'valle' else ()):
+        puente.extend(rango(fr, n))
+    for i in puente:
+        flags[i] |= PUENTE
 
     lote = Lote()
     M = dict(
@@ -556,15 +561,15 @@ def construir(pid, plano=None):
             if not flags[i] & PUENTE:
                 V = [borde(i, s * hw[i], -0.02), borde(i, s * ext, -0.04), borde(j, s * extj, -0.04), borde(j, s * hw[j], -0.02)]
                 lote.quads(M['hombro'], V, [(0, 1, 2, 3)] if s > 0 else [(0, 3, 2, 1)])
-            bajo = -2.5 if pid == 'cielo' else -0.6
-            if pid == 'cielo':
+            bajo = -2.5 if bioma == 'cielo' else -0.6
+            if bioma == 'cielo':
                 V = [borde(i, s * ext, -0.04), borde(i, s * (ext - 0.6), bajo - P[i][2] * 0 - 1.6), borde(j, s * (extj - 0.6), bajo - 1.6), borde(j, s * extj, -0.04)]
             elif flags[i] & PUENTE:
                 continue
             else:
                 V = [borde(i, s * ext, -0.04), borde(i, s * (ext + 2.0), -P[i][2] - 0.4), borde(j, s * (extj + 2.0), -P[j][2] - 0.4), borde(j, s * extj, -0.04)]
             lote.quads(M['talud'], V, [(0, 1, 2, 3)] if s > 0 else [(0, 3, 2, 1)])
-        if pid == 'cielo':
+        if bioma == 'cielo':
             # panza de la cinta (para que se vea gruesa desde abajo)
             ext, extj = hw[i] + hombro[i] - 0.6, hw[j] + hombro[j] - 0.6
             V = [borde(i, ext, -4.1), borde(i, -ext, -4.1), borde(j, -extj, -4.1), borde(j, extj, -4.1)]
@@ -572,7 +577,7 @@ def construir(pid, plano=None):
     piano_meta(lote, P, N, hw[0], (tela('cuadro negro', '#2B2230'), tela('cuadro blanco', '#FFFFFF')))
 
     # --- lava al lado del camino (brasa)
-    if pid == 'brasa':
+    if bioma == 'brasa':
         for i in range(n):
             if not flags[i] & LAVA:
                 continue
@@ -591,18 +596,18 @@ def construir(pid, plano=None):
             protos[k] = proto(fn)
         return protos[k]
 
-    if pid == 'valle':
+    if bioma == 'valle':
         poste = P_('poste', lambda c: (cilindro(c, 'poste cerca', (0, 0, 0), 0.13, 1.1, madera('cerca', '#A87A4E'), seg=6),
                                        bola(c, 'punta poste', (0, 0, 1.12), 0.15, tela('punta', '#E4566B'), n=2, sub=0)))
-    elif pid == 'brasa':
+    elif bioma == 'brasa':
         poste = P_('poste', lambda c: roca(c, '#3A2E2E', 0.9))
-    elif pid == 'nieve':
+    elif bioma == 'nieve':
         poste = P_('poste', lambda c: (bola(c, 'banco nieve', (0, 0, 0.3), (1.2, 0.9, 0.7), tela('nieve', '#FFFFFF'), n=2, sub=1),
                                        cilindro(c, 'baston', (0, 0, 0), 0.1, 1.6, tela('baston rojo', '#C73E4A'), seg=6)))
     else:
         poste = P_('poste', lambda c: (cilindro(c, 'poste cielo', (0, 0, 0), 0.12, 1.2, oro(), seg=6),
                                        bola(c, 'luz poste', (0, 0, 1.3), 0.22, luz('estrella oro', '#FFF2B0', 3.5), n=2, sub=0)))
-    riel = tela('riel', {'valle': '#A87A4E', 'brasa': '#5A4A48', 'nieve': '#C73E4A', 'cielo': '#F2C14E'}[pid])
+    riel = tela('riel', {'valle': '#A87A4E', 'brasa': '#5A4A48', 'nieve': '#C73E4A', 'cielo': '#F2C14E'}[bioma])
     for s in (-1, 1):
         tramo = []
         for i in range(n + 1):
@@ -611,11 +616,11 @@ def construir(pid, plano=None):
             if con_muro:
                 tramo.append(k)
             if (not con_muro or i == n) and len(tramo) > 1:
-                pts = [tuple(borde(q, s * (hw[q] + hombro[q] + 0.2), 0.75 if pid != 'brasa' else 0.6)) for q in tramo[::2]]
-                if pid in ('valle', 'nieve', 'cielo') and len(pts) > 2:
-                    for z in ((0.45, 0.85) if pid == 'valle' else (0.9,)):
+                pts = [tuple(borde(q, s * (hw[q] + hombro[q] + 0.2), 0.75 if bioma != 'brasa' else 0.6)) for q in tramo[::2]]
+                if bioma in ('valle', 'nieve', 'cielo') and len(pts) > 2:
+                    for z in ((0.45, 0.85) if bioma == 'valle' else (0.9,)):
                         ptsz = [(x, y, zz - 0.75 + z) for x, y, zz in pts]
-                        o = clay.sweep('riel', ptsz, 0.08 if pid != 'cielo' else 0.1, (1, 1), None, riel, segments=6, samples=1, subsurf=0)
+                        o = clay.sweep('riel', ptsz, 0.08 if bioma != 'cielo' else 0.1, (1, 1), None, riel, segments=6, samples=1, subsurf=0)
                         V = np.array([v.co[:] for v in o.data.vertices])
                         F = np.array([list(p.vertices) for p in o.data.polygons if len(p.vertices) == 4])
                         Ft = np.array([list(p.vertices) for p in o.data.polygons if len(p.vertices) == 3]).reshape(-1, 3)
@@ -625,11 +630,11 @@ def construir(pid, plano=None):
                         if len(Ft):
                             lote.tri(riel, V, Ft)
                         bpy.data.objects.remove(o, do_unlink=True)
-                if pid == 'brasa':
+                if bioma == 'brasa':
                     for q in tramo[::3]:
                         lote.poner(poste, borde(q, s * (hw[q] + hombro[q] + 0.6), -0.1), RNG.uniform(0, math.tau), RNG.uniform(0.8, 1.2))
                 else:
-                    for q in tramo[::4 if pid != 'nieve' else 6]:
+                    for q in tramo[::4 if bioma != 'nieve' else 6]:
                         lote.poner(poste, borde(q, s * (hw[q] + hombro[q] + 0.2), -0.05), 0)
                 tramo = []
             elif not con_muro:
@@ -693,7 +698,10 @@ def construir(pid, plano=None):
             lote.poner(pr, (math.cos(a) * r, math.sin(a) * r + 10, z if not callable(z) else z()), RNG.uniform(0, math.tau), RNG.uniform(*esc), trozo=(99, 99))
 
     extra = {}
-    if pid == 'valle':
+    if pid in NUEVAS:
+        import sys
+        extra = decorar_nuevo(pid,cfg,lote,P,T,N,hw,hombro,sys.modules[__name__],P_,repartir,anillo_lejos)
+    elif bioma == 'valle':
         prs = [P_(f'arbol{k}', lambda c, k=k: arbol(c, k)) for k in range(3)]
         for pr in prs:
             repartir(pr, 55, 2, 45, 2.5)
@@ -710,7 +718,7 @@ def construir(pid, plano=None):
         repartir(P_('molino', molino), 2, 20, 45, 9, esc=(1, 1))
         anillo_lejos(P_('montana_v', lambda c: montana(c, False, '#7FAF6A')), 18, 260, 330, esc=(0.9, 1.6))
         anillo_lejos(P_('arbol_lejos', lambda c: arbol(c, 1, 1.6)), 60, 170, 240, esc=(1.2, 1.8))
-    elif pid == 'brasa':
+    elif bioma == 'brasa':
         repartir(P_('roca_b', lambda c: roca(c, '#3A2E2E', 1.6)), 90, 1, 45, 1.5, esc=(0.7, 1.8))
         repartir(P_('cristal', cristal_brasa), 45, 1, 30, 1.5)
         repartir(P_('horno', horno), 12, 6, 30, 5, esc=(0.9, 1.1))
@@ -723,7 +731,7 @@ def construir(pid, plano=None):
             p = P[i] + N[i] * RNG.choice([-1, 1]) * (hw[i] + hombro[i] + RNG.uniform(14, 30))
             if libre(p[0], p[1], 6):
                 lote.poner(P_('charco_lava', lambda c: bola(c, 'charco lava', (0, 0, -0.3), (6, 3.5, 0.5), luz('lava', '#FF6A1A', 4.0), n=3, sub=0)), (p[0], p[1], 0), RNG.uniform(0, 6))
-    elif pid == 'nieve':
+    elif bioma == 'nieve':
         for k in range(2):
             repartir(P_(f'pino{k}', lambda c, k=k: pino(c, 1.0 + 0.3 * k)), 90, 1.5, 45, 2.0)
         repartir(P_('muneco', muneco_nieve), 16, 1, 12, 1.0, esc=(0.9, 1.1))
@@ -767,7 +775,7 @@ def construir(pid, plano=None):
     # --- arco de meta, turbos y rampas (los modelos de carreras_cosas puestos en su sitio)
     ang0 = math.atan2(N[0][1], N[0][0])
     lote.poner(P_('meta', lambda c: arco_meta(c, hw[0] + hombro[0] + 0.8, pid)), tuple(P[0] + up * -0.05), ang0)
-    if pid == 'valle':
+    if bioma == 'valle':
         g = P_('gradas', gradas)
         i = n - 30
         lote.poner(g, tuple(P[i] + N[i] * (hw[i] + hombro[i] + 6.5) - up * P[i][2] * 0), math.atan2(-N[i][1], -N[i][0]) - math.pi / 2 + math.pi / 2 - math.pi / 2)

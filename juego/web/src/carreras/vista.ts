@@ -43,6 +43,8 @@ export class Vista {
   private cosas = new Map<number, THREE.Object3D>();
   private plantillas = new Map<string, THREE.Object3D>();
   private nubes = new Map<number, THREE.Object3D>();
+  private globos: THREE.Object3D[][] = [];
+  private recogibles = new Map<number, THREE.Object3D>();
   private camPos = new THREE.Vector3();
   private camMira = new THREE.Vector3();
   private camLista = false;
@@ -98,12 +100,21 @@ export class Vista {
     this.karts = [];
     this.podioKarts = [];
     this.pistaObj?.traverse((o) => (o as THREE.Mesh).isMesh && (o as THREE.Mesh).geometry.dispose());
+    this.cielo?.geometry.dispose();
+    if (this.cielo) (this.cielo.material as THREE.Material).dispose();
+    this.estrellas?.geometry.dispose();
+    if (this.estrellas) (this.estrellas.material as THREE.Material).dispose();
+    this.efectos?.malla.geometry.dispose();
+    if (this.efectos) (this.efectos.malla.material as THREE.Material).dispose();
+    this.sol?.shadow.map?.dispose();
     this.pistaObj = null;
     this.cielo = null;
     this.estrellas = null;
     this.cajas = [];
     this.cosas.clear();
     this.nubes.clear();
+    this.globos = [];
+    this.recogibles.clear();
     this.podioObj = null;
     this.enPodio = false;
     this.camLista = false;
@@ -200,6 +211,20 @@ export class Vista {
     for (const nombre of ['obj_semilla', 'obj_enredadera', 'obj_charco', 'obj_brasa', 'obj_lucero', 'obj_nube']) this.plantillas.set(nombre, await pieza(`m_${nombre}`));
   }
 
+  async cargarMinijuego(tipo: string) {
+    const g = await cargar('carreras/carreras_minijuegos.glb');
+    for (const n of ['moneda','aro','globo0','globo1','globo2']) {
+      const base = g.getObjectByName(`m_${n}`);
+      if (!base) throw new Error(`Falta ${n} de los minijuegos`);
+      const c = base.clone(true); c.position.set(0,0,0); this.plantillas.set(n,c);
+    }
+    if (tipo === 'globos') for (let i=0;i<this.karts.length;i++) {
+      const lista: THREE.Object3D[] = [];
+      for (let j=0;j<3;j++) { const o=this.plantillas.get(`globo${j}`)!.clone(true);this.escena.add(o);lista.push(o); }
+      this.globos.push(lista);
+    }
+  }
+
   /** Junta las mallas de la pista por material (y sin sombra propia: solo la reciben). */
   private juntar(g: THREE.Object3D): THREE.Object3D {
     g.updateMatrixWorld(true);
@@ -228,6 +253,7 @@ export class Vista {
       const todos = geos.every((x) => x.index);
       const listos = todos ? geos : geos.map((x) => (x.index ? x.toNonIndexed() : x));
       const una = listos.length > 1 ? mergeGeometries(listos, false) : listos[0];
+      for (const g of new Set([...geos,...listos])) if (g !== una) g.dispose();
       if (!una) continue;
       const mm = mat as THREE.MeshStandardMaterial;
       // (sin coordenadas de textura el relieve de felpa no sirve en la pista)
@@ -368,11 +394,28 @@ export class Vista {
       o.removeFromParent();
       this.cosas.delete(id);
     }
+    this.actualizarMinijuego(sim, sigue);
     this.efectos.actualizar(dt);
     if (!this.enPodio) this.mover(sim, dt, p);
     if (this.estrellas) this.estrellas.position.copy(this.camara.position);
     if (this.cielo) this.cielo.position.copy(this.camara.position);
     this.renderer.render(this.escena, this.camara);
+  }
+
+  private actualizarMinijuego(sim: Sim, mio: number) {
+    const mini=sim.mini;if(!mini)return;
+    this.globos.forEach((lista,i)=>lista.forEach((o,j)=>{
+      const k=sim.karts[i];o.visible=j<mini.globos[i];
+      o.position.set(k.x+(j-1)*.85,k.y+3.5+(j===1?.5:0)+Math.sin(this.reloj*3+i+j)*.1,k.z-.35);
+    }));
+    const vivos=new Set<number>();
+    for(const c of mini.recogibles){
+      vivos.add(c.id);let o=this.recogibles.get(c.id);
+      if(!o){o=this.plantillas.get(c.tipo==='aro'?'aro':'moneda')!.clone(true);this.escena.add(o);this.recogibles.set(c.id,o);}
+      o.visible=c.vuelve<=0&&(c.tipo!=='aro'||c.pasadas[mio]!==sim.karts[mio].vuelta);
+      o.position.set(c.x,c.y+Math.sin(this.reloj*2+c.id)*.1,c.z);o.rotation.y=c.tipo==='aro'?c.rumbo:this.reloj*2+c.id;
+    }
+    for(const [id,o] of this.recogibles)if(!vivos.has(id)){o.removeFromParent();this.recogibles.delete(id);}
   }
 
   private particulasDe(k: Kart, k3: Kart3D, dt: number) {

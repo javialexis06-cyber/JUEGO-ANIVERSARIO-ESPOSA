@@ -6,6 +6,7 @@
 // las cajas y los objetos; los carros de los demás llegan por la red (`control: 'remoto'`).
 import { CRIATURAS, pesosObjeto, VUELTAS, type Corredor, type IdObjeto, type Stats } from './datos';
 import { angulo, CAIDA, HIELO, LAVA, type Lugar, type Pista } from './pista';
+import { Minijuego, type OpcionesMinijuego } from './minijuegos';
 
 export const PASO = 1 / 60;
 const VMAX = 30;
@@ -128,7 +129,7 @@ export type Evento =
   | { t: 'objeto'; k: number; o: IdObjeto }
   | { t: 'usa'; k: number; o: IdObjeto }
   | { t: 'golpe'; k: number; por: number; como: TipoCosa | 'choque' }
-  | { t: 'turbo'; k: number; nivel: number }
+  | { t: 'turbo'; k: number; nivel: number; por?: 'derrape' }
   | { t: 'chispas'; k: number; nivel: number }
   | { t: 'rebufo'; k: number }
   | { t: 'salto'; k: number }
@@ -140,7 +141,9 @@ export type Evento =
   | { t: 'muro'; k: number; fuerza: number }
   | { t: 'caida'; k: number }
   | { t: 'lluvia'; k: number; mojados: number[] }
-  | { t: 'choque'; k: number; con: number };
+  | { t: 'choque'; k: number; con: number }
+  | { t: 'globo'; k: number; por: number; quedan: number }
+  | { t: 'recoge'; k: number; tipo: 'moneda' | 'aro' };
 
 /** Generador de azar con semilla (las partidas en línea usan la misma). */
 export function azar(semilla: number) {
@@ -164,6 +167,7 @@ export interface OpcionesSim {
   vueltas?: number;
   /** En línea, el invitado no mueve a la máquina ni las cosas (llegan del anfitrión). */
   autoridad?: boolean;
+  minijuego?: OpcionesMinijuego;
 }
 
 export class Sim {
@@ -181,6 +185,7 @@ export class Sim {
   private sigId = 1;
   private llegaron = 0;
   autoridad: boolean;
+  mini: Minijuego | null = null;
 
   constructor(public o: OpcionesSim) {
     this.pista = o.pista;
@@ -219,6 +224,7 @@ export class Sim {
         }
       }
     }
+    if (o.minijuego) this.mini = new Minijuego(this, o.minijuego, this.rnd);
     this.ordenar();
   }
 
@@ -227,6 +233,8 @@ export class Sim {
   }
 
   paso() {
+    if (this.mini && this.terminada) return;
+    const primerEvento = this.eventos.length;
     const dt = PASO;
     this.t += dt;
     for (const k of this.karts) {
@@ -254,12 +262,14 @@ export class Sim {
       this.cajasYCosas(dt);
     }
     if (this.t >= 0) this.rebufos(dt);
+    this.mini?.actualizar(this.eventos.slice(primerEvento), dt);
     this.ordenar();
   }
 
   // ------------------------------------------------------------------------------------------ física de un carro
 
   private mover(k: Kart, dt: number) {
+    if (this.mini?.eliminado(k)) return;
     const p = this.pista;
     const e = k.entrada;
     if (k.terminado && k.control !== 'ia') {
@@ -325,7 +335,7 @@ export class Sim {
         if (nivel && k.giroT <= 0) {
           k.turbo = Math.max(k.turbo, [0, 0.55, 1.0, 1.5][nivel]);
           k.turboNivel = nivel;
-          this.eventos.push({ t: 'turbo', k: k.i, nivel });
+          this.eventos.push({ t: 'turbo', k: k.i, nivel, por: 'derrape' });
         }
         k.derrape = 0;
         k.carga = 0;
@@ -342,7 +352,7 @@ export class Sim {
     // Mover
     k.x += Math.sin(k.m) * k.v * dt;
     k.z += Math.cos(k.m) * k.v * dt;
-    p.lugar(k.x, k.z, L.s, L);
+    p.lugar(k.x, k.z, this.mini?.esArena ? null : L.s, L);
     // Piso: camino + rampas
     let piso = L.y;
     const ii = p.idx(L.s);
@@ -412,7 +422,10 @@ export class Sim {
     const fl2 = p.flags[ii];
     const borde = p.hw[ii] + p.hombro[ii];
     const lat = L.lat;
-    if (fl2 & (CAIDA | LAVA)) {
+    if (this.mini?.esArena) {
+      this.mini.contener(k);
+      p.lugar(k.x, k.z, null, L);
+    } else if (fl2 & (CAIDA | LAVA)) {
       if (Math.abs(lat) > borde + 0.4 && k.cayendo <= 0) {
         k.cayendo = 1.5;
         k.suelo = false;
@@ -437,7 +450,7 @@ export class Sim {
       }
       p.lugar(k.x, k.z, L.s, L);
     }
-    this.contarVuelta(k);
+    if (!this.mini?.esArena) this.contarVuelta(k);
     // Usar objeto
     if (e.objeto && k.objeto && k.ruleta <= 0 && k.giroT <= 0 && this.t > 0) this.usar(k, e.atras, e.adelante);
     e.objeto = false;
@@ -478,7 +491,7 @@ export class Sim {
           this.eventos.push({ t: 'vuelta', k: k.i, vuelta: k.vuelta, tiempo: tv });
         } else this.eventos.push({ t: 'vuelta', k: k.i, vuelta: 1, tiempo: 0 });
         k.inicioVuelta = this.t;
-        if (k.vuelta > this.vueltasTotal && !k.terminado) this.llegar(k, this.t);
+        if (k.vuelta > this.vueltasTotal && !k.terminado && !this.mini) this.llegar(k, this.t);
       }
     } else if (antes < n * 0.25 && s > n * 0.75) {
       k.vuelta--;
@@ -512,6 +525,7 @@ export class Sim {
   // ------------------------------------------------------------------------------------------ puestos y rebufo
 
   ordenar() {
+    if (this.mini) { this.mini.ordenar(); return; }
     const ks = [...this.karts].sort((a, b) => {
       if (a.terminado && b.terminado) return a.tiempo - b.tiempo;
       if (a.terminado !== b.terminado) return a.terminado ? -1 : 1;
@@ -599,7 +613,7 @@ export class Sim {
         continue;
       }
       for (const k of this.karts) {
-        if (k.cayendo > 0) continue;
+        if (k.cayendo > 0 || this.mini?.eliminado(k)) continue;
         const d2 = (k.x - c.x) ** 2 + (k.z - c.z) ** 2;
         if (d2 < 2.6 * 2.6 && Math.abs(k.y + 0.8 - c.y) < 2.2) {
           c.vuelve = 2.5;
@@ -658,7 +672,7 @@ export class Sim {
 
   private moverProyectil(c: Cosa, dt: number) {
     const p = this.pista;
-    const L = p.lugar(c.x, c.z, c.s);
+    const L = p.lugar(c.x, c.z, this.mini?.esArena ? null : c.s);
     c.s = L.s;
     if (c.tipo === 'lucero') {
       const obj = this.karts[c.objetivo];
@@ -666,7 +680,7 @@ export class Sim {
         const dx = obj.x - c.x, dz = obj.z - c.z;
         const d = Math.hypot(dx, dz);
         let meta: number;
-        if (d < 14) meta = Math.atan2(dx, dz);
+        if (d < 14 || this.mini?.esArena) meta = Math.atan2(dx, dz);
         else {
           // Sigue la pista hacia adelante, acercándose al carril del objetivo
           const q = p.punto(L.s + 10, obj.lugar.lat * 0.8);
@@ -680,6 +694,7 @@ export class Sim {
     }
     c.x += Math.sin(c.h) * c.v * dt;
     c.z += Math.cos(c.h) * c.v * dt;
+    this.mini?.proyectil(c);
     c.y += (L.y + 0.7 - c.y) * Math.min(1, dt * 8);
     const borde = p.hw[L.i] + p.hombro[L.i] - 0.6;
     if (Math.abs(L.lat) > borde) {
@@ -785,7 +800,8 @@ export class Sim {
         else nueva('brasa', k.x + fx * 3.5, k.z + fz * 3.5, k.h, Math.max(44, k.v + 18), 5);
         break;
       case 'lucero': {
-        const delante = this.orden[k.puesto - 1];
+        const delante = this.mini?.esArena ? this.karts.filter(x => x !== k && !this.mini!.eliminado(x))
+          .sort((a,b) => Math.hypot(a.x-k.x,a.z-k.z)-Math.hypot(b.x-k.x,b.z-k.z))[0]?.i : this.orden[k.puesto - 1];
         nueva('lucero', k.x + fx * 3.5, k.z + fz * 3.5, k.h, Math.max(42, k.v + 16), 8, { objetivo: delante ?? -1 });
         break;
       }
@@ -817,6 +833,7 @@ export class Sim {
   }
 
   pilotar(k: Kart) {
+    if (this.mini?.esArena) { this.mini.pilotar(k); return; }
     const p = this.pista;
     const ia = k.ia ?? (k.ia = { carril: 0, fase: 0, habilidad: 0.95, esperaObjeto: 0, derrapando: 0, atascado: 0 });
     const e = k.entrada;
@@ -845,6 +862,8 @@ export class Sim {
         if (Math.abs(cl - carril) < 3) carril = cl + (cl > 0 ? -4 : 4);
       }
     }
+    const carrilReto = this.mini?.carril(k);
+    if (carrilReto !== null && carrilReto !== undefined) carril = carrilReto;
     const q = p.punto(s2, carril);
     const meta = Math.atan2(q.x - k.x, q.z - k.z);
     const dif = angulo(meta - k.h);
@@ -859,6 +878,7 @@ export class Sim {
       ia.derrapando = 0.9 + (k.ia!.habilidad - 0.9) * 18;
       e.derrape = true;
     } else e.derrape = false;
+    if (this.mini?.tipo === 'trucos' && !k.suelo && k.trucoListo) e.derrape = true;
     // Objetos
     e.objeto = false;
     e.atras = false;

@@ -15,6 +15,8 @@ export interface DatosPista {
   turbos: [number, number][];
   rampas: [number, number, number][];
   anillos?: number[];
+  /** Arenas: piso circular libre; los obstáculos se exportan junto con su modelo de Blender. */
+  arena?: { radio: number; obstaculos: { x: number; z: number; r: number; h: number }[] };
 }
 
 export interface Lugar {

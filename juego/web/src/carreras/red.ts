@@ -12,7 +12,7 @@ import { esperarEnSala } from '../salas/espera';
 import { caritaSvg } from '../salas/carita';
 import type { JugadorSala, Sala } from '../salas/tipos';
 import { avisoSuelto } from '../sueltos/comun';
-import { CRIATURAS, ORDEN_PISTAS, PISTAS, PUNTOS, CARROS, type Corredor, type IdCarro, type IdCriatura, type IdObjeto, type IdPista } from './datos';
+import { CRIATURAS, CIRCUITOS, COPAS, PISTAS, PUNTOS, CARROS, type Corredor, type Dificultad, type IdCarro, type IdCriatura, type IdObjeto, type IdPista } from './datos';
 import type { OpcionesCarrera, Resultado } from './main';
 import type { Control, Evento, Kart, Sim, TipoCosa } from './sim';
 import { escapar } from './hud';
@@ -32,7 +32,7 @@ interface Contexto {
   pantalla(html: string, clase?: string): HTMLElement;
   miCorredor(): Corredor;
   rivales(n: number, excluir?: Set<string>): Corredor[];
-  ajustes(): { dificultad: string };
+  ajustes(): { dificultad: Dificultad };
   garaje(luego: () => void): void;
   correr(o: OpcionesCarrera): Promise<Resultado>;
   resultados(r: Resultado, titulo: string, puntos?: Map<string, number>, ganados?: Map<string, number>, conPodio?: boolean): Promise<void>;
@@ -40,6 +40,7 @@ interface Contexto {
   portada(): void;
   vaciar(): void;
   arrancarGaraje(): void;
+  ganarCopa(copa: string, dificultad?: Dificultad): void;
 }
 
 interface Config {
@@ -49,6 +50,8 @@ interface Config {
   semilla: number;
   /** Corredores en orden de salida: id del jugador dueño (o null: la máquina). */
   lista: { j: string | null; c: Corredor }[];
+  copa?: string;
+  dificultad?: Dificultad;
 }
 
 const JUEGO = 'carreras';
@@ -111,6 +114,8 @@ export async function abrirEnLinea(ctx: Contexto) {
 
 let modoSala: 'suelta' | 'gp' = 'suelta';
 let pistaSala: IdPista = 'valle';
+let copaSala = 'clasica';
+const copaDe = (id?: string) => COPAS.find(c => c.id === id) ?? COPAS[0];
 
 async function lobby(ctx: Contexto, sala: Sala) {
   ctx.pantalla('', 'vacia');
@@ -118,17 +123,21 @@ async function lobby(ctx: Contexto, sala: Sala) {
   const mio = ctx.miCorredor();
   sala.ponerDatos({ criatura: mio.criatura, carro: mio.carro, color: mio.color, jugando: false });
   const e = esperarEnSala({
-    sala, titulo: 'La Carrera de las Tres Lunas', subtitulo: sala.soyAnfitrion ? (modoSala === 'gp' ? 'Gran Premio · 4 pistas' : `Carrera · ${PISTAS[pistaSala].nombre}`) : 'Carrera en línea',
+    sala, titulo: 'La Carrera de las Tres Lunas', subtitulo: sala.soyAnfitrion ? (modoSala === 'gp' ? copaDe(copaSala).nombre : `Carrera · ${PISTAS[pistaSala].nombre}`) : 'Carrera en línea',
     tema: 'burbujas', minimo: 1,
     retrato: (j) => `<span class="car-carita grande" style="--c:${corredorDe(j).color}">${caritaSvg(j.aspecto, 64, 'feliz')}</span>`,
     detalle: (j) => `${CRIATURAS[corredorDe(j).criatura].nombre}`,
     extras: sala.soyAnfitrion && modoSala === 'suelta' ? [{ id: 'pista', texto: '🗺️ Cambiar pista', alTocar: () => {
-      pistaSala = ORDEN_PISTAS[(ORDEN_PISTAS.indexOf(pistaSala) + 1) % ORDEN_PISTAS.length];
+      pistaSala = CIRCUITOS[(CIRCUITOS.indexOf(pistaSala) + 1) % CIRCUITOS.length];
       const sub = document.querySelector('.sala-espera .se-sub');
       if (sub) sub.textContent = `Carrera · ${PISTAS[pistaSala].nombre}`;
       avisoSuelto(`Pista: ${PISTAS[pistaSala].nombre}`, 1600);
+    } }] : sala.soyAnfitrion ? [{ id:'copa',texto:'🏆 Cambiar copa',alTocar:()=>{
+      copaSala=COPAS[(COPAS.findIndex(c=>c.id===copaSala)+1)%COPAS.length].id;
+      const sub=document.querySelector('.sala-espera .se-sub');if(sub)sub.textContent=copaDe(copaSala).nombre;
+      avisoSuelto(copaDe(copaSala).nombre,1600);
     } }] : [],
-    alEmpezar: () => armarConfig(ctx, sala, modoSala === 'gp' ? ORDEN_PISTAS[0] : pistaSala, 0),
+    alEmpezar: () => armarConfig(ctx, sala, modoSala === 'gp' ? copaDe(copaSala).pistas[0] : pistaSala, 0),
   });
   const r = await e.resultado;
   if (r.que !== 'empezar') {
@@ -139,18 +148,20 @@ async function lobby(ctx: Contexto, sala: Sala) {
   await partida(ctx, sala, r.datos as Config);
 }
 
-function armarConfig(ctx: Contexto, sala: Sala, pista: IdPista, n: number, puntos?: Map<string, number>): Config {
-  const humanos = sala.jugadores.map((j) => ({ j: j.id, c: corredorDe(j) }));
-  // Con amigos, la máquina es solo vecinos; si están Javier y Laura, la pareja no se repite
-  const excluir = new Set<string>(sala.jugadores.filter((j) => j.tipo !== 'amigo').map((j) => j.tipo));
-  if (sala.hayAmigos) {
-    excluir.add('el');
-    excluir.add('ella');
+function armarConfig(ctx: Contexto, sala: Sala, pista: IdPista, n: number, puntos?: Map<string, number>, anterior?: Config['lista']): Config {
+  let lista: Config['lista'];
+  if (anterior) {
+    // La copa conserva los mismos ocho inscritos y sus puntos. Si alguien sale, su corredor pasa a la máquina.
+    lista = anterior.map(x => ({ ...x, j: x.j && sala.jugadores.some(j => j.id === x.j) ? x.j : null }));
+  } else {
+    const humanos = sala.jugadores.map((j) => ({ j: j.id, c: corredorDe(j) }));
+    const excluir = new Set<string>(sala.jugadores.filter((j) => j.tipo !== 'amigo').map((j) => j.tipo));
+    if (sala.hayAmigos) { excluir.add('el'); excluir.add('ella'); }
+    const maquina = ctx.rivales(8 - humanos.length, excluir).map((c) => ({ j: null, c }));
+    lista = [...maquina, ...humanos];
   }
-  const maquina = ctx.rivales(8 - humanos.length, excluir).map((c) => ({ j: null, c }));
-  let lista = [...maquina, ...humanos];
   if (puntos) lista = lista.sort((a, b) => (puntos.get(a.c.id) ?? 0) - (puntos.get(b.c.id) ?? 0));
-  return { modo: modoSala, pista, n, semilla: (Math.random() * 1e9) | 0, lista };
+  return { modo: modoSala, pista, n, semilla: (Math.random() * 1e9) | 0, lista, copa:copaSala, dificultad:ctx.ajustes().dificultad };
 }
 
 async function partida(ctx: Contexto, sala: Sala, cfg: Config) {
@@ -177,18 +188,20 @@ async function partida(ctx: Contexto, sala: Sala, cfg: Config) {
       puntos.set(c.id, (puntos.get(c.id) ?? 0) + (PUNTOS[idx] ?? 0));
     });
     const gp = config.modo === 'gp';
-    const ultima = !gp || config.n >= ORDEN_PISTAS.length - 1;
+    const copa=copaDe(config.copa),pistas=copa.pistas;
+    const ultima = !gp || config.n >= pistas.length - 1;
     const porPuntos = gp ? { ...r, orden: [...r.orden].sort((a, b) => (puntos.get(r.corredores[b].id) ?? 0) - (puntos.get(r.corredores[a].id) ?? 0)) } : r;
-    await ctx.resultados(porPuntos, gp ? `Gran Premio · ${config.n + 1}/4` : PISTAS[config.pista].nombre, gp ? puntos : undefined, gp ? ganados : undefined, !gp);
+    await ctx.resultados(porPuntos, gp ? `${copa.nombre} · ${config.n + 1}/${pistas.length}` : PISTAS[config.pista].nombre, gp ? puntos : undefined, gp ? ganados : undefined, !gp);
     if (gp && ultima) {
-      const final = config.lista.map((x) => x.c).sort((a, b) => (puntos.get(b.id) ?? 0) - (puntos.get(a.id) ?? 0));
-      await ctx.podio(final, 'Campeones del Gran Premio');
+      const final = porPuntos.orden.map(i => r.corredores[i]);
+      if(final[0]?.id===config.lista[mio].c.id)ctx.ganarCopa(copa.id,config.dificultad);
+      await ctx.podio(final, `Campeones del Gran Premio · ${copa.nombre}`);
     }
     ctx.vaciar();
     if (ultima) break;
     // Siguiente pista del Gran Premio: la arma el anfitrión y se la manda a todos
     const sig = await new Promise<Config | null>((ok) => {
-      const p = ctx.pantalla(`<div class="car-panel car-fin"><h2>Siguiente: ${escapar(PISTAS[ORDEN_PISTAS[config.n + 1]].nombre)}</h2>
+      const p = ctx.pantalla(`<div class="car-panel car-fin"><h2>Siguiente: ${escapar(PISTAS[pistas[config.n + 1]].nombre)}</h2>
         ${sala.soyAnfitrion ? '<button class="car-boton grande" data-sig>¡Vamos!</button>' : '<p>Esperando al anfitrión…</p>'}
         <button class="car-boton suave" data-salir>Salir</button></div>`, 'fin');
       const quitar = sala.al('sig', (d) => {
@@ -196,7 +209,7 @@ async function partida(ctx: Contexto, sala: Sala, cfg: Config) {
         ok(d as Config);
       });
       p.querySelector('[data-sig]')?.addEventListener('click', () => {
-        const c = armarConfig(ctx, sala, ORDEN_PISTAS[config.n + 1], config.n + 1, puntos);
+        const c = armarConfig(ctx, sala, pistas[config.n + 1], config.n + 1, puntos, config.lista);
         sala.mandar('sig', c);
         quitar();
         ok(c);
