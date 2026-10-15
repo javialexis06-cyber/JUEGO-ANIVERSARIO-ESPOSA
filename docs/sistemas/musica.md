@@ -107,5 +107,5 @@ Para cambiar una pista, se cambia su entrada en `MUSICA_GRANJA` y se vuelve a co
   - Música compuesta: ≈ 12.700 créditos.
   - Lo descargado no costó nada.
   - No hizo falta subir de plan: las voces de la biblioteca se usan sin ocupar cupo.
-- El Show de Nosotros (rama `trabajo/show`): cortina de concurso cuando se junte.
-- Las escenas premium siguen en los cuartos de la casa; los escenarios grandes propios están en `en-obra/escenas-premium.md`.
+- El Show está integrado y tiene tema de concurso, suspenso y relámpago sintetizados en `src/mesa/show/sonidos.ts`. No falta música para que funcione.
+- Se conserva el audio de las escenas existentes. Las ampliaciones no realizadas de escenarios premium fueron descartadas; no generar contenido nuevo para ellas.

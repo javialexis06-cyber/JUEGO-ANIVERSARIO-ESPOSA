@@ -1,352 +1,53 @@
-# Pedidos de Javier en cola
+# Pedidos de Javier · estado vigente
 
-**Encargo actual (15 de octubre):** terminar el Show de Nosotros; después ampliar Desaparecidos de Astra como
-teléfonos con historiales largos, audios y anotaciones manuales, sin ayudas ni pistas automáticas; después ampliar
-Carreras con circuitos originales, competición contra la máquina y minijuegos. La granja y los demás juegos quedan
-en pausa por instrucción de Javier. Al terminar estos tres frentes, preguntarle con qué continuar.
+Actualizado el 15 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
+[historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
-**Show, cierre hecho:** pausa manual y salida compartidas, respuestas protegidas contra toques repetidos y cierre
-con episodio/premio confirmados y reintento sin pagos duplicados. Repetidos tres episodios locales y uno en red
-simulada con pérdidas y fallos de escritura, once grupos del motor y controles táctiles de la interfaz.
-Ocho planos y siete ambientes inspeccionados; pasan ambas compilaciones, motores, 48 suites y seis comprobaciones
-de integración. Android físico y redes reales siguen sin certificarse; no cambian reglas ni premios.
+## Encargo activo
 
-**Desaparecidos, investigación manual hecha:** 6.111 mensajes entre los ocho teléfonos, historiales de tres años,
-chats archivados y búsqueda, fechas, citas, reacciones y vida cotidiana. 96 notas de voz nuevas (152 en total).
-La libreta solo conserva lo que escriba quien juega; se retiraron las pistas automáticas, contadores, tutorial y
-ayudas de desbloqueo. Se mantienen casos, claves, soluciones y partidas anteriores. Los ocho casos pasan de inicio
-a cierre por controles normales, con notas y recarga; las respuestas de las pruebas se leen de los datos.
-**Carreras, ampliación hecha:** 16 circuitos originales en cuatro copas, tres arenas y cuatro desafíos contra
-siete bots (globos, monedas, anillos y trucos). La carrera suelta y las copas en línea admiten los circuitos nuevos;
-la copa conserva los ocho inscritos, puntos y ganador del podio. Marcas por dificultad/duración y partidas antiguas
-conservadas. El motor completa 96 carreras y 38 desafíos; el navegador completa las tres copas nuevas y ocho
-desafíos en amigos, cuatro desafíos en pareja y una copa de cuatro carreras con dos jugadores. También pasan
-mando manual de arena, pausa, guardado fallido recuperado, recarga y retornos; valores clásicos sin cambios.
-Los desafíos nuevos siguen siendo locales contra la máquina; no se presenta paridad total con Mario Kart.
+1. Limpiar referencias obsoletas y mantener documentación, instrucciones y repositorio coherentes.
+2. Completar la comprobación de todos los juegos existentes, incluida la casa, sin desarrollar la granja.
+3. Corregir los fallos funcionales encontrados y repetir los recorridos afectados.
+4. Actualizar resultados y publicar los avances en `work` y `claude/supermarket-mania-minigame-xn2it8`.
 
-Los tres avances solicitados están terminados en código y verificados en navegador. Preguntarle a Javier con qué
-continuar; la granja y los demás juegos siguen en pausa. La APK nueva requiere reactivar GitHub Actions en la
-cuenta: los instaladores anteriores no contienen estos cambios.
+Antes de cambiar dificultad, balance, costes, precios o recompensas, presentar una propuesta concreta y esperar
+la aprobación de Javier. Las correcciones funcionales y las pruebas continúan sin pedir autorización de nuevo.
+La cobertura se registra en [verificación general](en-obra/verificacion-general-2026-10-15.md) y
+[auditoría de motores](en-obra/auditoria-motores.md). No confundir una prueba preparada con una campaña ordinaria
+ni una comprobación de navegador con una prueba en teléfonos físicos.
 
-**Encargo de motor y verificación (13 de octubre):** completar lo que falte del motor de cada juego y probar partidas de inicio a fin. Javier aprueba previamente cualquier cambio de dificultad, balance, costes, precios o recompensas. El seguimiento por juego, alcance real de las pruebas y límites pendientes está en [auditoría de motores](en-obra/auditoria-motores.md). Esta revisión no declara terminadas las campañas por usar ganchos de prueba o partidas preparadas.
+## Pausado y descartado
 
-**Avance de esta revisión:** corregidos los globos de Cien Puertas y verificados los cien acertijos con progreso
-conservado al recargar. Corregida la confirmación de días y compras de Cocina, con reintento y premios únicos;
-probados dos días desde cero en cada receta y una mejora pagada, con fallos de almacenamiento y recarga en día 3.
-Al integrar los cuatro juegos nuevos de Astra, la barra del Cuarto de Juegos tiene desplazamiento para dejar libre
-la puerta de la granja. Sus campañas continúan en la cola de verificación del motor.
-Escudo ya conserva pendiente el guardado fallido y el recibo P23, y permite reintentar antes de avanzar o salir.
-Verificados sus seis niveles desde cero en pareja y amigos, pausa y recarga por nivel, y la batalla directa de P23
-con recibo fallido recuperado. Las cifras de dificultad y recompensas se mantienen.
-Desaparecidos de Astra conserva el caso cerrado y las pistas cuando falla el guardado; un reinicio fallido no borra
-el caso anterior. Los ocho casos se resolvieron desde cero en amigos (24 estrellas), con candados normales, todas
-las pistas importantes y recarga por caso. Primer caso y retorno a casa comprobados en la compilación completa.
-Carreras ya deja tocar pausa y recupera correctamente los tiempos aún no logrados; una vuelta previa no bloquea el
-primer contrarreloj. Récord, fantasma y copa ganada se conservan tras fallos de escritura y recarga. Completados
-carrera, contrarreloj y Gran Premio de cuatro pistas desde cero, sin modificar dificultad, puntos ni premios.
-Torneo completó su arcade de seis rivales desde cero con Tarek, a los niveles originales, hasta campeón y retorno
-al menú. Se verificaron pausa y dieciocho combates del motor con réplica por entradas serializadas, sin cambiar
-vida, daño, golpes ni dificultad. Controles físicos, otros modos y red continúan en la auditoría.
-Retrete conserva vuelos y compras pendientes ante fallos de escritura, y guarda vuelo y monedas de la casa
-juntos, con reintento sin doble pago. Verificados dos vuelos desde cero en amigos, compra pagada, pausa,
-fallos recuperados, recarga y retorno; el adaptador de la casa local se comprueba con acceso preparado y vuelos
-normales. Doce regresiones cubren persistencia y el tope diario original. Continúan descubrimiento, ciclos
-avanzados, controles físicos y recuperación ante cierre forzado.
-La auditoría permanece abierta para los recorridos, dispositivos y modos que todavía faltan.
+- **Granja pausada:** no desarrollar ni modificar sus sistemas, historia, arte o balance. Las regresiones existentes
+  y la comprobación de integración casa–granja pueden ejecutarse para detectar daños indirectos.
+- **Descartadas las escenas premium no realizadas:** no construir la ampliación de escenarios propios ni la
+  tienda prevista. Conservar las escenas programadas, sus IDs y las compras que ya existan.
+- **Descartado el contenido futuro del sótano:** no crear la nueva zona, el juego de terror ni otros juegos
+  propuestos para ella. Desaparecidos de Astra y el sótano del tablero de Clue ya existen y se conservan.
+- No retomar propuestas antiguas, nuevos modos o expansiones por aparecer en documentos históricos.
 
-**Fluidez de Lavado con amigos (15 de octubre):** corregidos el salto directo del invitado en la pantalla del
-anfitrión y la marcha irregular entre fotos. Ambos lados usan una trayectoria visual separada del combate,
-con orden de mandos, predicción acotada, frenada y recuperación de cortes. El personaje propio conserva el
-movimiento directo. Doce grupos de regresión cubren red variable, pérdidas, estados y límites; detalles y
-cobertura de navegador en [movimiento en línea](en-obra/lavado-movimiento-en-linea.md). Pasan siete
-comprobaciones con dos amigos y modelos 3D y 36 con cuatro jugadores, incluidos cortes, rescate y retorno.
-Son escenarios preparados con red simulada; falta comprobarlo en teléfonos y redes reales.
+## Avances terminados antes de este encargo
 
-**Prueba solicitada de Lavado y Sangre (14 de octubre):** [informe de combate](en-obra/pruebas-combate-lavado-sangre.md).
-Corregida una reutilización prematura de enemigos de Lavado que duplicaba impactos. Repetidas 58 partidas:
-25 victorias en los cuatro mapas normales, cuatro en series con mejoras pagadas desde cero; siguen muriendo
-enemigos después del minuto 22. La Muerte cae con un equipo final preparado, pero la Cortina de terciopelo
-está bloqueada porque sus aretes aparecen en mapas distintos. **Aprobado y hecho:** ambos aretes aparecen en los cuatro mapas normales, conservando desbloqueo, guardianes,
-ranuras y recetas. Catorce recorridos adicionales verifican evolución conseguida y Muerte derrotada en los cuatro,
-incluida Ducha buscando los aretes desde el minuto 10. La tienda y disponibilidad de secretos son preparadas;
-los desbloqueos y compras completos desde progreso cero siguen pendientes. Cuatro regresiones nuevas cubren
-cada mapa y cuatro recorridos visuales preparados comprueban los ocho hallazgos en amigos sin errores.
-Las [builds exactas y rangos de tienda](en-obra/builds-lavado-minuto30.md) de las cuatro victorias de referencia
-se repitieron y registran también cartas y patitos ganados.
-Sangre aplica el ajuste aprobado por Javier: 1,5 s máximos de aturdimiento continuo y 1 s de resistencia.
-Astral cobra el 10 % de vida máxima (5 % con Sangre fría), Brújula el 70 % e Imán el 15 %; Paso sigue gratis.
-21 expediciones completas y dos Infinito hasta derrota por extracción perdida; en la etapa 15 los personajes
-fuertes sí recibieron golpes al permanecer quietos diez minutos. Botones, controles y flujo de grupo revisados
-en Chromium; trece regresiones nuevas de costes/control, reciclaje y aretes. No se añadió Berserk ni se cerró la
-verificación de todos los biomas, combinaciones o teléfonos.
+- **Show:** cierre y premio recuperables, protección de respuestas y pausa compartida; música sintetizada propia.
+- **Desaparecidos:** ocho casos, 6.111 mensajes, 96 audios nuevos (152 en total), historiales, búsqueda y apuntes
+  manuales sin pistas automáticas. Se conservan claves, soluciones y partidas anteriores.
+- **Carreras:** 16 circuitos originales, cuatro copas, tres arenas y cuatro desafíos contra bots; las copas se
+  comparten en salas. Los desafíos nuevos siguen siendo locales; añadir multijugador sería una ampliación.
+- **Lavado:** corrección de enemigos reutilizados, ambos aretes en los cuatro mapas normales y movimiento remoto
+  suavizado; [builds de referencia](en-obra/builds-lavado-minuto30.md) registradas.
+- **Sangre:** límite aprobado de 1,5 s de aturdimiento y 1 s de resistencia; sigilos por porcentaje de vida.
+  Berserk no se añadió; es una idea que requiere propuesta y aprobación, no una corrección pendiente autorizada.
+- Existen recorridos y pruebas de mesa, Cocina, Escudo, Torneo, Retrete y Cien Puertas; se amplían en la revisión
+  general donde falten modos, persistencia, campañas y conexiones. Los resultados concretos están en la auditoría.
 
-## Frente de granja en paralelo
+## Bloqueos externos y comprobaciones físicas
 
-**Arreglos de la granja (12 de octubre, lo siguiente que se hace):** Javier mandó una lista larga (rendimiento, menú de
-3 rayitas, mochila tipo Minecraft, mapas reales con marcadores, caminos, lagos, mina, semillas, historia que te lleve a
-los lugares físicos). ChatGPT se quedó sin uso: Claude hace todo. El plan por tandas, con lo ya encontrado en el código
-(archivos y líneas), está en [`en-obra/granja-arreglos.md`](en-obra/granja-arreglos.md). Las tandas 1 (rendimiento y
-calidad alta en PC), 2 (menú, Escape, E, mostradores y barra) 3 (mochila estilo Minecraft y habilidades
-simples) 4 (minimapa y mapa grande con fotos de verdad y marcas) y 5 (salidas anchas, caminos, pueblo, postes guía, mina
-cuadrada, semillas y estanques por casillas) quedaron **hechas**. La tanda 6 quedó **hecha** (12 de octubre): Gremio de Aventureros y
-Museo del Valle, terreno en la carpintería, vecinos por partes, inicio guiado, campaña por cartas y vecinos, y Campaña y
-Astra unificadas. **Siguiente**: el prólogo en película (`docs/sistemas/cine-granja.md`) espera que Javier lo vea; si le
-gusta, se hacen las demás escenas grandes con el mismo estilo. Las voces del prólogo quedaron **hechas** (celestial «suave») y se queda con su música
-de antes (M12 y M13).
+- GitHub devuelve `Actions has been disabled for this user` al intentar generar la APK. Hace falta reactivar
+  Actions en la cuenta; no anunciar instaladores anteriores como si incluyeran cambios nuevos.
+- Los archivos siguen pidiendo aplicar/confirmar `supabase/cambios-pendientes.sql` en el servicio real. No se da
+  por aplicado porque las pruebas locales de SQL pasen.
+- FPS, batería, memoria, sensores y red entre teléfonos necesitan dispositivos físicos. Las simulaciones se
+  identifican como tales y no certifican estos puntos.
 
-**La película de Astra (12 de octubre, plan aprobado):** todas las escenas animadas unidas como una sola película
-(prólogo, 14 cinemáticas, 5 de Sangre y Ceniza, 6 secundarias, el Altar del Lazo y **la boda** «Siempre te elegiré» en
-Eterna, Sopetrán, oficiada por Lara y sin votos), más **presentaciones de cada lugar** (6 llegadas y 33 postales) y la
-planeación de cuatro minijuegos futuros. Plan completo en [`en-obra/pelicula-de-astra.md`](en-obra/pelicula-de-astra.md)
-(escenas plano a plano, modelos de Blender y fases A-H). Los **arreglos de coherencia quedaron hechos**. **Hecho** (13 de octubre): todas
-las voces de la película, la música de la boda y **las 28 películas animadas de punta a punta** (prólogo, Actos I-V,
-Sangre y Ceniza, las seis secundarias, el Altar del Lazo y la boda en Eterna con créditos). Después: postales de los
-biomas en Sangre, la voz del Conde en su pelea, fotos en los créditos, la cría de unicornio y la ropa propia de Fuatia,
-Nath'Gora y Vael'Thor. También la copa del Conde en SC0. Y la **fase H, hecha el 14 de octubre**: los cuatro minijuegos en el Cuarto de Juegos y en la Sala de Juegos de
-amigos: «El Torneo del Despertar Dorado» (`docs/sistemas/peleas.md`), «La Carrera de las Tres Lunas»
-(`carreras.md`), «Desaparecidos de Astra» (`celular.md`, 8 casos) y «El Escudo de las Hermanas» (`escudo.md`, también
-la batalla de P23 de la historia). **Siguiente**: que Javier los pruebe en el celular (balance, rendimiento y en línea
-con aparatos de verdad).
-
-**Sala de cine y fluidez (14 de octubre, hecho):** `cine.html` (Ajustes de la granja → «Sala de cine») con las 28
-películas, «la película completa» seguida y descarga en video (WebM 1080p con sonido y subtítulos). Las películas y el
-juego de la granja corren a 60 en computador con resolución automática (`docs/sistemas/cine-granja.md`). **Espera a Javier**: GitHub
-Actions quedó desactivado en su cuenta («Actions has been disabled for this user»): sin eso no salen APK nuevas.
-
-
-**Prioridad actual, 11 de octubre:** Javier encargó una base narrativa profunda para conectar granja y
-Sangre y Ceniza. Entrega local en [narrativa/README.md](narrativa/README.md): cosmología y cronología,
-142 biografías y arcos personales, cinco figuras divinas, 24 misiones principales, doce secretos,
-19 encuentros comunitarios, 98 relaciones y guiones de audio. Es diseño escrito, no campaña ya ejecutable.
-Los pushes siguen pausados por su instrucción mientras Claude trabaja. No retomar publicación automática
-por las instrucciones anteriores de esta cola; los cuadernos K07 también permanecen locales.
-
-Javier pidió integrar la granja existente, subir cada avance probado y repartir el trabajo: el frente de granja continúa motor, sistemas e historia; Claude hace gráficos, diseño de personajes y presentación visual. Leer [`en-obra/granja-coordinacion.md`](en-obra/granja-coordinacion.md). El motor sigue en desarrollo; cuatro festivales básicos ya conectados (ver `juego/web/src/granja-v3/FESTIVALES-INTEGRACION.md`); ofertas diarias/semanales y tres especiales de dos etapas ya integrados (ver `juego/web/src/granja-v3/ENCARGOS-INTEGRACION.md`); dos proyectos de correspondencia con cuatro ramas excluyentes, recetas útiles y decisiones persistentes ya integrados (ver `juego/web/src/granja-v3/CORREO-INTEGRACION.md`); seis lotes del archivo con donaciones, premios únicos y reserva de semillas durante todo el año ya integrados (ver `juego/web/src/granja-v3/COLECCIONES-INTEGRACION.md`); tres cuadernos recuperables con lectura persistente, prospección y recetas rápidas ya integrados (ver `juego/web/src/granja-v3/LIBROS-INTEGRACION.md`); siguiente bloque previsto: identificación y uso de hallazgos mineros (F11). Esto no reemplaza el orden de los demás pedidos de esta cola.
-
-**Gráficos de la granja (Claude, regla «todo en Blender»):** ya están en Blender los muebles de todos los interiores, la decoración de los cuatro festivales, el Pueblo del Sol entero (14 edificios, 2 altares, fuente, bancos, faroles, jardineras, vallas, árboles, molino, corral), el monte de todas las zonas, los arcos y letreros de las salidas, lo que se ve más allá de cada arco, lo hecho por mano en la cueva de la mina y el cuerpo de las máquinas de producción. Falta (en este orden; obras, refugios, invernadero por dentro, nodos de la mina, caja de envíos, cuencos, herramientas en la mano, monstruos de las aventuras e íconos 3D ya están; **hecho** el 13 de octubre). Además, también en Blender: los refugios por fuera (con la carita de cada animal), las cercas, el portón, la puerta del corral, el comedero, la pérgola, el patio de los refugios, nidos, incubadora, trufas, el letrero de ampliación y el guardián del bosque antiguo. y las piezas que giran en las máquinas. Lo único que sigue con figuras: las baldosas pintadas de los caminos (son texturas). Detalle en `en-obra/granja-coordinacion.md`.
-
-**Astra (11 de octubre, pedido de Javier):** ya son pueblos de verdad, cuatro veces más grandes.
-- Cada uno tiene calle con faroles, plaza empedrada con monumento, puestos de oficio con letrero, huertas, pozo y su hito
-  al norte (faro, árbol ancestral, mina, termas, estanque helado, atalaya, rosaleda, pilar de hilos, cristal sellado o
-  nave).
-- Casas y paisaje propios de cada región, todo hecho en Blender.
-- 154 habitantes con ropa propia que caminan por la calle.
-- 36 vecinos nuevos con trasfondo.
-- 42 encargos con recompensa, 6 de ellos entre pueblos.
-
-Falta:
-- Los arreglos de [`en-obra/granja-arreglos.md`](en-obra/granja-arreglos.md) (voces y música de la granja ya están).
-
-Lo que Javier pidió y todavía falta, en el orden en que se va a hacer. Se tacha (se borra) cuando queda hecho,
-probado y subido.
-
-## Por dónde seguir (nota para el próximo Claude)
-
-Último trabajo subido: **Lavarse la cara 2, fase 2** (seis tesoros del baño con flecha verde; los seis modos del
-original: Hiper, Del otro lado del espejo, Agua caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar; y
-Don Jabón, el vendedor ambulante, con el Monedero) y **La Ducha** (fase 3a: el cuarto escenario, con 8 bichos y 4
-jefes nuevos y los chorros que caen del techo) y **La Jabonera** (fase 3b: el pasillo de arriba abajo de la repisa con
-los frascos que se caen) y **El Desagüe** (fase 3c: el escenario final con sus remolinos) y los dos primeros
-especiales (3d: **El Desfile de jefes** y **El Espejo empañado**) y **La Matera de la ventana** (3e) y **El Tobogán del
-desagüe** (3f), **El Laberinto de la cortina** (3g) y **La Feria de las cremas** (3h, con la ruleta del Ruletero:
-con ella quedan todos los escenarios de la propuesta). Javier pidió (12 de octubre) pasar ahora a los
-arreglos de la granja que venía haciendo el otro frente (`en-obra/granja-arreglos.md`: tandas 1 a 5 **hechas**; la 6
-espera que Javier diga si la hace este frente o el del motor) y después seguir con lo que falta del lavado. La fase 4
-ya está completa (4a y 4b: ocho disfraces con transformación y cajitas sorpresa; 4c: las cartas de la noche; 4d: las
-aventuras de la protagonista por capítulos); con la Radio y los bichos especiales, **Lavarse la cara 2 queda completo**. Antes, **la fase 1 completa** (las 24 armas del juego base y 5 de
-los DLC con sus evoluciones, 7 pasivas, 9 recogibles, los 4 arcanos que faltaban, 4 poderes en la tienda y 40 logros
-nuevos). Antes, **los arreglos de Sangre y Ceniza que Javier encontró jugando** (9 de octubre: sigilos, visión
-astral en pulso, el Guardián de una, sin pantallazo negro y los menús rehechos) y **la app de amigos con los seis
-juegos**. Antes, **Sangre y Ceniza 2, fase 5**, con la que **Sangre y Ceniza 2 queda completo**:
-equipo común a épico con rarezas especiales, la Forja con tres mostradores, el familiar (siete compañeros con modelo),
-el refugio con tres minijuegos y las medallas en relieve como íconos de las mejoras. Antes, la **fase 4**: 26 reliquias que se abren con hitos, los
-Desafíos (contratos del día y de la semana para comparar entre los dos, pruebas de maestría, anómalas), 17 mutadores
-nuevos, las misiones La Procesión (el Relicario) y La Cría (la Madre de Piedra), los objetivos Exorcismo y Cosecha de
-sangre, dos secundarios nuevos y el infinito que crece (con la bajada guardada). Antes, la **fase 3**: el mapa de la Noche (cuatro sectores con sus
-Puertas, tres metas por lugar y cinco escenas cortas con Javier y Laura como el Lazo Primordial), Sangre y Ceniza en
-la Sala de Trofeos, evoluciones para todas las armas, 14 uniones, 13 armas comunes nuevas con sus modelos y las
-especializaciones que abren armas. Antes, la **fase 2** (8 de octubre): los seis minerales del mito y el Pozo que los
-pide (con el mercader), el cofre de suministros, dos reglas propias por bioma y seis sobrecargas por arma (templadas y
-malditas con etiquetas especiales), la potencia y la regla de las dos armas. Antes, la **fase 1**: etapas que se ganan peleando con la barra de
-avance, el Guardián, la Noche se impacienta, 5 etapas con sepulcros y custodios en la final, ratas del tesoro y
-ladrón de tumbas, mini-élites, precios que suben y tres secundarios nuevos; la dificultad ahora crece etapa por etapa
-(ver `docs/sistemas/sangre-y-ceniza.md`). Antes: el estudio de las dos wikis y la **mitología de Astra** que Javier
-trajo de la granja ([`docs/mitologia.md`](mitologia.md)). Javier respondió lo de Sangre y Ceniza 2: **se hace
-primero**, con 5 etapas, escenas cortas con la mitología (Él y Ella de protagonistas) y todo lo de armas. Orden:
-
-1. ~~**Sangre y Ceniza 2**~~ **hecho** (las cinco fases de la sección 4 de `docs/en-obra/sangre-propuesta.md`; la 5:
-   equipo con rarezas, la Forja con tres mostradores, el familiar, el refugio y las medallas). Quedaron para después,
-   anotados en la propuesta: el aceite de lámpara y los sellos de la Procesión, los espejos del castillo y el piso en
-   llamas de la abadía.
-2. ~~**Sangre y Ceniza: lo que Javier encontró jugando**~~ **hecho** (9 de octubre): sin pantallazo negro, el
-   Guardián de una, visión astral en pulso, imán con el nivel, lo minado vuela solo, bombas que rompen vetas, ocho
-   sigilos, pantallas que no saltan, globito de ayuda propio, y los menús rehechos (logo en relieve con brasas, Cinzel,
-   medallas de logros/desafíos/sigilos, ilustraciones del Pozo y del refugio, juegos del refugio con sprites). Ver
-   `docs/sistemas/sangre-y-ceniza.md`. Lo que pidió:
-   - pantallazo negro de 1-2 s al subir de nivel (con las mejoras del piso no pasa);
-   - el Guardián debe salir apenas se cumple la misión principal (o a los pocos segundos);
-   - visión astral como pulso de 1-2 s que cuesta 10 de vida y sube por etapa (pedido inicial;
-     Javier lo cambió el 14 de octubre a 10 % de vida máxima);
-   - textos que se ponen gigantes al pasar el ratón; reliquias del final y el premio de la misión gigantes;
-   - el rango de recoger crece con el nivel; lo que se mina con bombas y demás llega solo al inventario; las bombas
-     rompen paredes con y sin minerales;
-   - al escoger equipo del Pozo la pantalla vuelve al principio (y todos los errores de ese tipo);
-   - **sigilos**: minimapa que se descubre al pasar (con el croquis de todo el mapa), brújula de sangre (70 % de la
-     vida por señalar el objetivo más cercano) y más ideas;
-   - mejores gráficos de lo simple: refugio, logros, Pozo, íconos de desafíos y una pantalla de inicio mucho más
-     trabajada (puede ser animada).
-3. ~~**Lavarse la cara 2**~~ **hecho** (12 de octubre: las fases 1 a 4, la Radio y los bichos especiales;
-   `docs/en-obra/lavado-propuesta.md`). Javier respondió las 5 preguntas el 9 de octubre (están anotadas en la
-   propuesta). Fue por partes:
-   - ~~1a: 14 armas del original con 15 evoluciones, 7 pasivas (anillos y aretes escondidos en los escenarios) y 18
-     logros que las abren~~ **hecho** (ver `docs/sistemas/nuestro-hogar.md`, «Versión 2, fase 1a»).
-   - ~~1b: las especiales y las de rebote~~ **hecho** (cortina de baño y de terciopelo, neceser y su regalo de lujo,
-     bolsillo de la bata, pececitos y la pecera infinita, confeti, hueso, bomba de baño, barquito, talco y bolitas de
-     gel, con 10 logros).
-   - ~~1c: recogibles nuevos, los 4 arcanos que faltan, Omni/Encanto/Desarmar/Conservar en la tienda y sus logros~~
-     **hecho** (9 recogibles con la fiebre de gotas y el patito dorado que se guarda, 4 arcanos, 4 poderes y 7 logros).
-   - ~~1d: una selección de armas de los DLC que encaje con el aseo~~ **hecho** (brisa, sales de las cuatro
-     estaciones, bata de seda, gotas de colores y culebrita destapacaños, con sus evoluciones y 5 logros).
-   - ~~2a: tesoros y modos~~ **hecho** (seis tesoros con flecha verde; modos Hiper, Del otro lado del espejo, Agua
-     caliente sin fin, Sin límite, Ruleta de sorpresas y Nivel al azar; el mapa en la pausa; 4 logros).
-   - ~~2b: el vendedor ambulante y el Monedero~~ **hecho** (Don Jabón con su carrito: armas de rebote, patitos
-     dorados, el Monedero y, del otro lado del espejo, tiradas, saltos, vetos y una carta).
-   - 2c: las cajitas sorpresa (los ataúdes del original: un anillo de mugrosos que hay que vencer para abrir la caja de
-     un disfraz nuevo); van con los disfraces de la fase 4, así que se hacen ahí.
-   - ~~3a: La Ducha~~ **hecho** (baldosas mojadas, 8 bichos y 4 jefes en Blender, los chorros que caen del techo).
-   - ~~3b: La Jabonera~~ **hecho** (el pasillo de arriba abajo de la repisa, 7 bichos y 4 jefes, los frascos que se
-     caen).
-   - ~~3c: El Desagüe~~ **hecho** (el escenario final: rejillas oscuras, 7 bichos y 4 jefes, los remolinos que se
-     tragan la mugre y las gotitas).
-   - ~~3d: El Desfile de jefes y El Espejo empañado~~ **hecho** (los dos primeros especiales de 15 minutos: 23 jefes
-     uno tras otro sobre el tapete; el vapor que tapa la vista y lo caliente que pega más).
-   - ~~3e: La Matera de la ventana~~ **hecho** (las maticas que no caminan pero muerden, tres jefes y la lluvia de
-     todo al final).
-   - ~~3f: El Tobogán del desagüe~~ **hecho** (la carrera: la corriente lleva a todos, turbos en el piso y banderas
-     que recogen lo que quedó atrás).
-   - ~~3g: El Laberinto de la cortina~~ **hecho** (cortinas que frenan, bichos grandotes, quesitos de jabón y el Rey
-     Ratón).
-   - ~~3h: la Feria de las cremas~~ **hecho** (la feria encerrada en vallas que se abre con la ruleta del Ruletero:
-     plaza, calle de los puestos y carpa; 5 bichos y 3 jefes nuevos).
-   - Fase 4:
-     - ~~4a y 4b: disfraces con transformación y cajitas sorpresa~~ **hecho** (8 disfraces nuevos: 4 de rebote que
-       se transforman al nivel 80 con su llavecita escondida y 4 que salen de las cajitas sorpresa).
-     - ~~4c: las cartas de la noche y la Mascarilla de noche~~ **hecho** (6 cartas que se abren con la Mascarilla de
-       noche, tirada en La Bañera).
-     - ~~4d: las aventuras de la protagonista~~ **hecho** (13 capítulos en tres aventuras: el carro andando, el bus a
-       Barranquilla sin el detalle y los vuelos cancelados; sola o en pareja, con historia antes y después).
-     - ~~La Radio (escoger la música)~~ **hecho** (tesoro en La Ducha; 23 canciones del lavado y de los otros juegos).
-     - ~~Los bichos especiales~~ **hecho** (el ratón ladrón con su cofre, el Tapón que persigue y la Llave que gotea, que
-       inunda el piso).
-4. ~~**Amigos: mesa, retrete y cocina en la app de amigos**~~ **hecho**: la app de amigos ya trae los seis juegos.
-5. ~~**El Show de Nosotros**~~ **hecho** (13 de octubre): juntado a la rama principal y probado (solo, los dos en un
-   celular y en línea); en la sala con código y en la app de amigos no sale. Diseño en `docs/sistemas/show.md`.
-6. **Cien Puertas con mucho más diseño** (punto 4 de «Ahora»): es para lo último.
-
-Esperan a Javier (no se empiezan solos): lo que sigue abierto de la mitología (sección 2 de `docs/mitologia.md`), las
-las ideas del sótano, la
-pegar `supabase/cambios-pendientes.sql`, y si quiere el repositorio privado.
-Si cuenta anécdotas nuevas: van primero a las cartas de amor de Lavarse la cara y a las cartas del súper (hoy
-inventadas), mirando «Quién cuenta qué» en `docs/la-pareja.md`.
-
-## Ahora
-
-Javier: «por ahora vamos a concentrarnos en crear el tipo Clue, terminar de pulir los juegos que ya tenemos y dejar
-pulido el repositorio».
-
-1. ~~**Clue clásico en la mesa**~~ **hecho**: «¿Quién fue?» (`mesa.html?juego=clue`, diseño en `docs/sistemas/clue.md`).
-   Queda pendiente solo lo que Javier pida al probarlo. Idea de Laura para guardar: que su boda tenga «un crimen por
-   mesa que deban solucionar».
-2. **Pulir lo que ya hay** (ver «Sangre y Ceniza» y «Ronda 2» abajo). Lo que Javier recalcó:
-   - ~~Lavarse la cara: íconos y panel de lo que se tiene~~ **hecho** (los íconos salían vacíos en la APK; la pausa
-     tiene «Mochila» y «Evoluciones», ver `docs/sistemas/nuestro-hogar.md`).
-   - ~~Sangre y Ceniza: mapas mucho más detallados en calidad alta~~ **hecho** (pisos con textura nítida, roca de
-     cada bioma en las paredes, detalle regado y aire de cada bioma; baja y media quedan como estaban; ver
-     `docs/sistemas/sangre-y-ceniza.md`, «Tres calidades»).
-   - ~~Súper Manía, volver a algo más parecido al original~~ **hecho** (tanda única): sin estantes de dos caras y la
-     mitad de cada tipo, el mismo local crece en 4 tamaños sin perder nada (días 1-100), dificultad del original
-     (carrito de 5, meta y meta experta), 12 cartas en ciertos días, mejoras solo desbloqueadas y el súper en la app
-     de amigos. Ver `docs/sistemas/mecanicas.md` (punto 9). Las cartas del súper se pueden cambiar por anécdotas
-     reales si Javier quiere contar más del mercado en Sopetrán (`src/recuerdos_super.ts`).
-   - ~~Que nada romántico se repita entre juegos~~ **hecho**: los 20 recuerdos son solo de Cien Puertas; la bañera
-     cuenta discusiones bobas del chat (16), la cama además los sueños (10), las cartas de Lavarse la cara son cartas
-     de amor sin historia y tres aventuras de «la protagonista», y se cambiaron los mimos, frases, escenas y cartas que
-     repetían algo de otro juego. La tabla «Quién cuenta qué» de `docs/la-pareja.md` dice a quién le toca cada cosa.
-     Si Javier cuenta más anécdotas, van primero a las cartas de Lavarse la cara y a las del súper (hoy inventadas).
-3. **Repositorio pulido** en GitHub: sin cosas obsoletas, README y CLAUDE.md al día (se hizo una primera limpieza; se
-   sigue cuidando en cada cambio).
-4. **Cien Puertas con mucho más amor y diseño** (para lo último, después de Sangre y Ceniza y lo urgente). Javier:
-   «las puertas están muy simples, ya sabes cómo me gustan las cosas». Ya funcionan todas (revisión completa y prueba
-   en pareja en verde, `docs/sistemas/cien-puertas.md`); falta subirles el detalle: cuartos llenos, objetos con más
-   piezas, materiales y adornos, nada vacío y nada que tape lo importante.
-
-## Sótano de la casa nueva (zona con varios juegos)
-
-Javier tenía una lista de juegos para un sótano (zona nueva de la casa). Lo único que quedó escrito es el juego de
-terror y el de crímenes (abajo, en «Después»): **falta que Javier pase las demás ideas** para documentarlas aquí.
-
-## Sangre y Ceniza: correcciones y mejoras (pedido de Javier tras probarlo)
-
-~~**Versión 2**~~ **hecha** en cinco fases (8 y 9 de octubre; cómo quedó en `docs/sistemas/sangre-y-ceniza.md`): misiones que llenen la etapa (se ganan matando al
-Guardián, la Noche se impacienta), más tipos de misión, dificultad y precios que suben, seis minerales para el Pozo,
-mapa de la Noche con historia y retos por bioma y clase, maestrías, contratos, infinito con mapa que crece y refugio
-con minijuegos, y (sección L) seis sobrecargas por arma con etiquetas especiales, evolución para todas las armas y
-uniones, 13 armas comunes nuevas, reliquias por hitos y el familiar que acompaña:
-[`docs/en-obra/sangre-propuesta.md`](en-obra/sangre-propuesta.md) (preguntas al final). Los íconos más elaborados de
-las mejoras quedaron como medallas en relieve (fase 5).
-
-Textual: «Mejorar calidad de mapa; mejorar movilidad, se siente tosca, los ojos se cansan o se abruman por la
-velocidad, se siente raro…»
-- **Calidad**: mapas, enemigos, personajes «y todo lo demás»; «los sprites están muy básicos, falta mucho trabajo de
-  texturas».
-- **Dos niveles de calidad**: la de hoy como «baja» (celulares menos potentes) y una «alta» con mapas mucho más
-  detallados para el S24 Ultra y el computador.
-
-## Ronda 2 de arreglos
-
-**Lavarse la cara (Vampire Survivors)**
-- ~~Chorro más translúcido, ataque a mano o solito, tutorial, íconos y panel de combinaciones~~ **hechos** (ver
-  `docs/sistemas/nuestro-hogar.md`).
-- ~~Logros y recompensas por avanzar con cada personaje/disfraz~~ **hecho**: maestría de 10 niveles por disfraz con
-  gotas, bonos propios y marcos de plata y oro (ver `docs/sistemas/nuestro-hogar.md`).
-- Seguir mejorando el minijuego con lo mejor de otros juegos del género, **sin chocar con Sangre y Ceniza** (que se
-  queda con lo oscuro, las cuevas excavables, las expediciones por etapas y las clases serias). **Propuesta entregada**
-  (falta pulirla con Javier): [`docs/en-obra/lavado-propuesta.md`](en-obra/lavado-propuesta.md), con las 24 armas del
-  juego base que faltan, 7 pasivas, cartas, recogibles, poderes, escenarios, modos, tesoros, mercader, cajitas
-  sorpresa, disfraces con transformación y logros.
-
-## Amigos: lo que sigue
-
-- ~~La mesa, el retrete y la cocina en la app de amigos~~ **hecho**: la «Sala de Juegos» ya trae los seis juegos
-  (Sangre y Ceniza, Lavarse la cara, Súper Manía, los juegos de mesa, el retrete espacial y la cocina de chef), con lo
-  de la pareja sacado a archivos aparte y su versión neutra (ver `docs/sistemas/salas.md`, «Versión para amigos»).
-- **El repositorio es público**: los enlaces de «Invitar amigos» llevan el nombre del repositorio y cualquiera puede
-  leer los documentos de la pareja. Opciones para Javier: volverlo privado y publicar las APK en otro repositorio
-  público solo de descargas, o dejarlo así.
-
-## Después
-- Sótano tétrico con contraseña y juego de terror estilo *No, I'm Not a Human* (estudio del género, historia
-  profunda).
-- Juego de resolver crímenes: 10 casos revisando el celular de la víctima (apps parecidas a las reales, personas
-  ficticias). Ojo: a Laura se le ocurrió que su boda tenga un juego así («un crimen por mesa que deban solucionar»).
-
-## Lo acumulado (en orden)
-
-- **La casa y la mitología** (cuando exista la granja): el Altar del Lazo Primordial, el Álbum y las reliquias del
-  multiverso para decorar, con lo que se gana en Sangre y Ceniza y en la granja (`docs/mitologia.md`, sección 5).
-
-- ~~**El Show de Nosotros**~~ **hecho** (13 de octubre): juntado a la rama principal (`mesa.html?juego=show`), con sus
-  dos pruebas en verde y el estudio revisado en capturas. Diseño en `docs/sistemas/show.md`. Falta su música.
-- Tele compartida, tocador de Laura, escenas premium (en pausa) y diseños premium.
-- ~~Música de todos los minijuegos y efectos de las escenas~~ **hecho** (11 de octubre): 60 pistas (81 min) con
-  Eleven Music, 5 canciones con letra (casa, Cien Puertas, súper, cohete, cocina), metal sin letra en Sangre y Ceniza
-  y Lavarse la cara, y 43 efectos de verdad para las escenas premium y la mesa (`docs/sistemas/musica.md`). Falta la
-  granja (cuando esté más avanzada) y el Show cuando se junte.
-- ~~Voces con IA~~ **hecho** (11 de octubre): 1.727 frases de Él y Ella con su voz y su emoción en Cien Puertas, la
-  casa, la mesa, el cohete, la cocina, las cartas del súper y Sangre y Ceniza (`docs/sistemas/voces.md`). Falta
-  sumar las frases sueltas que todavía no están en el guion (ver «Pendiente» allá).
-
-
-### Motor de granja · pastoreo libre (13 de octubre de 2026)
-
-**Hecho en el motor:** control desde el comedero, paseo por el terreno propio, rutas con cercas y portones, regreso, posición guardada y trufas del terreno; presupuesto de búsqueda distribuido. Se conservan los avances visuales de Claude. Contrato y alcance: `juego/web/src/granja-v3/PASTOREO-INTEGRACION.md`. Bebida, gestación y las ampliaciones pendientes de compañía continúan en el plan; esta tanda no termina todo el motor.
+El contenido descartado no debe reaparecer como tarea. Cuando termine la comprobación autorizada, informar
+qué pasó, qué se corrigió y qué límites externos o físicos permanecen.

@@ -1,5 +1,7 @@
 # CLAUDE.md · Nuestro Hogar (juego de aniversario)
 
+> **Instrucción vigente (15 de octubre de 2026):** completar la comprobación y corrección de los juegos existentes y limpiar notas antiguas. **Granja pausada.** Se descartan escenas premium no realizadas y contenido futuro del sótano; conservar escenas ya programadas y partidas. `docs/pedidos.md` prevalece sobre las prioridades históricas siguientes.
+>
 > **Frente de granja compartido (10 de octubre de 2026):** Javier pidió integrar la granja y subir cada avance. Su motor, sistemas, historia y misiones continúan en el frente de granja; Claude se encarga de sus gráficos, personajes y presentación visual. Antes de tocarla, leer [`docs/en-obra/granja-coordinacion.md`](docs/en-obra/granja-coordinacion.md). Fuente única: `juego/web/src/granja-v3/`; no crear otro motor ni borrar progreso.
 >
 > **Arreglos de la granja en curso (12 de octubre de 2026):** Claude lleva ahora todo el frente de granja (motor
@@ -197,8 +199,8 @@ npm run dev                    # http://localhost:5173 (casa), /super.html, /pue
 
 ## 9. Estado
 
-Lo hecho está descrito en `docs/sistemas/`; lo que falta, en orden, en **`docs/pedidos.md`** (arriba de todo,
-«Por dónde seguir», dice cuál es el siguiente y qué espera a Javier). El Show de Nosotros ya está juntado (la rama
+Lo hecho está descrito en `docs/sistemas/`; el encargo y los límites vigentes están en **`docs/pedidos.md`**.
+La cola anterior se conserva como historia en `docs/archivo/pedidos-hasta-2026-10-15.md` y no se retoma. El Show de Nosotros ya está juntado (la rama
 `trabajo/show` quedó vieja: no se retoma).
 
 **Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase.

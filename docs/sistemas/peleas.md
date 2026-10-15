@@ -196,10 +196,7 @@ Ya está hecho en esta rama: `peleas.html` en el `input` de `vite.config.ts`, en
 
 ## Pendiente o por mejorar
 
-- **Ojo (no es de este juego):** en la base de esta rama `npm run build:amigos` falla porque
-  `src/sangre/ui/postal.ts` importa `src/granja-v3/cine-lineas-lugares.ts`, que no está en `PERMITIDOS_AMIGOS`. Con ese
-  archivo permitido (prueba local, sin subir) la versión de amigos compila y `verificar-amigos` sale limpia con el
-  torneo adentro. Lo arregla quien junte (el frente de Sangre o de la granja).
+- La compilación de amigos ya pasa con el sustituto neutral de `cine-lineas-lugares.ts`; el bloqueo de la rama antigua está resuelto.
 
 - Las poses de pelea se arman sobre el esqueleto en el juego (el muñeco no trae poses de pelea propias en Blender).
 - En línea el invitado ve la pelea con el retraso de la red (no hay predicción de su propio muñeco).

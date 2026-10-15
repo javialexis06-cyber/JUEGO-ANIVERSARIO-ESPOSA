@@ -1,4 +1,6 @@
-# Escenas premium
+# Escenas premium existentes
+
+Estado del 15 de octubre de 2026: se conserva el catálogo ya programado. **Las ampliaciones no realizadas fueron descartadas por Javier.** No construir escenarios nuevos ni la tienda propuesta; conservar IDs y compras anteriores.
 
 Pequeñas películas de los dos que se compran con monedas en la tienda de la casa (pestaña «Escenas») y se
 lanzan en los juegos de mesa con el botón 🎭. Se ven a pantalla completa: 32 en los cuartos de la casa y 18 en
@@ -21,12 +23,12 @@ línea, la escena sale en los dos celulares al mismo tiempo; la IA espera a que 
 fanfarria…) son de verdad, hechos con ElevenLabs (`docs/sistemas/musica.md`). Javier decidió: solo efectos, sin
 voces en los globitos y sin videos con IA.
 
-## En pausa (siguiente paso cuando se retomen)
+## Ampliaciones descartadas
 
-- **Escenarios propios**: en vez de los cuartos pequeños de la casa (donde parece que dan vueltas en un
-  espacio diminuto), cada escena tendrá su escenario: espacios grandes y blancos, amplios para correr,
-  con solo lo necesario de utilería.
-- Pestaña «Escenas» en la tienda de la casa para comprarlas (con vista previa).
+- Escenarios propios adicionales para reemplazar los cuartos existentes.
+- La pestaña nueva de compra con vista previa prevista en la tienda.
+
+No son tareas pendientes. Las escenas ya definidas en `src/escenas/catalogo.ts` se conservan.
 
 ## Catálogo
 

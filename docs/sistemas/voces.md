@@ -97,7 +97,7 @@ node scripts/granja-v3/voces-astra.mjs             # genera lo que falte
 
 - Frases que todavía no están en el guion (suenan escritas): lo que dicen en las coreografías de la casa (la
   nalgada, el cohete al despegar, «¡Soy todo un chef!»…), los textos sueltos del cohete (granizo, récord, patico) y
-  las escenas premium. Se agregan sumándolas a `PARTES` y corriendo los tres pasos.
+  otras reacciones ya existentes. Las escenas premium conservan la decisión de efectos sin voces en los globitos; no ampliar las escenas descartadas. Las frases que se autoricen se agregan a `PARTES` y se generan con los tres pasos.
 
 ## Las voces del cine de la granja (las diosas, celestiales)
 

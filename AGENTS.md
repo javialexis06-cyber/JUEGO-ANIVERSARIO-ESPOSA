@@ -1,6 +1,8 @@
 # Trabajo en este repositorio
 
-Leer `CLAUDE.md` y, para la granja, `docs/en-obra/granja-coordinacion.md`. El usuario pidió que el motor, sistemas e historia continúen en el frente de granja y los gráficos, personajes y presentación en el frente visual. No crear otro motor ni perder partidas.
+Encargo vigente del 15 de octubre: limpiar documentación antigua y completar comprobaciones/correcciones de todos los juegos existentes. La granja está pausada: no modificar sus sistemas ni contenido. Se descartan las ampliaciones no realizadas de escenas premium y el contenido futuro del sótano; conservar lo implementado y los guardados. Las regresiones e integración existentes de granja se pueden ejecutar. Detalle en `docs/pedidos.md`.
+
+Leer `CLAUDE.md` y, si se vuelve a autorizar trabajo en la granja, `docs/en-obra/granja-coordinacion.md`. El usuario pidió que el motor, sistemas e historia continúen en el frente de granja y los gráficos, personajes y presentación en el frente visual. No crear otro motor ni perder partidas.
 
 Fuente activa: `juego/web/src/granja-v3/`. `src/granja-v2/biblioteca.ts` es solo el cargador visual. Guardado V5 y claves existentes. Conservar IDs, economía, genomas, huellas/puertas, calendario al dormir y cuidados reales. Usar las acciones del motor para cambios económicos.
 

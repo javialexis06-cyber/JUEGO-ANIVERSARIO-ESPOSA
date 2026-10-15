@@ -7,7 +7,7 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`pedidos.md`](pedidos.md) | **La cola de Javier**, en orden. Lo primero que se lee. |
 | [`la-pareja.md`](la-pareja.md) | Apodos, gustos, anécdotas y cómo se hablan (para cualquier texto romántico o chistoso). |
 | [`mitologia.md`](mitologia.md) | La mitología de Astra (de la granja): une la casa, la granja y Sangre y Ceniza. Lo decidido, lo abierto y el resumen para la otra IA. |
-| [`narrativa/README.md`](narrativa/README.md) | Biblia ampliada por encargo de Javier: mundo, 142 NPC, relaciones, campaña, secundarios, secretos y guiones de producción. Diseño escrito, todavía sin integración al motor o audio. |
+| [`narrativa/README.md`](narrativa/README.md) | Biblia ampliada por encargo de Javier: mundo, 142 NPC, relaciones, campaña, secundarios, secretos y guiones de producción. Fuentes narrativas; la integración y los límites actuales se consultan en los contratos de granja-v3. Granja pausada. |
 
 ## `sistemas/` · lo que ya funciona (consultar solo si se toca esa parte)
 
@@ -19,6 +19,8 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | [`show.md`](sistemas/show.md) | El Show de Nosotros, el libro, la pregunta diaria y la recuperación de respuestas. |
 | [`cien-puertas.md`](sistemas/cien-puertas.md) | Cien Puertas: las 100 puertas, el desorden, nada tapa lo importante, la revisión automática y el modo pareja. Tiene **la historia y los recuerdos de verdad**. |
 | [`clue.md`](sistemas/clue.md) | «¿Quién fue?», el Clue de la casona: reglas para dos, IA, cuaderno y el tablero renderizado en Blender. |
+| [`carreras.md`](sistemas/carreras.md) | 16 circuitos, copas, desafíos, guardado y salas. |
+| [`celular.md`](sistemas/celular.md) | Ocho teléfonos de Astra, historiales, audios y apuntes manuales. |
 | [`granja.md`](sistemas/granja.md) | La granja integrada: acceso desde la casa, motor y guardado, documentación de sistemas y límites actuales. |
 | [`cine-granja.md`](sistemas/cine-granja.md) | Las películas de la historia de la granja (el prólogo con Celia, Aura y Lara): motor, actores, escenarios, voces celestiales y música. |
 | [`peleas.md`](sistemas/peleas.md) | El Torneo del Despertar Dorado: peleas 1 contra 1 con los muñecos (arcade, contra la máquina, de a dos, en línea), escenarios de Blender y voces. |
@@ -33,11 +35,12 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 | Archivo | Estado |
 |---|---|
 | [`auditoria-motores.md`](en-obra/auditoria-motores.md) | Encargo vigente: motores y partidas completas por juego, pruebas verificadas, límites pendientes y aprobación previa de balance. |
-| [`pelicula-de-astra.md`](en-obra/pelicula-de-astra.md) | **Propuesta** de la película de Astra: las 28 escenas animadas en orden, la boda, Sangre y Ceniza y los minijuegos futuros. |
-| [`granja-coordinacion.md`](en-obra/granja-coordinacion.md) | Reparto pedido por Javier: motor/historia en el frente de granja; gráficos, personajes y presentación a cargo de Claude; avances probados y subidos. |
-| [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor (misiones, minerales, mapa de la Noche y, en L, armas, sobrecargas, reliquias y el familiar), para pulirla con Javier. |
-| [`lavado-propuesta.md`](en-obra/lavado-propuesta.md) | Lavarse la cara 2: lo que le falta frente a Vampire Survivors (24 armas, cartas, modos, tesoros, mercader, escenarios, disfraces), para pulirla con Javier. |
-| [`escenas-premium.md`](en-obra/escenas-premium.md) | Escenas pagas: en pausa. |
+| [`verificacion-general-2026-10-15.md`](en-obra/verificacion-general-2026-10-15.md) | Comprobación vigente de todos los juegos fuera de granja; fallos, correcciones y evidencia. |
+| [`pelicula-de-astra.md`](en-obra/pelicula-de-astra.md) | Plan histórico de una producción integrada; no autoriza nuevas tareas ni desarrollo de granja. |
+| [`granja-coordinacion.md`](en-obra/granja-coordinacion.md) | Historial del reparto de granja; el desarrollo está pausado por instrucción vigente. |
+| [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor (misiones, minerales, mapa de la Noche y, en L, armas, sobrecargas, reliquias y el familiar); su contenido ya está integrado. Se conserva como referencia histórica. |
+| [`lavado-propuesta.md`](en-obra/lavado-propuesta.md) | Lavarse la cara 2: propuesta histórica integrada, con referencia a Vampire Survivors (24 armas, cartas, modos, tesoros, mercader, escenarios, disfraces); su contenido ya está integrado. Se conserva como referencia histórica. |
+| [`escenas-premium.md`](en-obra/escenas-premium.md) | Catálogo existente conservado. Ampliaciones no realizadas descartadas. |
 
 El Show de Nosotros: [`sistemas/show.md`](sistemas/show.md) (en la mesa, `mesa.html?juego=show`).
 

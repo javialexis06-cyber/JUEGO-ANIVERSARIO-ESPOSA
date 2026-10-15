@@ -225,6 +225,6 @@ pareja). La música usa pistas que la app de amigos ya trae (súper, lavado, ret
 
 ## Pendiente o por mejorar
 
-- Una tarjeta propia para la sala de amigos (arte SVG de la carrera) y un ícono propio en el cuarto de juegos.
+- La sala de amigos ya tiene arte propio (`ARTE_CARRERAS`). El ícono del cuarto usa una bandera; sustituirlo por arte específico sería una mejora visual futura.
 - Los cuatro desafíos nuevos tienen competición local contra la máquina; su sincronización multijugador queda pendiente.
 - Pruebas de rendimiento, controles físicos y conexiones entre teléfonos Android.
