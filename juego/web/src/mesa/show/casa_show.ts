@@ -5,11 +5,17 @@
 import { normalizarShow, type ShowCasa, showVacio } from '../../casa/show_casa';
 import type { Rol } from './preguntas';
 import { SUPABASE_URL } from '../../casa/servidor';
+import { aplicarCierreShow, cierreValido, type CierreShow } from './cierre';
 
 const CLAVE_MODO = 'nuestro-hogar-modo';
 const CLAVE_LOCAL = 'nuestro-hogar-local';
 const CLAVE_SUELTO = 'show-libro-suelto';
 const PREFIJO_PENDIENTE = 'show-ronda-pendiente:';
+export const PREFIJO_CIERRE = 'show-cierre-pendiente:';
+const emisorCierres = crypto.randomUUID();
+let numeroCierre = 0;
+let cierresEnCurso: Promise<Map<string, ResultadoCasa>> | null = null;
+const cierresCreados = new Map<string, CierreShow>();
 type RespuestasShow = Pick<ShowCasa, 'r' | 'g' | 'c'>;
 type ResultadoCasa = DatosCasa & { guardado: boolean };
 
@@ -29,6 +35,57 @@ function destinoActual(): string {
     const config = JSON.parse(localStorage.getItem('nuestro-hogar-supabase') ?? 'null');
     return JSON.stringify(['linea', config?.url ?? SUPABASE_URL, sesion?.parejaId ?? null]);
   } catch { return 'linea-sin-sesion'; }
+}
+
+export function crearCierreShow(d: Omit<CierreShow, 'emisor' | 'n' | 'destino'>): CierreShow {
+  const clave = PREFIJO_CIERRE + d.id + ':' + d.rol;
+  const anterior = cierresCreados.get(clave);
+  if (anterior?.destino === destinoActual()) return anterior;
+  try {
+    const guardado = JSON.parse(localStorage.getItem(clave) ?? 'null');
+    if (cierreValido(guardado) && guardado.destino === destinoActual()) { cierresCreados.set(clave, guardado); return guardado; }
+  } catch { /* Se crea un recibo nuevo si todavía no había uno válido. */ }
+  const c = { ...d, emisor: emisorCierres, n: ++numeroCierre, destino: destinoActual() };
+  cierresCreados.set(clave, c);
+  return c;
+}
+
+async function reenviarCierres() {
+  if (cierresEnCurso) return cierresEnCurso;
+  cierresEnCurso = (async () => {
+    const resultados = new Map<string, ResultadoCasa>();
+    const pendientes: { clave: string; json: string; cierre: CierreShow }[] = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const clave = localStorage.key(i);
+        if (!clave?.startsWith(PREFIJO_CIERRE)) continue;
+        const json = localStorage.getItem(clave);
+        if (!json) continue;
+        try {
+          const cierre = JSON.parse(json), destino = destinoActual();
+          if (cierreValido(cierre) && (cierre.destino === destino || cierre.destino === 'suelto' && destino !== 'suelto')) pendientes.push({ clave, json, cierre });
+        } catch { /* Una entrada dañada no bloquea los demás cierres. */ }
+      }
+    } catch { return resultados; }
+    pendientes.sort((a, b) => a.cierre.emisor.localeCompare(b.cierre.emisor) || a.cierre.n - b.cierre.n);
+    for (const p of pendientes) {
+      let pagado = false;
+      const d = await casaShowDirecta((s, casa) => { pagado = aplicarCierreShow(s, casa, p.cierre, p.cierre.destino !== destinoActual()); });
+      if (!d.guardado) break;
+      resultados.set(p.clave, d);
+      if (pagado) try { if (localStorage.getItem(p.clave) === p.json) localStorage.removeItem(p.clave); } catch { /* El recibo de la casa evita repetir el premio. */ }
+    }
+    return resultados;
+  })().finally(() => { cierresEnCurso = null; });
+  return cierresEnCurso;
+}
+
+export async function guardarCierreShow(c: CierreShow): Promise<boolean> {
+  if (!cierreValido(c) || c.destino !== destinoActual() && c.destino !== 'suelto') return false;
+  const clave = PREFIJO_CIERRE + c.id + ':' + c.rol;
+  try { localStorage.setItem(clave, JSON.stringify(c)); } catch { return false; }
+  const guardados = await reenviarCierres();
+  return guardados.has(clave);
 }
 
 /** Solo respuestas idempotentes: nunca se repiten monedas ni premios al recuperar una ronda. */
@@ -85,7 +142,7 @@ export interface DatosCasa {
   fuente: 'local' | 'linea' | 'suelto';
 }
 
-type Casa = Record<string, any> & { show?: ShowCasa };
+type Casa = Record<string, any> & { show?: ShowCasa; monedas?: number };
 
 /** La conexión con la casa en línea se abre una vez por visita a la mesa (no en cada guardado). */
 let conexion: Promise<Awaited<ReturnType<typeof import('../../casa/sincro').conexionPareja>>> | null = null;
@@ -123,6 +180,7 @@ function suelto(): ShowCasa {
  */
 export async function casaShow(cambio?: (s: ShowCasa, c: Casa) => void): Promise<DatosCasa & { guardado: boolean }> {
   await reenviarPendientes();
+  await reenviarCierres();
   return casaShowDirecta(cambio);
 }
 

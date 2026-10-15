@@ -8,6 +8,24 @@ pusieron en el patio; si todavía no lo adoptan, se llama Pelusa), con corbatín
 
 ## Cómo se juega
 
+**Cierre y pausa (15 de octubre):** el botón ⏸ detiene las preguntas; la confirmación de salida también pausa el
+reloj y avisa al otro celular. Los toques repetidos no cambian una respuesta ya enviada, y las respuestas escritas y
+calificaciones esperan a reanudar. Destruir la pantalla resuelve las esperas del traspaso de teléfono.
+
+El resultado confirma respuestas, episodio y premio antes de permitir salir, abrir el libro o repetir. Si falla,
+muestra «Reintentar». Un recibo local conserva el cierre pendiente; la casa aplica monedas, victoria y recibo en la
+misma escritura, con deduplicación tras cortes o recargas. El libro suelto conserva el episodio y reserva el premio
+hasta abrir una casa; ese traslado no copia respuestas a otra casa. Los importes, puntos y criterios de victoria
+son los anteriores. No se puede recuperar una escritura que el aparato rechace y luego se cierre forzosamente.
+
+Verificado de nuevo con tres episodios completos (Ella sola, Él solo y los dos aquí) y uno entre dos contextos de
+navegador, con pérdida de mensajes del 8 % y dos fallos de guardado. Se comprobaron pausa manual, segundo plano y
+confirmación de salida compartidas, marcadores iguales, un episodio y dos premios únicos; pregunta diaria y libro.
+`scripts/probar-show-motor.mjs` cubre once grupos, incluidos 180 planes; `scripts/probar-show-interfaz.mjs` comprueba
+toques en horizontal, relojes, escritura, calificación, cierre y recuperación real del premio en una casa local.
+`scripts/probar-show.mjs` renderiza además ocho planos y siete ambientes del estudio (escenarios preparados).
+Las capturas no certifican FPS ni controles o redes de Android físico.
+
 1. **La cabina** (al tocar la tarjeta en la mesa): la marquesina, sus números (shows jugados, mejor conexión, lo
    que hay en el sobre), la **pregunta del día** (también se contesta aquí) y **el libro de nosotros**.
    «¡Que empiece el show!» sigue con el modo escogido en la mesa.

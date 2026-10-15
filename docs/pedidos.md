@@ -1,5 +1,16 @@
 # Pedidos de Javier en cola
 
+**Encargo actual (15 de octubre):** terminar el Show de Nosotros; después ampliar Desaparecidos de Astra como
+teléfonos con historiales largos, audios y anotaciones manuales, sin ayudas ni pistas automáticas; después ampliar
+Carreras con circuitos originales, competición contra la máquina y minijuegos. La granja y los demás juegos quedan
+en pausa por instrucción de Javier. Al terminar estos tres frentes, preguntarle con qué continuar.
+
+**Show, cierre hecho:** pausa manual y salida compartidas, respuestas protegidas contra toques repetidos y cierre
+con episodio/premio confirmados y reintento sin pagos duplicados. Repetidos tres episodios locales y uno en red
+simulada con pérdidas y fallos de escritura, once grupos del motor y controles táctiles de la interfaz.
+Ocho planos y siete ambientes inspeccionados; pasan ambas compilaciones, motores, 48 suites y seis comprobaciones
+de integración. Android físico y redes reales siguen sin certificarse; no cambian reglas ni premios.
+
 **Encargo de motor y verificación (13 de octubre):** completar lo que falte del motor de cada juego y probar partidas de inicio a fin. Javier aprueba previamente cualquier cambio de dificultad, balance, costes, precios o recompensas. El seguimiento por juego, alcance real de las pruebas y límites pendientes está en [auditoría de motores](en-obra/auditoria-motores.md). Esta revisión no declara terminadas las campañas por usar ganchos de prueba o partidas preparadas.
 
 **Avance de esta revisión:** corregidos los globos de Cien Puertas y verificados los cien acertijos con progreso

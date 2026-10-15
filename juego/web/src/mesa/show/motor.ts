@@ -47,7 +47,7 @@ export const RONDAS: InfoRonda[] = [
   { tipo: 'conoce', n: 4, titulo: '¿Cuánto me conoces?', sub: 'Uno contesta sobre sí mismo, el otro adivina. ¡Sin mirar!', seg: 24, color: '#9CCBEF' },
   { tipo: 'termo', n: 4, titulo: 'El termómetro', sub: 'Del 1 al 10. Entre más cerca, más puntos.', seg: 18, color: '#F29B38' },
   { tipo: 'historia', n: 4, titulo: 'Nuestra historia', sub: '¿Quién se acuerda mejor de lo que han vivido juntos?', seg: 20, color: '#B48CE0' },
-  { tipo: 'zapato', n: 10, titulo: 'Final relámpago', sub: '¡Diez preguntas en treinta segundos y puntos dobles!', seg: 30, color: '#E4574B' },
+  { tipo: 'zapato', n: 10, titulo: 'Final relámpago', sub: '¡Diez preguntas en treinta segundos! Cada coincidencia suma puntos.', seg: 30, color: '#E4574B' },
 ];
 export const infoRonda = (t: TipoPregunta) => RONDAS.find((r) => r.tipo === t)!;
 /** Segundos para una abierta (hay que escribir). */

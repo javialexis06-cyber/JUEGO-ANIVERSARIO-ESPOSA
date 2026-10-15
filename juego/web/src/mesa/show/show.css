@@ -631,6 +631,9 @@ body.con-show .show-panel:not([hidden]) ~ .show-pregunta { display: none; }
 .show-final-nivel b { color: var(--ella); }
 .show-final-sobre { margin: 0; padding: 4px 12px; border-radius: 10px; background: rgba(139, 123, 216, 0.3); font: 600 12.5px/1.3 var(--texto); }
 .show-final-premio { margin: 0; padding: 4px 12px; border-radius: 999px; background: var(--oro); color: var(--tinta); font: 700 13px/1.3 var(--display); }
+.show-final-guardado { display: flex; align-items: center; justify-content: center; gap: 6px; font: 600 11px/1.2 var(--texto); }
+.show-final-guardado .show-btn { padding: 5px 9px; font-size: 12px; }
+.show-final-carta { max-height: 100%; overflow-y: auto; box-sizing: border-box; }
 .show-final-botones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
 
 .show-carga { position: absolute; inset: 0; z-index: 20; display: grid; place-content: center; justify-items: center; gap: 10px; background: radial-gradient(circle at 50% 40%, #3b1865, var(--noche) 70%); transition: opacity 0.6s; }

@@ -14,8 +14,12 @@ try {
     stdin: { contents: `
       export { Show } from './src/mesa/show/show.ts';
       export { casaShow as casaReal, guardarRespuestasShow } from './src/mesa/show/casa_show.ts';
+      export { crearCierreShow, guardarCierreShow } from './src/mesa/show/casa_show.ts';
+      export { aplicarCierreShow, cierreValido } from './src/mesa/show/cierre.ts';
       export { asegurarDia, estadoDia } from './src/casa/pregunta_dia.ts';
       export { candidatasDelDia } from './src/mesa/show/motor.ts';
+      export { armarPlan, calificar, conexion } from './src/mesa/show/motor.ts';
+      export { BANCO, pregunta } from './src/mesa/show/preguntas';
       export { showVacio, normalizarShow, estadoDiaLigero, fechaHoy } from './src/casa/show_casa.ts';
     `, resolveDir: web },
     outfile: join(dir, 'motor.mjs'), bundle: true, packages: 'external',
@@ -29,13 +33,14 @@ try {
           for (const campo of ['r', 'g', 'c']) for (const rol of ['el', 'ella']) Object.assign(s[campo][rol], cambios[campo][rol]);
         });
         export const contarVictoria = () => {}; export const marcarVistas = () => {};
+        export const crearCierreShow = x => x; export const guardarCierreShow = async () => true;
         export const pagar = () => {}; export const vistas = () => [];
         export const musica = () => {}; export const SFX = {}; export const UI = class {};
         export const abrirLibro = () => {};
       `, loader: 'js' }));
     } }],
   });
-  const { Show, casaReal, guardarRespuestasShow, asegurarDia, estadoDia, candidatasDelDia, showVacio, normalizarShow, estadoDiaLigero, fechaHoy } =
+  const { Show, casaReal, guardarRespuestasShow, crearCierreShow, guardarCierreShow, aplicarCierreShow, cierreValido, asegurarDia, estadoDia, candidatasDelDia, armarPlan, calificar, conexion, BANCO, pregunta, showVacio, normalizarShow, estadoDiaLigero, fechaHoy } =
     await import(pathToFileURL(join(dir, 'motor.mjs')).href);
   const fixture = () => Object.assign(Object.create(Show.prototype), {
     guardadas: new Set(), guardando: new Map(),
@@ -130,7 +135,52 @@ try {
   assert.equal([...disco.keys()].some(k => k.startsWith('show-ronda-pendiente:')), false);
   assert.equal((await casaReal()).show.r.el.prueba, 'e');
   console.log('OK Diario conserva la ronda, respeta la casa de origen y recupera sin duplicar premios');
-  console.log('7 regresiones del Show superadas.');
+  const cierre = crearCierreShow({ id: 'final-prueba', rol: 'el', monedas: 3, victorias: 1,
+    episodio: { id: 'final-prueba', t: 1, m: 'local', p: { el: 100, ella: 50 }, c: 50, q: ['prueba'] } });
+  assert.ok(cierreValido(cierre));
+  assert.equal(cierreValido({ ...cierre, episodio: { id: cierre.id } }), false);
+  const saldo = { monedas: 40 }, final = showVacio();
+  assert.equal(aplicarCierreShow(final, saldo, cierre), true);
+  assert.equal(aplicarCierreShow(final, saldo, cierre), true);
+  assert.equal(saldo.monedas, 43);
+  assert.equal(final.ep.length, 1);
+  assert.equal(final.victorias.el, 1);
+  const recarga = normalizarShow(JSON.parse(JSON.stringify(final)));
+  aplicarCierreShow(recarga, saldo, cierre);
+  assert.equal(saldo.monedas, 43);
+  assert.equal(recarga.victorias.el, 1);
+  console.log('OK Reintentos y respuestas perdidas conservan un episodio, un premio y una victoria tras recargar');
+  sinEspacio = true;
+  assert.equal(await guardarCierreShow(cierre), false);
+  assert.ok([...disco.keys()].some(k => k.startsWith('show-cierre-pendiente:')));
+  sinEspacio = false;
+  assert.equal(await guardarCierreShow(cierre), true);
+  assert.equal((await casaReal()).show.ep.length, 1);
+  const nuevaCasa = showVacio(), nuevaCuenta = { monedas: 40 };
+  aplicarCierreShow(nuevaCasa, nuevaCuenta, cierre, true);
+  assert.equal(nuevaCuenta.monedas, 43);
+  assert.equal(nuevaCasa.ep.length, 0);
+  console.log('OK Cierre pendiente se recupera al liberar espacio; trasladar premio suelto no copia respuestas privadas');
+  for (const modo of ['solo','local','linea']) for (const yo of ['el','ella']) for (let semilla=1;semilla<=30;semilla++) {
+    let azar=semilla;
+    const p=armarPlan({id:'prueba',modo,yo,empieza:yo,show:showVacio(),vistas:[],azar:()=>((azar=(azar*1664525+1013904223)>>>0)/4294967296),perro:{nombre:'Pelusa',pelaje:'caramelo',hembra:false}});
+    const items=p.rondas.flatMap(r=>r.items);
+    assert.equal(items.length,30); assert.equal(new Set(items.map(x=>x.id)).size,30);
+    assert.ok(items.every(x=>pregunta(x.id)));
+    assert.ok(p.rondas[2].items.filter(x=>!pregunta(x.id).o).length<=1);
+    for(const r of p.rondas) assert.ok(r.items.every(x=>pregunta(x.id).tipo===r.tipo));
+  }
+  console.log('OK 180 planes completos de seis rondas, sin preguntas repetidas ni referencias rotas');
+  const abierta={...BANCO.conoce[0],o:undefined}, item={id:abierta.id,s:'el'}, respuestas={el:{a:'pan'},ella:{g:'pan'}};
+  assert.equal(calificar(abierta,item,respuestas).pendiente,true);
+  assert.deepEqual(calificar(abierta,item,respuestas,'2').pts,{el:50,ella:100});
+  assert.deepEqual(calificar(abierta,item,respuestas,'1').pts,{el:25,ella:50});
+  assert.deepEqual(calificar(abierta,item,respuestas,'0').pts,{el:0,ella:0});
+  assert.equal(calificar(BANCO.quien[0],{}, {el:{a:'e'}}).pendiente,true);
+  assert.deepEqual(calificar(BANCO.zapato[0],{}, {el:{a:'e'},ella:{a:'e'}}).pts,{el:60,ella:60});
+  assert.equal(conexion([calificar(BANCO.quien[0],{},{el:{a:'e'}})]),0);
+  console.log('OK Abiertas exactas/casi/erróneas, sobre sin respuesta y relámpago conservan sus reglas');
+  console.log('11 grupos de regresión del Show superados.');
 } finally {
   delete globalThis.__guardarShow;
   delete globalThis.localStorage;

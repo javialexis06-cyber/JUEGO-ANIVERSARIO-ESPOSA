@@ -431,6 +431,12 @@ async function abrirDeVerdad() {
     }
   }
   // Sueldo del súper: se descuenta del sobre solo lo que sí llegó a la casa
+  try {
+    if (Object.keys(localStorage).some(k => k.startsWith('show-cierre-pendiente:'))) {
+      await (await import('../mesa/show/casa_show')).casaShow();
+      await s.refrescar();
+    }
+  } catch { mensajes.push('El premio del Show sigue guardado para recuperarlo al volver.'); }
   let sueldo = 0;
   try {
     sueldo = Math.max(0, Math.floor(Number(localStorage.getItem(CLAVE_SUELDO) ?? 0) || 0));
@@ -1281,6 +1287,7 @@ async function juntarConNube() {
 async function subirLogros() {
   if (!s) return;
   const l = logrosLocales();
+  l.mesa += s.casa.show?.victorias?.[yo] ?? 0;
   const ya = s.casa.logros?.[yo];
   if (ya && l.super <= ya.super && l.puertas <= ya.puertas && l.mesa <= ya.mesa) return;
   await cambiarCasa((c) => {

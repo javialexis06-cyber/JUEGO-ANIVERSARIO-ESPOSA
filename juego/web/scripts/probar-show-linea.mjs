@@ -215,6 +215,17 @@ while (!fin && Date.now() - t0 < 25 * 60_000) {
         Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
         document.dispatchEvent(new Event('visibilitychange'));
       });
+      await el.waitForFunction(() => !window.__show.show.pausado, null, { timeout: 15000 });
+      await el.locator('.show-pausar').click();
+      await ella.waitForFunction(() => window.__show.show.pausado, null, { timeout: 15000 });
+      revisar(await el.evaluate(() => window.__show.show.pausado), 'La pausa manual se comparte entre los dos celulares');
+      await el.locator('.show-pausa button').click();
+      await ella.waitForFunction(() => !window.__show.show.pausado, null, { timeout: 15000 });
+      await el.locator('.show-salir').click();
+      await ella.waitForFunction(() => window.__show.show.pausado, null, { timeout: 15000 });
+      await el.locator('.show-pausa [data-no]').click();
+      await ella.waitForFunction(() => !window.__show.show.pausado, null, { timeout: 15000 });
+      revisar(true, 'Confirmar salida pausa a ambos y Seguir reanuda el episodio');
     }
   }
   if (Date.now() - t0 > (fotos + 1) * 40_000 && fotos < 6) {
@@ -247,6 +258,9 @@ const show = casa.casa.show ?? {};
 const n = (r, k) => Object.keys(show[k]?.[r] ?? {}).length;
 revisar(n('el', 'r') > 10 && n('ella', 'r') > 10, `El libro tiene las respuestas de los dos (Él ${n('el', 'r')}, Ella ${n('ella', 'r')})`);
 revisar((show.ep ?? []).length === 1, `Queda un solo episodio en el libro (${(show.ep ?? []).length})`);
+const con = show.ep?.[0]?.c ?? 0;
+revisar(casa.casa.monedas === 40 + 2 * (3 + (con >= 80 ? 1 : 0)), 'Los dos premios conservan su valor y se pagan una sola vez');
+for (const p of [el, ella]) revisar(await p.evaluate(() => !Object.keys(localStorage).some(k => k.startsWith('show-cierre-pendiente:'))), `${p.rol}: episodio y premio confirmados sin cierres pendientes`);
 if (FALLAR_GUARDADOS) {
   revisar(fallosGuardado === FALLAR_GUARDADOS, `Se probaron ${fallosGuardado} fallos de guardado`);
   for (const p of [el, ella]) revisar(await p.evaluate(() => !Object.keys(localStorage).some(k => k.startsWith('show-ronda-pendiente:'))), `${p.rol}: las rondas pendientes se recuperaron`);

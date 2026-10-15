@@ -71,12 +71,26 @@ async function unShow(rol, modo, nombre) {
     await new Promise((ok) => setTimeout(ok, 250));
   }
   revisar(fin, `${nombre}: el show termina`);
+  await p.waitForFunction(() => window.__show.show.cierreConfirmado === true, null, { timeout: 30000 });
+  revisar(true, `${nombre}: episodio confirmado antes de salir`);
   const r = await p.evaluate(() => {
     const s = window.__show.show;
     return { res: s.resultados.filter(Boolean).length, pend: s.resultados.filter((x) => x?.pendiente).length, puntos: s.puntos };
   });
   await p.evaluate(() => window.__show?.show?.estudio?.pintar()).catch(() => {});
   await p.screenshot({ path: `${carpeta}/${nombre}-final.png` });
+  if (nombre === 'ella-sola') {
+    const planos = ['general', 'grua', 'pareja', 'el', 'ella', 'presentador', 'pantalla', 'publico'];
+    const animos = ['intro', 'normal', 'suspenso', 'bien', 'mal', 'fiesta', 'relampago', 'normal'];
+    for (let k = 0; k < planos.length; k++) {
+      await p.evaluate(({plano,animo}) => {
+        const s=window.__show.show; s.estudio.pausar(false); s.estudio.animo(animo);
+        s.estudio.plano(plano,{corte:true}); s.estudio.simular(1); s.estudio.pausar(true);
+      },{plano:planos[k],animo:animos[k]});
+      await p.screenshot({path:`${carpeta}/plano-${planos[k]}.png`});
+    }
+    revisar(true, 'Ocho planos y siete ambientes del estudio renderizados (escenarios preparados)');
+  }
   await p.close();
   return r;
 }

@@ -6,7 +6,8 @@
 import * as sonido from '../../sonido';
 import type { ShowCasa } from '../../casa/show_casa';
 import type { Canal } from '../canal';
-import { casaShow, contarVictoria, guardarRespuestasShow, marcarVistas, pagar, vistas } from './casa_show';
+import { casaShow, crearCierreShow, guardarCierreShow, guardarRespuestasShow, marcarVistas, vistas } from './casa_show';
+import type { CierreShow } from './cierre';
 import { showVacio } from '../../casa/show_casa';
 import type { Estudio } from './estudio';
 import * as G from './guion';
@@ -61,6 +62,8 @@ export class Show {
   private pausaLocal = false;
   private pausaRemota = false;
   private sinSenal = false;
+  private pausaMenu = false;
+  private pausaManual = false;
   private avisos: (() => void)[] = [];
   private alPlan: ((p: Plan) => void) | null = null;
   private guardadas = new Set<number>();
@@ -69,12 +72,16 @@ export class Show {
   private tPresencia = 0;
   private relojPresencia = 0;
   private fuente: 'local' | 'linea' | 'suelto' = 'suelto';
+  private cierre: CierreShow | null = null;
+  private guardandoCierre: Promise<boolean> | null = null;
+  private cierreConfirmado = false;
 
   constructor(public o: OpcionesShow) {
     this.modo = o.modo === 'ia' ? 'solo' : o.modo;
     this.yo = o.yo;
     this.ui = new UI(this.yo, this.modo, o.rapido, {
       salir: () => this.preguntarSalir(),
+      pausa: () => { this.pausaManual = !this.pausaManual; this.actualizarPausaPropia(); },
     });
     document.addEventListener('visibilitychange', this.alVisibilidad);
   }
@@ -175,23 +182,27 @@ export class Show {
     const oculto = document.visibilityState === 'hidden';
     if (oculto === this.pausaLocal) return;
     this.pausaLocal = oculto;
-    this.red?.enviar({ k: 'pausa', si: oculto });
     if (!oculto) {
       sonido.activar();
       this.red?.pedirYa();
     }
-    this.estudio?.pausar(oculto);
-    this.pintarPausa();
-    this.avisar();
+    this.actualizarPausaPropia();
   };
 
   get pausado() {
-    return this.pausaLocal || this.pausaRemota || this.sinSenal;
+    return this.pausaLocal || this.pausaMenu || this.pausaManual || this.pausaRemota || this.sinSenal;
+  }
+
+  private actualizarPausaPropia() {
+    this.red?.enviar({ k: 'pausa', si: this.pausaLocal || this.pausaMenu || this.pausaManual });
+    this.pintarPausa();
+    this.avisar();
   }
 
   private pintarPausa() {
+    if (this.pausaMenu) { this.estudio?.pausar(true); return; }
     const o = NOMBRE[otroRol(this.yo)];
-    if (this.pausaLocal) this.ui.pausa('Show en pausa', 'Vuelve cuando quieras: aquí te esperamos.');
+    if (this.pausaLocal || this.pausaManual) this.ui.pausa('Show en pausa', 'Vuelve cuando quieras: aquí te esperamos.', false, () => { this.pausaManual = false; this.actualizarPausaPropia(); });
     else if (this.sinSenal) this.ui.pausa(`Se fue la señal de ${o}`, 'El show sigue apenas vuelva. El perrito está pidiendo que no se demore…', true);
     else if (this.pausaRemota) this.ui.pausa(`${o} pausó el show`, `Esperando a que ${o} vuelva al estudio…`, true);
     else this.ui.pausa(null);
@@ -499,7 +510,8 @@ export class Show {
     const quienCalifica: Rol = this.modo === 'linea' ? s : this.modo === 'local' ? s : this.yo;
     this.ui.globoPerro(G.frase(G.NOTA, { quien: quienCalifica }), this.perro.nombre, this.estudio);
     if (this.modo !== 'linea' || quienCalifica === this.yo) {
-      const v = await this.ui.calificar(quienCalifica, this.modo === 'solo' && s !== this.yo);
+      const v = await this.ui.calificar(quienCalifica, this.modo === 'solo' && s !== this.yo, () => this.pausado);
+      await this.libre();
       this.notas.set(i, v);
       if (this.modo === 'linea') this.red?.enviar({ k: 'nota', i, v });
     } else {
@@ -777,22 +789,14 @@ export class Show {
     await this.dormir(2600);
     // Premio: monedas escasas para la casa y una victoria para el trofeo de la mesa
     const monedas = this.modo === 'solo' ? 2 + (con >= 80 ? 1 : 0) : 3 + (con >= 80 ? 1 : 0);
-    pagar(monedas);
-    const gane = this.modo === 'solo' ? con >= 70 : ganador === null || (this.modo === 'local' ? true : ganador === this.yo);
-    if (gane) contarVictoria();
-    if (this.modo === 'local' && ganador === null) contarVictoria();
-    const guardado = this.guardarEpisodio(con);
     this.ui.globoPerro(G.frase(G.DESPEDIDA), perro, e);
     void fin;
     await this.ui.final({
       puntos: pts, ganador, con, nivel: nivelConexion(con), monedas, modo: this.modo,
       pendientes: this.resultados.filter((r) => r?.pendiente).length,
-      alOtro: () => {
-        this.cerrar(false);
-        this.o.alRevancha();
-      },
+      guardar: () => this.guardarEpisodio(con),
+      alOtro: () => { this.cerrar(false); this.o.alRevancha(); },
       alLibro: async () => {
-        await guardado;
         const { abrirLibro } = await import('./libro');
         await abrirLibro(this.yo);
       },
@@ -838,16 +842,27 @@ export class Show {
     await trabajo;
   }
 
-  private async guardarEpisodio(con: number) {
+  private async guardarEpisodio(con: number): Promise<boolean> {
+    if (this.cierreConfirmado) return true;
+    if (this.guardandoCierre) return this.guardandoCierre;
+    this.guardandoCierre = this.guardarFinal(con).finally(() => { this.guardandoCierre = null; });
+    return this.guardandoCierre;
+  }
+
+  private async guardarFinal(con: number): Promise<boolean> {
     for (let r = 0; r < (this.plan?.rondas.length ?? 0); r++) await this.guardar(r);
+    if (this.guardadas.size < (this.plan?.rondas.length ?? 0)) return false;
     // El episodio lo anota uno solo (Él en línea; este celular en los otros modos)
-    if (this.modo === 'linea' && this.yo !== 'el') return;
     const q = this.pasos.map((x) => (x.item.s ? `${x.item.id}:${x.item.s === 'el' ? 'e' : 'a'}` : x.item.id));
-    await casaShow((s) => {
-      if (s.ep.some((e) => e.id === this.o.id)) return;
-      s.ep.push({ id: this.o.id, t: Date.now(), m: this.modo, ...(this.modo === 'solo' ? { de: this.yo } : {}), p: { ...this.puntos }, c: con, q });
-      s.ep = s.ep.slice(-60);
+    const ganador = this.puntos.el === this.puntos.ella ? null : this.puntos.el > this.puntos.ella ? 'el' : 'ella';
+    const gane = this.modo === 'solo' ? con >= 70 : ganador === null || (this.modo === 'local' ? true : ganador === this.yo);
+    this.cierre ??= crearCierreShow({ id: this.o.id, rol: this.yo,
+      monedas: this.modo === 'solo' ? 2 + (con >= 80 ? 1 : 0) : 3 + (con >= 80 ? 1 : 0),
+      victorias: (gane ? 1 : 0) + (this.modo === 'local' && ganador === null ? 1 : 0),
+      ...((this.modo !== 'linea' || this.yo === 'el') ? { episodio: { id: this.o.id, t: Date.now(), m: this.modo, ...(this.modo === 'solo' ? { de: this.yo } : {}), p: { ...this.puntos }, c: con, q } } : {}),
     });
+    this.cierreConfirmado = await guardarCierreShow(this.cierre);
+    return this.cierreConfirmado;
   }
 
   // ------------------------------------------------------------------------------------------------ Textos
@@ -861,10 +876,12 @@ export class Show {
   }
 
   private preguntarSalir() {
-    if (this.terminado) return this.cerrar(false);
+    if (this.terminado) { void this.guardarEpisodio(conexion(this.resultados)).then(ok => { if (ok) this.cerrar(false); else this.ui.aviso('El show sigue pendiente de guardar. Reintenta desde el resultado.'); }); return; }
+    this.pausaMenu = true;
+    this.actualizarPausaPropia();
     this.ui.confirmar('¿Salir del show?', this.modo === 'linea' ? `Se acaba el show para los dos. Lo contestado hasta ahora queda en el libro.` : 'Lo contestado hasta ahora queda guardado en el libro.', () => {
       this.cerrar(true);
-    });
+    }, () => { this.pausaMenu = false; this.actualizarPausaPropia(); });
   }
 
   cerrar(avisar: boolean) {

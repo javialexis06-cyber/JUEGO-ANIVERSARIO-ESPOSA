@@ -37,6 +37,10 @@ export interface ShowCasa {
   g: Record<RolShow, Record<string, string>>;
   c: Record<RolShow, Record<string, string>>;
   ep: EpisodioShow[];
+  /** Último cierre cobrado por emisor; permite repetir una escritura sin volver a pagar. */
+  cobros?: Record<string, number>;
+  /** Victorias del Show posteriores al cierre transaccional, separadas del contador antiguo de mesa. */
+  victorias?: Record<RolShow, number>;
   /** La pregunta de hoy (la escoge el primero que abre la casa ese día). */
   dia?: DiaShow;
   /** Las preguntas del día anteriores (para el libro). */
@@ -120,6 +124,8 @@ export function normalizarShow(v: unknown): ShowCasa | null {
     ep: Array.isArray(v.ep) ? v.ep.map(episodio).filter((e): e is EpisodioShow => !!e).slice(-MAX_EPISODIOS) : [],
     dias: Array.isArray(v.dias) ? v.dias.map(dia).filter((d): d is DiaShow => !!d).slice(-MAX_DIAS) : [],
   };
+  if (esObjeto(v.cobros)) s.cobros = Object.fromEntries(Object.entries(v.cobros).filter(([k, n]) => /^[a-f0-9-]{36}$/.test(k) && Number.isSafeInteger(n) && n > 0));
+  if (esObjeto(v.victorias)) s.victorias = { el: Math.max(0, Math.floor(num(v.victorias.el, 0))), ella: Math.max(0, Math.floor(num(v.victorias.ella, 0))) };
   const d = dia(v.dia);
   if (d) {
     d.respuestas ??= {

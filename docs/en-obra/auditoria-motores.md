@@ -17,6 +17,17 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
 
 ## Correcciones comprobadas
 
+- **Show: cierre y controles (15 de octubre).** Pausa manual y confirmación de salida detienen las preguntas
+  y se comparten en línea. Opciones, textos y calificaciones rechazan entradas repetidas o durante pausa;
+  cerrar resuelve las esperas del traspaso de teléfono. Resultado con reintento y recibo persistente: episodio,
+  monedas y victorias se confirman juntos en la casa, sin repetir pagos al recuperar la respuesta de una escritura.
+  Se conserva el premio de un libro suelto hasta abrir la casa, sin trasladar respuestas a otro hogar.
+  Once grupos de regresión incluyen 180 planes válidos y calificaciones exactas, parciales y erróneas;
+  las comprobaciones táctiles usan la interfaz real en 844×390 y estados preparados.
+  Pasan tipos, compilación completa, compilación de amigos con filtro de privacidad, `probar:motores`, las 48
+  suites de granja y las seis comprobaciones de integración sobre el build final. Registros locales en
+  `juego/web/test-results/show-cierre-2026-10-15/` y scripts reproducibles en `juego/web/scripts/probar-show*.mjs`.
+
 - **Lavado en sala (15 de octubre).** Posiciones visuales entre mensajes tanto para anfitrión como invitados,
   con reloj del emisor, mandos ordenados, frenada y recuperación acotada. Modelo, nombre, barra, sombra y auras
   comparten la vista; el control propio y las posiciones usadas por el combate se conservan. Doce grupos de
@@ -111,7 +122,7 @@ están registradas con rangos de tienda, cartas y patitos.
 | Parchís | Reglas e IA y recorrido de navegador hasta meta y menú (93 s) | Controles físicos del dado, pausa y red |
 | Parchís a dos colores | Reglas e IA y recorrido de navegador hasta meta y menú (340 s) | Controles físicos de dos dados y red |
 | Clue / ¿Quién fue? | Reglas e IA hasta acusación legal y recorrido de navegador completo (11 s) | Recorrido táctil completo y cartas privadas en red |
-| El Show de Nosotros | Tres episodios locales y uno en línea completo; pausa, pérdida de mensajes, dos fallos de guardado, conflictos resueltos, mismo resultado y un episodio en el libro; sin errores | Todas las escenas y controles en dispositivos |
+| El Show de Nosotros | Repetidos tres episodios locales y uno en línea completo: 120 preguntas, sobre, día y libro; mismo resultado, un episodio y dos premios únicos en red con pérdida del 8 % y dos fallos de escritura. Pausa manual, segundo plano y confirmación de salida compartidas. Once grupos de regresión y pruebas táctiles de interfaz/recuperación del premio en casa local. Ocho planos y siete ambientes del estudio renderizados; capturas inspeccionadas | Controles, FPS y red en dispositivos físicos; cierre forzado cuando el aparato rechaza toda escritura |
 | Granja / Astra | Las 48 suites pasan. Seis comprobaciones de navegador casa–granja, inventario, correo, retorno y recarga sin errores | Campaña por controles normales desde cero; cerrar capacidades pendientes de la auditoría vigente y probar dispositivos |
 | Lavarse la cara | Reutilización corregida; ocho regresiones, incluyendo ambos aretes, guardianes, ranuras, receta y fotos. 58 partidas: 25 victorias, cuatro con mejoras pagadas desde cero, bajas después del minuto 22. Acceso a ambos aretes aprobado y aplicado en los cuatro mapas normales; catorce recorridos adicionales consiguen evolución y derrotan Muerte en los cuatro con tienda y secretos disponibles preparados. Ocho hallazgos dibujados y recogidos en amigos en navegador; cuatro builds de referencia repetidas y documentadas. Movimiento remoto con doce grupos nuevos y 7/36 comprobaciones de navegador para dos/cuatro jugadores | Desbloqueos y compras completos desde progreso cero; otros mapas/modos/disfraces, economía completa, controles físicos, guardado, red real y Android |
 | Sangre y Ceniza | Expedición inicial preparada; auditoría específica con 18 expediciones reproducibles de Monarca, Campesino y Prisionero en peligro 1 hasta cinco etapas, perfiles iniciales o arsenal preparado, compras pagadas y control medido. Diez expediciones de Caballero en peligro 2: nueve victorias y una derrota; aturdimientos encadenados de hasta 4,63 s. Ajuste aprobado de 1,5 s más 1 s aplicado, costes sobre vida máxima y 21 expediciones de cinco etapas completas; dos Infinito hasta extracción perdida en etapa 16, con golpes recibidos durante diez minutos quietos en etapa 15; botones y flujo de grupo/control táctil en Chromium | progresión completa de desbloqueos, demás biomas/peligros, clases y combinaciones, controles, red y dispositivos |

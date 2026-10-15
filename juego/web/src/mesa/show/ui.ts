@@ -53,8 +53,9 @@ export class UI {
   private estudioGlobo: Estudio | null = null;
   private puntosVistos: Record<Rol, number> = { el: 0, ella: 0 };
   private saltar: (() => void) | null = null;
+  private cancelaciones = new Set<() => void>();
 
-  constructor(private yo: Rol, private modo: ModoShow, private rapido: number, private acciones: { salir: () => void }) {
+  constructor(private yo: Rol, private modo: ModoShow, private rapido: number, private acciones: { salir: () => void; pausa: () => void }) {
     const r = document.createElement('section');
     r.id = 'show';
     r.className = 'show';
@@ -69,6 +70,7 @@ export class UI {
         <span class="show-bug"><b>El Show</b><small>de Nosotros</small></span>
         <span class="show-chip" hidden></span>
         <span class="show-espacio"></span>
+        <button class="show-boton show-pausar" aria-label="Pausar el show">⏸</button>
         <button class="show-boton show-musica boton-musica" aria-label="Música">♪</button>
         <button class="show-boton show-sonido" aria-label="Sonido"></button>
       </header>
@@ -96,6 +98,7 @@ export class UI {
       const b = (ev.target as HTMLElement).closest<HTMLElement>('button');
       if (!b) return;
       if (b.classList.contains('show-salir')) this.acciones.salir();
+      else if (b.classList.contains('show-pausar')) this.acciones.pausa();
       else if (b.classList.contains('show-sonido')) {
         sonido.alternar();
         this.pintarBotones();
@@ -140,14 +143,15 @@ export class UI {
     this.$('.show-saltar').hidden = !fn;
   }
 
-  pausa(titulo: string | null, texto = '', conSalir = false) {
+  pausa(titulo: string | null, texto = '', conSalir = false, continuar?: () => void) {
     const p = this.$('.show-pausa');
     p.hidden = !titulo;
     if (!titulo) return;
     p.innerHTML = `<div class="show-pausa-carta"><i class="show-pausa-icono">${conSalir ? '📡' : '⏸'}</i><h3>${esc(titulo)}</h3><p>${esc(texto)}</p>${
-      conSalir ? '<button class="show-btn show-btn-papel" data-pausa-salir>Salir del show</button>' : ''
+      conSalir ? '<button class="show-btn show-btn-papel" data-pausa-salir>Salir del show</button>' : continuar ? '<button class="show-btn show-btn-oro" data-pausa-seguir>Seguir jugando</button>' : ''
     }</div>`;
     p.querySelector<HTMLElement>('[data-pausa-salir]')?.addEventListener('click', () => this.acciones.salir());
+    p.querySelector<HTMLElement>('[data-pausa-seguir]')?.addEventListener('click', () => continuar?.());
   }
 
   ronda(info: { n: number; total: number; titulo: string } | null) {
@@ -322,6 +326,7 @@ export class UI {
       const fin = () => {
         if (terminado) return;
         terminado = true;
+        this.cancelaciones.delete(fin);
         clearInterval(reloj);
         panel.classList.add('sale');
         setTimeout(() => {
@@ -366,12 +371,13 @@ export class UI {
         zona.innerHTML = lista.map((x, k) => `<button class="show-op ${x.clase ?? ''}" data-v="${esc(x.v)}" style="--k:${k}"><i>${String.fromCharCode(65 + k)}</i><span>${esc(x.texto)}</span></button>`).join('');
         zona.querySelectorAll<HTMLButtonElement>('.show-op').forEach((b) =>
           b.addEventListener('click', () => {
-            if (terminado || o.pausado()) return;
+            if (terminado || o.pausado() || zona.classList.contains('decidido')) return;
             SFX.toque();
             r[campo] = b.dataset.v!;
             zona.querySelectorAll('.show-op').forEach((x) => x.classList.toggle('elegida', x === b));
             zona.classList.add('decidido');
-            setTimeout(siguiente, 260 / this.rapido);
+            zona.querySelectorAll<HTMLButtonElement>('button').forEach(b => b.disabled = true);
+            setTimeout(() => { if (!terminado && !o.cancelado()) siguiente(); }, 260 / this.rapido);
           }),
         );
       };
@@ -425,7 +431,8 @@ export class UI {
             f.addEventListener('submit', (ev) => {
               ev.preventDefault();
               const v = inp.value.trim().replace(/\s+/g, ' ').slice(0, 60);
-              if (!v || terminado) return;
+              if (!v || terminado || o.pausado() || f.querySelector('button')!.disabled) return;
+              f.querySelector('button')!.disabled = true;
               SFX.toque();
               inp.blur();
               r[sobreMi ? 'a' : 'g'] = v;
@@ -459,7 +466,9 @@ export class UI {
           });
           pintar();
           panel.querySelector('.show-termo-ok')!.addEventListener('click', () => {
-            if (terminado || o.pausado()) return;
+            const boton = panel.querySelector<HTMLButtonElement>('.show-termo-ok');
+            if (terminado || o.pausado() || !boton || boton.disabled) return;
+            boton.disabled = true;
             SFX.toque();
             r[sobreMi ? 'a' : 'g'] = inp.value;
             pasoFinal();
@@ -468,6 +477,7 @@ export class UI {
         }
       }
       this.relojes.push(reloj);
+      this.cancelaciones.add(fin);
     });
   }
 
@@ -496,7 +506,12 @@ export class UI {
         : `<div class="show-telon-caja" data-r="${quien}"><i>🙈</i><h2>Turno de ${NOMBRE[quien]}</h2><p>${NOMBRE[otroRol(quien)]}: ¡ojos cerrados y nada de mirar!</p><button class="show-btn show-btn-${quien}">Soy ${NOMBRE[quien]}: ¡listo!</button></div>`;
     c.innerHTML = `<div class="show-telon-tela izq"></div><div class="show-telon-tela der"></div>${html}`;
     void fase;
-    await new Promise<void>((r) => c.querySelector('button')!.addEventListener('click', () => r(), { once: true }));
+    await new Promise<void>((r) => {
+      const fin = () => { this.cancelaciones.delete(fin); r(); };
+      this.cancelaciones.add(fin);
+      c.querySelector('button')!.addEventListener('click', fin, { once: true });
+    });
+    if (!c.isConnected) return;
     SFX.toque();
     c.classList.add('abre');
     await this.esperar(450);
@@ -587,7 +602,7 @@ export class UI {
   }
 
   /** El dueño de una abierta califica: exacto, casi o ni cerca. */
-  calificar(quien: Rol, propia: boolean): Promise<string> {
+  calificar(quien: Rol, propia: boolean, pausado: () => boolean = () => false): Promise<string> {
     const panel = this.$('.show-panel');
     panel.hidden = false;
     panel.classList.remove('sale');
@@ -600,16 +615,21 @@ export class UI {
         <button class="show-op op-mal" data-v="0"><i>✗</i><span>Ni cerca</span></button>
       </div></div>`;
     return new Promise((ok) => {
+      let respondido = false;
+      const cancelar = () => { respondido = true; ok('-'); };
+      this.cancelaciones.add(cancelar);
       panel.querySelectorAll<HTMLButtonElement>('.show-op').forEach((b) =>
         b.addEventListener(
           'click',
           () => {
+            if (respondido || pausado()) return;
+            respondido = true;
+            this.cancelaciones.delete(cancelar);
             SFX.toque();
             panel.classList.add('sale');
             setTimeout(() => (panel.hidden = true), 320);
             ok(b.dataset.v!);
           },
-          { once: true },
         ),
       );
     });
@@ -649,6 +669,7 @@ export class UI {
       const fin = () => {
         if (terminado) return;
         terminado = true;
+        this.cancelaciones.delete(fin);
         clearInterval(reloj);
         while (v.length < n) v.push('-');
         panel.classList.add('sale');
@@ -672,6 +693,7 @@ export class UI {
         }
       }, 80);
       this.relojes.push(reloj);
+      this.cancelaciones.add(fin);
       panel.querySelectorAll<HTMLButtonElement>('.show-op').forEach((b) =>
         b.addEventListener('click', () => {
           if (terminado || o.pausado() || v.length >= n) return;
@@ -781,6 +803,7 @@ export class UI {
     monedas: number;
     modo: ModoShow;
     pendientes: number;
+    guardar: () => Promise<boolean>;
     alOtro: () => void;
     alLibro: () => void;
     alSalir: () => void;
@@ -802,17 +825,42 @@ export class UI {
       <p class="show-final-nivel">Conexión <b>${o.con}%</b> · ${esc(o.nivel.nombre)}</p>
       ${o.pendientes ? `<p class="show-final-sobre">✉️ ${o.pendientes} ${o.pendientes === 1 ? 'pregunta quedó' : 'preguntas quedaron'} en el sobre para ${NOMBRE[otroRol(this.yo)]}.</p>` : ''}
       <p class="show-final-premio">+${o.monedas} monedas para la casa</p>
+      <div class="show-final-guardado"><span role="status" data-guardado>Guardando el show…</span><button class="show-btn show-btn-papel" data-reintentar hidden>Reintentar</button></div>
       <div class="show-final-botones">
         <button class="show-btn show-btn-papel" data-f="salir">Salir</button>
         <button class="show-btn show-btn-papel" data-f="libro">📖 El libro</button>
         <button class="show-btn show-btn-oro" data-f="otro">¡Otro show!</button>
       </div></article>`;
-    f.querySelector('[data-f="salir"]')!.addEventListener('click', () => o.alSalir());
-    f.querySelector('[data-f="libro"]')!.addEventListener('click', () => o.alLibro());
-    f.querySelector('[data-f="otro"]')!.addEventListener('click', () => o.alOtro());
+    let guardado = false, navegando = false, enCurso: Promise<boolean> | null = null;
+    const guardar = (): Promise<boolean> => {
+      if (guardado) return Promise.resolve(true);
+      if (enCurso) return enCurso;
+      f.querySelectorAll<HTMLButtonElement>('button').forEach(b => b.disabled = true);
+      f.querySelector('[data-guardado]')!.textContent = 'Guardando el show…';
+      enCurso = o.guardar().catch(() => false).then(ok => {
+        guardado = ok;
+        if (f.isConnected) {
+          f.querySelectorAll<HTMLButtonElement>('button').forEach(b => b.disabled = false);
+          f.querySelector('[data-guardado]')!.textContent = ok ? 'Show guardado' : 'No se pudo guardar. Reintenta para continuar.';
+          (f.querySelector('[data-reintentar]') as HTMLElement).hidden = ok;
+        }
+        return ok;
+      }).finally(() => { enCurso = null; });
+      return enCurso;
+    };
+    f.querySelector('[data-reintentar]')!.addEventListener('click', () => void guardar());
+    for (const [accion, fn] of [['salir', o.alSalir], ['libro', o.alLibro], ['otro', o.alOtro]] as const) {
+      f.querySelector(`[data-f="${accion}"]`)!.addEventListener('click', async () => {
+        if (navegando) return;
+        navegando = true;
+        try { if (await guardar() && f.isConnected) await fn(); }
+        finally { navegando = false; }
+      });
+    }
+    void guardar();
   }
 
-  confirmar(titulo: string, texto: string, si: () => void) {
+  confirmar(titulo: string, texto: string, si: () => void, no?: () => void) {
     const p = this.$('.show-pausa');
     const estaba = !p.hidden ? p.innerHTML : null;
     p.hidden = false;
@@ -820,6 +868,7 @@ export class UI {
     p.querySelector('[data-no]')!.addEventListener('click', () => {
       if (estaba) p.innerHTML = estaba;
       else p.hidden = true;
+      no?.();
     });
     p.querySelector('[data-si]')!.addEventListener('click', () => {
       p.hidden = true;
@@ -828,6 +877,8 @@ export class UI {
   }
 
   destruir() {
+    for (const cancelar of this.cancelaciones) cancelar();
+    this.cancelaciones.clear();
     for (const r of this.relojes) clearInterval(r);
     cancelAnimationFrame(this.globoReloj);
     clearTimeout(this.tAviso);
