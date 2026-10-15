@@ -41,7 +41,7 @@ const tmp = join(tmpdir(), `celular-casos-${process.pid}.mjs`);
 await build({ entryPoints: [join(RAIZ, 'src/celular/casos/index.ts')], bundle: true, format: 'esm', outfile: tmp, logLevel: 'error' });
 const { CASOS } = await import(tmp);
 unlinkSync(tmp);
-const VOCES = CASOS.flatMap((c) => c.voces);
+const VOCES = CASOS.flatMap((c) => c.voces).filter(v => !v.historial);
 
 /** Cómo se busca a cada quien en la biblioteca (género, edad y palabras). «marcela_hoy» usa la voz de Marcela. */
 const PERFIL = {

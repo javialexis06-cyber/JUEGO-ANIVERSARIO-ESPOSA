@@ -1,6 +1,6 @@
 // «Desaparecidos de Astra»: los datos de cada caso (un celular encontrado en algún lugar de Astra). Cada caso trae el
-// teléfono entero (su cara, su candado, sus apps y lo que hay adentro), las pistas que se anotan solas en la libreta,
-// las ayudas por etapa, las preguntas para cerrarlo y la escena corta del final. Nada de la pareja: también lo juegan
+// teléfono entero (su cara, su candado, sus apps y lo que hay adentro), las referencias editoriales del expediente,
+// las preguntas para cerrarlo y la escena corta del final. El jugador toma sus propias notas. Nada de la pareja: también lo juegan
 // los amigos (docs/sistemas/celular.md).
 
 /** Un candado: el de la pantalla de bloqueo o el de algo de adentro (una nota, un álbum, la bitácora…). */
@@ -37,11 +37,18 @@ export interface Mensaje {
   foto?: string;
   /** Una nota de voz (id de `voces`). */
   voz?: string;
+  cita?: { de: string; texto: string };
+  reaccion?: string;
+  editado?: boolean;
+  reenviado?: boolean;
+  eliminado?: boolean;
   pista?: string;
 }
 
 export interface Chat {
   con: string;
+  archivado?: boolean;
+  silenciado?: boolean;
   /** Nombre del grupo (si lo es). */
   grupo?: string;
   noLeidos?: number;
@@ -90,6 +97,8 @@ export interface Voz {
   pista?: string;
   /** Lo que dice la transcripción automática del teléfono, si se equivoca (Iridalia). */
   transcrita?: string;
+  /** Audio del historial cotidiano, generado aparte del reparto de la trama. */
+  historial?: boolean;
 }
 
 export interface Llamada {
@@ -152,7 +161,7 @@ export interface Evento {
 export interface Pista {
   id: string;
   texto: string;
-  /** Hace falta para cerrar el caso. */
+  /** Referencia editorial heredada. No bloquea las conclusiones ni se muestra como importante. */
   clave?: boolean;
   /** Es el giro del caso (sale destacado en la libreta). */
   giro?: boolean;
@@ -229,7 +238,7 @@ export interface Caso {
   /** El código de señas de luz (caso de Iridalia): color → letra. */
   senas?: { color: string; nombre: string; letra: string }[];
   pistas: Pista[];
-  /** Ayudas por etapa: 'bloqueo', el id de un candado, o 'resolver'. Cada una se destapa de a una. */
+  /** Referencia heredada para respetar penalizaciones de partidas antiguas. No existe una pantalla de ayudas. */
   ayudas: { etapa: string; textos: string[] }[];
   preguntas: Pregunta[];
   final: { titulo: string; paneles: Panel[]; cierre: string };

@@ -17,6 +17,20 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
 
 ## Correcciones comprobadas
 
+- **Desaparecidos: investigación manual (15 de octubre).** Por petición de Javier, se retiran pistas automáticas,
+  contador de importantes, giros destacados, tutorial, ayudas de contraseña y sugerencias de linterna. La libreta
+  guarda texto escrito por el jugador; presentar conclusiones no exige entradas concretas. Los historiales de los
+  ocho teléfonos suman 6.111 mensajes (708–785 por aparato), tres años anteriores, nueve o diez chats por teléfono,
+  archivo, búsqueda, fechas, citas, reacciones, ediciones, llamadas y notas cotidianas. Hay 96 audios adicionales,
+  generados con voces de ficción, separados de las 56 voces de la trama. Se conservan soluciones, claves, candados,
+  casos y estrellas anteriores. Seis regresiones de guardado cubren también notas y compatibilidad.
+  Ocho casos completados por controles en amigos, con 24 estrellas, cero pistas automáticas y recarga por caso;
+  primer cierre fallido recuperado. Las claves y respuestas proceden de los datos de prueba: no es una validación
+  de deducción humana. La interfaz comprueba búsqueda, archivo, paginación y notas; el navegador decodifica los
+  152 audios con señal sonora. Registro en `juego/web/test-results/astra-manual-2026-10-15/`.
+  Pasan ambas compilaciones, filtro de amigos, motores, 48 suites de granja y las seis comprobaciones de
+  integración. También pasa el primer caso y el retorno a casa sobre el build final, con guardado fallido.
+
 - **Show: cierre y controles (15 de octubre).** Pausa manual y confirmación de salida detienen las preguntas
   y se comparten en línea. Opciones, textos y calificaciones rechazan entradas repetidas o durante pausa;
   cerrar resuelve las esperas del traspaso de teléfono. Resultado con reintento y recibo persistente: episodio,
@@ -101,7 +115,9 @@ gancho de prueba. Esas pruebas sirven para la integración y se describen como e
   Workflow: «Motores de los juegos».
   Incluye también los dieciocho combates y réplicas del Torneo y las doce regresiones del Retrete.
 
-No se cambiaron precios, puntuaciones, temporizadores, recompensas ni dificultad.
+Las correcciones iniciales conservaron precios, puntuaciones, temporizadores, recompensas y dificultad. La retirada
+de asistencia de Desaparecidos es un cambio solicitado expresamente por Javier el 15 de octubre. Los ajustes
+aprobados de Sangre y Lavado se detallan por separado.
 
 ## Cobertura y límites
 
@@ -130,7 +146,7 @@ están registradas con rangos de tienda, cartas y patitos.
 | Cien Puertas | Cien acertijos resueltos en orden por toques/sensores simulados; cero fallos de revisión de puerta/objetos/página; cien avances y estrellas conservados al recargar | Campaña narrativa, retorno a la casa, red, otras semillas y sensores físicos de teléfono |
 | El Escudo de las Hermanas | Seis niveles desde cero en amigos y pareja, con presupuesto normal, pausa, guardado fallido recuperado y recarga por nivel; doce comprobaciones del motor, derrota e infinito hasta pérdida natural (41 oleadas en motor, 48 en el último recorrido de pareja). Derrota normal, reintento, cancelación y salida de pareja conservan las estrellas. Modo P23: victoria, recibo fallido recuperado y retorno a la granja sin errores | Controles físicos, escenas completas, cierre forzado mientras falla almacenamiento y recorrido de P23 desde su desbloqueo real en la campaña de la granja; derrota y salida de amigos en navegador |
 | La Carrera de las Tres Lunas | Carrera normal, contrarreloj y Gran Premio de cuatro pistas desde cero en «Carrera»; tres vueltas por pista, pausa real, puntos conservados, copa ganada y dos fallos de escritura recuperados. Récord, muestras del fantasma y copa única conservados al recargar. Carrera, contrarreloj y retorno a casa en edición de pareja; sin errores | Precisión física, repetición visible del fantasma, otras criaturas/dificultades y verificación propia de la red |
-| Desaparecidos de Astra | Ocho casos resueltos desde cero en amigos: 24 estrellas, PIN, palabras, patrones arrastrados, fotos con linterna, todas las pistas importantes y recarga por caso; primer cierre fallido recuperado. Primer caso y retorno a casa en compilación completa. Cinco regresiones de guardado y reinicio; sin errores | Reproducción completa de las voces y escenas, controles en Android, salida de amigos por controles y cierre forzado mientras falla el almacenamiento |
+| Desaparecidos de Astra | Ocho casos cerrados de nuevo desde cero en amigos: 24 estrellas, cero pistas automáticas, apuntes escritos y recarga por caso; primer guardado fallido recuperado. Primer caso y retorno a casa en build final. 6.111 mensajes y 96 audios adicionales; 152 audios decodificados con señal, búsqueda, archivo, fechas y paginación por controles. Seis regresiones de notas/guardado/partidas anteriores | Deducción humana sin conocer soluciones, Android físico y cierre forzado mientras el aparato rechaza escrituras |
 | El Torneo del Despertar Dorado | Arcade completo desde cero con Tarek: seis rivales a sus niveles originales, campeón, pausa y retorno al menú sin errores; dieciocho combates de motor con tres luchadores, derrota y réplicas por entradas serializadas | Otros luchadores y escenarios por controles físicos, dos jugadores en el aparato y verificación propia de la red; el arcade no tiene guardado de etapa implementado |
 | Retrete espacial | Amigos: dos vuelos desde cero con piloto, choques normales, pausa, otra salida, escudo pagado con 120 rollitos ganados, fallos al aterrizar/comprar recuperados, recarga y retorno a la sala. Casa local: ruta nativa de Atrás simulada en navegador y dos vuelos normales con acceso preparado, rechazo de escritura y respuesta perdida después de pagar, reintentos sin repetir monedas, retorno y recarga. Doce regresiones de persistencia | Descubrimiento desde el baño, sensores/controles físicos, ciclos avanzados, Supabase real y cierre forzado mientras falla el almacenamiento |
 | Cocina de chef: wafles, frappés y fresas | Dos días desde progreso nuevo por receta, con pedidos y estaciones normales, resultado, propinas, mejoras pagadas y recarga en día 3; dos fallos de escritura al terminar wafles y uno por compra recuperados; once regresiones de persistencia. Wafles en pareja: escenario preparado con pérdida del 8 % de mensajes, pausa, segundo plano, reconexión, mismo resultado y premio del anfitrión, sin errores | Fresas y frappés en pareja, rangos avanzados, cierre forzado mientras hay una escritura pendiente y precisión táctil |

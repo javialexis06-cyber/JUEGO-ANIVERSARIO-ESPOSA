@@ -1,0 +1,390 @@
+{
+ "version": 1,
+ "origen": "Síntesis de voces de ficción; no son grabaciones privadas",
+ "voces": {
+  "vida_ambarina_0": {
+   "archivo": "./audio/celular/historial/vida_ambarina_0-808d76d0a3.ogg",
+   "seg": 10.51
+  },
+  "vida_ambarina_1": {
+   "archivo": "./audio/celular/historial/vida_ambarina_1-718cf2cab4.ogg",
+   "seg": 9.61
+  },
+  "vida_ambarina_10": {
+   "archivo": "./audio/celular/historial/vida_ambarina_10-9a5cc7e91b.ogg",
+   "seg": 11.31
+  },
+  "vida_ambarina_11": {
+   "archivo": "./audio/celular/historial/vida_ambarina_11-2e591000a7.ogg",
+   "seg": 10.21
+  },
+  "vida_ambarina_2": {
+   "archivo": "./audio/celular/historial/vida_ambarina_2-7d6ee55fa4.ogg",
+   "seg": 10.91
+  },
+  "vida_ambarina_3": {
+   "archivo": "./audio/celular/historial/vida_ambarina_3-2f13a92ba0.ogg",
+   "seg": 10.11
+  },
+  "vida_ambarina_4": {
+   "archivo": "./audio/celular/historial/vida_ambarina_4-a2b5b14ef5.ogg",
+   "seg": 9.71
+  },
+  "vida_ambarina_5": {
+   "archivo": "./audio/celular/historial/vida_ambarina_5-3fb87c2417.ogg",
+   "seg": 9.41
+  },
+  "vida_ambarina_6": {
+   "archivo": "./audio/celular/historial/vida_ambarina_6-0c544e69bc.ogg",
+   "seg": 8.91
+  },
+  "vida_ambarina_7": {
+   "archivo": "./audio/celular/historial/vida_ambarina_7-dd68a33636.ogg",
+   "seg": 10.91
+  },
+  "vida_ambarina_8": {
+   "archivo": "./audio/celular/historial/vida_ambarina_8-64fd2ae4cd.ogg",
+   "seg": 10.01
+  },
+  "vida_ambarina_9": {
+   "archivo": "./audio/celular/historial/vida_ambarina_9-27300dd600.ogg",
+   "seg": 10.21
+  },
+  "vida_cota_0": {
+   "archivo": "./audio/celular/historial/vida_cota_0-0b3d785a5d.ogg",
+   "seg": 9.81
+  },
+  "vida_cota_1": {
+   "archivo": "./audio/celular/historial/vida_cota_1-10be4fb947.ogg",
+   "seg": 11.11
+  },
+  "vida_cota_10": {
+   "archivo": "./audio/celular/historial/vida_cota_10-b332573890.ogg",
+   "seg": 11.81
+  },
+  "vida_cota_11": {
+   "archivo": "./audio/celular/historial/vida_cota_11-2058232d69.ogg",
+   "seg": 9.21
+  },
+  "vida_cota_2": {
+   "archivo": "./audio/celular/historial/vida_cota_2-7dd3875a6e.ogg",
+   "seg": 9.61
+  },
+  "vida_cota_3": {
+   "archivo": "./audio/celular/historial/vida_cota_3-7948cbde1d.ogg",
+   "seg": 10.11
+  },
+  "vida_cota_4": {
+   "archivo": "./audio/celular/historial/vida_cota_4-7896f01878.ogg",
+   "seg": 8.81
+  },
+  "vida_cota_5": {
+   "archivo": "./audio/celular/historial/vida_cota_5-436c3c6d2f.ogg",
+   "seg": 9.61
+  },
+  "vida_cota_6": {
+   "archivo": "./audio/celular/historial/vida_cota_6-5d8d5c494b.ogg",
+   "seg": 8.91
+  },
+  "vida_cota_7": {
+   "archivo": "./audio/celular/historial/vida_cota_7-70e448b4a1.ogg",
+   "seg": 9.31
+  },
+  "vida_cota_8": {
+   "archivo": "./audio/celular/historial/vida_cota_8-4a11d362db.ogg",
+   "seg": 10.11
+  },
+  "vida_cota_9": {
+   "archivo": "./audio/celular/historial/vida_cota_9-a6d1543739.ogg",
+   "seg": 9.51
+  },
+  "vida_eco_0": {
+   "archivo": "./audio/celular/historial/vida_eco_0-401bbb7524.ogg",
+   "seg": 11.21
+  },
+  "vida_eco_1": {
+   "archivo": "./audio/celular/historial/vida_eco_1-61e87fd905.ogg",
+   "seg": 9.41
+  },
+  "vida_eco_10": {
+   "archivo": "./audio/celular/historial/vida_eco_10-bba6657854.ogg",
+   "seg": 9.41
+  },
+  "vida_eco_11": {
+   "archivo": "./audio/celular/historial/vida_eco_11-d650f6c44a.ogg",
+   "seg": 9.61
+  },
+  "vida_eco_2": {
+   "archivo": "./audio/celular/historial/vida_eco_2-e8a56891e3.ogg",
+   "seg": 9.61
+  },
+  "vida_eco_3": {
+   "archivo": "./audio/celular/historial/vida_eco_3-72960c10d8.ogg",
+   "seg": 9.01
+  },
+  "vida_eco_4": {
+   "archivo": "./audio/celular/historial/vida_eco_4-ad65a4dfd5.ogg",
+   "seg": 9.51
+  },
+  "vida_eco_5": {
+   "archivo": "./audio/celular/historial/vida_eco_5-dc912d3dde.ogg",
+   "seg": 8.81
+  },
+  "vida_eco_6": {
+   "archivo": "./audio/celular/historial/vida_eco_6-8c145c7ccd.ogg",
+   "seg": 9.11
+  },
+  "vida_eco_7": {
+   "archivo": "./audio/celular/historial/vida_eco_7-05e55e62d5.ogg",
+   "seg": 8.81
+  },
+  "vida_eco_8": {
+   "archivo": "./audio/celular/historial/vida_eco_8-74202b5baf.ogg",
+   "seg": 9.31
+  },
+  "vida_eco_9": {
+   "archivo": "./audio/celular/historial/vida_eco_9-a47da9d1a2.ogg",
+   "seg": 11.51
+  },
+  "vida_estacion_0": {
+   "archivo": "./audio/celular/historial/vida_estacion_0-b8c14f75d5.ogg",
+   "seg": 10.51
+  },
+  "vida_estacion_1": {
+   "archivo": "./audio/celular/historial/vida_estacion_1-add0594069.ogg",
+   "seg": 9.71
+  },
+  "vida_estacion_10": {
+   "archivo": "./audio/celular/historial/vida_estacion_10-b6794c27ce.ogg",
+   "seg": 9.91
+  },
+  "vida_estacion_11": {
+   "archivo": "./audio/celular/historial/vida_estacion_11-c8066b64f9.ogg",
+   "seg": 9.71
+  },
+  "vida_estacion_2": {
+   "archivo": "./audio/celular/historial/vida_estacion_2-f474bfca23.ogg",
+   "seg": 10.21
+  },
+  "vida_estacion_3": {
+   "archivo": "./audio/celular/historial/vida_estacion_3-68706ffef1.ogg",
+   "seg": 9.81
+  },
+  "vida_estacion_4": {
+   "archivo": "./audio/celular/historial/vida_estacion_4-9807057393.ogg",
+   "seg": 8.61
+  },
+  "vida_estacion_5": {
+   "archivo": "./audio/celular/historial/vida_estacion_5-998201d61e.ogg",
+   "seg": 10.61
+  },
+  "vida_estacion_6": {
+   "archivo": "./audio/celular/historial/vida_estacion_6-bfd7e00608.ogg",
+   "seg": 8.51
+  },
+  "vida_estacion_7": {
+   "archivo": "./audio/celular/historial/vida_estacion_7-795b18aeee.ogg",
+   "seg": 8.81
+  },
+  "vida_estacion_8": {
+   "archivo": "./audio/celular/historial/vida_estacion_8-c07e5d71e6.ogg",
+   "seg": 11.01
+  },
+  "vida_estacion_9": {
+   "archivo": "./audio/celular/historial/vida_estacion_9-1000ce4f3d.ogg",
+   "seg": 9.71
+  },
+  "vida_faro_0": {
+   "archivo": "./audio/celular/historial/vida_faro_0-c07f5521d2.ogg",
+   "seg": 9.81
+  },
+  "vida_faro_1": {
+   "archivo": "./audio/celular/historial/vida_faro_1-62b254765e.ogg",
+   "seg": 10.01
+  },
+  "vida_faro_10": {
+   "archivo": "./audio/celular/historial/vida_faro_10-f6b431348c.ogg",
+   "seg": 9.81
+  },
+  "vida_faro_11": {
+   "archivo": "./audio/celular/historial/vida_faro_11-693bf242be.ogg",
+   "seg": 12.01
+  },
+  "vida_faro_2": {
+   "archivo": "./audio/celular/historial/vida_faro_2-dfa016f7af.ogg",
+   "seg": 11.11
+  },
+  "vida_faro_3": {
+   "archivo": "./audio/celular/historial/vida_faro_3-702ef27341.ogg",
+   "seg": 9.81
+  },
+  "vida_faro_4": {
+   "archivo": "./audio/celular/historial/vida_faro_4-a136f2f414.ogg",
+   "seg": 9.41
+  },
+  "vida_faro_5": {
+   "archivo": "./audio/celular/historial/vida_faro_5-adda0b1fde.ogg",
+   "seg": 9.01
+  },
+  "vida_faro_6": {
+   "archivo": "./audio/celular/historial/vida_faro_6-445c076314.ogg",
+   "seg": 9.81
+  },
+  "vida_faro_7": {
+   "archivo": "./audio/celular/historial/vida_faro_7-99393a0507.ogg",
+   "seg": 9.11
+  },
+  "vida_faro_8": {
+   "archivo": "./audio/celular/historial/vida_faro_8-0baac28f7c.ogg",
+   "seg": 10.71
+  },
+  "vida_faro_9": {
+   "archivo": "./audio/celular/historial/vida_faro_9-471b7662f5.ogg",
+   "seg": 10.31
+  },
+  "vida_iridalia_0": {
+   "archivo": "./audio/celular/historial/vida_iridalia_0-2e633d2b6a.ogg",
+   "seg": 9.41
+  },
+  "vida_iridalia_1": {
+   "archivo": "./audio/celular/historial/vida_iridalia_1-8a9c62712c.ogg",
+   "seg": 10.71
+  },
+  "vida_iridalia_10": {
+   "archivo": "./audio/celular/historial/vida_iridalia_10-2b4f606644.ogg",
+   "seg": 9.91
+  },
+  "vida_iridalia_11": {
+   "archivo": "./audio/celular/historial/vida_iridalia_11-9cdbfbcc10.ogg",
+   "seg": 10.21
+  },
+  "vida_iridalia_2": {
+   "archivo": "./audio/celular/historial/vida_iridalia_2-5073992fa8.ogg",
+   "seg": 9.91
+  },
+  "vida_iridalia_3": {
+   "archivo": "./audio/celular/historial/vida_iridalia_3-532b002560.ogg",
+   "seg": 10.41
+  },
+  "vida_iridalia_4": {
+   "archivo": "./audio/celular/historial/vida_iridalia_4-fee2585d63.ogg",
+   "seg": 9.21
+  },
+  "vida_iridalia_5": {
+   "archivo": "./audio/celular/historial/vida_iridalia_5-f06762e501.ogg",
+   "seg": 8.91
+  },
+  "vida_iridalia_6": {
+   "archivo": "./audio/celular/historial/vida_iridalia_6-d691dfdca9.ogg",
+   "seg": 10.71
+  },
+  "vida_iridalia_7": {
+   "archivo": "./audio/celular/historial/vida_iridalia_7-8474cf11d0.ogg",
+   "seg": 9.01
+  },
+  "vida_iridalia_8": {
+   "archivo": "./audio/celular/historial/vida_iridalia_8-6be05a0cd4.ogg",
+   "seg": 10.01
+  },
+  "vida_iridalia_9": {
+   "archivo": "./audio/celular/historial/vida_iridalia_9-6ae4937243.ogg",
+   "seg": 11.01
+  },
+  "vida_nocturna_0": {
+   "archivo": "./audio/celular/historial/vida_nocturna_0-0d8b890cf7.ogg",
+   "seg": 10.21
+  },
+  "vida_nocturna_1": {
+   "archivo": "./audio/celular/historial/vida_nocturna_1-ab61995d1b.ogg",
+   "seg": 10.71
+  },
+  "vida_nocturna_10": {
+   "archivo": "./audio/celular/historial/vida_nocturna_10-7659363242.ogg",
+   "seg": 10.41
+  },
+  "vida_nocturna_11": {
+   "archivo": "./audio/celular/historial/vida_nocturna_11-1fee9918fe.ogg",
+   "seg": 11.61
+  },
+  "vida_nocturna_2": {
+   "archivo": "./audio/celular/historial/vida_nocturna_2-d0a4ef13c1.ogg",
+   "seg": 9.81
+  },
+  "vida_nocturna_3": {
+   "archivo": "./audio/celular/historial/vida_nocturna_3-7240e3a498.ogg",
+   "seg": 11.21
+  },
+  "vida_nocturna_4": {
+   "archivo": "./audio/celular/historial/vida_nocturna_4-2ed38ee097.ogg",
+   "seg": 9.51
+  },
+  "vida_nocturna_5": {
+   "archivo": "./audio/celular/historial/vida_nocturna_5-98a8914da4.ogg",
+   "seg": 9.91
+  },
+  "vida_nocturna_6": {
+   "archivo": "./audio/celular/historial/vida_nocturna_6-863a1ce270.ogg",
+   "seg": 9.61
+  },
+  "vida_nocturna_7": {
+   "archivo": "./audio/celular/historial/vida_nocturna_7-2ff3dd02b6.ogg",
+   "seg": 9.11
+  },
+  "vida_nocturna_8": {
+   "archivo": "./audio/celular/historial/vida_nocturna_8-5e8e25a302.ogg",
+   "seg": 12.51
+  },
+  "vida_nocturna_9": {
+   "archivo": "./audio/celular/historial/vida_nocturna_9-06fad88649.ogg",
+   "seg": 10.01
+  },
+  "vida_pacto_0": {
+   "archivo": "./audio/celular/historial/vida_pacto_0-9d2621daf6.ogg",
+   "seg": 11.71
+  },
+  "vida_pacto_1": {
+   "archivo": "./audio/celular/historial/vida_pacto_1-2bf188f4ea.ogg",
+   "seg": 9.91
+  },
+  "vida_pacto_10": {
+   "archivo": "./audio/celular/historial/vida_pacto_10-084a5f6da0.ogg",
+   "seg": 10.51
+  },
+  "vida_pacto_11": {
+   "archivo": "./audio/celular/historial/vida_pacto_11-f2b82f484b.ogg",
+   "seg": 9.91
+  },
+  "vida_pacto_2": {
+   "archivo": "./audio/celular/historial/vida_pacto_2-aa2108b59a.ogg",
+   "seg": 10.21
+  },
+  "vida_pacto_3": {
+   "archivo": "./audio/celular/historial/vida_pacto_3-0b31c335de.ogg",
+   "seg": 11.41
+  },
+  "vida_pacto_4": {
+   "archivo": "./audio/celular/historial/vida_pacto_4-a098a3e269.ogg",
+   "seg": 9.11
+  },
+  "vida_pacto_5": {
+   "archivo": "./audio/celular/historial/vida_pacto_5-60a218704e.ogg",
+   "seg": 9.61
+  },
+  "vida_pacto_6": {
+   "archivo": "./audio/celular/historial/vida_pacto_6-6c1e263449.ogg",
+   "seg": 9.11
+  },
+  "vida_pacto_7": {
+   "archivo": "./audio/celular/historial/vida_pacto_7-dcf5f074d3.ogg",
+   "seg": 10.11
+  },
+  "vida_pacto_8": {
+   "archivo": "./audio/celular/historial/vida_pacto_8-24d8d4e670.ogg",
+   "seg": 10.51
+  },
+  "vida_pacto_9": {
+   "archivo": "./audio/celular/historial/vida_pacto_9-f96097b465.ogg",
+   "seg": 10.91
+  }
+ }
+}

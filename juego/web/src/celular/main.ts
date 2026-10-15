@@ -1,6 +1,5 @@
 // «Desaparecidos de Astra»: la mesa de los perdidos de Vigilia. Ulises recibe teléfonos encontrados en Astra y tú
-// los revisas para saber qué le pasó a su dueño y dónde está. Ocho casos (src/celular/casos), el primero enseña a
-// jugar. Se juega en horizontal con el teléfono grande a la izquierda y la libreta del detective a la derecha.
+// los revisas para saber qué le pasó a su dueño y dónde está. Ocho casos con investigación y apuntes manuales. Se juega en horizontal con el teléfono grande a la izquierda y la libreta del detective a la derecha.
 // Documento: docs/sistemas/celular.md.
 import './celular.css';
 import { alAtras, volverALaSala } from '../sueltos/comun';
@@ -118,11 +117,6 @@ function expediente(c: Caso) {
 
 // ------------------------------------------------------------------ el caso: teléfono + libreta
 
-let libretaLista: HTMLElement | null = null;
-let libretaCuenta: HTMLElement | null = null;
-let botonResolver: HTMLButtonElement | null = null;
-let coach: HTMLElement | null = null;
-
 function abrirCaso(c: Caso) {
   casoActual = c;
   const p = de(c);
@@ -130,134 +124,48 @@ function abrirCaso(c: Caso) {
   const s = el('div', 'cel-caso');
   const zonaTel = el('div', 'cel-zona-tel');
   tel = new Telefono(c, p, {
-    anotar: (id) => anotar(c, p, id),
-    abierto: (id) => { if (!p.abiertos.includes(id)) { p.abiertos.push(id); guardar(); actualizarLibreta(c, p); } },
-    evento: (n) => tutorial(c, p, n),
+    abierto: (id) => { if (!p.abiertos.includes(id)) { p.abiertos.push(id); guardar(); } },
     guardar,
   });
   zonaTel.append(tel.raiz);
   const libreta = el('aside', 'cel-libreta');
-  const cab = el('div', 'cel-libreta-cab', `${ICONO.libreta}<b>Libreta</b>`);
-  libretaCuenta = el('small', 'cel-libreta-cuenta');
-  cab.append(libretaCuenta);
-  libretaLista = el('ol', 'cel-libreta-lista');
+  libreta.setAttribute('aria-label', 'Tus anotaciones');
+  libreta.append(el('div', 'cel-libreta-cab', `${ICONO.libreta}<b>Mi libreta</b>`));
+  const apuntes = el('textarea', 'cel-apuntes');
+  apuntes.setAttribute('aria-label', 'Anotaciones del caso');
+  apuntes.placeholder = 'Escribe aquí tus observaciones, fechas, dudas e hipótesis…';
+  apuntes.maxLength = 30000;
+  apuntes.value = p.apuntes;
+  const estado = el('small', 'cel-apuntes-estado', 'Solo se guarda lo que tú escribas.');
+  apuntes.oninput = () => { p.apuntes = apuntes.value; estado.textContent = guardar() ? 'Notas guardadas' : 'Notas pendientes de guardar'; };
   const acciones = el('div', 'cel-libreta-acciones');
-  const ayuda = el('button', 'cel-boton', `${ICONO.ayuda}<span>Ayuda</span>`);
-  ayuda.dataset.accion = 'ayuda';
-  ayuda.onclick = () => mostrarAyuda(c, p);
   const exp = el('button', 'cel-boton', `${ICONO.carpeta}<span>Expediente</span>`);
   exp.onclick = () => expediente(c);
-  botonResolver = el('button', 'cel-boton resolver', `${ICONO.lupa}<span>Resolver el caso</span>`);
-  botonResolver.dataset.accion = 'resolver';
-  botonResolver.onclick = () => resolver(c, p);
+  const resolverBoton = el('button', 'cel-boton resolver', `${ICONO.lupa}<span>Presentar conclusiones</span>`);
+  resolverBoton.dataset.accion = 'resolver';
+  resolverBoton.onclick = () => resolver(c, p);
+  acciones.append(exp, resolverBoton);
+  libreta.append(apuntes, estado, acciones);
   const salir = el('button', 'cel-boton redondo chico', ICONO.salir);
   salir.title = 'Volver a la mesa';
   salir.onclick = () => mesa();
-  acciones.append(ayuda, exp, botonResolver);
-  libreta.append(cab, libretaLista, acciones);
-  s.append(zonaTel, libreta, salir);
+  const alternar = el('button', 'cel-alternar-libreta', `${ICONO.libreta}<span>Libreta</span>`);
+  alternar.setAttribute('aria-expanded', 'false');
+  libreta.hidden = true;
+  alternar.onclick = () => { libreta.hidden = !libreta.hidden; alternar.setAttribute('aria-expanded', String(!libreta.hidden)); };
+  s.append(zonaTel, libreta, salir, alternar);
   app.replaceChildren(s);
-  actualizarLibreta(c, p);
-  if (c.tutorial) tutorial(c, p, 'inicio');
-}
-
-function actualizarLibreta(c: Caso, p: ProgresoCaso) {
-  if (!libretaLista || !libretaCuenta || !botonResolver) return;
-  libretaLista.replaceChildren();
-  // En el orden en que las fue encontrando
-  for (const id of p.pistas) {
-    const pi = c.pistas.find((x) => x.id === id);
-    if (!pi) continue;
-    const li = el('li', `${pi.clave ? 'clave' : ''} ${pi.giro ? 'giro' : ''}`, `${pi.giro ? '<b>¡Giro!</b> ' : ''}${esc(pi.texto)}`);
-    li.dataset.pista = id;
-    libretaLista.append(li);
-  }
-  if (!p.pistas.length) libretaLista.append(el('li', 'vacia', 'Todavía nada. Lo que encuentres en el teléfono se anota aquí solo.'));
-  const claves = c.pistas.filter((x) => x.clave);
-  const tengo = claves.filter((x) => p.pistas.includes(x.id)).length;
-  libretaCuenta.innerHTML = `${p.pistas.length} pistas · <b>${tengo}/${claves.length}</b> importantes`;
-  const listo = tengo === claves.length;
-  botonResolver.classList.toggle('listo', listo);
-  libretaLista.scrollTop = libretaLista.scrollHeight;
-}
-
-function anotar(c: Caso, p: ProgresoCaso, id: string | undefined) {
-  if (!id || p.pistas.includes(id)) return;
-  const pi = c.pistas.find((x) => x.id === id);
-  if (!pi) return;
-  p.pistas.push(id);
-  guardar();
-  actualizarLibreta(c, p);
-  efecto(pi.giro ? 'sorpresa' : 'tin', pi.giro ? 0.45 : 0.25);
-  const papel = el('div', `cel-papelito ${pi.giro ? 'giro' : ''}`, `<b>${pi.giro ? '¡Giro en el caso!' : 'Pista anotada'}</b><span>${esc(pi.texto)}</span>`);
-  app.append(papel);
-  setTimeout(() => papel.classList.add('vuela'), pi.giro ? 2600 : 1500);
-  setTimeout(() => papel.remove(), pi.giro ? 3300 : 2200);
-  libretaLista?.querySelector(`[data-pista="${id}"]`)?.classList.add('nueva');
-  tutorial(c, p, 'pista');
-}
-
-// ------------------------------------------------------------------ ayudas
-
-function etapaActual(c: Caso, p: ProgresoCaso) {
-  if (!p.abiertos.includes('bloqueo')) return 'bloqueo';
-  const falta = c.candados.find((k) => !p.abiertos.includes(k.id));
-  return falta?.id ?? 'resolver';
-}
-
-function mostrarAyuda(c: Caso, p: ProgresoCaso) {
-  const etapa = etapaActual(c, p);
-  const a = c.ayudas.find((x) => x.etapa === etapa);
-  const capa = el('div', 'cel-capa');
-  const caja = el('div', 'cel-ayuda');
-  const n = p.ayudas[etapa] ?? 0;
-  const nombre = etapa === 'bloqueo' ? 'Abrir el teléfono' : etapa === 'resolver' ? 'Resolver el caso' : `Abrir «${c.candados.find((k) => k.id === etapa)?.titulo ?? ''}»`;
-  const pintar = () => {
-    const k = p.ayudas[etapa] ?? 0;
-    caja.innerHTML = `<h3>${ICONO.ayuda} Ayuda de Ulises</h3><small>Ahora mismo: ${esc(nombre)}</small>`;
-    const ol = el('ol');
-    a?.textos.forEach((t, i) => ol.append(el('li', i < k ? 'vista' : 'tapada', i < k ? esc(t) : i === a.textos.length - 1 ? 'La respuesta (cuesta una estrella)' : 'Otra ayuda')));
-    caja.append(ol);
-    const fila = el('div', 'cel-exp-botones');
-    const cerrar = el('button', 'cel-boton', 'Cerrar');
-    cerrar.onclick = () => { capa.remove(); capas.pop(); };
-    fila.append(cerrar);
-    if (a && k < a.textos.length) {
-      const mas = el('button', 'cel-boton grande', k === a.textos.length - 1 ? 'Ver la respuesta' : k ? 'Otra ayuda' : 'Dame una ayuda');
-      mas.dataset.accion = 'mas-ayuda';
-      mas.onclick = () => { p.ayudas[etapa] = k + 1; guardar(); efecto('idea', 0.35); pintar(); };
-      fila.append(mas);
-    }
-    caja.append(fila);
-  };
-  if (!a) caja.textContent = 'Sigue buscando: vas bien.';
-  else pintar();
-  void n;
-  capa.append(caja);
-  app.append(capa);
-  capas.push(() => capa.remove());
 }
 
 // ------------------------------------------------------------------ resolver
 
 function resolver(c: Caso, p: ProgresoCaso) {
-  const claves = c.pistas.filter((x) => x.clave);
-  const faltan = claves.filter((x) => !p.pistas.includes(x.id)).length;
   const capa = el('div', 'cel-capa');
   const caja = el('div', 'cel-resolver');
   capa.append(caja);
   app.append(capa);
   capas.push(() => capa.remove());
   const cerrar = () => { capa.remove(); capas.pop(); };
-  if (faltan) {
-    caja.innerHTML = `<h3>${ICONO.lupa} Todavía no cuadra</h3><p>Te faltan <b>${faltan}</b> ${faltan === 1 ? 'pista importante' : 'pistas importantes'} en la libreta. Revisa el teléfono con calma: chats, fotos, notas de voz… y lo que esté con candado.</p>`;
-    const f = el('div', 'cel-exp-botones');
-    const b = el('button', 'cel-boton grande', 'Seguir buscando');
-    b.onclick = cerrar;
-    f.append(b);
-    caja.append(f);
-    return;
-  }
   let i = 0;
   const pregunta = () => {
     const q = c.preguntas[i];
@@ -273,7 +181,7 @@ function resolver(c: Caso, p: ProgresoCaso) {
           ops.classList.add('hecho');
           b.classList.add('bien');
           efecto('si', 0.4);
-          aviso.innerHTML = `<b>¡Eso es!</b> ${esc(q.porque)}`;
+          aviso.textContent = 'Conclusión registrada.';
           aviso.className = 'cel-resolver-aviso bien';
           const sig = el('button', 'cel-boton grande', i + 1 < c.preguntas.length ? 'Siguiente' : 'Cerrar el caso');
           sig.dataset.accion = 'siguiente';
@@ -285,7 +193,7 @@ function resolver(c: Caso, p: ProgresoCaso) {
           p.errores++;
           guardar();
           efecto('duda', 0.4);
-          aviso.innerHTML = '<b>No cuadra con las pistas.</b> Vuelve a mirar la libreta.';
+          aviso.innerHTML = 'Esa conclusión no concuerda con el expediente.';
           aviso.className = 'cel-resolver-aviso mal';
         }
       };
@@ -357,35 +265,6 @@ async function escenaFinal(c: Caso, estrellas: number) {
   saltar.remove();
   s.append(cierre);
   efecto('fanfarria', 0.35);
-}
-
-// ------------------------------------------------------------------ el tutorial del caso 1 (Ulises va guiando)
-
-const PASOS: { id: string; cuando: (n: string, c: Caso, p: ProgresoCaso) => boolean; texto: string }[] = [
-  { id: 'hola', cuando: (n, _c, p) => n === 'inicio' && !p.abiertos.includes('bloqueo'), texto: 'Este es el teléfono de Marcela. Tócale la pantalla para despertarlo.' },
-  { id: 'clave', cuando: (n) => n === 'despertar', texto: 'Tiene clave. Lee el recordatorio que dejó ella: dice qué número usó. Mira la fecha de arriba.' },
-  { id: 'adentro', cuando: (n) => n === 'desbloqueo', texto: '¡Adentro! Lo que encuentres se anota solo en tu libreta (a la derecha). Empieza por Mensajes.' },
-  { id: 'chat', cuando: (n) => n === 'app:mensajes', texto: 'Abre cada conversación. Las notas de voz se escuchan con el botón de play (y «Aa» muestra lo que dicen).' },
-  { id: 'voz', cuando: (n) => n === 'voz', texto: 'Eso. Revisa también Fotos, Notas, la Grabadora y el Mapa. Si una foto está muy oscura, prende la Linterna.' },
-  { id: 'candado', cuando: (n) => n.startsWith('candado:'), texto: 'Una nota con candado. La clave siempre está escondida en otra parte del teléfono. Si te atascas, toca Ayuda.' },
-  { id: 'resolver', cuando: (_n, c, p) => c.pistas.filter((x) => x.clave).every((x) => p.pistas.includes(x.id)), texto: 'Ya tienes todas las pistas importantes. Toca «Resolver el caso» y contesta qué pasó.' },
-];
-
-function tutorial(c: Caso, p: ProgresoCaso, n: string) {
-  if (!c.tutorial || p.resuelto) return;
-  const paso = PASOS.find((x) => !p.tutorial.includes(x.id) && x.cuando(n, c, p));
-  if (!paso) return;
-  p.tutorial.push(paso.id);
-  guardar();
-  coach?.remove();
-  coach = el('div', 'cel-coach', `<span class="cel-coach-cara" style="background-image:url(${foto('ulises')})"></span><div><b>Ulises</b><p>${esc(paso.texto)}</p></div>`);
-  const x = el('button', 'cel-coach-x', '×');
-  x.onclick = () => coach?.remove();
-  coach.append(x);
-  app.append(coach);
-  const este = coach;
-  setTimeout(() => este.classList.add('fuera'), 9000);
-  setTimeout(() => este.remove(), 9600);
 }
 
 // ------------------------------------------------------------------ arranque

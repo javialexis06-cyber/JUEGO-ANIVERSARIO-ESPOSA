@@ -1,6 +1,6 @@
 // El teléfono encontrado: la carcasa (cada uno con su personalidad), la pantalla de bloqueo, el inicio con sus apps y
 // cada app por dentro (mensajes, fotos, notas, grabadora, llamadas, mapa, correo o bitácora, calendario, linterna y
-// las señas de luz). Todo lo que se abre puede anotar una pista en la libreta.
+// las señas de luz). Leer no selecciona, clasifica ni anota datos del caso.
 import { efecto, hayVoz, pararVoz, segundosVoz, sonarVoz } from './audio';
 import { candado } from './candado';
 import { COLOR_APP, ICONO, NOMBRE_APP } from './iconos';
@@ -20,12 +20,8 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', html = ''):
 }
 
 export interface Ganchos {
-  /** Anota una pista (si no estaba). */
-  anotar(id: string | undefined): void;
   /** Se abrió un candado. */
   abierto(id: string): void;
-  /** Algo pasó (para el tutorial): 'despertar', 'desbloqueo', 'app:mensajes', 'voz', 'candado:x'… */
-  evento(nombre: string): void;
   guardar(): void;
 }
 
@@ -82,13 +78,13 @@ export class Telefono {
   private pedir(id: string, luego: () => void) {
     const c = this.candadoDe(id);
     if (!c) return luego();
-    this.g.evento('candado:' + id);
+
     const capa = el('div', 'cel-sobre');
     this.pantalla.append(capa);
     const cerrar = () => { capa.remove(); this.pila.pop(); };
     this.pila.push(() => capa.remove());
     candado(capa, c, {
-      alAbrir: () => { cerrar(); this.g.abierto(c.id); this.g.anotar(c.pista); luego(); },
+      alAbrir: () => { cerrar(); this.g.abierto(c.id); luego(); },
       alCancelar: cerrar,
     });
   }
@@ -122,10 +118,10 @@ export class Telefono {
     s.append(reloj, avisos, desliza);
     s.onclick = () => {
       if (s.querySelector('.cel-candado')) return;
-      this.g.evento('despertar');
+
       s.classList.add('pidiendo');
       const c = candado(s, this.caso.bloqueo, {
-        alAbrir: () => { this.g.abierto('bloqueo'); this.g.anotar(this.caso.bloqueo.pista); this.g.evento('desbloqueo'); this.inicio(); },
+        alAbrir: () => { this.g.abierto('bloqueo'); this.inicio(); },
         alCancelar: () => { c.remove(); s.classList.remove('pidiendo'); this.pila.pop(); },
       });
       this.pila.push(() => { c.remove(); s.classList.remove('pidiendo'); });
@@ -137,7 +133,7 @@ export class Telefono {
 
   private noLeidos(app: IdApp) {
     const v = this.p.vistos;
-    if (app === 'mensajes') return this.caso.chats.filter((c) => !v.includes('chat:' + c.con)).length;
+    if (app === 'mensajes') return this.caso.chats.filter((c) => !c.archivado && c.noLeidos && !v.includes('chat:' + c.con)).length;
     if (app === 'llamadas') return v.includes('app:llamadas') ? 0 : this.caso.llamadas.filter((l) => l.tipo === 'perdida').length;
     if (app === 'fotos') return v.includes('app:fotos') ? 0 : 0;
     return 0;
@@ -186,7 +182,7 @@ export class Telefono {
     pararVoz();
     this.app = app;
     this.pila = [];
-    this.g.evento('app:' + app);
+
     if (!this.p.vistos.includes('app:' + app)) { this.p.vistos.push('app:' + app); this.g.guardar(); }
     const t = this.caso.telefono;
     const titulo = app === 'correo' ? t.nombreCorreo ?? 'Correo' : NOMBRE_APP[app];
@@ -209,64 +205,97 @@ export class Telefono {
   // ------------------------------------------------------------------ mensajes
 
   private appMensajes(cuerpo: HTMLElement) {
-    cuerpo.classList.add('dos-paneles');
+    cuerpo.classList.add('dos-paneles', 'cel-whatsapp');
+    const herramientas = el('div', 'cel-chat-herramientas');
+    const buscar = el('input', 'cel-chat-buscar');
+    buscar.type = 'search'; buscar.placeholder = 'Buscar en WhatsApp';
+    buscar.setAttribute('aria-label', 'Buscar en conversaciones');
+    const archivo = el('button', 'cel-chat-archivo', 'Archivados');
+    archivo.setAttribute('aria-pressed','false');
+    herramientas.append(buscar, archivo);
     const lista = el('div', 'cel-lista');
     const conv = el('div', 'cel-conv', '<div class="cel-vacio">Escoge una conversación</div>');
-    const pintarLista = (activo?: string) => {
+    let archivados = false, activo = '';
+    const normalizar = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    const textoMensaje = (m: typeof this.caso.chats[number]['mensajes'][number]) => m.eliminado ? '' :
+      [m.dia,m.texto,m.voz ? this.caso.voces.find(v=>v.id===m.voz)?.transcrita ?? this.caso.voces.find(v=>v.id===m.voz)?.texto : ''].filter(Boolean).join(' ');
+    const coincide = (t: string) => normalizar(t).includes(normalizar(buscar.value.trim()));
+    const pintarLista = () => {
       lista.replaceChildren();
       for (const ch of this.caso.chats) {
         const c = this.contacto(ch.con);
-        const ult = ch.mensajes[ch.mensajes.length - 1];
+        if (!buscar.value.trim() && !!ch.archivado !== archivados) continue;
+        const encontrado = buscar.value.trim() ? [...ch.mensajes].reverse().find(m=>coincide(textoMensaje(m))) : undefined;
+        if (buscar.value.trim() && !coincide(ch.grupo ?? c.nombre) && !encontrado) continue;
+        const ult = encontrado ?? ch.mensajes[ch.mensajes.length - 1];
         const b = el('button', `cel-fila-chat ${activo === ch.con ? 'activo' : ''}`);
         b.dataset.chat = ch.con;
         const nuevo = !this.p.vistos.includes('chat:' + ch.con);
         b.append(this.avatar(c));
-        b.insertAdjacentHTML('beforeend', `<div><b>${esc(ch.grupo ?? c.nombre)}</b><span>${ult.voz ? '🎤 Nota de voz' : ult.foto ? '📷 Foto' : esc(ult.texto ?? '')}</span></div><small>${esc(ult.t)}${nuevo && ch.noLeidos ? `<em>${ch.noLeidos}</em>` : ''}</small>`);
-        b.onclick = () => { abrirChat(ch.con); };
+        b.insertAdjacentHTML('beforeend', `<div><b>${esc(ch.grupo ?? c.nombre)}</b><span>${ult?.eliminado ? 'Este mensaje fue eliminado' : ult?.voz ? '🎤 Nota de voz' : ult?.foto ? '📷 Foto' : esc(ult?.texto ?? '')}</span></div><small>${esc(ult?.t ?? '')}${ch.silenciado ? ' 🔇' : ''}${nuevo && ch.noLeidos ? `<em>${ch.noLeidos}</em>` : ''}</small>`);
+        b.onclick = () => abrirChat(ch.con);
         lista.append(b);
       }
+      if (!lista.childElementCount) lista.append(el('div','cel-vacio','Sin resultados'));
     };
     const abrirChat = (id: string) => {
-      const ch = this.caso.chats.find((x) => x.con === id)!;
+      const ch = this.caso.chats.find(x=>x.con===id)!;
+      activo = id;
       pararVoz();
       if (!this.p.vistos.includes('chat:' + id)) { this.p.vistos.push('chat:' + id); this.g.guardar(); }
-      pintarLista(id);
-      conv.replaceChildren();
-      const c = this.contacto(ch.con);
-      const cab = el('div', 'cel-conv-cab');
-      cab.append(this.avatar(c, 'chico'));
-      cab.insertAdjacentHTML('beforeend', `<div><b>${esc(ch.grupo ?? c.nombre)}</b><small>${esc(ch.grupo ? ch.mensajes.map((m) => m.de).filter((v, i, a) => v !== 'yo' && a.indexOf(v) === i).map((x) => this.contacto(x).nombre).join(', ') : c.rol ?? '')}</small></div>`);
-      const hilo = el('div', 'cel-hilo');
-      for (const m of ch.mensajes) {
-        if (m.dia) hilo.append(el('div', 'cel-dia', esc(m.dia)));
-        const mio = m.de === 'yo';
-        const b = el('div', `cel-burbuja ${mio ? 'mia' : 'suya'}`);
-        if (ch.grupo && !mio) b.append(el('b', 'quien', esc(this.contacto(m.de).nombre)));
-        if (m.texto) b.append(el('p', '', br(m.texto)));
-        if (m.foto) {
-          const img = el('img', 'cel-burbuja-foto');
-          img.src = foto(m.foto);
-          img.alt = '';
-          img.onclick = () => { const f = this.caso.fotos.find((x) => x.archivo === m.foto); this.verFoto(f ?? { id: m.foto!, archivo: m.foto!, fecha: m.t }); };
-          b.append(img);
-        }
-        if (m.voz) b.append(this.reproductor(this.caso.voces.find((v) => v.id === m.voz)!, m.pista));
-        b.append(el('small', '', esc(m.t)));
-        hilo.append(b);
-        if (m.pista && !m.voz) this.g.anotar(m.pista);
+      pintarLista(); conv.replaceChildren();
+      const c = this.contacto(ch.con), cab = el('div', 'cel-conv-cab');
+      cab.append(this.avatar(c,'chico'));
+      cab.insertAdjacentHTML('beforeend', `<div><b>${esc(ch.grupo ?? c.nombre)}</b><small>${esc(ch.grupo ? [...new Set(ch.mensajes.map(m=>m.de))].map(x=>this.contacto(x).nombre).join(', ') : c.rol ?? '')}</small></div>`);
+      const fechas = el('select','cel-chat-fechas');
+      fechas.setAttribute('aria-label','Ir a una fecha del chat');
+      fechas.append(new Option('Ir a fecha…',''));
+      ch.mensajes.forEach((m,k)=>{if(m.dia)fechas.append(new Option(m.dia,String(k)));});
+      cab.append(fechas);
+      const hilo = el('div','cel-hilo');
+      let desde = Math.max(0,ch.mensajes.length-80);
+      if (buscar.value.trim()) {
+        const ultimo = [...ch.mensajes].reverse().findIndex(m=>coincide(textoMensaje(m)));
+        const k = ultimo<0?-1:ch.mensajes.length-1-ultimo;
+        if (k>=0) desde=Math.max(0,k-10);
       }
-      conv.append(cab, hilo);
-      requestAnimationFrame(() => { hilo.scrollTop = hilo.scrollHeight; });
-      this.g.evento('chat:' + id);
+      const pintarHilo = (alFinal=false) => {
+        pararVoz(); hilo.replaceChildren();
+        const pagina = (etiqueta:string,nuevo:number) => {const b=el('button','cel-chat-pagina',etiqueta);b.onclick=()=>{desde=nuevo;pintarHilo();};return b;};
+        if(desde>0)hilo.append(pagina('Cargar mensajes anteriores',Math.max(0,desde-60)));
+        let diaAnterior='';
+        for(let k=0;k<desde;k++)if(ch.mensajes[k].dia)diaAnterior=ch.mensajes[k].dia!;
+        if(diaAnterior&&!ch.mensajes[desde]?.dia)hilo.append(el('div','cel-dia',esc(diaAnterior)));
+        for (const m of ch.mensajes.slice(desde,desde+80)) {
+          if(m.dia)hilo.append(el('div','cel-dia',esc(m.dia)));
+          const mio=m.de==='yo',b=el('div',`cel-burbuja ${mio?'mia':'suya'} ${m.eliminado?'eliminado':''}`);
+          if(ch.grupo&&!mio)b.append(el('b','quien',esc(this.contacto(m.de).nombre)));
+          if(m.reenviado)b.append(el('small','cel-reenviado','↪ Reenviado'));
+          if(m.cita)b.append(el('blockquote','cel-cita',`<b>${esc(this.contacto(m.cita.de).nombre)}</b><span>${esc(m.cita.texto)}</span>`));
+          if(m.eliminado)b.append(el('p','','Este mensaje fue eliminado'));
+          else {
+            if(m.texto)b.append(el('p','',br(m.texto)));
+            if(m.foto){const img=el('img','cel-burbuja-foto');img.src=foto(m.foto);img.alt='Foto compartida';img.loading='lazy';img.onclick=()=>{const f=this.caso.fotos.find(x=>x.archivo===m.foto);this.verFoto(f??{id:m.foto!,archivo:m.foto!,fecha:m.t});};b.append(img);}
+            if(m.voz){const v=this.caso.voces.find(v=>v.id===m.voz);if(v)b.append(this.reproductor(v));}
+          }
+          b.append(el('small','',`${m.editado?'Editado · ':''}${esc(m.t)}${mio?' ✓✓':''}`));
+          if(m.reaccion)b.append(el('span','cel-reaccion',esc(m.reaccion)));
+          hilo.append(b);
+        }
+        if(desde+80<ch.mensajes.length)hilo.append(pagina('Cargar mensajes más recientes',Math.min(ch.mensajes.length-1,desde+60)));
+        requestAnimationFrame(()=>{hilo.scrollTop=alFinal?hilo.scrollHeight:0;});
+      };
+      fechas.onchange=()=>{if(fechas.value!==''){desde=Number(fechas.value);pintarHilo();}};
+      const pie=el('div','cel-chat-pie','Sin conexión');
+      conv.append(cab,hilo,pie); pintarHilo(!buscar.value.trim());
     };
-    pintarLista();
-    cuerpo.append(lista, conv);
-    (cuerpo as HTMLElement & { abrirChat?: (id: string) => void }).abrirChat = abrirChat;
+    buscar.oninput=pintarLista;
+    archivo.onclick=()=>{archivados=!archivados;archivo.textContent=archivados?'Chats':'Archivados';archivo.setAttribute('aria-pressed',String(archivados));pintarLista();};
+    pintarLista(); cuerpo.append(herramientas,lista,conv);
   }
 
-  /** El reproductor de una nota de voz (con su transcripción). Al terminar de oírla, anota su pista. */
-  private reproductor(v: Voz, pistaChat?: string): HTMLElement {
-    const pista = v.pista ?? pistaChat;
+  /** Reproductor y transcripción del mensaje original, sin interpretación automática. */
+  private reproductor(v: Voz): HTMLElement {
     const r = el('div', 'cel-voz');
     r.dataset.voz = v.id;
     const b = el('button', 'cel-voz-play', ICONO.play);
@@ -274,13 +303,13 @@ export class Telefono {
     let semilla = [...v.id].reduce((a, ch) => a + ch.charCodeAt(0), 0);
     for (let i = 0; i < 26; i++) { semilla = (semilla * 9301 + 49297) % 233280; const barra = el('i'); barra.style.height = `${22 + (semilla / 233280) * 78}%`; onda.append(barra); }
     const seg = segundosVoz(v.id) || Math.max(3, v.texto.length / 14);
-    const dur = el('small', '', `0:${String(Math.round(seg)).padStart(2, '0')}`);
+    const dur = el('small', '', `${Math.floor(Math.round(seg)/60)}:${String(Math.round(seg)%60).padStart(2, '0')}`);
     const tr = el('div', 'cel-voz-texto');
     tr.innerHTML = v.transcrita ? `<small>Transcripción automática</small>${esc(v.transcrita)}` : `<small>Transcripción</small>${esc(v.texto)}`;
     tr.hidden = true;
     const ver = el('button', 'cel-voz-ver', 'Aa');
     ver.title = 'Ver transcripción';
-    ver.onclick = (e) => { e.stopPropagation(); tr.hidden = !tr.hidden; if (!tr.hidden) { this.g.anotar(pista); this.g.evento('voz'); } };
+    ver.onclick = (e) => { e.stopPropagation(); tr.hidden = !tr.hidden; };
     const fila = el('div', 'cel-voz-fila');
     fila.append(b, onda, dur, ver);
     r.append(fila, tr);
@@ -292,8 +321,8 @@ export class Telefono {
         const k = Math.floor(u * barras.length);
         barras.forEach((x, i) => x.classList.toggle('va', i <= k));
       });
-      this.g.anotar(pista);
-      this.g.evento('voz');
+
+
       if (sono) { r.classList.add('sonando'); b.innerHTML = ICONO.pausa; }
       // sin audio todavía: se abre la transcripción
       else tr.hidden = false;
@@ -338,15 +367,13 @@ export class Telefono {
     img.style.backgroundImage = `url(${foto(f.archivo)})`;
     const info = el('div', 'cel-visor-info');
     info.innerHTML = `<b>${esc(f.lugar ?? '')}</b><small>${esc(f.fecha)}</small>${f.pie ? `<p>${esc(f.pie)}</p>` : ''}`;
-    if (f.oscura) info.insertAdjacentHTML('beforeend', `<p class="cel-pista-linterna">${this.linterna ? 'La linterna alumbra la foto…' : 'Está muy oscura. ¿Y si prendes la linterna?'}</p>`);
     const x = el('button', 'cel-visor-cerrar', ICONO.atras);
     x.onclick = () => { v.remove(); this.pila.pop(); };
     v.append(img, info, x);
     this.pantalla.append(v);
     this.pila.push(() => v.remove());
-    this.g.anotar(f.pista);
-    if (f.oscura && this.linterna) this.g.anotar(f.pistaLinterna);
-    this.g.evento('foto:' + f.id);
+
+
   }
 
   // ------------------------------------------------------------------ notas
@@ -366,8 +393,8 @@ export class Telefono {
           if (cerrada) { this.pedir(n.candado!, () => { this.abrir('notas'); this.abrirNota(n.id); }); return; }
           pintar(n.id);
           hoja.innerHTML = `<h3>${esc(n.titulo)}</h3><small>${esc(n.fecha)}</small><p>${br(n.texto)}</p>`;
-          this.g.anotar(n.pista);
-          this.g.evento('nota:' + n.id);
+
+
         };
         lista.append(b);
       }
@@ -419,7 +446,7 @@ export class Telefono {
         f.classList.add('con-buzon');
       }
       lista.append(f);
-      this.g.anotar(l.pista);
+
     }
     cuerpo.append(lista);
   }
@@ -450,14 +477,14 @@ export class Telefono {
     }
     const ficha = el('div', 'cel-mapa-ficha', `<b>${esc(m.titulo)}</b><span>Toca un lugar</span>`);
     for (const l of m.lugares) {
-      const b = el('button', `cel-mapa-pin ${l.pista ? 'guardado' : ''}`, `${ICONO[l.icono ?? 'pin']}`);
+      const b = el('button', 'cel-mapa-pin', `${ICONO[l.icono ?? 'pin']}`);
       b.dataset.lugar = l.id;
       b.style.left = `${l.x}%`; b.style.top = `${l.y}%`;
       b.onclick = () => {
         caja.querySelectorAll('.cel-mapa-pin.activo').forEach((x) => x.classList.remove('activo'));
         b.classList.add('activo');
         ficha.innerHTML = `<b>${esc(l.nombre)}</b>${l.nota ? `<span>${esc(l.nota)}</span>` : ''}`;
-        this.g.anotar(l.pista);
+
       };
       const etiqueta = el('span', 'cel-mapa-nombre', esc(l.nombre));
       etiqueta.style.left = `${l.x}%`; etiqueta.style.top = `${l.y}%`;
@@ -495,8 +522,8 @@ export class Telefono {
         lista.querySelectorAll('.activo').forEach((e) => e.classList.remove('activo'));
         b.classList.add('activo');
         hoja.innerHTML = `<h3>${esc(x.asunto)}</h3><small>${esc(x.de)} · ${esc(x.fecha)}</small><p>${br(x.texto)}</p>${x.foto ? `<img src="${foto(x.foto)}" alt="">` : ''}`;
-        this.g.anotar(x.pista);
-        this.g.evento('correo:' + x.id);
+
+
       };
       lista.append(b);
     }
@@ -511,7 +538,7 @@ export class Telefono {
     for (const e of this.caso.calendario) {
       if (e.dia !== dia) { dia = e.dia; lista.append(el('div', 'cel-agenda-dia', esc(dia))); }
       lista.append(el('div', 'cel-evento', `<i></i><small>${esc(e.t ?? 'Todo el día')}</small><b>${esc(e.texto)}</b>`));
-      this.g.anotar(e.pista);
+
     }
     cuerpo.append(lista);
   }
@@ -526,9 +553,9 @@ export class Telefono {
       b.classList.toggle('prendida', this.linterna);
       b.querySelector('span')!.textContent = this.linterna ? 'Prendida' : 'Apagada';
       this.aplicarLinterna();
-      this.g.evento(this.linterna ? 'linterna' : 'linterna-off');
+
     };
-    cuerpo.append(b, el('p', 'cel-linterna-nota', 'La linterna alumbra lo que está muy oscuro (en las fotos, por ejemplo).'));
+    cuerpo.append(b, el('p', 'cel-linterna-nota', 'Luz continua'));
   }
 
   private aplicarLinterna() {
@@ -548,10 +575,10 @@ export class Telefono {
     const msj = el('button', `cel-protegido ${this.abierto(id) ? 'leido' : ''}`);
     msj.dataset.candado = id;
     if (this.abierto(id)) msj.innerHTML = `${ICONO.abierto}<b>Mensaje leído: G·E·O·D·A</b><span>Las luces del valle dicen GEODA.</span>`;
-    else msj.innerHTML = `${ICONO.candado}<b>Mensaje recibido sin leer</b><span>Escribe lo que dicen las luces</span>`;
+    else msj.innerHTML = `${ICONO.candado}<b>Mensaje privado</b><span>Contenido protegido</span>`;
     msj.onclick = () => { if (!this.abierto(id)) this.pedir(id, () => this.abrir('senas')); };
     cuerpo.append(tabla, msj);
-    this.g.anotar('tabla');
+
   }
 
   destruir() {

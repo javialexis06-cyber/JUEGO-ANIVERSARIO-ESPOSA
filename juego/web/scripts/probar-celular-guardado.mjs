@@ -15,13 +15,13 @@ try{
   assert.equal(m.confirmarGuardado(),true);assert.equal(escrituras,0);
   assert.equal(m.desbloqueado(m.CASOS,0),true);assert.equal(m.desbloqueado(m.CASOS,1),false);
   console.log('✓ Confirmar un perfil nuevo no inventa escrituras ni desbloquea el segundo caso');
-  const p=m.de(c);p.recibido=true;p.abiertos=['bloqueo'];p.pistas=['pin'];
+  const p=m.de(c);p.recibido=true;p.abiertos=['bloqueo'];p.pistas=['pin'];p.apuntes='Mi hipótesis escrita a mano\nRevisar las fechas.';
   assert.equal(m.guardar(),true);
   const previo=leer();cortar=true;p.resuelto=true;p.estrellas=3;
   assert.equal(m.guardar(),false);assert.equal(m.guardadoPendiente,true);assert.equal(m.confirmarGuardado(),false);
   assert.deepEqual(leer(),previo);assert.equal(p.resuelto,true);assert.equal(p.estrellas,3);
   console.log('✓ Un caso cerrado conserva su resultado pendiente cuando falla la escritura');
-  p.pistas.push('copa');cortar=false;const memoria=structuredClone(m.progreso);
+  p.pistas.push('copa');p.apuntes+='\nNo confundir el mensaje viejo con el nuevo.';cortar=false;const memoria=structuredClone(m.progreso);
   assert.equal(m.confirmarGuardado(),true);assert.equal(m.guardadoPendiente,false);
   assert.deepEqual(leer(),memoria);assert.deepEqual(m.progreso,memoria);
   const veces=escrituras;assert.equal(m.confirmarGuardado(),true);assert.equal(escrituras,veces);
@@ -34,6 +34,12 @@ try{
   console.log('✓ Reiniciar sin espacio conserva el caso anterior, su referencia y los demás casos');
   assert.equal(m.reiniciar(c),true);assert.notEqual(m.de(c),p);
   assert.equal(m.de(c).resuelto,false);assert.equal(m.de(c).estrellas,0);assert.deepEqual(m.de(c).pistas,[]);
+  assert.equal(m.de(c).apuntes,'');
   assert.equal(m.de(m.CASOS[1]),segundo);assert.deepEqual(leer(),m.progreso);
   console.log('✓ El reinicio confirmado afecta solo al caso elegido');
+  const antiguo=leer();antiguo.casos.pacto.pistas=['abuela'];antiguo.casos.pacto.abiertos=['bloqueo'];delete antiguo.casos.pacto.apuntes;
+  disco.set('celular-astra-v1',JSON.stringify(antiguo));
+  const migrado=await import(pathToFileURL(archivo).href+'?partida-anterior');
+  assert.equal(migrado.de(c).apuntes,'');assert.deepEqual(migrado.de(c).pistas,['abuela']);assert.deepEqual(migrado.de(c).abiertos,['bloqueo']);
+  console.log('✓ Partida anterior conserva candados y datos heredados sin inventar anotaciones manuales');
 }finally{await rm(dir,{recursive:true,force:true});}

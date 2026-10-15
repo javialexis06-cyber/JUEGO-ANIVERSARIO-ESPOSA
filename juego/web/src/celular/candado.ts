@@ -29,12 +29,9 @@ export function candado(cont: HTMLElement, c: Candado, o: OpcionesCandado): HTML
   const izq = el('div', 'cel-candado-info');
   const titulo = el('div', 'cel-candado-titulo', `${ICONO.candado}<span></span>`);
   titulo.querySelector('span')!.textContent = c.titulo;
-  const rec = el('div', 'cel-candado-rec');
-  rec.innerHTML = '<small>Recordatorio</small><b></b>';
-  rec.querySelector('b')!.textContent = `«${c.recordatorio}»`;
   const muestra = el('div', 'cel-candado-muestra');
   const aviso = el('div', 'cel-candado-aviso');
-  izq.append(titulo, rec, muestra, aviso);
+  izq.append(titulo, muestra, aviso);
   if (o.alCancelar) {
     const x = el('button', 'cel-candado-cancelar', `${ICONO.atras}<span>Volver</span>`);
     x.onclick = () => o.alCancelar!();
@@ -43,6 +40,7 @@ export function candado(cont: HTMLElement, c: Candado, o: OpcionesCandado): HTML
   const der = el('div', 'cel-candado-entrada');
   caja.append(izq, der);
   cont.append(caja);
+  let abriendo = false;
 
   const fallar = (txt = 'Clave incorrecta') => {
     aviso.textContent = txt;
@@ -53,11 +51,14 @@ export function candado(cont: HTMLElement, c: Candado, o: OpcionesCandado): HTML
     o.alFallar?.();
   };
   const abrir = () => {
+    if (abriendo || !caja.isConnected) return;
+    abriendo = true;
+    caja.querySelectorAll<HTMLButtonElement>('button').forEach(b => b.disabled = true);
     aviso.textContent = '';
     caja.classList.add('abierto');
     titulo.innerHTML = `${ICONO.abierto}<span>Abierto</span>`;
     efecto('tin', 0.5);
-    setTimeout(() => o.alAbrir(), 420);
+    setTimeout(() => { if (caja.isConnected) o.alAbrir(); }, 420);
   };
 
   if (c.tipo === 'pin') {
@@ -172,7 +173,8 @@ export function candado(cont: HTMLElement, c: Candado, o: OpcionesCandado): HTML
     // Con teclado físico (computador) también se puede escribir
     const tecla = (e: KeyboardEvent) => {
       if (!caja.isConnected) { document.removeEventListener('keydown', tecla); return; }
-      if (/^[a-zñáéíóú]$/i.test(e.key)) { v += plano(e.key) || e.key.toLowerCase(); pintar(); }
+      if (abriendo || (e.target instanceof HTMLElement && (e.target.closest('input,textarea') || e.target.isContentEditable))) return;
+      if (/^[a-zñáéíóú]$/i.test(e.key) && v.length < 14) { v += plano(e.key) || e.key.toLowerCase(); pintar(); }
       else if (e.key === 'Backspace') { v = v.slice(0, -1); pintar(); }
       else if (e.key === 'Enter') teclado.querySelector<HTMLButtonElement>('[data-tecla="ok"]')!.click();
     };

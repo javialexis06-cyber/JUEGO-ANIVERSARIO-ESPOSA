@@ -11,6 +11,13 @@ simulada con pérdidas y fallos de escritura, once grupos del motor y controles 
 Ocho planos y siete ambientes inspeccionados; pasan ambas compilaciones, motores, 48 suites y seis comprobaciones
 de integración. Android físico y redes reales siguen sin certificarse; no cambian reglas ni premios.
 
+**Desaparecidos, investigación manual hecha:** 6.111 mensajes entre los ocho teléfonos, historiales de tres años,
+chats archivados y búsqueda, fechas, citas, reacciones y vida cotidiana. 96 notas de voz nuevas (152 en total).
+La libreta solo conserva lo que escriba quien juega; se retiraron las pistas automáticas, contadores, tutorial y
+ayudas de desbloqueo. Se mantienen casos, claves, soluciones y partidas anteriores. Los ocho casos pasan de inicio
+a cierre por controles normales, con notas y recarga; las respuestas de las pruebas se leen de los datos.
+Continúa Carreras; los demás juegos y la granja siguen en pausa.
+
 **Encargo de motor y verificación (13 de octubre):** completar lo que falte del motor de cada juego y probar partidas de inicio a fin. Javier aprueba previamente cualquier cambio de dificultad, balance, costes, precios o recompensas. El seguimiento por juego, alcance real de las pruebas y límites pendientes está en [auditoría de motores](en-obra/auditoria-motores.md). Esta revisión no declara terminadas las campañas por usar ganchos de prueba o partidas preparadas.
 
 **Avance de esta revisión:** corregidos los globos de Cien Puertas y verificados los cien acertijos con progreso

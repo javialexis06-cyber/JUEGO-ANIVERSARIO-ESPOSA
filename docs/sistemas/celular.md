@@ -4,47 +4,49 @@ Minijuego de detective del capítulo 6 de [`en-obra/pelicula-de-astra.md`](../en
 **mesa de los perdidos de Vigilia**, Ulises (el cartógrafo) recibe teléfonos encontrados en distintos lugares de Astra.
 El jugador abre cada teléfono, revisa todo lo que tiene adentro y deduce qué le pasó a su dueño y dónde está.
 
-- **Ocho casos completos**, que se desbloquean en orden; el primero es el tutorial (Ulises va guiando con globos).
-- **Nunca la desaparecida es Laura** y ningún caso habla de la pareja: el juego es el mismo para la casa y para la
-  Sala de Juegos de los amigos (`verificar-amigos` lo revisa).
-- Se juega en horizontal: el teléfono grande a la izquierda (en horizontal, como en la mano) y la **libreta del
-  detective** a la derecha, donde las pistas se anotan solas al encontrarlas.
+- **Ocho casos completos**, que se desbloquean en orden. No hay tutorial que indique qué revisar.
+- Los teléfonos y conversaciones son ficticios. Ningún caso habla de la pareja; la edición de amigos usa los mismos datos.
+- El teléfono ocupa la pantalla horizontal; «Libreta» abre o esconde las anotaciones escritas por quien investiga.
 
-## Cómo se juega
+## Investigación manual (15 de octubre)
 
-1. **La mesa**: ocho carpetas (foto del desaparecido, lugar, estado y estrellas). Al tocar una sale el **expediente**
-   de Ulises (quién es, qué se sabe, dónde apareció el teléfono y la primera pista para abrirlo).
-2. **El teléfono**: pantalla de bloqueo con sus avisos y un **candado** (PIN, patrón o palabra) con el recordatorio que
-   dejó el dueño. Adentro, las apps: Mensajes (chats con varias personas, grupos, fotos y notas de voz), Fotos
-   (galería con álbum con candado), Notas (algunas protegidas), Grabadora (las propias y las recibidas), Teléfono
-   (llamadas perdidas y grabaciones de buzón), Mapa (lugares guardados de Astra), Correo/Bitácora, Calendario,
-   **Linterna** (aclara las fotos tomadas a oscuras) y, en Iridalia, **Señas de luz**.
-3. **Cada teléfono tiene personalidad**: carcasa (rota, antigolpes con tornillos, de flores, de cristal, de estrellas,
-   de traje espacial), color de acento, tema claro u oscuro, letra propia, operador, batería y fondo de pantalla.
-4. **Pistas**: al abrir un chat, una foto, una nota, un lugar del mapa o al oír una nota de voz se anota la pista en la
-   libreta (un papelito vuela a la libreta; los **giros** salen destacados). Las importantes se cuentan arriba.
-5. **Resolver**: con todas las pistas importantes, el botón se enciende y salen 2 o 3 preguntas de opción múltiple
-   (qué pasó, dónde está, por qué). Una respuesta equivocada resta una estrella.
-6. **Ayuda**: según la etapa (abrir el teléfono, abrir un candado de adentro o resolver), tres ayudas que se destapan
-   de a una; la última da la respuesta y cuesta una estrella. Estrellas = 3 − errores − respuestas reveladas (mínimo 1).
-7. **El final**: escena corta a pantalla completa con franjas de cine, tres fotos con movimiento, subtítulos y las
-   voces de los personajes, el sello «Caso cerrado», las estrellas y el siguiente caso.
+Los ocho teléfonos contienen **6.111 mensajes**, entre 708 y 785 por aparato, en nueve o diez conversaciones.
+Cada uno conserva tres años anteriores al suceso: turnos, comida, arreglos, encargos, préstamos, reuniones cambiadas,
+malentendidos aclarados después, conversaciones de grupo, citas de mensajes, reacciones, ediciones y mensajes
+eliminados. Los historiales combinan escenas autorales cotidianas con lugares, objetos y pequeñas historias de cada
+oficio; las fechas distinguen los planes antiguos del expediente actual. No son chats de personas reales.
 
-Progreso en el aparato (`localStorage['celular-astra-v1']`): por caso, si recibió el teléfono, candados abiertos,
-pistas, ayudas, errores, estrellas y pasos del tutorial. Música: la pista de misterio `mesa-clue` (baja cuando habla
-una voz); botón para apagarla en la mesa. Atrás de Android / Esc: cierra lo abierto, luego vuelve a la mesa y después
-sale (a `amigos.html` en modo amigo o a la casa, con `volverALaSala` de `src/sueltos/comun.ts`).
+WhatsApp permite buscar nombres, texto, fechas y transcripciones, también en conversaciones archivadas. Se puede
+abrir una fecha del chat o cargar mensajes anteriores y posteriores. Solo se montan 80 burbujas por página.
+Hay registros de llamadas antiguos, notas personales y eventos de calendario, además de las fotos y aplicaciones
+anteriores. El teléfono conserva su aspecto propio y funciona como un archivo sin conexión.
 
-Si falla una escritura, el resultado y las pistas permanecen pendientes en la partida abierta. La mesa y la salida
-requieren confirmar el guardado y el aviso permite reintentar. Un reinicio que no pudo escribirse conserva el caso
-anterior y su referencia en el teléfono abierto. Cinco regresiones verifican estas situaciones. Un cierre forzado
-mientras el almacenamiento sigue fallando no está cubierto: hay que mantener la partida abierta hasta confirmar.
+**No se seleccionan ni anotan pistas al leer, mirar fotos, escuchar o transcribir audio.** No hay contador de datos
+importantes, giros destacados, globos de Ulises, botón Ayuda, recordatorios de contraseña ni sugerencias de linterna.
+Las conclusiones se abren cuando el jugador decide, sin exigir descubrir determinadas entradas. Las explicaciones
+se reservan al cierre del caso; contestar una pregunta no revela la historia de la siguiente.
+
+La libreta es un campo libre de hasta 30.000 caracteres por caso, con guardado al escribir. Seleccionar y copiar
+texto es posible, pero nada lo transfiere automáticamente. No se importan las antiguas pistas a estas notas.
+Se conservan los IDs, teléfonos, contraseñas, soluciones, candados abiertos, casos cerrados y estrellas ya ganadas.
+Las penalizaciones por ayudas de partidas anteriores siguen contando; ya no es posible pedir ayudas nuevas.
+
+Progreso en `localStorage['celular-astra-v1']`: por caso, recepción, candados, lecturas, **apuntes manuales**, errores,
+estrellas y cierre; los campos antiguos se conservan por compatibilidad. Ante un fallo de almacenamiento, resultado
+y notas siguen pendientes en la partida abierta. Mesa, salida y atrás requieren confirmar y el aviso permite
+reintentar. Un reinicio fallido conserva el caso anterior. Un cierre forzado mientras el aparato rechaza toda
+escritura sigue sin estar cubierto.
+
+Las aplicaciones incluyen Fotos con álbum protegido, Notas, Grabadora, Teléfono, Mapa, correo o bitácora,
+Calendario, Linterna y Señas de luz. Los candados siguen siendo PIN, patrón o contraseña, sin ayudas de interfaz.
+Las respuestas finales conservan sus errores y estrellas. El cierre presenta la escena, las voces y el siguiente
+caso. Atrás de Android o Esc cierra capas y apps antes de volver a la mesa o a la sala de origen.
 
 ## Los ocho casos (con su solución)
 
 | # | Caso | Lugar | Candados | Giro | Solución |
 |---|---|---|---|---|---|
-| 1 | **La noche del pacto** (tutorial) | Valdemora (AV 301) → Vigilia | PIN `0301` (el año); notas privadas `celina` (la abuela, en el chat de mamá) | Marcela iba a cambiarse el nombre por el de su abuela | El Conde bebió ceniza en su copa vieja sin adornos (la de cuando comía en la cocina) y aceptó «una noche que no termina»; Marcela huyó por el túnel de la leña y vive en Vigilia como **Celina**, amasando en el comedor de Brígida. Final: su mamá salió con los últimos liberados. |
+| 1 | **La noche del pacto** | Valdemora (AV 301) → Vigilia | PIN `0301` (el año); notas privadas `celina` (la abuela, en el chat de mamá) | Marcela iba a cambiarse el nombre por el de su abuela | El Conde bebió ceniza en su copa vieja sin adornos (la de cuando comía en la cocina) y aceptó «una noche que no termina»; Marcela huyó por el túnel de la leña y vive en Vigilia como **Celina**, amasando en el comedor de Brígida. Final: su mamá salió con los últimos liberados. |
 | 2 | **El faro que no encendió** | Puerto de los Lirios | Patrón `L` (1-4-7-8-9); bitácora `garza` (su barquita) | No lo prendió a propósito: la crecida corrió el banco de arena justo al haz de la luz | Don Abundio (tío de Julián) salió solo en La Garza con un farol a buscar la barca 7 de los Quintero; están en la **choza de las eras de sal de Genaro**. |
 | 3 | **La cota tres** | Piedralumbre | Palabra `candela` (la brigada de su papá, AV 281); álbum PIN `3141` (los golpes por noche) | Los golpes eran de una dragona de Celia y su cría (foto oscura: con linterna se ve el ojo) | Rosalba se torció el tobillo y se le vino el techo detrás; está en la **cámara tibia del fondo**, cuidada por los dragones. |
 | 4 | **La niña del Eco** | Jardines del Eco (Verdia) | Patrón `Z` (1-2-3-5-7-8-9); partitura `sol` (la campana de Casiano) | Sus mensajes, fotos y notas de voz son idénticos día tras día | El seto en zigzag es un **laberinto viejo de Vael'Thor** que repite la misma tarde; se rompe cantándole un final distinto de la canción para que Abril responda algo suyo. |
@@ -68,25 +70,27 @@ Samira, Rocío, Maia, Nahuel, Orin, Mauro, Calista, Helena, Boris, Valentina, Sa
 | Qué | Dónde |
 |---|---|
 | Página | `juego/web/celular.html` (`<meta name="apto-amigos" content="si">`) |
-| Flujo: mesa, expediente, libreta, ayudas, resolver, final, tutorial | `src/celular/main.ts` |
+| Flujo: mesa, expediente, libreta manual, conclusiones y final | `src/celular/main.ts` |
 | El teléfono y sus apps | `src/celular/telefono.ts` |
 | Candados (PIN, patrón, palabra con teclado propio) | `src/celular/candado.ts` |
 | Íconos SVG y colores de las apps | `src/celular/iconos.ts` |
 | Voces, música y efectos | `src/celular/audio.ts` |
 | Progreso | `src/celular/progreso.ts` |
 | Tipos de los datos | `src/celular/tipos.ts` |
-| Los ocho casos | `src/celular/casos/c1-pacto.ts` … `c8-estacion.ts` (+ `index.ts`) |
+| Los ocho casos y sus historiales | `src/celular/casos/c1-pacto.ts` … `c8-estacion.ts` (+ `index.ts` y `src/celular/historiales.ts`) |
 | Estilos | `src/celular/celular.css` |
 | Fotos (106 JPG, 800×450 y retratos de 240×240) | `public/celular/fotos/` |
-| Notas de voz (56, Opus) e índice | `public/audio/celular/*.ogg`, `public/audio/celular/voces.json` |
+| Notas de voz (152, Opus) e índices | `public/audio/celular/` y `public/audio/celular/historial/` |
 | Escenarios de las fotos | `scripts/celular/fotos-escenas.ts` (kits `granja_*.glb`, `sangre/bioma_*.glb`, dragón, muñecos de peluche) |
 | Sacar las fotos | `node scripts/celular/fotos.mjs c1 [escenario]` (servidor de Vite en `PUERTO`, por defecto 5193; `SALIDA=` para probar) |
 | Voces | `node scripts/celular/voces.mjs reparto` y `node scripts/celular/voces.mjs` (`SECO=1` cuenta sin gastar); reparto en `voces-guion/celular-reparto.json` |
 
-**Voces**: 56 notas, **7.031 caracteres** de ElevenLabs (tope del juego: 9.000; el script no deja pasarlo), modelo
+**Voces de la trama**: 56 notas, **7.031 caracteres** de ElevenLabs (tope del juego: 9.000; el script no deja pasarlo), modelo
 `eleven_v4` con acotaciones en inglés entre corchetes, una voz distinta de la biblioteca por personaje (latinas, nunca
 las clonadas de la pareja). La transcripción de cada nota se ve con el botón «Aa» (y en Iridalia la transcripción
 automática se equivoca a propósito).
+
+**Audios cotidianos**: 96 notas adicionales con voces sintéticas en español, en `public/audio/celular/historial/`. Se generan por separado con `scripts/celular/historial-audio.mjs` y `historial-audio.py` (Python, `edge-tts`, ffmpeg); se reutilizan por huella de texto y voz. No usan las voces de la pareja ni créditos del reparto de la trama.
 
 **Fotos**: escenarios armados con el motor de cine de la granja (`cine-granja.ts`, `cine-kit.ts`, `cine-actores.ts`):
 el castillo y la cocina de Valdemora, Vigilia, el puerto con el faro (de tarde y de noche), las eras de sal, la
@@ -105,8 +109,8 @@ voces de personajes de Astra, no de la pareja). La música (`mesa-clue`) ya iba 
 ```bash
 cd juego/web
 npx tsc --noEmit -p . && npx vite build && npm run build:amigos && node scripts/verificar-amigos.mjs
-node scripts/_celular_revisar.mjs          # coherencia de los datos (pistas alcanzables, voces, candados)
-node scripts/_celular_todos.mjs <carpeta>  # recorre los 8 casos de punta a punta y saca capturas (servidor en 5193)
+node scripts/probar-celular-historial.mjs # coherencia de fechas, chats y audios
+node scripts/probar-celular-interfaz.mjs http://127.0.0.1:5176/ test-results/celular-interfaz
 node scripts/probar-celular-guardado.mjs    # guardado fallido, recuperación y reinicio sin pérdida
 CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-celular-recorrido.mjs http://127.0.0.1:4184/ test-results/celular-amigos
 # Primera partida y retorno a casa en la compilación completa:
@@ -121,8 +125,8 @@ Ganchos: `window.__celular` (`abrir(id)`, `tel()`, `final(id)`, `desbloquearTodo
 El recorrido nuevo solo usa los ganchos para leer casos y progreso. Abre las apps y sus candados por botones,
 teclados y patrones con arrastre; consulta las transcripciones y adelanta las escenas mediante su botón normal.
 Se verificaron los ocho casos desde cero en amigos, con 24 estrellas, recarga después de cada cierre y recuperación
-del primer guardado fallido; también el primer caso y retorno a la casa en la compilación completa. No se cambiaron
-las soluciones, las ayudas ni la fórmula de estrellas.
+del primer guardado fallido; también el primer caso y retorno a la casa en la compilación completa. Se mantienen
+soluciones, contraseñas y fórmula de estrellas; se retiraron las ayudas por petición de Javier.
 
 ## Integración (hecha el 14 de octubre de 2026: casa y Sala de Juegos con su tema `celular`)
 
@@ -169,3 +173,16 @@ const ARTE_CELULAR = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspe
 ```
 
 `docs/la-pareja.md`, «Quién cuenta qué»: Desaparecidos de Astra no cuenta nada de la pareja (fila agregada).
+
+## Verificación de la investigación manual
+
+`probar-celular-historial.mjs` comprueba cantidades, fechas, contactos, referencias y archivos de audio; con
+`PROBAR_AUDIO=1` verifica las 96 duraciones con ffprobe. `probar-celular-interfaz.mjs` comprueba búsqueda, archivo,
+fechas, paginación, notas, conclusiones sin contador y reproducción de una nota nueva a 4×; además decodifica los
+152 audios en navegador y comprueba señal sonora. Las claves y respuestas se leen de los datos en las pruebas: no
+se presentan esos recorridos como una deducción humana de los enigmas ni como pruebas en Android físico.
+
+Pasaron los ocho casos en amigos, el primero con retorno a casa en la edición completa, notas y recarga por caso,
+fallo de almacenamiento recuperado, ambas compilaciones, privacidad de amigos, motores, 48 suites de granja y las
+seis comprobaciones de integración. Para rehacer los audios cotidianos: `python3 -m pip install edge-tts==7.3.1`
+y `node scripts/celular/historial-audio.mjs` (ffmpeg y ffprobe instalados).

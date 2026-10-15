@@ -16,12 +16,13 @@ export async function cargarAudio() {
   const leer = async <T>(url: string, vacio: T): Promise<T> => {
     try { const r = await fetch(url); return r.ok ? ((await r.json()) as T) : vacio; } catch { return vacio; }
   };
-  const [v, lista, sfx] = await Promise.all([
+  const [v, historial, lista, sfx] = await Promise.all([
     leer<{ voces?: Record<string, VozArchivo> }>('./audio/celular/voces.json', {}),
+    leer<{ voces?: Record<string, VozArchivo> }>('./audio/celular/historial/voces.json', {}),
     leer<Record<string, [string, number]>>('./musica/lista.json', {}),
     leer<Record<string, [string, number]>>('./sfx/lista.json', {}),
   ]);
-  voces = v.voces ?? {};
+  voces = { ...v.voces, ...historial.voces };
   efectos = sfx;
   const pista = lista['mesa-clue'] ?? lista['sangre-menu'] ?? lista['mesa-menu'];
   if (pista) {
@@ -60,12 +61,13 @@ export function sonarVoz(id: string, fin?: () => void, progreso?: (u: number) =>
   if (musica) musica.volume = VOL_MUSICA * 0.3;
   a.ontimeupdate = () => progreso?.(a.duration ? a.currentTime / a.duration : 0);
   a.onended = () => pararVoz();
+  a.onerror = () => pararVoz();
   void a.play().catch(() => pararVoz());
   return true;
 }
 
 export function pararVoz() {
-  if (actual) { actual.pause(); actual.ontimeupdate = null; actual.onended = null; }
+  if (actual) { actual.pause(); actual.ontimeupdate = null; actual.onended = null; actual.onerror = null; }
   actual = null;
   if (musica) musica.volume = VOL_MUSICA;
   const f = alTerminar;

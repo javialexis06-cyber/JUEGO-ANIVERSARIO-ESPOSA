@@ -63,6 +63,6 @@ export const COLOR_APP: Record<IdApp, string> = {
 };
 
 export const NOMBRE_APP: Record<IdApp, string> = {
-  mensajes: 'Mensajes', fotos: 'Fotos', notas: 'Notas', grabadora: 'Grabadora', llamadas: 'Teléfono', mapa: 'Mapa',
+  mensajes: 'WhatsApp', fotos: 'Fotos', notas: 'Notas', grabadora: 'Grabadora', llamadas: 'Teléfono', mapa: 'Mapa',
   correo: 'Correo', calendario: 'Calendario', linterna: 'Linterna', senas: 'Señas de luz',
 };

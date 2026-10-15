@@ -10,8 +10,10 @@ export interface ProgresoCaso {
   recibido: boolean;
   /** Candados abiertos ('bloqueo' y los de adentro). */
   abiertos: string[];
-  /** Pistas anotadas en la libreta. */
+  /** IDs de la libreta automática anterior. No se añaden pistas nuevas. */
   pistas: string[];
+  /** Texto escrito por quien investiga; nunca se rellena desde el contenido del teléfono. */
+  apuntes: string;
   /** Cosas ya vistas (para los avisos de «nuevo»). */
   vistos: string[];
   /** Cuántas ayudas destapó en cada etapa. */
@@ -20,7 +22,7 @@ export interface ProgresoCaso {
   errores: number;
   resuelto: boolean;
   estrellas: number;
-  /** Pasos del tutorial que ya salieron. */
+  /** Pasos del tutorial anterior, conservados por compatibilidad. */
   tutorial: string[];
 }
 
@@ -29,7 +31,7 @@ export interface Progreso {
   musica: boolean;
 }
 
-const nuevoCaso = (): ProgresoCaso => ({ recibido: false, abiertos: [], pistas: [], vistos: [], ayudas: {}, errores: 0, resuelto: false, estrellas: 0, tutorial: [] });
+const nuevoCaso = (): ProgresoCaso => ({ recibido: false, abiertos: [], pistas: [], apuntes: '', vistos: [], ayudas: {}, errores: 0, resuelto: false, estrellas: 0, tutorial: [] });
 
 const lista = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []);
 
@@ -43,6 +45,7 @@ function normalizar(v: unknown): Progreso {
     for (const [k, n] of Object.entries((c.ayudas ?? {}) as Record<string, unknown>)) if (typeof n === 'number') ayudas[k] = Math.max(0, Math.min(5, n | 0));
     casos[id] = {
       recibido: !!c.recibido, abiertos: lista(c.abiertos), pistas: lista(c.pistas), vistos: lista(c.vistos), ayudas,
+      apuntes: typeof c.apuntes === 'string' ? c.apuntes.slice(0, 30000) : '',
       errores: typeof c.errores === 'number' ? c.errores : 0, resuelto: !!c.resuelto,
       estrellas: typeof c.estrellas === 'number' ? Math.max(0, Math.min(3, c.estrellas)) : 0, tutorial: lista(c.tutorial),
     };

@@ -33,9 +33,26 @@ try{
   assert.equal(await p.locator('.cel-carpeta:not(.bloqueada)').count(),1);
   for(let i=0;i<casos.length;i++){
     const c=casos[i];await p.locator(`[data-caso="${c.id}"]`).click();await p.locator('[data-accion="recibir"]').click();await coach();
-    await p.locator('.cel-bloqueo-abrir').click();await candado(c.bloqueo);
+    await p.locator('.cel-alternar-libreta').click();
+    const apuntes=`Caso ${i+1}: mis observaciones\nComparar las fechas y comprobar los planes antiguos. <sin anotaciones automáticas>`;
+    assert.equal(await p.locator('.cel-apuntes').inputValue(),'');
+    await p.locator('.cel-apuntes').fill(apuntes);
+    await p.locator('.cel-alternar-libreta').click();
+    await p.locator('.cel-bloqueo-abrir').click();
+    assert.equal(await p.locator('.cel-candado-rec').count(),0);
+    if(c.bloqueo.tipo==='palabra') {
+      await p.locator('.cel-alternar-libreta').click();
+      await p.locator('.cel-apuntes').pressSequentially(' otra nota');
+      assert.equal(await p.locator('.cel-palabra').innerText(),'');
+      await p.locator('.cel-apuntes').fill(apuntes);
+      await p.locator('.cel-alternar-libreta').click();
+    }
+    await candado(c.bloqueo);
     if(c.apps.includes('linterna')){await app('linterna');await p.locator('.cel-linterna').click();}
-    if(c.apps.includes('mensajes')){await app('mensajes');for(const ch of c.chats){await p.locator(`[data-chat="${ch.con}"]`).click();await coach();await voces();}}
+    if(c.apps.includes('mensajes')){await app('mensajes');for(const ch of c.chats){
+      await p.locator('.cel-chat-buscar').fill(ch.grupo??c.contactos.find(x=>x.id===ch.con).nombre);
+      await p.locator(`[data-chat="${ch.con}"]`).click();await coach();await voces();
+    }}
     if(c.apps.includes('fotos')){
       await app('fotos');
       for(const id of [...new Set(c.fotos.map(f=>f.candado).filter(Boolean))]){await p.locator(`button[data-candado="${id}"]`).click();await candado(c.candados.find(x=>x.id===id));}
@@ -48,7 +65,10 @@ try{
     if(c.apps.includes('calendario'))await app('calendario');
     if(c.apps.includes('senas')){await app('senas');await p.locator('button[data-candado="senas"]').click();await candado(c.candados.find(x=>x.id==='senas'));}
     await coach();const antes=(await progreso()).casos[c.id];
-    assert.deepEqual(c.pistas.filter(x=>x.clave&&!antes.pistas.includes(x.id)).map(x=>x.id),[],'Todas las pistas importantes deben ser alcanzables');
+    assert.deepEqual(antes.pistas,[],'Revisar el teléfono no debe seleccionar pistas automáticamente');
+    assert.equal(antes.apuntes,apuntes);
+    assert.equal(await p.locator('.cel-coach,.cel-papelito,[data-accion="ayuda"],.cel-libreta-cuenta').count(),0);
+    await p.locator('.cel-alternar-libreta').click();
     await tocar('[data-accion="resolver"]');
     for(let q=0;q<c.preguntas.length;q++){
       await p.locator(`[data-opcion="${c.preguntas[q].correcta}"]`).click();
@@ -73,12 +93,12 @@ try{
     await p.locator('[data-accion="volver-mesa"]').click();
     assert.equal(await p.locator('.cel-carpeta.resuelta').count(),i+1);
     await abrir();assert.deepEqual(await progreso(),avance);
-    resultados.push({id:c.id,estrellas:3,pistas:avance.casos[c.id].pistas.length,candados:avance.casos[c.id].abiertos});console.log(`✓ Caso ${i+1}/${casos.length}: ${c.titulo}, 3 estrellas, pistas y candados conservados tras recarga`);
+    resultados.push({id:c.id,estrellas:3,pistasAutomaticas:avance.casos[c.id].pistas.length,apuntesManuales:true,candados:avance.casos[c.id].abiertos});console.log(`✓ Caso ${i+1}/${casos.length}: ${c.titulo}, 3 estrellas, cero pistas automáticas, apuntes y candados conservados tras recarga`);
   }
   assert.deepEqual(errores,[]);assert.deepEqual(bad,[]);
   await p.screenshot({path:`${out}/mesa-final.png`});
   await p.locator('.cel-mesa-cab button[title="Volver"]').click();
   await p.waitForURL(amigo?/amigos\.html/:/index\.html/);
   assert.deepEqual(errores,[]);assert.deepEqual(bad,[]);
-  await writeFile(`${out}/resultado.json`,JSON.stringify({amigo,resultados,retorno:true,errores,bad,limites:'Respuestas leídas de los datos; pistas y candados por controles normales; voces por transcripción y finales adelantados con el botón normal.'},null,2));
+  await writeFile(`${out}/resultado.json`,JSON.stringify({amigo,resultados,retorno:true,errores,bad,limites:'Claves y conclusiones leídas de los datos; controles normales, apuntes escritos y cero pistas automáticas; audios por transcripción y finales adelantados con su botón. No demuestra deducción de una persona.'},null,2));
 }catch(e){await p.screenshot({path:`${out}/fallo.png`}).catch(()=>{});throw e;}finally{await b.close();}

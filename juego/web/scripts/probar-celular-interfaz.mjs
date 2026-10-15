@@ -1,0 +1,74 @@
+// Controles reales del teléfono e investigación manual. Las claves se leen de los datos para recorrer la interfaz.
+import assert from 'node:assert/strict';
+import { chromium } from '@playwright/test';
+import { mkdir,writeFile } from 'node:fs/promises';
+const base=process.argv[2]??'http://127.0.0.1:5176/',out=process.argv[3]??'test-results/celular-interfaz';
+await mkdir(out,{recursive:true});
+const b=await chromium.launch({executablePath:process.env.CHROME_PATH??'/usr/bin/chromium'});
+const ctx=await b.newContext({viewport:{width:844,height:390},hasTouch:true});
+await ctx.addInitScript(()=>{const original=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){this.playbackRate=4;return original.call(this);};});
+await ctx.routeWebSocket(u=>u.host===new URL(base).host&&u.searchParams.has('token'),s=>s.send(JSON.stringify({type:'connected'})));
+const p=await ctx.newPage(),errores=[],bad=[];
+p.on('pageerror',e=>errores.push(e.message));p.on('response',r=>{if(r.status()>=400)bad.push(r.status()+' '+r.url());});
+const abrir=async()=>{await p.goto(new URL('celular.html',base).href,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__celular);await p.locator('[data-caso="pacto"]').click();await p.locator('[data-accion="recibir"]').click();};
+try {
+ await abrir();
+ assert.equal(await p.locator('.cel-libreta').isVisible(),false);
+ await p.locator('.cel-bloqueo-abrir').tap();
+ for(const ch of '0301')await p.locator(`.cel-candado [data-tecla="${ch}"]`).tap();
+ await p.locator('[data-app="mensajes"]').tap();
+ assert.equal(await p.locator('.cel-coach,.cel-papelito,.cel-candado-rec,[data-accion="ayuda"]').count(),0);
+ await p.locator('[data-chat="mama"]').tap();
+ assert.ok(await p.locator('.cel-burbuja').count()<=80);
+ await p.locator('.cel-chat-fechas').selectOption({index:1});
+ assert.match(await p.locator('.cel-hilo .cel-dia').first().innerText(),/AV 298/);
+ await p.locator('.cel-chat-pagina').filter({hasText:'más recientes'}).tap();
+ assert.ok(await p.locator('.cel-burbuja').count()<=80);
+ console.log('OK Fechas y paginación abren mensajes antiguos con un máximo de 80 burbujas');
+ await p.locator('.cel-chat-buscar').fill('abuela Celina');
+ await p.locator('[data-chat="mama"]').tap();
+ assert.ok((await p.locator('.cel-hilo').innerText()).includes('abuela Celina'));
+ await p.screenshot({path:out+'/whatsapp-busqueda.png'});
+ await p.locator('.cel-chat-buscar').fill('Vera');
+ await p.locator('[data-chat="vida2"]').tap();
+ await p.locator('.cel-chat-buscar').fill('');
+ await p.locator('.cel-chat-archivo').tap();
+ assert.ok(await p.locator('[data-chat="vida2"]').count());
+ await p.locator('[data-chat="vida2"]').tap();
+ await p.screenshot({path:out+'/whatsapp-archivados.png'});
+ console.log('OK Búsqueda encuentra texto y contactos archivados sin seleccionar pistas');
+ await p.locator('.cel-voz-play').first().tap();
+ await p.waitForFunction(()=>document.querySelector('.cel-voz.sonando'));
+ await p.waitForFunction(()=>!document.querySelector('.cel-voz.sonando'));
+ console.log('OK Nota nueva se reproduce hasta terminar (a velocidad 4× en esta prueba)');
+ await p.locator('.cel-alternar-libreta').tap();
+ assert.equal(await p.locator('.cel-apuntes').inputValue(),'');
+ const texto='Mi hipótesis\nUn mensaje antiguo no prueba lo ocurrido hoy. <nota propia>';
+ await p.locator('.cel-apuntes').fill(texto);
+ await p.locator('[data-accion="resolver"]').tap();
+ assert.equal(await p.locator('.cel-resolver .cel-opcion').count(),4);
+ assert.deepEqual(await p.evaluate(()=>window.__celular.progreso.casos.pacto.pistas),[]);
+ await p.locator('.cel-resolver-cerrar').tap();
+ await p.screenshot({path:out+'/libreta-manual.png'});
+ await abrir();await p.locator('.cel-alternar-libreta').tap();
+ assert.equal(await p.locator('.cel-apuntes').inputValue(),texto);
+ console.log('OK Notas escritas sobreviven recarga y las conclusiones no exigen un contador de pistas');
+ const audios=await p.evaluate(async()=>{
+   const a=await(await fetch('./audio/celular/voces.json')).json();
+   const h=await(await fetch('./audio/celular/historial/voces.json')).json();
+   const ctx=new AudioContext(),salida=[];
+   for(const [id,v] of Object.entries({...a.voces,...h.voces})){
+     const r=await fetch(v.archivo);if(!r.ok)throw Error('Audio no encontrado: '+id);
+     const buffer=await ctx.decodeAudioData(await r.arrayBuffer());
+     const datos=buffer.getChannelData(0);let potencia=0;
+     for(let i=0;i<datos.length;i+=10)potencia+=datos[i]*datos[i];
+     salida.push({id,duracion:buffer.duration,rms:Math.sqrt(potencia/Math.ceil(datos.length/10))});
+   }
+   await ctx.close();return salida;
+ });
+ assert.equal(audios.length,152);
+ assert.ok(audios.every(a=>a.duracion>0&&a.rms>.001));
+ await writeFile(out+'/audios-decodificados.json',JSON.stringify(audios,null,2));
+ console.log('OK 152 audios reales se decodifican en navegador y contienen señal sonora');
+ assert.deepEqual(errores,[]);assert.deepEqual(bad,[]);
+}catch(e){await p.screenshot({path:out+'/fallo.png'}).catch(()=>{});throw e;}finally{await b.close();}
