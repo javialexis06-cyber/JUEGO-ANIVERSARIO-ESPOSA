@@ -245,6 +245,11 @@ Solo jugando solo; no sale con `?sinhistoria=1` ni `?sintutorial` (las pruebas).
 - Estrellas por puerta (1–3) según el tiempo; con la pistica del caramelo, máximo 2; con una pista más grande, 1.
   No bloquean nada.
 
+Si el aparato rechaza el guardado, el avance y las monedas quedan pendientes con un aviso y un botón de
+reintento. Cruzar, volver al mapa o salir espera la confirmación; recuperar una escritura no repite la que ya se
+confirmó. Mantener abierto hasta guardar: el cierre forzado mientras el almacenamiento falla no protege la copia
+pendiente en memoria. Claves, estrellas y cantidades de recompensa se conservan.
+
 ## Antojos: las pistas se compran con dulces
 
 El narrador no regala pistas. El botón rosado del caramelo (arriba a la derecha, siempre está; late después de un

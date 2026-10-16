@@ -1,3 +1,4 @@
+import { GuardadoPuertas } from './guardado';
 // Cien Puertas: escape room de un jugador con el otro personaje de narrador.
 // Flujo de cada puerta: el narrador cuenta → se juega → la puerta se abre → celebra → se cruza a la siguiente.
 import '../deslizar';
@@ -44,7 +45,6 @@ import { $, ANTOJOS, aviso, esc, Inventario, mostrar, Paneles, pausa, tarjetaRec
 
 const params = new URLSearchParams(location.search);
 const CLAVE = 'cien-puertas';
-const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
 // Las monedas van a la casa (un cuarto de lo que era: la casa se gana despacio)
 const MONEDAS_PUERTA = 1;
 const MONEDAS_CAPITULO = 10;
@@ -73,13 +73,7 @@ const leer = <T,>(k: string): T | null => {
     return null;
   }
 };
-const escribir = (k: string, v: unknown) => {
-  try {
-    localStorage.setItem(k, JSON.stringify(v));
-  } catch {
-    /* sin almacenamiento */
-  }
-};
+
 
 function rolJugador(): Rol {
   const p = params.get('rol');
@@ -90,7 +84,32 @@ function rolJugador(): Rol {
 
 const yo = rolJugador();
 let progreso: Progreso = { hasta: 0, estrellas: {}, vioInicio: false, ...leer<Progreso>(CLAVE) };
-const guardar = () => escribir(CLAVE, progreso);
+const guardado = new GuardadoPuertas();
+const esperasGuardado = new Set<() => void>();
+function pintarGuardado() {
+  let aviso = document.querySelector<HTMLDivElement>('.puertas-guardado');
+  if (!guardado.pendiente) {
+    aviso?.remove();
+    for (const fin of esperasGuardado) fin();
+    esperasGuardado.clear();
+    return;
+  }
+  if (!aviso) {
+    aviso = document.createElement('div');
+    aviso.className = 'puertas-guardado';
+    aviso.innerHTML = '<p role="status">No se pudo guardar. Mantén el juego abierto y reintenta antes de continuar.</p><button class="boton boton-tomate" data-reintentar-puertas>Reintentar guardado</button>';
+    aviso.querySelector('button')!.onclick = asegurarGuardado;
+    document.body.append(aviso);
+  }
+}
+function guardar(sueldo = 0) { const ok = guardado.guardar(progreso, sueldo); pintarGuardado(); return ok; }
+function asegurarGuardado() { const ok = guardado.confirmar(); pintarGuardado(); return ok; }
+async function esperarGuardado() {
+  if (!asegurarGuardado()) await new Promise<void>(fin => esperasGuardado.add(fin));
+}
+document.addEventListener('click', e => {
+  if ((e.target as HTMLElement).closest?.('a[href]') && !asegurarGuardado()) e.preventDefault();
+}, true);
 
 let escena: Escena;
 let sensores: Sensores;
@@ -241,6 +260,7 @@ function controles() {
   };
   if (Capacitor.isNativePlatform()) {
     void App.addListener('backButton', () => {
+      if (!asegurarGuardado()) return;
       if (!$('hoja-pareja').hidden) mostrar('hoja-pareja', false);
       else if (paneles.abierto) paneles.quitar();
       else if (jugando) salirAlMapa();
@@ -303,6 +323,7 @@ function album() {
 }
 
 function salirAlMapa(texto?: string) {
+  if (!asegurarGuardado()) return;
   if (pareja) {
     pareja.salir(!texto);
     pareja = null;
@@ -513,6 +534,7 @@ function armarCapitulo(cap: number) {
 }
 
 async function jugar(n: number, plano?: PlanoDesorden) {
+  if (!asegurarGuardado()) return;
   const turno = ++jugadas;
   // La música del capítulo (docs/sistemas/musica.md); la canción del final se deja terminar
   if (sonido.musica.pistaSonando() !== 'puertas-final') sonido.musica.pista(`puertas-cap${Math.min(10, Math.floor((n - 1) / 10) + 1)}`);
@@ -586,6 +608,7 @@ async function jugar(n: number, plano?: PlanoDesorden) {
   if (n === 1 && !progreso.vioInicio) {
     progreso.vioInicio = true;
     guardar();
+    await esperarGuardado();
   }
   void narrador.irEsquina();
   entrada.bloqueada = false;
@@ -663,9 +686,10 @@ async function jugar(n: number, plano?: PlanoDesorden) {
   // En pareja la casa es una sola: las monedas las manda el anfitrión (y el avance se cuenta si era la que seguía)
   if (papel === 'solo' ? primera : n === progreso.hasta + 1) progreso.hasta = n;
   const ganadas = primera && papel !== 'invitado' ? MONEDAS_PUERTA + (n % 10 === 0 ? MONEDAS_CAPITULO : 0) : 0;
-  if (ganadas) pagar(ganadas);
   celebrarEstrellas(n, estrellas, ganadas);
-  guardar();
+  guardar(ganadas);
+  await esperarGuardado();
+  if (turno !== jugadas) return;
   if (UNA) return;
   sonido.musica.remate('puertas-abierta');
   if (!SIN_HISTORIA) {
@@ -831,17 +855,12 @@ function destapar() {
 /** El color de la luz que sale por la puerta de cada capítulo. */
 const LUZ_PUERTA: Record<number, string> = { 1: '#fff1c8', 2: '#f4ffd0', 3: '#ffe2c0', 4: '#dff0ff', 5: '#ffd9a0', 6: '#d8ffb8', 7: '#ffd0e8', 8: '#e8d8ff', 9: '#cfe6ff', 10: '#ffd6e4' };
 
-function pagar(monedas: number) {
-  try {
-    localStorage.setItem(CLAVE_SUELDO, String((Number(localStorage.getItem(CLAVE_SUELDO)) || 0) + monedas));
-  } catch {
-    /* sin almacenamiento */
-  }
-}
+
 
 
 /** Los antojos del narrador: se le compra un dulce y a cambio suelta una pista (más grande mientras más cueste). */
 async function antojo() {
+  if (!asegurarGuardado()) return;
   const n = jugando;
   const nivel = NIVELES[n];
   if (!nivel || !ctx || entrada.bloqueada || paneles.abierto) return;

@@ -2,7 +2,8 @@
 // comparten el almacenamiento y se hablan por BroadcastChannel, como dos celulares).
 // Uso: node scripts/probar-casa.mjs [url] [carpeta] [ancho]x[alto]
 import { chromium } from '@playwright/test';
-import { existsSync, mkdirSync } from 'node:fs';
+import assert from 'node:assert/strict';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 
 const url = process.argv[2] ?? 'http://localhost:5173/index.html';
 const carpeta = process.argv[3] ?? 'test-results/casa';
@@ -11,7 +12,7 @@ mkdirSync(carpeta, { recursive: true });
 
 const PREINSTALADO = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PREINSTALADO) ? PREINSTALADO : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PREINSTALADO) ? PREINSTALADO : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 const contexto = await navegador.newContext({ viewport: { width: ancho, height: alto }, deviceScaleFactor: 1 });
@@ -23,13 +24,16 @@ async function abrir(rol) {
   p.on('pageerror', (e) => errores.push(`${rol}: ${e}`));
   p.on('console', (m) => m.type() === 'error' && !m.text().startsWith('Failed to load resource') && errores.push(`${rol}: ${m.text()}`));
   p.on('response', (r) => r.status() >= 400 && errores.push(`${rol}: ${r.status()} ${r.url()}`));
+  await p.routeWebSocket(u=>u.host===new URL(url).host&&u.searchParams.has('token'),s=>s.send(JSON.stringify({type:'connected'})));
   const t0 = Date.now();
   await p.goto(`${url}?rol=${rol}&local=1&rapido=${process.env.RAPIDO ?? 3}`);
   await p.waitForFunction(() => window.__listo === true, null, { timeout: 180000 });
+  await aligerar(p);
   console.log(rol, 'lista en', ((Date.now() - t0) / 1000).toFixed(1), 's');
   return p;
 }
-const foto = (p, n) => p.screenshot({ path: `${carpeta}/${n}.png`, animations: 'disabled', timeout: 120000 }).catch((e) => errores.push(`foto ${n}: ${e.message.split('\n')[0]}`));
+const aligerar=async p=>p.evaluate(()=>{const m=window.__mundo();if(m&&!m.__dibujarOriginal){m.__dibujarOriginal=m.dibujar.bind(m);m.dibujar=()=>{};}});
+const foto = async(p, n) => {await p.evaluate(()=>window.__mundo()?.__dibujarOriginal?.(1/30,true));return p.screenshot({ path: `${carpeta}/${n}.png`, animations: 'disabled', timeout: 120000 }).catch((e) => errores.push(`foto ${n}: ${e.message.split('\n')[0]}`));};
 const estado = (p) => p.evaluate(() => window.__casa());
 /** Espera a que el personaje llegue y termine de acomodarse (o a que el mimo esté en su pose). */
 const quieto = async (p, rol, extra = 1200) => {
@@ -49,17 +53,20 @@ const clic = async (p, sel) => {
 // Casa limpia
 const limpia = await contexto.newPage();
 await limpia.goto(url.replace(/\?.*$/, ''));
-// Con monedas de sobra para las compras de la prueba (una casa nueva empieza con 40)
-await limpia.evaluate(() => {
+// Opcional: sobre y progreso obtenidos por probar-super-campana; sin él se prepara el saldo antiguo de 150.
+const superJugado=process.env.GUARDADO_SUPER?JSON.parse(readFileSync(process.env.GUARDADO_SUPER,'utf8')):null;
+await limpia.evaluate(datos => {
   localStorage.clear();
-  localStorage.setItem('nuestro-hogar-local', JSON.stringify({ casa: { monedas: 150 } }));
-});
+  localStorage.setItem('nuestro-hogar-local', JSON.stringify({ casa: { monedas: datos?40:150 } }));
+  if(datos)for(const [k,v] of Object.entries(datos))localStorage.setItem(k,v);
+},superJugado);
 await limpia.close();
 
 const el = await abrir('el');
 await el.waitForTimeout(4000);
 await foto(el, '01-el-sala');
-console.log('estado inicial', JSON.stringify(await estado(el)));
+const estadoInicial=await estado(el);if(superJugado){assert.ok(estadoInicial.diario['trofeo-super-3']);assert.equal(await el.evaluate(()=>localStorage.getItem('nuestro-hogar-sueldo')),null);}
+console.log('estado inicial', JSON.stringify(estadoInicial));
 
 // Él come en la cocina
 await clic(el, '[data-cuarto="cocina"]');
@@ -67,7 +74,7 @@ await clic(el, '[data-accion="comer"]');
 await foto(el, '02-despensa');
 await clic(el, '[data-comer="pan"]');
 await quieto(el, 'el');
-await foto(el, '03-el-come');
+await foto(el, '03-el-come');assert.ok((await estado(el)).personajes.el.hambre>estadoInicial.personajes.el.hambre,'Comer recupera comida');
 
 // Compra en la tienda: flores, un marco y un osito de decoración
 await clic(el, '[data-accion="tienda"]');
@@ -157,7 +164,7 @@ await ella.bringToFront();
 await clic(ella, '[data-cuarto="bano"]');
 await clic(ella, '[data-accion="banar"]');
 await quieto(ella, 'ella');
-await foto(ella, '16-ella-bano');
+await foto(ella, '16-ella-bano');assert.ok((await estado(ella)).personajes.ella.higiene>95,'El baño recupera higiene');
 await ella.evaluate(() => {
   // cansarla para poder dormir
   const k = 'nuestro-hogar-local';
@@ -167,6 +174,7 @@ await ella.evaluate(() => {
 });
 await ella.reload();
 await ella.waitForFunction(() => window.__listo === true, null, { timeout: 180000 });
+await aligerar(ella);
 await clic(ella, '[data-cuarto="cuarto"]');
 await clic(ella, '[data-accion="dormir"]');
 await quieto(ella, 'ella', 2500);
@@ -196,7 +204,16 @@ await clic(el, '[data-cuarto="juegos"]');
 await quieto(el, 'el', 1500);
 await foto(el, '21-cuarto-juegos');
 
+const final=await estado(el),otra=await estado(ella);
+assert.equal(final.deco.sala_cuadro,'cuadro_corazon');assert.equal(final.deco.sala_mesa,'florero');
+assert.ok(final.notas>0);assert.ok(final.regalos.some(r=>r.item==='flores'&&r.abierto));
+const casaFinal=await el.evaluate(()=>JSON.parse(localStorage.getItem('nuestro-hogar-local')).casa);assert.equal(casaFinal.aniversario,'2021-10-02');assert.equal(otra.monedas,final.monedas);assert.deepEqual(otra.inventario,final.inventario);
+await el.reload();await el.waitForFunction(()=>window.__listo===true);await aligerar(el);
+const recargada=await estado(el);assert.equal(recargada.monedas,final.monedas,'Recargar no vuelve a cobrar sueldo ni trofeos');assert.deepEqual(recargada.inventario,final.inventario);assert.deepEqual(recargada.deco,final.deco);assert.equal(await el.evaluate(()=>JSON.parse(localStorage.getItem('nuestro-hogar-local')).casa.aniversario),casaFinal.aniversario);
+console.log('OK cuidados, compras pagadas, regalo, notas, decoración, dos perfiles y recarga (saldo preparado o sobre realmente ganado, según GUARDADO_SUPER)');
 console.log('final el', JSON.stringify(await estado(el)));
 console.log('final ella', JSON.stringify(await estado(ella)));
 console.log(errores.length ? `ERRORES:\n${errores.slice(0, 20).join('\n')}` : 'sin errores');
 await navegador.close();
+
+process.exitCode=errores.length?1:0;

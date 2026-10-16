@@ -112,8 +112,14 @@ CHROME_PATH=/usr/bin/chromium node scripts/probar-peleas-arcade.mjs http://127.0
 
 El parámetro de pruebas `bot1=7` también puede pilotar al jugador local del arcade. `__peleasAvanzar(n)` ejecuta el
 director del combate y conserva eventos, rondas y transiciones; el dibujo se desactiva entre capturas. Siguen
-pendientes controles físicos, otros luchadores, dos jugadores en un aparato y comprobación propia de la red.
+pendientes controles físicos e internet entre dispositivos.
 El arcade no tiene un guardado de etapa implementado: la prueba termina sus seis combates en una misma sesión.
+
+La revisión del 16 de octubre añade 400 cruces de los diez luchadores y las cuatro dificultades, dos mandos
+locales con teclado automatizado en los tres escenarios y una sala local completa con ambos resultados.
+Se corrigió el cierre que podía dejar al invitado esperando: la última foto usa transporte fiable y evita el
+intervalo de envío; las fotos antiguas se descartan y la última recibida se conserva mientras carga el espejo.
+Cinco grupos de regresión cubren el envío final, reenvíos, orden, retirada de receptores y carga lenta.
 
 | Archivo | Qué es |
 |---|---|

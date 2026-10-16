@@ -50,7 +50,7 @@ window.__pagina = true;
 </script></body></html>`;
 
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
-const navegador = await chromium.launch({ executablePath: existsSync(PRE) ? PRE : undefined });
+const navegador = await chromium.launch({ executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined) });
 const nombres = ['Javier', 'Laura', 'Pipe', 'Caro', 'Quinto'];
 async function celular(k) {
   const ctx = await navegador.newContext({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true, deviceScaleFactor: 1 });

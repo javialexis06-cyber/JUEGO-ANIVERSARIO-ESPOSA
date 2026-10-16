@@ -4,7 +4,7 @@
 // Uso: node scripts/probar-linea.mjs [url] [carpeta]
 import { chromium } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 
 const url = process.argv[2] ?? 'http://localhost:5173/index.html';
 const carpeta = process.argv[3] ?? 'test-results/linea';
@@ -19,7 +19,7 @@ let idEvento = 0, idRecuerdo = 0;
 const canales = new Map(); // id → { pagina, uid, nombre, subs }
 const presencia = new Map(); // nombre → Map(canalId → { clave, datos })
 const sinRed = new Set(); // páginas sin internet
-const errores = [];
+const errores = [], comprobaciones=[];
 const esMiembro = (uid, p) => db.miembros.some((m) => m.pareja_id === p && m.usuario === uid);
 const LETRAS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const demora = () => new Promise((ok) => setTimeout(ok, 20 + Math.random() * 180));
@@ -282,19 +282,32 @@ const CLIENTE = () => {
 // ---------------------------------------------------------------------------
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PRE) ? PRE : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
+});
+const paginasQA=[];
+process.on('uncaughtException',async e=>{
+  console.error(e);
+  for(const [i,p] of paginasQA.entries())await p.screenshot({path:`${carpeta}/fallo-${i}.png`}).catch(()=>{});
+  await navegador.close();process.exit(1);
 });
 async function celular(nombre) {
   const ctx = await navegador.newContext({ viewport: { width: 960, height: 540 }, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
+  paginasQA.push(p);p.setDefaultTimeout(90000);
+  if(process.env.SIN_DIBUJO==='1')await p.addInitScript(()=>{
+    // Prueba de datos/interfaz: la presentación 3D se comprueba en el recorrido local.
+    for(const C of [WebGLRenderingContext,WebGL2RenderingContext])for(const n of ['drawElements','drawArrays','drawElementsInstanced','drawArraysInstanced'])if(C.prototype[n])C.prototype[n]=()=>{};
+  });
   p.nombre = nombre;
   p.on('pageerror', (e) => errores.push(`${nombre}: ${e}`));
   p.on('console', (m) => m.type() === 'error' && !/Failed to load resource|No se pudo guardar|Failed to fetch/.test(m.text()) && errores.push(`${nombre}: ${m.text()}`));
   await p.exposeFunction('__srv', (a) => servidor(p, a));
   await p.addInitScript(CLIENTE);
+  await p.routeWebSocket(u=>u.host===new URL(url).host&&u.searchParams.has('token'),s=>s.send(JSON.stringify({type:'connected'})));
   await p.goto(`${url}?rapido=${RAPIDO}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
   await p.waitForSelector('#bienvenida:not([hidden])', { timeout: 180000 });
+  console.log(nombre,'bienvenida lista');
   return p;
 }
 const estado = (p) => p.evaluate(() => window.__casa());
@@ -310,6 +323,7 @@ const esperar = async (p, fn, arg, ms = 60000, que = 'condición') => {
 };
 const revisar = (ok, texto) => {
   console.log(`${ok ? 'OK   ' : 'FALLA'} ${texto}`);
+  comprobaciones.push({ok:!!ok,texto});
   if (!ok) errores.push(texto);
 };
 
@@ -330,6 +344,7 @@ const conClave = async (p, rol) => {
   await escribir(p, '#inp-contrasena', 'TEAMO');
   await tocar(p, '#form-cuenta button[type="submit"]');
   await p.waitForSelector('#bienv-conexion:not([hidden])', { state: 'attached', timeout: 60000 });
+  console.log(p.nombre,'personaje identificado',rol);
 };
 
 // Él crea la casa
@@ -341,6 +356,7 @@ revisar(/^[A-Z0-9]{6}$/.test(codigo), `Él crea la casa y recibe el código ${co
 await el.click('#btn-codigo-listo');
 await esperar(el, () => window.__listo === true, null, 60000, 'casa lista');
 
+await el.evaluate(()=>{const m=window.__mundo();m.dibujar=()=>{};});
 // Ella se equivoca: toca «Soy Él» con el código → debe preguntar
 await conClave(ella, 'el');
 await ella.fill('#inp-codigo', codigo.toLowerCase());
@@ -360,6 +376,7 @@ await esperar(el, () => document.getElementById('pareja-linea').classList.contai
 revisar(await el.evaluate(() => document.getElementById('pareja-linea').classList.contains('si')), 'Él ve a Ella en línea');
 await foto(ella, '02-ella-entra');
 
+await ella.evaluate(()=>{const m=window.__mundo();m.dibujar=()=>{};});
 // Monedas: cada uno recibió su bono
 let e1 = await estado(el);
 revisar(e1.monedas === 50, `Bonos de los dos: 40 + 5 + 5 = ${e1.monedas}`);
@@ -487,6 +504,7 @@ revisar(db.recuerdos.length === 1 && db.fotos.size === 1, `Ella sube una foto y 
 await el.waitForTimeout(2000);
 revisar((await estado(el)) && (await el.evaluate(() => window.__casa())) !== null, 'Él recibe el recuerdo');
 
+writeFileSync(`${carpeta}/resultado.json`,JSON.stringify({comprobaciones,errores,limites:'Supabase simulado con dos contextos; no acredita el despliegue SQL ni internet en teléfonos.'},null,2));
 console.log(errores.length ? `\nERRORES:\n${errores.join('\n')}` : '\nsin errores');
 await navegador.close();
 process.exit(errores.length ? 1 : 0);

@@ -15,6 +15,18 @@ La revisión parte de `9e290f6a`, integrado con la rama compartida. No se consid
 recorrido que habilita contenido, teletransporta personajes, entrega recursos o fuerza resultados mediante un
 gancho de prueba. Esas pruebas sirven para la integración y se describen como escenarios preparados.
 
+## Cierre de la revisión · 16 de octubre de 2026
+
+La [verificación general del 15–16 de octubre](verificacion-general-2026-10-15.md) concentra la evidencia final,
+las campañas, los modos probados y sus límites. Se corrigieron los fallos silenciosos de guardado de Súper y
+Cien Puertas, y el resultado de sala que podía no llegar al invitado del Torneo. La granja permanece pausada;
+se descartan ampliaciones no realizadas de escenas premium y contenido futuro del sótano. No hubo cambios de
+balance en esta tanda. Las instrucciones y la cola antigua se limpiaron en `df687ed3`.
+
+Pasan ambas compilaciones, el filtro de amigos (578 archivos), `probar:motores`, las 48 suites de granja y las
+seis comprobaciones de integración. Una prueba automatizada no certifica teléfonos físicos ni todas las
+combinaciones. Las cifras y alcances anteriores se conservan abajo como historial.
+
 ## Correcciones comprobadas
 
 - **Carreras: circuitos, copas y desafíos (15 de octubre).** Dieciséis circuitos originales (cuatro clásicos sin
@@ -149,30 +161,25 @@ la reutilización que duplicaba impactos: repetidas 58 partidas, 25 victorias. J
 derrotaron a la Muerte en los cuatro, incluida Ducha. Las [builds al minuto 30](builds-lavado-minuto30.md) también
 están registradas con rangos de tienda, cartas y patitos.
 
-| Juego o sistema | Evidencia obtenida en esta revisión | Lo que falta para cerrar su recorrido |
+| Juego o sistema | Evidencia actual | Límites que permanecen |
 |---|---|---|
-| Dados Party | Reglas e IA y recorrido de navegador inicio → resultado → menú (37 s) | Precisión física de controles, persistencia, pausa y red |
-| Mancala | Reglas e IA sin perder semillas y recorrido de navegador completo (6 s) | Controles físicos y red |
-| Puntos y Cajas | Reglas e IA y recorrido de navegador completo (6 s) | Controles físicos y red |
-| Parchís | Reglas e IA y recorrido de navegador hasta meta y menú (93 s) | Controles físicos del dado, pausa y red |
-| Parchís a dos colores | Reglas e IA y recorrido de navegador hasta meta y menú (340 s) | Controles físicos de dos dados y red |
-| Clue / ¿Quién fue? | Reglas e IA hasta acusación legal y recorrido de navegador completo (11 s) | Recorrido táctil completo y cartas privadas en red |
-| El Show de Nosotros | Repetidos tres episodios locales y uno en línea completo: 120 preguntas, sobre, día y libro; mismo resultado, un episodio y dos premios únicos en red con pérdida del 8 % y dos fallos de escritura. Pausa manual, segundo plano y confirmación de salida compartidas. Once grupos de regresión y pruebas táctiles de interfaz/recuperación del premio en casa local. Ocho planos y siete ambientes del estudio renderizados; capturas inspeccionadas | Controles, FPS y red en dispositivos físicos; cierre forzado cuando el aparato rechaza toda escritura |
-| Granja / Astra | Las 48 suites pasan. Seis comprobaciones de navegador casa–granja, inventario, correo, retorno y recarga sin errores | Campaña por controles normales desde cero; cerrar capacidades pendientes de la auditoría vigente y probar dispositivos |
-| Lavarse la cara | Reutilización corregida; ocho regresiones, incluyendo ambos aretes, guardianes, ranuras, receta y fotos. 58 partidas: 25 victorias, cuatro con mejoras pagadas desde cero, bajas después del minuto 22. Acceso a ambos aretes aprobado y aplicado en los cuatro mapas normales; catorce recorridos adicionales consiguen evolución y derrotan Muerte en los cuatro con tienda y secretos disponibles preparados. Ocho hallazgos dibujados y recogidos en amigos en navegador; cuatro builds de referencia repetidas y documentadas. Movimiento remoto con doce grupos nuevos y 7/36 comprobaciones de navegador para dos/cuatro jugadores | Desbloqueos y compras completos desde progreso cero; otros mapas/modos/disfraces, economía completa, controles físicos, guardado, red real y Android |
-| Sangre y Ceniza | Expedición inicial preparada; auditoría específica con 18 expediciones reproducibles de Monarca, Campesino y Prisionero en peligro 1 hasta cinco etapas, perfiles iniciales o arsenal preparado, compras pagadas y control medido. Diez expediciones de Caballero en peligro 2: nueve victorias y una derrota; aturdimientos encadenados de hasta 4,63 s. Ajuste aprobado de 1,5 s más 1 s aplicado, costes sobre vida máxima y 21 expediciones de cinco etapas completas; dos Infinito hasta extracción perdida en etapa 16, con golpes recibidos durante diez minutos quietos en etapa 15; botones y flujo de grupo/control táctil en Chromium | progresión completa de desbloqueos, demás biomas/peligros, clases y combinaciones, controles, red y dispositivos |
-| Súper Manía | Primer día desde progreso nuevo hasta resultado en navegador: tres estrellas, nueve clientes atendidos, ganancia 98 y ningún error | Campaña desde cero; comprobar mejoras pagadas, días avanzados y recarga |
-| Cien Puertas | Cien acertijos resueltos en orden por toques/sensores simulados; cero fallos de revisión de puerta/objetos/página; cien avances y estrellas conservados al recargar | Campaña narrativa, retorno a la casa, red, otras semillas y sensores físicos de teléfono |
-| El Escudo de las Hermanas | Seis niveles desde cero en amigos y pareja, con presupuesto normal, pausa, guardado fallido recuperado y recarga por nivel; doce comprobaciones del motor, derrota e infinito hasta pérdida natural (41 oleadas en motor, 48 en el último recorrido de pareja). Derrota normal, reintento, cancelación y salida de pareja conservan las estrellas. Modo P23: victoria, recibo fallido recuperado y retorno a la granja sin errores | Controles físicos, escenas completas, cierre forzado mientras falla almacenamiento y recorrido de P23 desde su desbloqueo real en la campaña de la granja; derrota y salida de amigos en navegador |
-| La Carrera de las Tres Lunas | 16 circuitos, cuatro copas, tres arenas y cuatro desafíos. 96 carreras y 38 minijuegos completos del motor; tiempos clásicos idénticos. Tres copas nuevas y ocho desafíos completos en navegador de amigos, con guardado fallido de una marca, podios y recarga. Copa de cuatro carreras en dos pestañas: ocho inscritos constantes, tablas y podio idénticos, retorno y salida para ambos. Se conservan los recorridos previos de carrera, contrarreloj, fantasma y copa clásica | Controles y FPS físicos, internet entre dispositivos, demás criaturas; los desafíos nuevos aún no tienen sincronización en salas |
-| Desaparecidos de Astra | Ocho casos cerrados de nuevo desde cero en amigos: 24 estrellas, cero pistas automáticas, apuntes escritos y recarga por caso; primer guardado fallido recuperado. Primer caso y retorno a casa en build final. 6.111 mensajes y 96 audios adicionales; 152 audios decodificados con señal, búsqueda, archivo, fechas y paginación por controles. Seis regresiones de notas/guardado/partidas anteriores | Deducción humana sin conocer soluciones, Android físico y cierre forzado mientras el aparato rechaza escrituras |
-| El Torneo del Despertar Dorado | Arcade completo desde cero con Tarek: seis rivales a sus niveles originales, campeón, pausa y retorno al menú sin errores; dieciocho combates de motor con tres luchadores, derrota y réplicas por entradas serializadas | Otros luchadores y escenarios por controles físicos, dos jugadores en el aparato y verificación propia de la red; el arcade no tiene guardado de etapa implementado |
-| Retrete espacial | Amigos: dos vuelos desde cero con piloto, choques normales, pausa, otra salida, escudo pagado con 120 rollitos ganados, fallos al aterrizar/comprar recuperados, recarga y retorno a la sala. Casa local: ruta nativa de Atrás simulada en navegador y dos vuelos normales con acceso preparado, rechazo de escritura y respuesta perdida después de pagar, reintentos sin repetir monedas, retorno y recarga. Doce regresiones de persistencia | Descubrimiento desde el baño, sensores/controles físicos, ciclos avanzados, Supabase real y cierre forzado mientras falla el almacenamiento |
-| Cocina de chef: wafles, frappés y fresas | Dos días desde progreso nuevo por receta, con pedidos y estaciones normales, resultado, propinas, mejoras pagadas y recarga en día 3; dos fallos de escritura al terminar wafles y uno por compra recuperados; once regresiones de persistencia. Wafles en pareja: escenario preparado con pérdida del 8 % de mensajes, pausa, segundo plano, reconexión, mismo resultado y premio del anfitrión, sin errores | Fresas y frappés en pareja, rangos avanzados, cierre forzado mientras hay una escritura pendiente y precisión táctil |
-| Casa / mascota virtual | Entrada, retorno y persistencia del recorrido de granja comprobados | Ciclo completo de cuidado, compras, habitaciones, trofeos y sincronización en dos perfiles |
+| Dados, Mancala, Cajas, Parchís, Parchís a dos colores y Clue | Seis recorridos locales, 36 partidas de reglas/IA y seis partidas completas de sala con finales coincidentes; pausa/reconexión de Parchís y retorno | Controles físicos, red real y auditoría específica del aislamiento de manos privadas en Clue |
+| Show | Tres episodios locales y uno en línea de 120 preguntas, premios únicos, libro/calendario, pérdida del 8 %, dos escrituras rechazadas recuperadas y estudio renderizado | Teléfonos físicos y cierre forzado mientras toda escritura falla |
+| Granja | 48 suites y seis comprobaciones de integración correctas | Desarrollo pausado, incluidas campaña y capacidades planificadas |
+| Lavado | Progresión nueva acumulada de 18 partidas: gana/desbloquea los cuatro mapas normales y paga 48 mejoras con gotas ganadas. Evolución y Muerte en los cuatro con perfiles preparados; bajas tras minuto 22, ocho regresiones de enemigos y doce de movimiento remoto, recorridos de sala | No todas las combinaciones/modos ni economía completa; la campaña nueva es simulación de motor, sin controles táctiles ni guardado de navegador |
+| Sangre | Control aprobado 1,5 s + 1 s y sigilos sobre vida máxima. Se mantienen las expediciones e Infinito previos. Otras 21 expediciones con doce clases y cuatro biomas: 14 victorias de cinco etapas y siete derrotas; selección/arsenal preparados, compras pagadas | Adquisición ordinaria de todas las clases, combinaciones restantes, dispositivos y red real |
+| Súper | 100 días desde cero, 80 compras por interfaz, recargas, guardado fallido recuperado y seis regresiones nuevas. Sala de tres con corte, retorno y cierre de escenario preparado | Victoria cooperativa ordinaria completa, teléfonos y cierre forzado cuando falla almacenamiento |
+| Cien Puertas | 100 puertas con narrativa y recuerdos, álbum, estrellas, recarga y retorno; guardado fallido recuperado y cuatro regresiones nuevas. Sala con inventario, candados y reconexión en puertas seleccionadas | Otras semillas, campaña completa en pareja y sensores físicos |
+| Escudo | Seis niveles desde cero en amigos y pareja; derrota, reintento, cancelación, salida, guardado y recarga. Amigos repite seis victorias de tres estrellas y 48 oleadas completas antes de derrota en Infinito. P23 conserva su resultado y retorno | Controles físicos, escenas completas, cierre forzado mientras falla almacenamiento; P23 desde desbloqueo real en granja pausada |
+| Carreras | 16 pistas, cuatro copas, tres arenas, cuatro desafíos; 96 carreras y 38 desafíos de motor. Copas/desafíos en navegador y copa de cuatro carreras en dos pestañas con ocho inscritos constantes y podio idéntico | Teléfonos, internet real, demás criaturas. Desafíos nuevos locales; añadir salas sería ampliación |
+| Desaparecidos | Ocho casos desde cero, 24 estrellas, 6.111 mensajes, 152 audios, apuntes manuales sin pistas automáticas, búsqueda/archivo y recarga; guardado fallido recuperado | Deducción humana sin conocer soluciones, Android y cierre forzado mientras falla almacenamiento |
+| Torneo | Arcade completo con Tarek, 18 combates replicados y 400 cruces de los diez luchadores y cuatro dificultades. Dos jugadores locales en tres escenarios y sala con ambos resultados tras la corrección; cinco regresiones de red | Controles físicos e internet. Arcade de una sesión, sin guardado de etapa implementado |
+| Retrete | Vuelos de amigos y casa, escudo pagado, pausas/salida, fallos recuperados sin repetir monedas, Atrás nativo simulado y recarga; descubrimiento desde casas nuevas con ambos personajes, comida pagada, baño, vuelo, retorno y recarga sin repetir premio | Sensores/controles físicos, ciclos avanzados, Supabase real y cierre forzado mientras falla almacenamiento |
+| Cocina | Dos días locales desde cero y compra por receta. Fresas y Frappés añaden día 1 en pareja con ingredientes normales, medias 94/97, pérdida del 8 %, pausa, reconexión, premio único, guardado y retorno. Wafles conserva el escenario preparado anterior | Rangos avanzados, día ordinario completo de Wafles en pareja, precisión táctil y cierre forzado mientras falla almacenamiento |
+| Casa | Cuidado, compras con sueldo ganado, habitaciones, mimos, decoración, regalos, trofeos y persistencia; energía preparada para dormir. Dos perfiles con compras/notas simultáneas, eventos recuperados una vez y álbum compartido | Teléfonos y Supabase real; la prueba de red usa servidor simulado |
 
-Las compilaciones de pareja y amigos integradas con los cuatro juegos nuevos de Astra pasan. El filtro de amigos
-revisó 546 archivos y no encontró contenido personal. Estas comprobaciones no certifican FPS, batería o memoria en Android real.
+Las compilaciones de pareja y amigos de la revisión final pasan. El filtro de amigos
+revisó 578 archivos y no encontró contenido personal. Estas comprobaciones no certifican FPS, batería o memoria en Android real.
 La integración de Escudo con la sala de cine remota (`fff42485`) conserva ambas compilaciones, las 48 suites de la
 granja y las seis comprobaciones casa–granja sin errores. Los recorridos ya verificados de Escudo no se repiten
 por esa integración, que no cambia sus archivos.
@@ -212,7 +219,8 @@ los instaladores anteriores con estas correcciones. Requiere reactivar Actions e
 6. Repetir la versión de amigos y el modo en pareja cuando estén disponibles.
 7. Registrar fallos funcionales, correcciones y resultados. Las propuestas de balance llevan aprobación explícita.
 
-**Estado:** auditoría en curso. No está certificado que todos los juegos estén terminados o perfectos.
+**Estado:** revisión automatizada terminada con los alcances y límites registrados arriba y en la verificación general.
+Permanecen comprobaciones físicas y externas; no se declara perfección ni cobertura de todas las combinaciones.
 
 ## Cómo repetir esta tanda
 

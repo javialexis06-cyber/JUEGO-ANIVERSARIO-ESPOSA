@@ -34,8 +34,8 @@ Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en s
 
 | Archivo | Estado |
 |---|---|
-| [`auditoria-motores.md`](en-obra/auditoria-motores.md) | Encargo vigente: motores y partidas completas por juego, pruebas verificadas, límites pendientes y aprobación previa de balance. |
-| [`verificacion-general-2026-10-15.md`](en-obra/verificacion-general-2026-10-15.md) | Comprobación vigente de todos los juegos fuera de granja; fallos, correcciones y evidencia. |
+| [`auditoria-motores.md`](en-obra/auditoria-motores.md) | Revisión de motores cerrada con cobertura y límites explícitos; historial y aprobación previa de balance. |
+| [`verificacion-general-2026-10-15.md`](en-obra/verificacion-general-2026-10-15.md) | Resultado de la revisión del 15–16 de octubre: campañas, salas, correcciones, regresión final y límites físicos/externos. |
 | [`pelicula-de-astra.md`](en-obra/pelicula-de-astra.md) | Plan histórico de una producción integrada; no autoriza nuevas tareas ni desarrollo de granja. |
 | [`granja-coordinacion.md`](en-obra/granja-coordinacion.md) | Historial del reparto de granja; el desarrollo está pausado por instrucción vigente. |
 | [`sangre-propuesta.md`](en-obra/sangre-propuesta.md) | Sangre y Ceniza 2: propuesta sacada de Deep Rock Galactic: Survivor (misiones, minerales, mapa de la Noche y, en L, armas, sobrecargas, reliquias y el familiar); su contenido ya está integrado. Se conserva como referencia histórica. |

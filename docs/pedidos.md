@@ -1,14 +1,20 @@
 # Pedidos de Javier · estado vigente
 
-Actualizado el 15 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
+Actualizado el 16 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
-## Encargo activo
+## Encargo revisado
 
 1. Limpiar referencias obsoletas y mantener documentación, instrucciones y repositorio coherentes.
 2. Completar la comprobación de todos los juegos existentes, incluida la casa, sin desarrollar la granja.
 3. Corregir los fallos funcionales encontrados y repetir los recorridos afectados.
 4. Actualizar resultados y publicar los avances en `work` y `claude/supermarket-mania-minigame-xn2it8`.
+
+La comprobación automatizada está terminada con los alcances registrados: campaña de 100 días de Súper,
+100 puertas con narrativa, progresión de los cuatro mapas normales de Lavado, salas de los seis juegos de mesa,
+Casa con dos perfiles y ampliación de Cocina, Sangre, Escudo, Torneo y Retrete. Se corrigieron los guardados de
+Súper y Puertas y el resultado remoto del Torneo. Tipos, ambas compilaciones, filtro de amigos, motores,
+48 suites de granja y seis comprobaciones de integración pasan. No se retoman expansiones descartadas.
 
 Antes de cambiar dificultad, balance, costes, precios o recompensas, presentar una propuesta concreta y esperar
 la aprobación de Javier. Las correcciones funcionales y las pruebas continúan sin pedir autorización de nuevo.
@@ -37,8 +43,8 @@ ni una comprobación de navegador con una prueba en teléfonos físicos.
   suavizado; [builds de referencia](en-obra/builds-lavado-minuto30.md) registradas.
 - **Sangre:** límite aprobado de 1,5 s de aturdimiento y 1 s de resistencia; sigilos por porcentaje de vida.
   Berserk no se añadió; es una idea que requiere propuesta y aprobación, no una corrección pendiente autorizada.
-- Existen recorridos y pruebas de mesa, Cocina, Escudo, Torneo, Retrete y Cien Puertas; se amplían en la revisión
-  general donde falten modos, persistencia, campañas y conexiones. Los resultados concretos están en la auditoría.
+- Existen recorridos y pruebas de mesa, Cocina, Escudo, Torneo, Retrete y Cien Puertas; la revisión
+  general registra las ampliaciones realizadas y los límites que permanecen. Los resultados concretos están en la auditoría.
 
 ## Bloqueos externos y comprobaciones físicas
 

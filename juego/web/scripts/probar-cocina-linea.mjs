@@ -10,6 +10,8 @@
 import { chromium } from '@playwright/test';
 import { existsSync, mkdirSync } from 'node:fs';
 import { SupabaseFalso } from './supabase-falso.mjs';
+import { cocinarDia } from './cocina-piloto.mjs';
+const completo=process.env.COMPLETO==='1';
 
 const receta = process.argv[2] ?? 'wafles';
 const url = process.argv[3] ?? 'http://127.0.0.1:5173/scripts/cocina-prueba.html';
@@ -20,7 +22,7 @@ const errores = [];
 
 const PRE = process.env.CHROME_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PRE) ? PRE : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 async function celular(rol, sala) {
@@ -30,7 +32,8 @@ async function celular(rol, sala) {
   p.on('pageerror', (e) => errores.push(`${rol}: ${e}`));
   p.on('console', (m) => m.type() === 'error' && !/Failed to load resource|403/.test(m.text()) && errores.push(`${rol}: ${m.text()}`));
   await red.conectar(p, rol);
-  await p.goto(`${url}?rol=${rol}&receta=${receta}&xp=900&dia=4&sala=${sala}`, { timeout: 180000 });
+  await p.routeWebSocket(u=>u.host===new URL(url).host&&u.searchParams.has('token'),s=>s.send(JSON.stringify({type:'connected'})));
+  await p.goto(`${url}?rol=${rol}&receta=${receta}&xp=${completo?0:900}&dia=${completo?1:4}&sala=${sala}`, { timeout: 180000 });
   return p;
 }
 const revisar = (ok, texto) => {
@@ -57,13 +60,14 @@ revisar(await esperar(el, () => window.__cocinaMotor?.resumen().juntos, null, 60
 revisar(await esperar(ella, () => window.__cocinaMotor?.resumen().juntos, null, 60000), 'Laura está en la cocina de Javier');
 revisar(await el.evaluate(() => !!window.__cocinaMotor.pareja && !window.__cocinaMotor.neutro), 'Sin amigos no es modo neutro (la pareja puede llegar a comer)');
 await Promise.all([el, ella].map((p) => p.evaluate(() => window.__cocinaMotor.probar('intro'))));
-revisar(await esperar(ella, () => window.__cocinaMotor.resumen().dia === 4 && window.__cocinaMotor.resumen().n > 0), 'Laura recibe el día 4 del restaurante de Javier');
+revisar(await esperar(ella, () => window.__cocinaMotor.resumen().dia === (window.location.search.includes('dia=1')?1:4) && window.__cocinaMotor.resumen().n > 0), 'Laura recibe el día del restaurante de Javier');
 await foto(ella, '1-dia');
 
 // 2) Laura le da «¡A cocinar!» (se lo pide al anfitrión) y los dos arrancan
 await ella.evaluate(() => window.__cocinaMotor.probar('jugar'));
 revisar(await esperar(el, () => window.__cocinaMotor.resumen().fase === 'jugando'), 'El «¡A cocinar!» de Laura arranca el día en el celular de Javier');
 revisar(await esperar(ella, () => window.__cocinaMotor.resumen().fase === 'jugando'), 'Laura también ve el día andando');
+if(!completo){
 await el.evaluate(() => window.__cocinaMotor.probar('llegar', 0));
 await esperar(el, () => window.__cocinaMotor.resumen().invitados.some((e) => e === 'fila'), null, 20000);
 await el.waitForTimeout(3500);
@@ -88,6 +92,7 @@ await foto(el, '3-juicio');
 await el.evaluate(() => window.__cocinaMotor.probar('juicio'));
 revisar(await esperar(ella, () => window.__cocinaMotor.resumen().fase === 'jugando'), 'Se cierra la calificación en los dos');
 
+}
 // 5) Pausa: Laura pone pausa y a Javier le sale; Javier le da seguir
 await ella.evaluate(() => window.__cocinaMotor.pausar('mano'));
 revisar(await esperar(el, () => window.__cocinaMotor.resumen().fase === 'pausa'), 'La pausa de Laura le llega a Javier');
@@ -114,7 +119,11 @@ revisar(await esperar(el, () => window.__cocinaMotor.resumen().fase === 'jugando
 revisar(await esperar(ella, () => window.__cocinaMotor.resumen().fase === 'jugando', null, 20000), 'Laura también sigue');
 
 // 8) Fin del día: los dos con el mismo día, las mismas propinas y los mismos puntajes
-await el.evaluate(() => window.__cocinaMotor.probar('fin'));
+if(completo){
+ const dia=await cocinarDia(el,receta);
+ revisar(dia.resultado.servidos>=3,'Día completo con pedidos, ingredientes y estaciones normales');
+ console.log('DÍA ORDINARIO',JSON.stringify(dia.resultado));
+}else await el.evaluate(() => window.__cocinaMotor.probar('fin'));
 revisar(await esperar(ella, () => window.__cocinaMotor.resumen().fase === 'fin', null, 20000), 'Laura ve el fin del día');
 await ella.waitForTimeout(1500);
 const [a, b] = await Promise.all([resumen(el), resumen(ella)]);

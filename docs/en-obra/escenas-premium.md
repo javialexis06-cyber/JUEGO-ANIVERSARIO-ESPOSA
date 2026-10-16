@@ -2,8 +2,8 @@
 
 Estado del 15 de octubre de 2026: se conserva el catálogo ya programado. **Las ampliaciones no realizadas fueron descartadas por Javier.** No construir escenarios nuevos ni la tienda propuesta; conservar IDs y compras anteriores.
 
-Pequeñas películas de los dos que se compran con monedas en la tienda de la casa (pestaña «Escenas») y se
-lanzan en los juegos de mesa con el botón 🎭. Se ven a pantalla completa: 32 en los cuartos de la casa y 18 en
+Pequeñas películas de los dos ya definidas en el catálogo. Las que estén disponibles en el aparato se
+lanzan en los juegos de mesa con el botón 🎭. La tienda propuesta no se terminó y fue descartada. Se ven a pantalla completa: 32 en los cuartos de la casa y 18 en
 el escenario grande, donde el tablero queda chiquito en una esquina para no perder la partida de vista. En
 línea, la escena sale en los dos celulares al mismo tiempo; la IA espera a que termine para jugar.
 

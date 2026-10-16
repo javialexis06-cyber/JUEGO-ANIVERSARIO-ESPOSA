@@ -998,3 +998,5 @@ body.animando .hud-puertas > *, body.animando .inventario { opacity: 0.35; trans
 @keyframes tp-salta { to { translate: 0 -12px; } }
 @media (max-width: 600px) { .tp-globo { width: calc(100% - 20px); } }
 @media (prefers-reduced-motion: reduce) { .tp-flecha span { animation: none; } }
+
+.puertas-guardado{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:2000;width:min(470px,90vw);padding:12px 16px;border-radius:14px;background:#fff5dc;color:#392b25;box-shadow:0 4px 25px #0007;text-align:center;font:700 14px Nunito,sans-serif}.puertas-guardado p{margin:0 0 8px}

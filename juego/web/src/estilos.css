@@ -1944,3 +1944,8 @@ body.neutro .solo-pareja { display: none; }
   color: var(--papel);
   text-shadow: 0 1px 2px rgba(61, 43, 39, 0.5);
 }
+
+/* El resultado y las compras se conservan hasta confirmar su escritura. */
+.super-guardado { position: fixed; z-index: 2000; bottom: 8px; left: 50%; transform: translateX(-50%); width: min(470px,90vw); box-sizing: border-box; padding: 10px 14px; border: 2px solid #ba744e; border-radius: 14px; background: #fff2d8; color: #513a35; box-shadow: 0 4px 22px #0005; text-align: center; }
+.super-guardado p { margin: 0 0 7px; font-size: 13px; }
+.super-guardado .boton { padding: 6px 13px; font-size: 13px; }

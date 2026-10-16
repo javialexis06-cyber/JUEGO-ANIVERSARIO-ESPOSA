@@ -1,4 +1,4 @@
-// Súper Manía en Pareja · jugable 1 (la tiendita completa: 25 días, solo con Él, los dos en el mismo celular, en
+// Súper Manía en Pareja (100 días en cuatro tamaños de local, solo con Él, los dos en el mismo celular, en
 // línea cada uno en su celular o en una sala con código de 2 a 4 con amigos). Con amigos (o en el aparato de un
 // amigo) todo va en modo neutro: nada personal de la pareja (neutro.ts).
 // Letras empacadas con el juego (funciona sin internet, también en la app de Android)
@@ -34,7 +34,6 @@ import { NOMBRE_PAREJA } from './nombres';
 import { DIA_FINAL, RECUERDOS_SUPER, TEXTOS_CARTAS, type RecuerdoSuper } from './recuerdos_super';
 import type { AspectoJugador, JugadorSala, Sala } from './salas/tipos';
 
-const CLAVE_SUELDO = 'nuestro-hogar-sueldo';
 /** Parte de la ganancia del día que llega a la casa como sueldo: un tercio, dividido entre 4 (la casa se paga con calma). */
 const SUELDO_FRACCION = 1 / 12;
 const CLAVE_MODO = 'supermania-modo';
@@ -65,6 +64,29 @@ const localActual = () => localDe(diaAlcanzado());
 let niveles: NivelDato[];
 let escalas: Record<string, number> = {};
 let partida: guardado.Partida;
+const guardadoPendiente = new guardado.GuardadoSuper();
+const diasRegistrados = new WeakSet<Juego>();
+function guardarProgreso(sueldo = 0) {
+  const ok = guardadoPendiente.guardar(partida, sueldo);
+  pintarGuardado();
+  return ok;
+}
+function asegurarGuardado() {
+  const ok = guardadoPendiente.confirmar();
+  pintarGuardado();
+  return ok;
+}
+function pintarGuardado() {
+  let aviso = document.querySelector<HTMLDivElement>('.super-guardado');
+  if (!guardadoPendiente.pendiente) { aviso?.remove(); return; }
+  if (!aviso) {
+    aviso = document.createElement('div');
+    aviso.className = 'super-guardado';
+    aviso.innerHTML = '<p role="status">No se pudo guardar. Mantén el juego abierto y reintenta antes de continuar.</p><button class="boton boton-tomate" data-reintentar-super>Reintentar guardado</button>';
+    aviso.querySelector('button')!.onclick = asegurarGuardado;
+    document.body.append(aviso);
+  }
+}
 let juego: Juego | null = null;
 let fondo: Tienda | null = null;
 let pausado = false;
@@ -298,6 +320,7 @@ function diaAlcanzado() {
 }
 
 function abrirMenu() {
+  if (!asegurarGuardado()) return;
   ui.terminarNivel();
   mandos.mostrar(false);
   sonido.musica.iniciar('menu');
@@ -306,7 +329,7 @@ function abrirMenu() {
   const local = localActual();
   if (local.nivel > partida.tamano) {
     const regalos = guardado.estrenar(partida, catalogo(), local.nivel);
-    guardado.guardar(partida);
+    guardarProgreso();
     void montarFondo();
     mostrarCarta({
       sello: '🎉',
@@ -385,6 +408,7 @@ function tiposDelDia(nv: NivelDato): TipoCliente[] {
 }
 
 function abrirTarjeta(n: number) {
+  if (!asegurarGuardado()) return;
   nivelElegido = n;
   const tres = (partida.estrellas[n] ?? []).filter(Boolean).length === 3;
   if (!tres) legendario = false;
@@ -475,6 +499,7 @@ function nivelDeJuego(n: number, jugadores = jugadoresDelModo()): NivelDato {
 }
 
 async function jugar(n: number) {
+  if (!asegurarGuardado()) return;
   estrenarCallado();
   sonido.activar();
   sonido.musica.iniciar('juego', legendario ? 112 : 100);
@@ -502,10 +527,10 @@ async function jugar(n: number) {
     if (v && juego?.reponerSeccion(v)) ui.aviso('Reposición en la fila');
   };
   ui.alUsarAyuda = (id) => {
-    if (!juego || (partida.ayudas[id] ?? 0) <= 0) return;
+    if (!asegurarGuardado() || !juego || (partida.ayudas[id] ?? 0) <= 0) return;
     if (juego.usarAyuda(id)) {
       partida.ayudas[id]--;
-      guardado.guardar(partida);
+      guardarProgreso();
       ui.pintarAyudas(partida.ayudas, juego);
     }
   };
@@ -531,6 +556,8 @@ async function jugar(n: number) {
  * un amigo no se le paga nada a ninguna casa (`sueldoDe` = '' esconde la línea).
  */
 function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: string | null = null) {
+  if (diasRegistrados.has(j)) return;
+  diasRegistrados.add(j);
   sonido.musica.prisa(1);
   sonido.musica.remate(r.estrellas[0] ? 'super-ganado' : 'super-perdido');
   const antes = partida.estrellas[n] ?? [false, false, false];
@@ -548,16 +575,9 @@ function terminarDia(j: Juego, n: number, r: Resultado, sueldoDe: string | null 
   if (carta) $('btn-rcarta').onclick = () => leerRecuerdo(carta, () => pantallaUnica('resultado'));
   $('rec-local').textContent = localDe(n).nombre.toUpperCase();
   partida.dinero += r.ganancia;
-  guardado.guardar(partida);
   // Una parte de lo ganado pasa a la casa (Nuestro Hogar) como sueldo (al menos 1 moneda si se ganó algo)
   const sueldo = r.ganancia > 0 && !modoAmigo() && sueldoDe !== '' ? Math.max(1, Math.round(r.ganancia * SUELDO_FRACCION)) : 0;
-  if (!sueldoDe && sueldo) {
-    try {
-      localStorage.setItem(CLAVE_SUELDO, String((Number(localStorage.getItem(CLAVE_SUELDO)) || 0) + sueldo));
-    } catch {
-      /* sin almacenamiento */
-    }
-  }
+  guardarProgreso(!sueldoDe ? sueldo : 0);
   $('rec-sueldo').hidden = sueldo <= 0;
   $('rec-sueldo').textContent = sueldoDe
     ? `Sueldo para la casa: +${sueldo} monedas (llegan por el celular de ${sueldoDe})`
@@ -580,7 +600,7 @@ function estrenarCallado() {
   const t = localActual().nivel;
   if (t <= partida.tamano) return;
   guardado.estrenar(partida, catalogo(), t);
-  guardado.guardar(partida);
+  guardarProgreso();
 }
 
 /** Las cartas del súper (con amigos no salen: son de la pareja). */
@@ -635,6 +655,7 @@ function abrirRecuerdos() {
 }
 
 function abrirMejoras() {
+  if (!asegurarGuardado()) return;
   pantallaUnica('mejoras');
   pintarMejoras();
 }
@@ -662,13 +683,14 @@ function pintarMejoras() {
     b.textContent = estado === 'listo' ? 'Listo' : estado === 'bloqueado' ? '—' : `${precio}`;
     if (conFichas && estado === 'comprar') b.setAttribute('aria-label', `${precio} estrellas`);
     b.addEventListener('click', async () => {
-      if (!alcanza()) return;
+      if (b.disabled || !asegurarGuardado() || !alcanza()) return;
+      b.disabled = true;
       if (conFichas) partida.gastadas += precio;
       else partida.dinero -= precio;
       accion();
       sonido.activar();
       sonido.caja();
-      guardado.guardar(partida);
+      guardarProgreso();
       pintarMejoras();
       await montarFondo();
     });
@@ -747,6 +769,9 @@ function conectarBotones() {
     legendario = !legendario;
     abrirTarjeta(nivelElegido);
   });
+  document.addEventListener('click', e => {
+    if ((e.target as HTMLElement).closest?.('a[href]') && !asegurarGuardado()) e.preventDefault();
+  }, true);
   $('btn-mejoras').addEventListener('click', abrirMejoras);
   $('btn-recuerdos').addEventListener('click', abrirRecuerdos);
   $('btn-carta').addEventListener('click', () => {
@@ -823,6 +848,7 @@ function conectarBotones() {
     abrirMenu();
   });
   $('btn-siguiente').addEventListener('click', async () => {
+    if (!asegurarGuardado()) return;
     legendario = false;
     // Al pasar al primer día de un local más grande se ve primero la tarjeta de la ampliación (desde el menú)
     if (localActual().nivel > partida.tamano) {
@@ -835,12 +861,14 @@ function conectarBotones() {
   });
   $('btn-repetir').addEventListener('click', () => abrirTarjeta(nivelElegido));
   $('btn-rmejoras').addEventListener('click', async () => {
+    if (!asegurarGuardado()) return;
     juego?.destruir();
     juego = null;
     await montarFondo();
     abrirMejoras();
   });
   $('btn-rmenu').addEventListener('click', async () => {
+    if (!asegurarGuardado()) return;
     juego?.destruir();
     juego = null;
     await montarFondo();
@@ -850,6 +878,7 @@ function conectarBotones() {
   $('btn-rsala').addEventListener('click', () => terminarDiaSala('sala'));
   $('btn-rsalir').addEventListener('click', () => terminarDiaSala('salir'));
   $('btn-borrar').addEventListener('click', async () => {
+    if (!asegurarGuardado()) return;
     const b = $('btn-borrar');
     if (b.dataset.confirmar !== '1') {
       b.dataset.confirmar = '1';
@@ -940,6 +969,7 @@ function conectarBotones() {
   // Botón «atrás» de Android (en el computador, la tecla Esc): pausa el día, vuelve al menú o sale (a la casa, o a la
   // sala de juegos de amigos)
   const atras = () => {
+    if (!asegurarGuardado()) return;
     const visible = (id: string) => !$(id).hidden;
     const espera = document.querySelector<HTMLElement>('.sala-espera.visible [data-a="salir"]');
     const dia = document.querySelector<HTMLElement>('.dia-sala [data-cerrar]');
@@ -1337,12 +1367,12 @@ function arrancarDia(l: Linea) {
     if (v && j.reponerSeccion(v, yo)) ui.aviso('Reposición en la fila');
   };
   ui.alUsarAyuda = (id) => {
-    if ((partida.ayudas[id] ?? 0) <= 0) return;
+    if (!asegurarGuardado() || (partida.ayudas[id] ?? 0) <= 0) return;
     if (l.anfitrion) {
       if (!j.usarAyuda(id)) return;
     } else enviarAlAnfitrion(l, { t: 'ayuda', id: l.id, ayuda: id });
     partida.ayudas[id]--;
-    guardado.guardar(partida);
+    guardarProgreso();
     ui.pintarAyudas(partida.ayudas, j);
   };
   ui.alTomarCorazon = () => (l.anfitrion ? j.tomarCorazon() : enviarAlAnfitrion(l, { t: 'corazon', id: l.id }));
@@ -1810,6 +1840,7 @@ function diaEnSala(s: Sala, cfg: ConfigDia): Promise<'sala' | 'salir'> {
 
 /** Tiquete de la sala: volver a la sala de espera o salirse. */
 function terminarDiaSala(que: 'sala' | 'salir') {
+  if (!asegurarGuardado()) return;
   const f = finDiaSala;
   finDiaSala = null;
   f?.(avisoAlSalir ? 'salir' : que);

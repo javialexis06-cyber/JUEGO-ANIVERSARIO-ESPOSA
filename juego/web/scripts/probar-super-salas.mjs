@@ -25,7 +25,7 @@ const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PRE) ? PRE : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 const red = new SupabaseFalso({ perder: 0.05, demora: 160 });
@@ -41,6 +41,10 @@ async function celular(nombre, amigo, extra = '') {
   const ctx = await navegador.newContext({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
   p.nombre = nombre;
+  if(process.env.SIN_DIBUJO==='1')await p.addInitScript(()=>{
+    // Solo datos e interfaz: en GPU virtual no dibuja; las reglas y las entradas siguen activas.
+    for(const C of [WebGLRenderingContext,WebGL2RenderingContext])for(const n of ['drawElements','drawArrays','drawElementsInstanced','drawArraysInstanced'])if(C.prototype[n])C.prototype[n]=()=>{};
+  });
   p.on('pageerror', (e) => errores.push(`${nombre}: ${e}`));
   p.on('console', (m) => m.type() === 'error' && !/Failed to load resource|status of 403/.test(m.text()) && errores.push(`${nombre}: ${m.text()}`));
   await red.conectar(p, amigo ? 'amigo' : 'el');

@@ -48,7 +48,7 @@ interface Foto {
   E: Evento[];
 }
 
-function fotoDe(sim: Sim, desde: number): Foto {
+export function fotoDe(sim: Sim, desde: number): Foto {
   const r2 = (v: number) => Math.round(v * 100) / 100;
   return {
     f: FASES.indexOf(sim.fase), ft: sim.faseT, r: sim.ronda, rl: sim.reloj, le: sim.lento, ps: sim.pausaSuper, sd: sim.superDe, pa: sim.pasos, g: sim.ganador, pg: sim.paraGanar,
@@ -89,6 +89,7 @@ export class Espejo implements EstadoVista {
   }
 
   recibir(f: Foto) {
+    if (f.pa < this.pasos) return;
     this.fase = FASES[f.f] ?? 'pelea';
     this.faseT = f.ft;
     this.ronda = f.r;
@@ -295,7 +296,7 @@ async function enSala(g: Ganchos, sala: Sala) {
   }
 }
 
-function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): void } {
+export function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): void } {
   let ultima = 0;
   let entradaOtro = NADA;
   let fotoT = 0;
@@ -303,6 +304,7 @@ function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): void } {
   let mandadoT = 0;
   let enviados = 0;
   let espejo: Espejo | null = null;
+  let fotoRecibida: Foto | null = null;
   let finFn: (() => void) | null = null;
   let cortado = false;
   const quitar: (() => void)[] = [];
@@ -310,7 +312,12 @@ function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): void } {
     sala.al('pe:e', (d) => {
       entradaOtro = desempacar(Number(d) || 0);
     }),
-    sala.al('pe:f', (d) => espejo?.recibir(d as Foto)),
+    sala.al('pe:f', (d) => {
+      const f = d as Foto;
+      if (fotoRecibida && f.pa < fotoRecibida.pa) return;
+      fotoRecibida = f;
+      espejo?.recibir(f);
+    }),
     sala.alCorte((c, q) => {
       if (q.id === otro.id) cortado = c;
     }),
@@ -323,12 +330,14 @@ function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): void } {
     entrada: () => entradaOtro,
     mandarFoto(sim) {
       const ahora = performance.now();
-      if (ahora - fotoT < 50) return;
+      const final = sim.fase === 'fin' && sim.faseT > 100;
+      if (!final && ahora - fotoT < 50) return;
       fotoT = ahora;
       // Los eventos van repetidos en varias fotos seguidas (por si se pierde una): el espejo los cuenta una vez
       const f = fotoDe(sim, Math.max(0, ultima - 12));
       ultima = sim.ultimoEvento;
-      sala.mandar('pe:f', f, { rapido: true });
+      // El anfitrión deja de simular al cerrar: esta última foto debe llegar incluso si se pierde un paquete.
+      sala.mandar('pe:f', f, { rapido: !final });
     },
     mandarEntrada(e) {
       const n = empacar(e);
@@ -341,6 +350,7 @@ function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): void } {
     },
     espejo(defs) {
       espejo = new Espejo(defs);
+      if (fotoRecibida) espejo.recibir(fotoRecibida);
       return espejo;
     },
     cortado: () => cortado,

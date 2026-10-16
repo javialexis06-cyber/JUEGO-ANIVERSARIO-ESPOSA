@@ -30,7 +30,7 @@ const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PRE) ? PRE : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 const red = new SupabaseFalso({ perder: 0.06, demora: 160 });
@@ -63,7 +63,8 @@ async function celular(nombre, amigo, extra = '') {
   await red.conectar(p, 'amigo');
   await p.addInitScript((a) => localStorage.setItem('nuestro-hogar-amigo', JSON.stringify({ ...a, activo: true, creado: 1 })), amigo);
   await p.addInitScript(VIGILAR);
-  await p.goto(`${url}/mesa.html?amigo&rapido=${RAPIDO}${extra}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
+  await p.routeWebSocket(u => u.host === new URL(url).host && u.searchParams.has('token'), s => s.send(JSON.stringify({type:'connected'})));
+  await p.goto(`${url}/mesa.html?amigo&rapido=${RAPIDO}${process.env.SIN3D === '1' ? '&sin3d=1' : ''}${extra}`, { waitUntil: 'domcontentloaded', timeout: 180000 });
   await p.waitForSelector('#menu:not([hidden]) .juego-carta', { timeout: 120000 });
   return p;
 }
@@ -82,9 +83,11 @@ const limiteDe = (juego, enSala = false) => (juego === 'parchis2' ? 30 : juego =
 async function jugarHastaElFinal(paginas, limite = 12 * 60_000) {
   const t0 = Date.now();
   let ultimaFoto = t0;
+  let ultimoEstado = t0;
   for (;;) {
     for (const p of paginas) {
       await p.evaluate(() => {
+        document.querySelector('.clue-capa:not([hidden]) :is(.clue-hoja-cartas, .clue-hoja-revela) [data-ok]')?.click();
         const pt = window.__mesa.partida;
         if (!pt || !pt.esperando) return;
         const mov = pt.juego.ia(pt.e, 'normal', Math.random);
@@ -95,12 +98,19 @@ async function jugarHastaElFinal(paginas, limite = 12 * 60_000) {
     }
     const fin = (await Promise.all(paginas.map((p) => p.evaluate(() => !document.getElementById('final').hidden)))).every(Boolean);
     if (fin) return true;
+    if(Date.now()-ultimoEstado>15000){
+      ultimoEstado=Date.now();
+      console.log('ESTADO',JSON.stringify(await Promise.all(paginas.map(p=>p.evaluate(()=>{
+        const pt=window.__mesa?.partida;
+        return{juego:pt?.juego.id,n:pt?.n,esperando:!!pt?.esperando,turno:pt?.e?.turno,tiradas:pt?.e?.tiradas,terminada:pt?.terminada,oculta:document.hidden,pausa:!document.getElementById('pausa-linea')?.hidden};
+      })))));
+    }
     if (Date.now() - t0 > limite) return false;
     if (Date.now() - ultimaFoto > 5 * 60_000) {
       ultimaFoto = Date.now();
       await paginas[0].screenshot({ path: `${carpeta}/progreso-${new Date().toTimeString().slice(0, 5).replace(':', 'h')}.png` }).catch(() => {});
     }
-    await espera(250);
+    await espera(40);
   }
 }
 
@@ -158,6 +168,7 @@ await caro.waitForSelector('.sala-espera.visible .se-puesto.yo', { timeout: 6000
 revisar(true, 'Caro entró a la sala con el código');
 
 for (const [k, juego] of JUEGOS.entries()) {
+  const anteriores = await Promise.all([pipe,caro].map(p=>p.evaluate(()=>window.__mesa.partida?.id)));
   if (k > 0) {
     // El anfitrión cambia el juego en la sala de espera
     await pipe.click('.sala-espera [data-x="juego"]');
@@ -174,7 +185,10 @@ for (const [k, juego] of JUEGOS.entries()) {
     await sinNadaPersonal(caro, 'sala de espera');
   }
   await pipe.tap('.sala-espera [data-a="principal"]', { force: true });
-  await Promise.all([pipe, caro].map((p) => p.waitForSelector('#partida:not([hidden])', { timeout: 60000 })));
+  await Promise.all([pipe, caro].map((p,i) => p.waitForFunction(({juego,anterior})=>{
+    const pt=window.__mesa?.partida;
+    return pt?.juego.id===juego&&pt.id!==anterior&&!pt.terminada&&!document.getElementById('partida').hidden;
+  },{juego,anterior:anteriores[i]},{timeout:60000})));
   const nombre = await pipe.evaluate(() => document.getElementById('partida-juego').textContent);
   revisar(true, `Sala · ${juego}: los dos entraron a la partida (${nombre})`);
   await espera(k === 0 ? 4000 : 1200);

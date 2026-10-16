@@ -25,5 +25,15 @@ try{
   }
   console.log(JSON.stringify({yo:id,victorias,rivales:rivales.length}));
  }
- console.log('✓ Dieciocho combates completos y sus réplicas conservan estado, entradas y resultados');
+ const todos=[...new Map([...elenco(false),...lista].map(d=>[d.id,d])).values()];let cruces=0;
+ for(const yo of todos)for(const rival of todos)for(const nivel of [2,4,6,7]){
+  const s=new Sim({luchadores:[yo,rival],borde:8,semilla:400+cruces}),a=new Bot(0,nivel,31),b=new Bot(1,nivel,72);
+  for(let n=0;n<60*600&&(s.fase!=='fin'||s.faseT<=100);n++){
+   s.paso([a.decidir(s),b.decidir(s)]);
+   assert.ok(s.L.every(l=>[l.x,l.y,l.vida,l.barra].every(Number.isFinite)&&l.vida>=0));
+  }
+  assert.equal(s.fase,'fin',`${yo.id}/${rival.id} nivel ${nivel}`);assert.ok([-1,0,1].includes(s.ganador));
+  assert.ok(s.L.every(l=>l.rondas>=0&&l.rondas<=2));cruces++;
+ }
+ console.log(`✓ Dieciocho combates con réplica y ${cruces} cruces: ${todos.length} luchadores, espejos y cuatro dificultades. Los tres escenarios comparten borde 8; la presentación se verifica en navegador.`);
 }finally{await rm(dir,{recursive:true,force:true});}

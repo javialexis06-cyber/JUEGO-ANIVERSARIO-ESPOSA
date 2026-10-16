@@ -102,7 +102,7 @@ const CLIENTE = ([rol]) => {
 
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PRE) ? PRE : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined),
   args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'],
 });
 async function celular(rol) {

@@ -56,6 +56,7 @@ for (const semilla of semillas) {
   let errores = [];
   pagina.on('pageerror', (e) => errores.push(String(e.message ?? e)));
   pagina.on('console', (m) => m.type() === 'error' && !/Failed to load resource|favicon/.test(m.text()) && errores.push(m.text()));
+  await pagina.routeWebSocket(u=>u.hostname==='127.0.0.1'&&u.port===PUERTO&&u.searchParams.has('token'),s=>s.send(JSON.stringify({type:'connected'})));
   // Sin fotos, la página corre sin dibujar (todo igual, pero mucho más rápido)
   await pagina.goto(`http://127.0.0.1:${PUERTO}/puertas.html?sinhistoria=1&rapido=3&una=1&semilla=${semilla}${FOTOS ? '' : '&revisar=1'}`, { timeout: 180000 });
   await pagina.waitForFunction(() => window.__listo, null, { timeout: 180000 });

@@ -1211,7 +1211,7 @@ if (params.has('vitrina')) void vitrina();
 if (params.has('libro')) void import('./show/libro').then((m) => m.abrirLibro(yo));
 
 // ---------------------------------------------------------------------------
-// Escenas premium: se compran en la tienda de la casa y se lanzan aquí con 🎭 (en línea, en los dos celulares)
+// Escenas ya disponibles en el aparato. La ampliación de tienda no realizada fue descartada.
 const CLAVE_ESCENAS = 'nuestro-hogar-escenas';
 let cine: Promise<void> | null = null;
 /** Se cumple cuando no hay ninguna escena en pantalla. */
@@ -1228,18 +1228,13 @@ async function elegirEscena() {
   const tiene = (id: string) => mias.has('*') || mias.has(id);
   const lugar: Record<string, string> = { grande: '🎭', sala: '🛋️', cocina: '🍳', bano: '🛁', cuarto: '🛏️' };
   const propias = ESCENAS.filter((e) => tiene(e.id));
-  const faltan = ESCENAS.filter((e) => !tiene(e.id));
   const boton = (e: (typeof ESCENAS)[number]) =>
     `<button class="escena-opcion" data-escena="${e.id}"><i>${lugar[e.lugar]}</i><b>${e.nombre}</b><small>${e.descripcion}</small></button>`;
   hoja(
-    `<h3>Escenas premium</h3>${
+    `<h3>Escenas</h3>${
       propias.length
         ? `<div class="escenas-lista">${propias.map(boton).join('')}</div>`
-        : '<p>Todavía no tienen escenas. Se compran con monedas en la tienda de la casa, en la pestaña «Escenas».</p>'
-    }${
-      faltan.length && propias.length
-        ? `<p class="escenas-faltan">Faltan ${faltan.length} por comprar en la tienda de la casa.</p>`
-        : ''
+        : '<p>No hay escenas disponibles en este aparato.</p>'
     }`,
     [{ texto: 'Cerrar' }],
   );

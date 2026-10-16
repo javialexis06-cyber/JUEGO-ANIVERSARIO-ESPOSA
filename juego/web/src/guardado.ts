@@ -117,8 +117,41 @@ export function cargar(t: TiendaDato): Partida {
 export function guardar(p: Partida) {
   try {
     localStorage.setItem(clave(), JSON.stringify(p));
+    return true;
   } catch {
-    /* navegador sin almacenamiento: se juega igual, sin guardar */
+    return false;
+  }
+}
+
+/** Conserva la copia y el sueldo hasta confirmar ambas escrituras, sin volver a cobrar al reintentar. */
+export class GuardadoSuper {
+  private copia: Partida | null = null;
+  private sueldo = 0;
+  constructor(private escribir = guardar, private pagar = (cantidad: number) => {
+    try {
+      const anterior = Number(localStorage.getItem('nuestro-hogar-sueldo')) || 0;
+      localStorage.setItem('nuestro-hogar-sueldo', String(Math.max(0, anterior) + cantidad));
+      return true;
+    } catch { return false; }
+  }) {}
+  get pendiente() { return !!this.copia || this.sueldo > 0; }
+  guardar(p: Partida, sueldo = 0) {
+    this.copia = structuredClone(p);
+    this.sueldo += Math.max(0, Math.floor(sueldo));
+    return this.confirmar();
+  }
+  confirmar() {
+    try {
+      if (this.copia) {
+        if (!this.escribir(this.copia)) return false;
+        this.copia = null;
+      }
+      if (this.sueldo > 0) {
+        if (!this.pagar(this.sueldo)) return false;
+        this.sueldo = 0;
+      }
+      return true;
+    } catch { return false; }
   }
 }
 

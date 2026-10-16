@@ -30,7 +30,7 @@ const esperar = (p, fn, arg, ms = 30000) => p.waitForFunction(fn, arg, { timeout
 
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PRE) ? PRE : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 const red = new SupabaseFalso({ perder: 0.05, demora: 150 });

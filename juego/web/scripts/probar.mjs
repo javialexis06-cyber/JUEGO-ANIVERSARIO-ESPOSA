@@ -12,7 +12,7 @@ mkdirSync(carpeta, { recursive: true });
 // Chromium preinstalado del entorno (si existe) para no descargar otro
 const PREINSTALADO = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PREINSTALADO) ? PREINSTALADO : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PREINSTALADO) ? PREINSTALADO : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 const pagina = await navegador.newPage({ viewport: { width: ancho, height: alto }, deviceScaleFactor: 1 });

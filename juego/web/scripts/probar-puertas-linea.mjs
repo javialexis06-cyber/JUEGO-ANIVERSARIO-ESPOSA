@@ -105,13 +105,17 @@ const CLIENTE = ([rol]) => {
 
 const PRE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const navegador = await chromium.launch({
-  executablePath: existsSync(PRE) ? PRE : undefined,
+  executablePath: process.env.CHROME_PATH ?? (existsSync(PRE) ? PRE : undefined),
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 });
 async function celular(rol, tam, sinDibujar = false) {
   const ctx = await navegador.newContext({ viewport: tam, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
   p.rol = rol;
+  if(process.env.SIN_DIBUJO==='1')await p.addInitScript(()=>{
+    // Solo datos e interfaz: en GPU virtual no dibuja; las reglas y las entradas siguen activas.
+    for(const C of [WebGLRenderingContext,WebGL2RenderingContext])for(const n of ['drawElements','drawArrays','drawElementsInstanced','drawArraysInstanced'])if(C.prototype[n])C.prototype[n]=()=>{};
+  });
   p.on('pageerror', (e) => errores.push(`${rol}: ${e}`));
   p.on('console', (m) => m.type() === 'error' && !/Failed to load resource|favicon/.test(m.text()) && errores.push(`${rol}: ${m.text()}`));
   await p.exposeFunction('__srv', (a) => servidor(p, a));
