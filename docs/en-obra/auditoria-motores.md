@@ -209,6 +209,11 @@ automática para ese SHA y el intento de iniciar `apk.yml` devolvió **HTTP 422:
 user**. El workflow figura activo, pero la cuenta no puede ejecutarlo. No se anuncia una APK nueva ni se confunden
 los instaladores anteriores con estas correcciones. Requiere reactivar Actions en la cuenta y repetir la compilación.
 
+El cierre del 16 de octubre se publicó como `3b83c2d9cd91fa0bada12b09f002538856b4aefb` en ambas ramas.
+Consulta de `apk.yml` para ese SHA: sin ejecuciones. Despacho manual de nuevo rechazado con **HTTP 422:
+Actions has been disabled for this user**. El código está publicado, pero sigue sin generarse una APK con estas
+correcciones. La cuenta debe recuperar Actions para repetir el workflow.
+
 ## Criterio de cierre por juego
 
 1. Empezar con progreso nuevo en un contexto aislado, sin tocar la partida de Javier.

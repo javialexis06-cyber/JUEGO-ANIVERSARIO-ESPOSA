@@ -48,7 +48,7 @@ ni una comprobación de navegador con una prueba en teléfonos físicos.
 
 ## Bloqueos externos y comprobaciones físicas
 
-- GitHub devuelve `Actions has been disabled for this user` al intentar generar la APK. Hace falta reactivar
+- Comprobado el 16 de octubre para `3b83c2d9`: GitHub devuelve `HTTP 422: Actions has been disabled for this user` al intentar generar la APK. Hace falta reactivar
   Actions en la cuenta; no anunciar instaladores anteriores como si incluyeran cambios nuevos.
 - Los archivos siguen pidiendo aplicar/confirmar `supabase/cambios-pendientes.sql` en el servicio real. No se da
   por aplicado porque las pruebas locales de SQL pasen.

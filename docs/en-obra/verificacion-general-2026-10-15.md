@@ -75,11 +75,20 @@ publican como código. Las pruebas usan contextos aislados, nunca la cuenta ni l
   Los avisos piden mantener abierto y reintentar; no se promete recuperar datos que nunca pudieron escribirse.
 - Las salas locales o con Supabase simulado no certifican el despliegue de `supabase/cambios-pendientes.sql` ni el
   servicio real. Su aplicación debe confirmarse en Supabase.
-- GitHub había rechazado generar instaladores con `Actions has been disabled for this user`; comprobar el SHA
-  publicado antes de anunciar una APK nueva. Una ejecución histórica verde no incorpora esta tanda.
+- Comprobado de nuevo el 16 de octubre tras publicar `3b83c2d9cd91fa0bada12b09f002538856b4aefb`
+  en ambas ramas: no hay ejecución de `apk.yml` para ese SHA. El intento manual devolvió **HTTP 422: Actions
+  has been disabled for this user**. El bloqueo corresponde a la cuenta; reactivar Actions y repetir el workflow
+  es necesario para generar los instaladores. No hay APK nueva de esta tanda; una ejecución histórica verde no
+  incorpora estas correcciones.
 
 La revisión automatizada cubre todos los juegos existentes fuera del desarrollo pausado de granja. Los límites
 anteriores siguen abiertos y no se convierte esta evidencia en una afirmación de perfección ni de balance universal.
+
+## Publicación
+
+Limpieza inicial publicada en `df687ed3`. Correcciones, pruebas y cierre de cobertura publicados en `3b83c2d9`,
+confirmado en `work` y `claude/supermarket-mania-minigame-xn2it8`, sin push forzado. El seguimiento de APK se
+actualiza en documentación, sin cambios adicionales al código probado.
 
 ## Repetir los recorridos añadidos
 
