@@ -17,8 +17,10 @@ Vite + TypeScript + three.js. El contenedor Android usa Capacitor; el de escrito
 | `cocina.html` | `src/sueltos/cocina.ts` | Wafles, Fresas y Frappés sin la casa. |
 | `escudo.html` | `src/escudo/` | El Escudo de las Hermanas. |
 | `carreras.html` | `src/carreras/` | Dieciséis pistas, copas, contrarreloj y cuatro desafíos locales o en sala. |
-| `celular.html` | `src/celular/` | Los ocho teléfonos de Desaparecidos de Astra. |
+| `celular.html` | `src/celular/` | Los doce teléfonos de Desaparecidos de Astra. |
 | `peleas.html` | `src/peleas/` | El Torneo del Despertar Dorado. |
+| `mente.html` | `src/mente/` | Dieciséis juegos mentales del patio, reto diario y clasificación. |
+| `jardin.html` | `src/jardin/` | Jardín de los Desvelados: doce patios con plantas y zombis originales. |
 | `granja-v3.html` | `src/granja-v3/` | Granja V5 integrada; desarrollo pausado. |
 
 Lavarse la cara se abre desde la casa y desde la sala de amigos mediante `src/casa/lavado.ts`.
@@ -59,3 +61,7 @@ sus exportadores y pruebas específicas.
 - Supabase usa la URL y clave publicable configuradas en la aplicación o sus variables de compilación; nunca una clave privada.
 - La orientación es horizontal. Los guardados y compras se conservan entre versiones compatibles.
 - [Pedidos vigentes](../../docs/pedidos.md) registra la granja pausada y los trabajos descartados.
+
+Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistemas/patio-mental.md) y
+[Jardín de los Desvelados](../../docs/sistemas/jardin.md). La clasificación compartida necesita la migración
+específica de Supabase documentada allí; la marca local funciona sin red.

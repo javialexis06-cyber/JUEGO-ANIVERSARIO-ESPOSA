@@ -2,8 +2,9 @@
 
 Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en su carpeta.
 
-Encargo del 16 de octubre completado: mejoras de Torneo y Carreras y limpieza del repositorio. Voces nuevas descartadas;
-granja pausada. [Pedidos vigentes](pedidos.md) prevalece sobre planes y registros históricos.
+Ampliación del 16 de octubre implementada y comprobada: El Escudo, Desaparecidos y juegos del patio. Pendiente
+solo conectar Supabase para habilitar su clasificación real. Voces nuevas descartadas; granja pausada.
+[Pedidos vigentes](pedidos.md) prevalece sobre planes y registros históricos.
 
 [Inicio del repositorio](../README.md) · [Aplicación y pruebas](../juego/web/README.md) · [Guía de colaboración](../CLAUDE.md)
 
@@ -25,7 +26,10 @@ granja pausada. [Pedidos vigentes](pedidos.md) prevalece sobre planes y registro
 | [`cien-puertas.md`](sistemas/cien-puertas.md) | Cien Puertas: las 100 puertas, el desorden, nada tapa lo importante, la revisión automática y el modo pareja. Tiene **la historia y los recuerdos de verdad**. |
 | [`clue.md`](sistemas/clue.md) | «¿Quién fue?», el Clue de la casona: reglas para dos, IA, cuaderno y el tablero renderizado en Blender. |
 | [`carreras.md`](sistemas/carreras.md) | 16 circuitos, copas, desafíos, guardado y salas. |
-| [`celular.md`](sistemas/celular.md) | Ocho teléfonos de Astra, historiales, audios y apuntes manuales. |
+| [`celular.md`](sistemas/celular.md) | Doce teléfonos de Astra, historiales, audios y apuntes manuales. |
+| [`escudo.md`](sistemas/escudo.md) | Doce mapas de campaña del tower defense y modo infinito. |
+| [`patio-mental.md`](sistemas/patio-mental.md) | Los dieciséis juegos del patio, reto diario y clasificación. |
+| [`jardin.md`](sistemas/jardin.md) | Jardín de los Desvelados, doce patios y figuras originales. |
 | [`granja.md`](sistemas/granja.md) | La granja integrada: acceso desde la casa, motor y guardado, documentación de sistemas y límites actuales. |
 | [`cine-granja.md`](sistemas/cine-granja.md) | Las películas de la historia de la granja (el prólogo con Celia, Aura y Lara): motor, actores, escenarios, voces celestiales y música. |
 | [`peleas.md`](sistemas/peleas.md) | El Torneo del Despertar Dorado: peleas 1 contra 1 con los muñecos (arcade, contra la máquina, de a dos, en línea), escenarios de Blender y voces. |
@@ -39,6 +43,7 @@ granja pausada. [Pedidos vigentes](pedidos.md) prevalece sobre planes y registro
 
 | Archivo | Estado |
 |---|---|
+| [`ampliacion-patio-2026-10-16.md`](en-obra/ampliacion-patio-2026-10-16.md) | Seis mapas, cuatro casos, dieciséis juegos mentales y Jardín; pruebas y estado de la clasificación real. |
 | [`mejoras-y-limpieza-2026-10-16.md`](en-obra/mejoras-y-limpieza-2026-10-16.md) | Cierre de mejoras de Torneo/Carreras y limpieza del repositorio, con verificaciones; voces nuevas descartadas. |
 | [`auditoria-motores.md`](en-obra/auditoria-motores.md) | Revisión de motores cerrada con cobertura y límites explícitos; historial y aprobación previa de balance. |
 | [`verificacion-general-2026-10-15.md`](en-obra/verificacion-general-2026-10-15.md) | Resultado de la revisión del 15–16 de octubre: campañas, salas, correcciones, regresión final y límites físicos/externos. |

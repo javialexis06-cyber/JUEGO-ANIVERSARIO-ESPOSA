@@ -54,4 +54,5 @@ futuro del sótano fueron descartados. Los documentos históricos y diseños no 
 
 Conservar las partidas y no subir credenciales. La versión de amigos se verifica con su filtro propio.
 [Resultados y límites de la revisión general](docs/en-obra/verificacion-general-2026-10-15.md) y
-[cierre de mejoras y limpieza](docs/en-obra/mejoras-y-limpieza-2026-10-16.md). No quedan tareas activas de esos encargos.
+[cierre de mejoras y limpieza](docs/en-obra/mejoras-y-limpieza-2026-10-16.md).
+[Ampliación del patio, El Escudo y Desaparecidos](docs/en-obra/ampliacion-patio-2026-10-16.md): contenido, pruebas y estado del servicio de clasificación.

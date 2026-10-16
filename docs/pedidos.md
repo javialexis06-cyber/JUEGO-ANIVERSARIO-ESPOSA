@@ -3,6 +3,21 @@
 Actualizado el 16 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
+## Encargo activo · ampliación de juegos y patio
+
+- Completado El Escudo: seis mapas añadidos con recorridos propios; doce en total y balance existente conservado.
+- Completado Desaparecidos: cuatro casos añadidos con historial cotidiano e investigación manual; doce en total.
+- Completados los 16 juegos mentales, práctica libre, reto diario y clasificación probada con PostgreSQL temporal.
+- Completado Jardín de los Desvelados: doce patios con ocho plantas y cinco zombis originales.
+- Completadas las pruebas, integración y documentación. Publicación en ambas ramas autorizadas al cerrar el avance.
+
+**Única tarea pendiente:** conectar la cuenta de Supabase y habilitar allí la clasificación compartida del patio.
+La granja continúa pausada; las voces nuevas siguen descartadas.
+
+[Contenido y verificaciones](en-obra/ampliacion-patio-2026-10-16.md). La clasificación pasa las pruebas en PostgreSQL
+temporal; activarla en el proyecto real está autorizado y lo hará el agente cuando se conecte la cuenta de Supabase.
+Javier pidió no ejecutar SQL por su cuenta. Esta excepción solo comprende `supabase/patio-clasificacion.sql`.
+
 ## Encargo completado · mejoras y limpieza
 
 1. Torneo: poses de pelea propias producidas en Blender y predicción del personaje invitado, conservando reglas y autoridad del anfitrión.
@@ -32,7 +47,8 @@ El [historial](archivo/pedidos-hasta-2026-10-15.md) conserva la cola antigua sin
 - Escenas premium no realizadas y su tienda: descartadas. Conservar catálogo, IDs y propiedad ya implementados.
 - Contenido futuro del sótano: descartado. Se conservan el sótano de Clue y Desaparecidos de Astra.
 - Generación/seguimiento de instaladores y reactivación de Actions: descartados como continuación de esta revisión.
-- Aplicación/confirmación de SQL, Supabase real y pruebas con teléfonos físicos: descartadas.
+- Aplicación/confirmación del SQL antiguo de la casa, su revisión de Supabase real y pruebas con teléfonos físicos: descartadas.
+  La clasificación nueva del patio sí está autorizada por el encargo activo.
 - Ampliación general de recorridos parciales, todas las clases, modos y combinaciones de la auditoría anterior: descartada.
 
 Los checks de futuros cambios autorizados sí son necesarios. No retomar el resto salvo un nuevo pedido de Javier. Conservar

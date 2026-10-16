@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html', 'carreras.html', 'celular.html', 'peleas.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html', 'carreras.html', 'celular.html', 'peleas.html', 'mente.html', 'jardin.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -58,11 +58,11 @@ export const PERMITIDOS_AMIGOS = [
   // Desaparecidos de Astra (el juego del celular encontrado: ningún caso es de la pareja)
   'src/celular/',
   // el Torneo del Despertar Dorado (peleas), con Javier y Laura aparte (ver SUSTITUTOS)
-  'src/peleas/',
+  'src/peleas/', 'src/mente/', 'src/jardin/',
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
-export const PUBLICOS_AMIGOS = ['modelos/escudo_mapa.glb', 'modelos/escudo_torres.glb', 'modelos/escudo_enemigos.glb', 'audio/escudo/',
+export const PUBLICOS_AMIGOS = ['jardin/', 'modelos/escudo_mapa.glb', 'modelos/escudo_torres.glb', 'modelos/escudo_enemigos.glb', 'audio/escudo/',
   'modelos/granja-v3/dragon_lod.glb', 'modelos/granja-v3/grifo_lod.glb', 'modelos/granja-v3/unicornio_lod.glb', 'modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/', 'datos/niveles.json',
   'modelos/manifest_export.json',
   // La carrera: pistas, carros, íconos y voces (sin las de la pareja); las criaturas ya van arriba
@@ -196,6 +196,7 @@ export default defineConfig(({ mode, command }) => {
             carreras: resolve(raiz, 'carreras.html'),
             celular: resolve(raiz, 'celular.html'),
             peleas: resolve(raiz, 'peleas.html'),
+            mente: resolve(raiz, 'mente.html'), jardin: resolve(raiz, 'jardin.html'),
           },
       },
     },

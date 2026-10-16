@@ -4,7 +4,9 @@ Leer [CLAUDE.md](CLAUDE.md). La cola vigente está en [docs/pedidos.md](docs/ped
 
 Encargo del 16 de octubre completado: poses y predicción del invitado en Torneo, icono y salas para los cuatro
 desafíos de Carreras, y revisión/orden/limpieza del repositorio y su documentación. **Voces nuevas descartadas.**
-No quedan tareas activas de ese encargo; esperar el siguiente pedido.
+Ampliación implementada y comprobada: El Escudo y Desaparecidos con doce mapas/casos, los 16 juegos mentales
+del patio con reto diario y Jardín de los Desvelados con doce patios. Solo falta conectar Supabase y aplicar
+la clasificación real; la prueba temporal no acredita ese despliegue. Ver `docs/pedidos.md`.
 **Granja pausada:** no modificar sus sistemas, historia, arte ni balance; solo regresiones e integración existentes.
 Los descartes anteriores de instaladores, Supabase real y pruebas adicionales siguen vigentes.
 
@@ -23,3 +25,7 @@ cambios integrados. Una comprobación de navegador no certifica rendimiento o se
 
 Fuente única de granja: `juego/web/src/granja-v3/`; guardado V5. El cargador de `src/granja-v2/biblioteca.ts` no es otro motor.
 Si se autoriza reanudarla, leer primero `docs/en-obra/granja-coordinacion.md` y sus contratos; no presentar los planes como implementados.
+
+El nuevo pedido sí autoriza habilitar y comprobar la clasificación del patio en Supabase. Limitarse a
+`supabase/patio-clasificacion.sql`; no aplicar el SQL antiguo de la casa. Javier pidió que lo haga el agente.
+Usar la conexión Supabase cuando esté autorizada, sin pedir al usuario escribir SQL ni pegar claves privadas.

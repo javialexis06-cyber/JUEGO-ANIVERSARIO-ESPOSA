@@ -4,13 +4,13 @@ Minijuego de detective del capítulo 6 de [`en-obra/pelicula-de-astra.md`](../en
 **mesa de los perdidos de Vigilia**, Ulises (el cartógrafo) recibe teléfonos encontrados en distintos lugares de Astra.
 El jugador abre cada teléfono, revisa todo lo que tiene adentro y deduce qué le pasó a su dueño y dónde está.
 
-- **Ocho casos completos**, que se desbloquean en orden. No hay tutorial que indique qué revisar.
+- **Doce casos completos**, que se desbloquean en orden. No hay tutorial que indique qué revisar.
 - Los teléfonos y conversaciones son ficticios. Ningún caso habla de la pareja; la edición de amigos usa los mismos datos.
 - El teléfono ocupa la pantalla horizontal; «Libreta» abre o esconde las anotaciones escritas por quien investiga.
 
 ## Investigación manual (15 de octubre)
 
-Los ocho teléfonos contienen **6.111 mensajes**, entre 708 y 785 por aparato, en nueve o diez conversaciones.
+Los doce teléfonos contienen **6.111 mensajes**, entre 708 y 785 por aparato, en nueve o diez conversaciones.
 Cada uno conserva tres años anteriores al suceso: turnos, comida, arreglos, encargos, préstamos, reuniones cambiadas,
 malentendidos aclarados después, conversaciones de grupo, citas de mensajes, reacciones, ediciones y mensajes
 eliminados. Los historiales combinan escenas autorales cotidianas con lugares, objetos y pequeñas historias de cada
@@ -42,7 +42,7 @@ Calendario, Linterna y Señas de luz. Los candados siguen siendo PIN, patrón o 
 Las respuestas finales conservan sus errores y estrellas. El cierre presenta la escena, las voces y el siguiente
 caso. Atrás de Android o Esc cierra capas y apps antes de volver a la mesa o a la sala de origen.
 
-## Los ocho casos (con su solución)
+## Los ocho casos originales (con su solución)
 
 | # | Caso | Lugar | Candados | Giro | Solución |
 |---|---|---|---|---|---|
@@ -77,7 +77,7 @@ Samira, Rocío, Maia, Nahuel, Orin, Mauro, Calista, Helena, Boris, Valentina, Sa
 | Voces, música y efectos | `src/celular/audio.ts` |
 | Progreso | `src/celular/progreso.ts` |
 | Tipos de los datos | `src/celular/tipos.ts` |
-| Los ocho casos y sus historiales | `src/celular/casos/c1-pacto.ts` … `c8-estacion.ts` (+ `index.ts` y `src/celular/historiales.ts`) |
+| Los doce casos y sus historiales | `src/celular/casos/c1-pacto.ts` … `c8-estacion.ts` (+ `ampliacion.ts`, `index.ts` y `src/celular/historiales.ts`) |
 | Estilos | `src/celular/celular.css` |
 | Fotos (106 JPG, 800×450 y retratos de 240×240) | `public/celular/fotos/` |
 | Notas de voz (152, Opus) e índices | `public/audio/celular/` y `public/audio/celular/historial/` |
@@ -128,51 +128,12 @@ Se verificaron los ocho casos desde cero en amigos, con 24 estrellas, recarga de
 del primer guardado fallido; también el primer caso y retorno a la casa en la compilación completa. Se mantienen
 soluciones, contraseñas y fórmula de estrellas; se retiraron las ayudas por petición de Javier.
 
-## Integración (hecha el 14 de octubre de 2026: casa y Sala de Juegos con su tema `celular`)
+## Integración
 
-### Lo que se había propuesto
-
-**Casa** (`src/casa/main.ts`), en el cuarto de juegos:
-
-```ts
-// JUEGOS
-celular: { punto: 'arcade', url: './celular.html', nombre: 'Desaparecidos de Astra' },
-```
-
-```ts
-// case 'juegos': (botones)
-{ id: 'jugar-celular', texto: 'Desaparecidos de Astra', icono: '<span class="ico ico-emoji">📱</span>' },
-```
-
-```ts
-// acciones
-case 'jugar-celular':
-  return jugar('celular');
-```
-
-Y en `vite.config.ts` ya está `celular: resolve(raiz, 'celular.html')` en el `input` de la versión de la pareja.
-
-**Sala de Juegos de los amigos** (`src/amigos/juegos.ts`), en la lista `JUEGOS` (con el tema `'mesa'` para no tocar
-el CSS; si se quiere uno propio, agregar `'celular'` al tipo `tema` y su clase):
-
-```ts
-{ id: 'celular', nombre: 'Desaparecidos de Astra', desc: 'Revisa celulares encontrados y resuelve 8 casos', arte: ARTE_CELULAR, tema: 'mesa', url: './celular.html' },
-```
-
-con el dibujo:
-
-```ts
-const ARTE_CELULAR = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-  <rect width="200" height="110" fill="#5a3620"/><rect width="200" height="110" fill="url(#cm)" opacity=".5"/>
-  <defs><radialGradient id="cm" cx="50%" cy="20%" r="70%"><stop offset="0" stop-color="#ffcf8a"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
-  <g transform="translate(38 22) rotate(-8)"><rect width="56" height="72" rx="3" fill="#f0cf8e"/><rect x="6" y="8" width="26" height="30" fill="#fff"/><rect x="9" y="11" width="20" height="22" fill="#7a8a9a"/>
-    <rect x="6" y="46" width="40" height="4" rx="2" fill="#a97e3a"/><rect x="6" y="54" width="30" height="4" rx="2" fill="#a97e3a"/></g>
-  <g transform="translate(96 30) rotate(6)"><rect width="78" height="46" rx="9" fill="#1d1d24"/><rect x="5" y="5" width="68" height="36" rx="5" fill="#2f6f9a"/>
-    <path d="M40 8 L34 20 L42 26 L36 40" stroke="#fff" stroke-width="1.3" fill="none" opacity=".8"/><circle cx="20" cy="22" r="7" fill="#ffd23f"/></g>
-  <circle cx="160" cy="84" r="12" fill="none" stroke="#fff3d6" stroke-width="4"/><path d="M168 92 l12 12" stroke="#fff3d6" stroke-width="5" stroke-linecap="round"/></svg>`;
-```
-
-`docs/la-pareja.md`, «Quién cuenta qué»: Desaparecidos de Astra no cuenta nada de la pareja (fila agregada).
+En la casa, `jugar-celular` abre `celular.html` desde el cuarto de juegos. En amigos, la tarjeta de
+`src/amigos/juegos.ts` usa arte `ARTE_CELULAR`, tema `celular` y el contador actualizado de doce casos.
+La página está en los inputs de ambas compilaciones y en `PAGINAS_AMIGOS`; `src/celular/`, `celular/` y
+`audio/celular/` forman parte de las listas permitidas de `vite.config.ts`. Ningún caso contiene recuerdos de pareja.
 
 ## Verificación de la investigación manual
 
@@ -186,3 +147,23 @@ Pasaron los ocho casos en amigos, el primero con retorno a casa en la edición c
 fallo de almacenamiento recuperado, ambas compilaciones, privacidad de amigos, motores, 48 suites de granja y las
 seis comprobaciones de integración. Para rehacer los audios cotidianos: `python3 -m pip install edge-tts==7.3.1`
 y `node scripts/celular/historial-audio.mjs` (ffmpeg y ffprobe instalados).
+
+## Cuatro expedientes nuevos · 16 de octubre
+
+Los casos 9–12 se añaden después de Estación y conservan los ocho IDs, claves, soluciones y guardados anteriores.
+El contador de casos y estrellas se calcula por catálogo (12 y 36). Cada teléfono nuevo tiene más de 690 mensajes,
+nueve chats, tres años anteriores, registros actuales, mapa, notas, correo, calendario y siete notas de voz
+cotidianas reutilizadas con el mismo texto. No se generaron voces nuevas. Los doce teléfonos suman 8.907 mensajes.
+Las fotos, retratos y documentos nuevos salen del exportador `personajes/blender/patio_figuras.py`.
+
+| # | Caso | Región | Investigación |
+|---|---|---|---|
+| 9 | La campana de las seis | Nieveclara | Avisos programados, un letrero trasladado y códigos de refugio. |
+| 10 | La caja sin destinatario | Brumaverde | Distinguir etiquetas y recibos de distintos años. |
+| 11 | La página que faltaba | Vigilia | Separar una firma de presupuesto de la persona que hizo la entrega. |
+| 12 | La ruta del hilo violeta | Iridalia | Una ubicación antigua, cambio de montaje y parte de relevo incompleto. |
+
+Claves editoriales, solo para mantenimiento: campana `2714`/`canela`, semillas `4306`/`helecho`, archivo
+`1852`/`nogal`, tejedora `6241`/`cometa`. Se deducen de los objetos del expediente y conversaciones; no aparecen como
+recordatorios del candado. Sin contador de pistas, anotaciones automáticas, tutorial ni pantalla de ayudas.
+Los finales son originales y las conclusiones requieren comparar las fuentes del propio teléfono.

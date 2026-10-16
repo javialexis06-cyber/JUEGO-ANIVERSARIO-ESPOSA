@@ -28,7 +28,7 @@ try{
   await abrir();
   assert.equal(await p.evaluate(k=>localStorage.getItem(k),clave),null);
   assert.equal(await p.locator('[data-nivel]:not([disabled])').count(),1);
-  const ids=['mirador','arcos','cantera','rosal','puente','grieta'];
+  const ids=await p.locator('[data-nivel]:not([data-nivel="infinito"])').evaluateAll(bs=>bs.map(b=>b.dataset.nivel));
   await p.locator('[data-nivel="mirador"]').click();
   await p.locator('.ec-saltar').click();
   for(let i=0;i<ids.length;i++){
@@ -49,6 +49,7 @@ try{
         Storage.prototype.setItem=function(clave,valor){if(clave===k&&window.__cortarEscudo)throw new DOMException('Prueba de almacenamiento lleno','QuotaExceededError');return original.call(this,clave,valor);};
       },clave);
     }
+    if(i>=6)await foto(`nivel-${i+1}-mapa`);
     const fin=await p.evaluate(()=>{
       const h=window.__escudo,m=h.motor();
       for(let n=0;n<50&&!m.terminado;n++)h.avanzar(900);
@@ -83,7 +84,7 @@ try{
     await abrir();
     assert.deepEqual(await p.evaluate(()=>window.__escudo.progreso()),avance);
     assert.equal(await p.locator('[data-nivel="infinito"]').isEnabled(),i>=2);
-    if(i<5){await p.locator(`[data-nivel="${ids[i+1]}"]`).click();}
+    if(i<ids.length-1){await p.locator(`[data-nivel="${ids[i+1]}"]`).click();}
   }
   await foto('campana-completa');
   await p.locator('[data-nivel="infinito"]').click();

@@ -125,6 +125,9 @@ const ARTE_COCINA = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspec
   ${[[20, 40], [36, 26], [52, 44]].map(([x, y]) => `<path d="M${x} ${y} q4 -8 0 -16" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/>`).join('')}</svg>`;
 
 /** Los juegos de la sala de amigos, en orden. */
+const ARTE_MENTE = `<svg viewBox="0 0 200 110" aria-hidden="true"><rect width="200" height="110" fill="#d9e5ce"/><path d="M0 90Q60 55 200 85V110H0" fill="#a0be94"/><rect x="32" y="22" width="48" height="62" rx="10" fill="#aa91bb" transform="rotate(-10 56 53)"/><rect x="87" y="22" width="48" height="62" rx="10" fill="#fff1d1" transform="rotate(8 110 53)"/><path d="M102 51l10-12 10 12-10 12z" fill="#d69aad"/><circle cx="155" cy="71" r="19" fill="#efc46f"/><path d="M144 71h22m-11-11v22" stroke="#fff5db" stroke-width="4"/></svg>`;
+const ARTE_JARDIN = `<svg viewBox="0 0 200 110" aria-hidden="true"><rect width="200" height="110" fill="#b9d5d4"/><path d="M0 65Q75 40 200 70V110H0" fill="#8fb387"/><path d="M53 80V40" stroke="#51865c" stroke-width="8"/><g fill="#f3dd99"><circle cx="53" cy="30" r="13"/><circle cx="37" cy="43" r="13"/><circle cx="69" cy="43" r="13"/><circle cx="53" cy="56" r="13"/></g><circle cx="53" cy="43" r="13" fill="#f1b95f"/><circle cx="49" cy="41" r="2"/><circle cx="57" cy="41" r="2"/><rect x="132" y="58" width="27" height="29" rx="9" fill="#88798f"/><circle cx="145" cy="45" r="19" fill="#91b7a2"/><circle cx="139" cy="43" r="3"/><circle cx="151" cy="43" r="3"/><path d="M135 32l18 3" stroke="#eee4cb" stroke-width="3"/></svg>`;
+
 export const JUEGOS: JuegoAmigos[] = [
   { id: 'lavado', nombre: 'Lavarse la cara', desc: 'Mugrosos sin fin · de 1 a 4', arte: ARTE_LAVADO, tema: 'lavado', interno: true, sala: 'lavado' },
   { id: 'sangre', nombre: 'Sangre y Ceniza', desc: 'Sobrevive la noche eterna · de 1 a 4', arte: ARTE_SANGRE, tema: 'sangre', url: './sangre.html', sala: 'sangre',
@@ -136,7 +139,9 @@ export const JUEGOS: JuegoAmigos[] = [
   { id: 'escudo', nombre: 'El Escudo de las Hermanas', desc: 'Defiende el escudo de luz · torres y estrellas', arte: ARTE_ESCUDO, tema: 'escudo', url: './escudo.html' },
   { id: 'carreras', nombre: 'La Carrera de las Tres Lunas', desc: 'Carros y criaturas por Astra · de 1 a 4', arte: ARTE_CARRERAS, tema: 'carreras', url: './carreras.html', sala: 'carreras',
     urlCrear: './carreras.html?sala', urlUnirse: (c) => `./carreras.html?unirse=${encodeURIComponent(c)}` },
-  { id: 'celular', nombre: 'Desaparecidos de Astra', desc: 'Revisa celulares encontrados y resuelve 8 casos', arte: ARTE_CELULAR, tema: 'celular', url: './celular.html' },
+  { id: 'celular', nombre: 'Desaparecidos de Astra', desc: 'Revisa celulares encontrados y resuelve 12 casos', arte: ARTE_CELULAR, tema: 'celular', url: './celular.html' },
+  { id: 'mente', nombre: 'Un ratito en el patio', desc: '16 juegos de memoria y lógica · reto diario y clasificación', arte: ARTE_MENTE, tema: 'celular', url: './mente.html' },
+  { id: 'jardin', nombre: 'Jardín de los Desvelados', desc: '12 patios · plantas de peluche contra zombis remendados', arte: ARTE_JARDIN, tema: 'escudo', url: './jardin.html' },
   { id: 'peleas', nombre: 'Torneo de peleas', desc: 'Uno contra uno · contra la máquina, de a dos o en línea', arte: ARTE_PELEAS, tema: 'peleas',
     url: './peleas.html', sala: 'peleas' },
 ];

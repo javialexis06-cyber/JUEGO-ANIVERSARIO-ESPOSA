@@ -60,6 +60,12 @@ llega rompe el escudo.
 | IV | El Rosal de la Noche | Fuatia; rutas que se abren y se juntan dos veces | 10 |
 | V | El Puente de las Brasas | El paso angosto sobre el abismo (islas que faltan) | 11 |
 | VI · P23 | La Estrella sin Dueño | La batalla de la historia, con la sombra de Nath'Gora | 11 |
+| VII | El Observatorio del Alba | Curvas que rodean el telescopio y comparten un regreso | 10 |
+| VIII | Los Canales de Cristal | Tres entradas y cruces entre cristales | 10 |
+| IX | El Jardín de las Luciérnagas | Dos jardines con pasos interiores compartidos | 10 |
+| X | Las Terrazas del Ocaso | Dos entradas que rodean las terrazas | 10 |
+| XI | La Ronda de los Braseros | Dos columnas que se cruzan en el campamento | 11 |
+| XII | La Corona del Borde | Tres pasos y un eco final de Nath’Gora | 11 |
 | ∞ | El Borde sin Fin | Oleadas que se arman solas y crecen | sin fin |
 
 Los sitios para construir los escoge el motor (los que más camino ven, a 1,85-2,6 m del camino y separados 2,5 m).
@@ -117,7 +123,7 @@ resolución y luego las sombras. Al salir suelta el WebGL (`forceContextLoss`).
 ```bash
 cd juego/web
 npx tsc --noEmit -p . && npx vite build && npm run build:amigos && node scripts/verificar-amigos.mjs
-node scripts/probar-escudo-motor.mjs                 # seis niveles, derrota, infinito y fallos de escritura
+node scripts/probar-escudo-motor.mjs                 # doce niveles, derrota, infinito y fallos de escritura
 # Servir dist y dist-amigos en puertos distintos; los navegadores se ejecutan de a uno:
 CHROME_PATH=/usr/bin/chromium AMIGO=0 FALLOS=1 node scripts/probar-escudo-recorrido.mjs http://127.0.0.1:4182/ test-results/escudo-pareja
 CHROME_PATH=/usr/bin/chromium FALLOS=1 node scripts/probar-escudo-recorrido.mjs http://127.0.0.1:4184/ test-results/escudo-amigos
@@ -209,3 +215,11 @@ La propuesta histórica de integración de granja indicaba lo siguiente; no es t
    (no del personaje): si se quiere por personaje, guardar también `personaje` en el recibo y compararlo.
 
 La película C09 sigue saliendo donde ya sale (el giro/cierre de P23): el Escudo es la batalla jugable de antes.
+
+## Ampliación del 16 de octubre
+
+Seis mapas nuevos, añadidos después del VI, con geometrías, entradas, rutas y ambientes propios. Conservan los
+presupuestos y las oleadas de Cantera, Rosal, Puente y Grieta; no se alteran torres, enemigos, habilidades, costes,
+recompensas, campaña anterior ni infinito. Una huella de regresión verifica ese contrato. Los IDs anteriores se
+conservan; las estrellas del VI abren el VII sin repetir la campaña. La batalla P23 y su escena siguen en el VI.
+Esta ampliación es del minijuego: no reanuda el desarrollo de granja.

@@ -370,6 +370,72 @@ export const NIVELES: Nivel[] = [
   },
 ];
 
+/** Nuevas defensas del Borde. Reutilizan presupuestos y oleadas de la campaña original; cambia el terreno. */
+function expedicion(base: string, mapa: Pick<Nivel, 'id' | 'nombre' | 'sub' | 'intro' | 'rutas' | 'cielo' | 'utileria'>): Nivel {
+  const origen = NIVELES.find(n => n.id === base)!;
+  return { ...structuredClone(origen), ...mapa, historia: false, huecos: undefined, sitiosExtra: undefined };
+}
+
+NIVELES.push(
+  expedicion('cantera', {
+    id: 'observatorio', nombre: 'El Observatorio del Alba', sub: 'VII',
+    intro: 'Dos senderos rodean el telescopio. Las patrullas deben cubrir también el regreso de la curva.',
+    rutas: [
+      [[-17,-5],[-12,-5],[-12,1],[-7,1],[-7,-5],[0,-5],[0,4],[7,4],[7,-2],[12,-2],[12,1],[17,1]],
+      [[-17,5],[-12,5],[-12,1],[-7,1],[-7,6],[0,6],[0,4],[7,4],[7,-2],[12,-2],[12,1],[17,1]],
+      [[-17,-5],[-12,-5],[-12,1],[-7,1],[-7,6],[0,6],[0,4],[7,4],[7,-2],[12,-2],[12,1],[17,1]],
+    ],
+    cielo: ['#37456b','#10172b'], utileria: ['telescopio','farol_estrella','cristal_dorado','banco_madera','estandarte_aura','columna_rota'],
+  }),
+  expedicion('cantera', {
+    id: 'canales', nombre: 'Los Canales de Cristal', sub: 'VIII',
+    intro: 'Tres entradas desembocan entre cristales. El paso central une las rutas antes del escudo.',
+    rutas: [
+      [[-17,-6],[-11,-6],[-11,-1],[-4,-1],[-4,-5],[3,-5],[3,0],[10,0],[10,-4],[14,-4],[14,0],[17,0]],
+      [[-17,6],[-11,6],[-11,1],[-4,1],[-4,5],[3,5],[3,0],[10,0],[10,4],[14,4],[14,0],[17,0]],
+      [[-17,0],[-14,0],[-14,-3],[-8,-3],[-8,1],[-4,1],[-4,5],[3,5],[3,0],[10,0],[10,4],[14,4],[14,0],[17,0]],
+    ],
+    cielo: ['#194b58','#081722'], utileria: ['cristal_azul','cristal_morado','cristal_dorado','roca_lunar_2','farol_estrella','provisiones'],
+  }),
+  expedicion('rosal', {
+    id: 'luciernagas', nombre: 'El Jardín de las Luciérnagas', sub: 'IX',
+    intro: 'La ceniza rodea dos jardines de luz. Las curvas interiores permiten acompañar más de un sendero.',
+    rutas: [
+      [[-17,0],[-13,0],[-13,-5],[-6,-5],[-6,4],[1,4],[1,-4],[8,-4],[8,4],[13,4],[13,0],[17,0]],
+      [[-17,0],[-13,0],[-13,5],[-6,5],[-6,4],[1,4],[1,-4],[8,-4],[8,4],[13,4],[13,0],[17,0]],
+    ],
+    cielo: ['#1e453e','#081b1b'], utileria: ['hongos_luz','flores_estrella','arbol_estelar','rosal_lara','farol_estrella','estandarte_lara'],
+  }),
+  expedicion('rosal', {
+    id: 'terrazas', nombre: 'Las Terrazas del Ocaso', sub: 'X',
+    intro: 'Dos grietas bordean las terrazas en sentidos opuestos antes de compartir el último corredor.',
+    rutas: [
+      [[-17,-6],[-8,-6],[-8,-1],[-12,-1],[-12,5],[-3,5],[-3,-4],[5,-4],[5,2],[11,2],[11,-1],[17,-1]],
+      [[-17,6],[-14,6],[-14,2],[-8,2],[-8,6],[-3,6],[-3,-4],[5,-4],[5,2],[11,2],[11,-1],[17,-1]],
+    ],
+    cielo: ['#543452','#1d1028'], utileria: ['rosal_lara','estandarte_lara','arco_roto','columna_rota','banco_madera','flores_estrella','cristal_morado'],
+  }),
+  expedicion('puente', {
+    id: 'braseros', nombre: 'La Ronda de los Braseros', sub: 'XI',
+    intro: 'Las dos columnas de ceniza rodean los braseros y se cruzan en el centro del campamento.',
+    rutas: [
+      [[-17,-5],[-11,-5],[-11,4],[-4,4],[-4,-4],[3,-4],[3,4],[10,4],[10,-2],[14,-2],[14,0],[17,0]],
+      [[-17,5],[-14,5],[-14,-1],[-7,-1],[-7,6],[0,6],[0,0],[7,0],[7,-5],[13,-5],[13,0],[17,0]],
+    ],
+    cielo: ['#5a352c','#1b0f16'], utileria: ['brasero_aura','estandarte_aura','tienda_campana','provisiones','cristal_dorado','farol_estrella'],
+  }),
+  expedicion('grieta', {
+    id: 'corona', nombre: 'La Corona del Borde', sub: 'XII',
+    intro: 'Tres pasos forman una corona alrededor del campamento. Un eco de Nath’Gora sigue a la última patrulla.',
+    rutas: [
+      [[-17,-6],[-10,-6],[-10,-1],[-4,-1],[-4,-6],[3,-6],[3,1],[8,1],[8,-3],[13,-3],[13,0],[17,0]],
+      [[-17,6],[-10,6],[-10,1],[-4,1],[-4,6],[3,6],[3,1],[8,1],[8,-3],[13,-3],[13,0],[17,0]],
+      [[-17,0],[-14,0],[-14,-3],[-7,-3],[-7,3],[0,3],[0,-2],[5,-2],[5,5],[11,5],[11,0],[17,0]],
+    ],
+    cielo: ['#352653','#090e22'], utileria: ['estandarte_aura','estandarte_lara','arco_roto','cristal_dorado','cristal_morado','telescopio','farol_estrella'],
+  }),
+);
+
 /** El mapa del modo infinito (las oleadas se arman solas, cada vez más duras). */
 export const INFINITO: Nivel = {
   id: 'infinito', nombre: 'El Borde sin Fin', sub: '∞', luz: 360, fuerza: 1, sitios: 15, torres: T6,

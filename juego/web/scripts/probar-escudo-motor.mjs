@@ -1,5 +1,6 @@
 // Campaña desde progreso nuevo, derrota, infinito y escrituras fallidas. No cambia recursos ni balance.
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { build } from 'esbuild';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -24,7 +25,10 @@ try {
       export * from './src/escudo/datos'; export * from './src/escudo/progreso';`, resolveDir: resolve(import.meta.dirname, '..') },
     bundle: true, platform: 'node', format: 'esm', outfile: archivo, logLevel: 'silent',
   });
-  const { Motor, crearBot, NIVELES, INFINITO, leerProgreso, GuardadoEscudo, desbloqueado, CLAVE_MISION } = await import(pathToFileURL(archivo));
+  const { TORRES, ENEMIGOS, HABILIDADES, Motor, crearBot, NIVELES, INFINITO, leerProgreso, GuardadoEscudo, desbloqueado, CLAVE_MISION } = await import(pathToFileURL(archivo));
+  const legado={niveles:NIVELES.slice(0,6),infinito:INFINITO,torres:TORRES,enemigos:ENEMIGOS,habilidades:HABILIDADES};
+  assert.equal(createHash('sha256').update(JSON.stringify(legado)).digest('hex'),'31630349516e0e19760f45a24f0e8f84a61b3d0ad379c407879cfb01a6692817','La campaña y el balance anteriores se conservan');
+  assert.equal(new Set(NIVELES.map(n=>n.id)).size,NIVELES.length);
   const recorrer = (m, bot, maxSegundos = 1200) => {
     let finales = 0;
     for (let paso = 0; paso < 30 * maxSegundos && !m.terminado; paso++) {
@@ -58,7 +62,7 @@ try {
     p.estrellas[m.nivel.id] = fin.estrellas;
     assert.equal(new GuardadoEscudo(false, p).guardar(), true);
     assert.deepEqual(leerProgreso(false), p); p = leerProgreso(false);
-    console.log(`✓ Campaña ${i + 1}/6: ${m.nivel.id}, ${fin.estrellas} estrellas, ${fin.vidas} vidas, avance conservado`);
+    console.log(`✓ Campaña ${i + 1}/${NIVELES.length}: ${m.nivel.id}, ${fin.estrellas} estrellas, ${fin.vidas} vidas, avance conservado`);
   }
   const derrota = new Motor(NIVELES[0]);
   derrota.llamarOleada();

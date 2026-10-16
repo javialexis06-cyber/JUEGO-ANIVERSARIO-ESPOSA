@@ -1,5 +1,5 @@
 // «Desaparecidos de Astra»: la mesa de los perdidos de Vigilia. Ulises recibe teléfonos encontrados en Astra y tú
-// los revisas para saber qué le pasó a su dueño y dónde está. Ocho casos con investigación y apuntes manuales. Se juega en horizontal con el teléfono grande a la izquierda y la libreta del detective a la derecha.
+// los revisas para saber qué le pasó a su dueño y dónde está. Doce casos con investigación y apuntes manuales. Se juega en horizontal con el teléfono grande a la izquierda y la libreta del detective a la derecha.
 // Documento: docs/sistemas/celular.md.
 import './celular.css';
 import { alAtras, volverALaSala } from '../sueltos/comun';
@@ -34,7 +34,7 @@ let casoActual: Caso | null = null;
 /** Lo que cierra el botón atrás antes de salir (capas abiertas). */
 let capas: (() => void)[] = [];
 
-// ------------------------------------------------------------------ la mesa (los ocho expedientes)
+// ------------------------------------------------------------------ la mesa (los expedientes)
 
 function mesa() {
   if (!asegurarGuardado()) return;
@@ -50,7 +50,7 @@ function mesa() {
   const titulo = el('div', 'cel-titulo', '<b>Desaparecidos de Astra</b><span>La mesa de los perdidos · Vigilia de Ceniza</span>');
   const resueltos = CASOS.filter((c) => progreso.casos[c.id]?.resuelto).length;
   const estrellas = CASOS.reduce((a, c) => a + (progreso.casos[c.id]?.estrellas ?? 0), 0);
-  const marcador = el('div', 'cel-marcador', `<span>${resueltos}/8 casos</span><span>${ICONO.estrella}${estrellas}/24</span>`);
+  const marcador = el('div', 'cel-marcador', `<span>${resueltos}/${CASOS.length} casos</span><span>${ICONO.estrella}${estrellas}/${CASOS.length * 3}</span>`);
   const musica = el('button', 'cel-boton redondo', progreso.musica ? ICONO.musica : ICONO.sinMusica);
   musica.title = 'Música';
   musica.onclick = () => { progreso.musica = !progreso.musica; guardar(); ponerMusica(progreso.musica); musica.innerHTML = progreso.musica ? ICONO.musica : ICONO.sinMusica; };

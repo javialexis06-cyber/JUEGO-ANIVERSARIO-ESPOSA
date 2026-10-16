@@ -4,7 +4,9 @@
 
 La cola y las decisiones actuales están en [docs/pedidos.md](docs/pedidos.md). El encargo del 16 de octubre quedó
 completado: poses y predicción de Torneo, icono y salas de desafíos de Carreras y limpieza del repositorio.
-No quedan tareas activas de ese encargo; esperar el siguiente pedido.
+Ampliación implementada y comprobada: El Escudo y Desaparecidos con doce mapas/casos, los 16 juegos mentales
+del patio con reto diario y Jardín de los Desvelados con doce patios. Solo falta conectar Supabase y aplicar
+la clasificación real; la prueba temporal no acredita ese despliegue. Ver `docs/pedidos.md`.
 Las voces nuevas fueron descartadas expresamente. La granja sigue pausada; no modificar sus sistemas, historia,
 arte ni balance. Se permiten sus regresiones e integración existentes.
 
@@ -77,3 +79,7 @@ Usar `CHROME_PATH` si el Chromium instalado no coincide con el de Playwright.
 - Logs y capturas van a `juego/web/test-results/`; temporales de scripts a `scripts/_*.mjs` (excluidos localmente).
 - Al terminar: actualizar cola y documentos del sistema, revisar `git diff --check`, publicar y verificar ambas ramas.
   El seguimiento de instaladores sigue descartado salvo un nuevo pedido explícito.
+
+El nuevo pedido sí autoriza habilitar y comprobar la clasificación del patio en Supabase. Limitarse a
+`supabase/patio-clasificacion.sql`; no aplicar el SQL antiguo de la casa. Javier pidió que lo haga el agente.
+Usar la conexión Supabase cuando esté autorizada, sin pedir al usuario escribir SQL ni pegar claves privadas.

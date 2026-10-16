@@ -10,6 +10,8 @@ interface Vida {
   comidas: string[];
   objetos: string[];
   oficio: string[][];
+  /** Reutiliza solo notas cotidianas ya grabadas, con el mismo texto. No genera voces nuevas. */
+  audioExistente?: boolean;
 }
 
 const VIDAS: Record<string, Vida> = {
@@ -147,6 +149,25 @@ const AUDIOS = [
  'El cambio que te debían está adentro del sobre. Lo conté dos veces porque siempre me enredo. Si no cuadra, me escribes y lo miramos.',
 ];
 
+const NUEVAS_VIDAS: [string, string, Vida['vecinos'], Vida['grupos'], string[], string[], string[], string[]][] = [
+ ['campana','cota',['Rita · Remiendos','Dante · Herramientas','Alda'],['Los del taller','Comidas del domingo'],
+  ['el taller de radios','la panadería','el patio de mantas','la plaza baja'],['pan de queso','chocolate caliente','sopa de papa','galletas de avena'],['el abrigo azul','el termo pequeño','la bolsa de botones','el cajón de agujas'],
+  ['Las fundas nuevas quedaron estrechas. Dejé dos muestras en el taller.','El recibo de esa radio es de la temporada pasada, ya está pagado.','Hoy voy al puesto de telas, no a repartir mantas.','La campana del patio es para llamar a comer, no es una alarma.']],
+ ['semillas','eco',['Estela · Canastos','Ramón · Carretas','Lola'],['Turnos del archivo','Intercambios de Brumaverde'],
+  ['el mostrador del archivo','el puesto de canastos','la plaza de sombra','la mesa del vivero'],['pan de semillas','infusión de menta','arroz con verduras','torta de fruta'],['el impermeable verde','la caja de etiquetas','el canasto pequeño','mi cuaderno'],
+  ['La etiqueta azul de la caja es vieja. La caja vacía sí volvió.','El helecho del patio se secó otra vez. Esta vez no fui yo.','El vivero pidió cambiar el día de la entrega, no la dirección.','Hoy no fumigan el archivo. Ese aviso quedó colgado desde el mes pasado.']],
+ ['archivo','pacto',['Nieves · Papeles','Héctor · Colas','Alma'],['Encuadernadores','La cuadra del mercado'],
+  ['el taller de libros','la mesa de Adela','el puesto de papel','la plaza del mercado'],['pan de anís','café con leche','sopa de cebolla','galletas de canela'],['el estuche de gafas','la prensa pequeña','el bolso de tela','el cuaderno de encargos'],
+  ['La hoja de atrás todavía está húmeda. No la pongan bajo la prensa.','Ese recibo era el presupuesto, no una entrega. Hay que separarlos.','La mesa de nogal no se vende, aunque esté rayada.','La caja marcada para el patio no tiene libros: son herramientas.']],
+ ['tejedora','iridalia',['Rosa · Cintas','Teo · Atriles','Oliva'],['Taller de tejidos','Vecinos del mirador'],
+  ['el taller de telas','la mesa de muestras','la plaza de la feria','el puesto de hilos'],['té de frutas','pan de almendra','buñuelos pequeños','galletas de coco'],['la bolsa violeta','el telar pequeño','el costurero','el cuaderno de patrones'],
+  ['La cinta violeta de ayer era para los paquetes, no para el vestido.','Me mandaste la dirección de la feria del año pasado. Ya no es allí.','La cometa quedó bonita, pero la voy a guardar para mi familia.','El telar hace ruido porque una pieza está floja. No es el piso.']],
+];
+for (const [id,base,vecinos,grupos,lugares,comidas,objetos,semillas] of NUEVAS_VIDAS) {
+ VIDAS[id]={...VIDAS[base],ano:312,vecinos,grupos,lugares,comidas,objetos,audioExistente:true,
+  oficio:semillas.map(t=>[t,'¿Entonces reviso el encargo de hoy?','Sí, pero mire la fecha completa del papel.','Listo, ya separé las hojas.','Le guardo algo para comer al volver.','Gracias. Paso después del turno.'])};
+}
+
 const ESTACIONES = ['Primavera', 'Verano', 'Otoño', 'Invierno'];
 const normal = (s: string) => s.split(' · ')[0];
 
@@ -177,9 +198,13 @@ export function ampliarHistorial(c: Caso): Caso {
     ...(k===dialogo.length-1&&sesion%3===0?{reaccion:['👍','❤️','😂'][j%3]}:{}),
     ...(k===3&&sesion%5===0?{editado:true}:{}),}));
    if(j>=c.chats.length && j<c.chats.length+3 && sesion%3===2) {
-    const num=(j-c.chats.length)*4+Math.floor(sesion/3), id=`vida_${c.id}_${num}`;
+    const num=(j-c.chats.length)*4+Math.floor(sesion/3);
+    // Estas siete frases no contienen nombres ni lugares: el audio y la transcripción siguen siendo idénticos.
+    const audio = v.audioExistente ? AUDIOS[(num+1)%AUDIOS.length] : texto(AUDIOS[(num+c.n)%AUDIOS.length],j,sesion);
+    if(v.audioExistente && audio.includes('{'))continue;
+    const id=`vida_${v.audioExistente?'pacto':c.id}_${num}`;
     voces.push({id,quien:ch.con,nombre:normal(contactos.find(x=>x.id===ch.con)!.nombre),fecha:dia,
-     texto:texto(AUDIOS[(num+c.n)%AUDIOS.length],j,sesion),historial:true});
+     texto:audio,historial:true});
     anteriores.push({de:ch.con,t:`${String(hora).padStart(2,'0')}:58`,voz:id});
     anteriores.push({de:'yo',t:`${String(hora).padStart(2,'0')}:59`,texto:c.id==='iridalia'?'Ya pude leer la transcripción. Gracias por avisar.':'Listo, ya te escuché. Te escribo cuando llegue.'});
    }

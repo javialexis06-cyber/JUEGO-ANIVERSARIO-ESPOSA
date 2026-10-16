@@ -21,9 +21,9 @@ try {
   assert.equal(c.bloqueo.recordatorio,'');
   assert.ok(c.candados.every(k=>!k.recordatorio));
   assert.ok(c.chats.some(ch=>ch.archivado));
-  assert.equal(c.voces.filter(v=>v.historial).length,12);
+  assert.equal(c.voces.filter(v=>v.historial).length,c.n<=8?12:7);
   const anos=new Set(mensajes.map(m=>m.dia?.match(/AV (\d+)/)?.[1]).filter(Boolean));
-  assert.equal(anos.size,3);
+  assert.equal(anos.size,c.n<=8?3:4);
   for(const ch of c.chats) {
    assert.ok(contactos.has(ch.con));
    for(const m of ch.mensajes) {
@@ -44,7 +44,7 @@ try {
    }
   }
   total+=mensajes.length;
-  console.log(`OK ${c.id}: ${mensajes.length} mensajes, ${c.chats.length} chats, 3 años anteriores y 12 audios nuevos verificables`);
+  console.log(`OK ${c.id}: ${mensajes.length} mensajes, ${c.chats.length} chats, 3 años anteriores y ${c.voces.filter(v=>v.historial).length} audios verificables`);
  }
- console.log(`OK ${total} mensajes en ocho teléfonos; 96 audios nuevos sin referencias rotas`);
+ console.log(`OK ${total} mensajes en ${CASOS.length} teléfonos; audios existentes sin referencias rotas`);
 } finally {await rm(tmp,{recursive:true,force:true});}

@@ -273,7 +273,7 @@ async function entrarDeVerdad(m: Modo, como?: Como): Promise<boolean> {
   await Promise.all([...new Set([s.personajes.el.cuarto, s.personajes.ella.cuarto])].map((c) => casa3d.asegurar(c).catch(() => {})));
   const ahora = Date.now();
   for (const r of ['el', 'ella'] as Rol[]) mascotas[r].aplicar(s.personajes[r], ahora, false);
-  verCuarto(s.personajes[yo].cuarto);
+  verCuarto(params.has('desdePatio') && tieneCuarto(s.casa, 'patio') ? 'patio' : s.personajes[yo].cuarto);
   sincronizarAmpliacion();
   patio.sincronizar();
   await casa3d.ponerDeco(s.casa.deco, s.recuerdos);
@@ -2164,6 +2164,8 @@ function botonesCuarto(): Boton[] {
           ? { id: 'perro', texto: `Jugar con ${perro.nombre}`, icono: '<span class="ico ico-emoji">🐶</span>', principal: true }
           : { id: 'adoptar', texto: 'Adoptar un perrito', icono: '<span class="ico ico-emoji">🐶</span>', principal: true },
         { id: 'banca', texto: 'Sentarse', icono: ico('sofa') },
+        { id: 'jugar-mente', texto: 'Un ratito en el patio', icono: '<span class="ico ico-emoji">🧩</span>' },
+        { id: 'jugar-jardin', texto: 'Jardín de los Desvelados', icono: '<span class="ico ico-emoji">🌻</span>' },
       );
       break;
     }
@@ -2307,6 +2309,14 @@ async function alAccion(id: string) {
       return patio.activar();
     case 'banca':
       return hacer('usar', 'patio', 25, { energia: 4, carino: 2 }, 'banca');
+    case 'jugar-mente':
+    case 'jugar-jardin': {
+      const url = new URL(id === 'jugar-mente' ? './mente.html' : './jardin.html', location.href);
+      for (const k of ['rol', 'local']) if (params.has(k)) url.searchParams.set(k, params.get(k)!);
+      if (params.has('sin-salir')) (window as any).__salioA = url.pathname + url.search;
+      else location.href = url.href;
+      return;
+    }
     case 'jugar-super':
       return jugar('super');
     case 'jugar-puertas':
