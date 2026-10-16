@@ -2,6 +2,9 @@
 
 Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en su carpeta.
 
+Cierre del 16 de octubre: revisión terminada, sin tareas activas. Los pendientes adicionales enumerados al cierre
+fueron descartados por Javier; la granja continúa pausada. `pedidos.md` prevalece sobre notas históricas.
+
 | Archivo | Para qué |
 |---|---|
 | [`pedidos.md`](pedidos.md) | **La cola de Javier**, en orden. Lo primero que se lee. |

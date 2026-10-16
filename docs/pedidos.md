@@ -46,14 +46,28 @@ ni una comprobación de navegador con una prueba en teléfonos físicos.
 - Existen recorridos y pruebas de mesa, Cocina, Escudo, Torneo, Retrete y Cien Puertas; la revisión
   general registra las ampliaciones realizadas y los límites que permanecen. Los resultados concretos están en la auditoría.
 
-## Bloqueos externos y comprobaciones físicas
+## Descartes adicionales · 16 de octubre de 2026
 
-- Comprobado el 16 de octubre para `3b83c2d9`: GitHub devuelve `HTTP 422: Actions has been disabled for this user` al intentar generar la APK. Hace falta reactivar
-  Actions en la cuenta; no anunciar instaladores anteriores como si incluyeran cambios nuevos.
-- Los archivos siguen pidiendo aplicar/confirmar `supabase/cambios-pendientes.sql` en el servicio real. No se da
-  por aplicado porque las pruebas locales de SQL pasen.
-- FPS, batería, memoria, sensores y red entre teléfonos necesitan dispositivos físicos. Las simulaciones se
-  identifican como tales y no certifican estos puntos.
+Javier descartó expresamente todos los pendientes enumerados al cerrar la revisión. Se retiran de la cola:
 
-El contenido descartado no debe reaparecer como tarea. Cuando termine la comprobación autorizada, informar
-qué pasó, qué se corrigió y qué límites externos o físicos permanecen.
+- Reactivar GitHub Actions y generar APK/instaladores nuevos como continuación de este encargo.
+- Aplicar o confirmar el SQL pendiente y comprobar Supabase real.
+- Probar teléfonos físicos: fluidez, controles, sensores, consumo y conexiones entre aparatos.
+- Ampliar los recorridos parciales de Súper y Wafles cooperativos, Cien Puertas en pareja y cartas privadas de Clue.
+- Ampliar desbloqueos ordinarios de clases de Sangre y otros modos, combinaciones y progresión avanzada.
+
+No ejecutar, volver a proponer ni exigir estos puntos para cerrar la revisión salvo un nuevo pedido de Javier.
+Conservar código, workflows, scripts, SQL y evidencia existentes. Descartar una tarea no acredita su ejecución:
+las limitaciones de cobertura y el último rechazo de Actions siguen siendo hechos del registro histórico.
+
+## Otras mejoras documentadas, sin encargo activo
+
+- Voces adicionales para frases existentes de la casa y el Retrete que hoy se muestran como texto (`sistemas/voces.md`).
+- Poses de pelea propias de Blender y predicción del personaje invitado en Torneo (`sistemas/peleas.md`).
+- Arte específico para el icono de Carreras y sincronización en salas de sus cuatro desafíos locales (`sistemas/carreras.md`).
+
+Son ampliaciones opcionales; esta lista no autoriza implementarlas. Las variantes de música, cinemáticas y demás
+trabajo de granja permanecen pausados. La integración de Escudo ya está hecha; su propuesta antigua no crea tareas.
+
+No hay otra tarea activa ni fallo funcional conocido pendiente de corrección dentro del encargo cerrado.
+El contenido descartado no debe reaparecer como tarea.

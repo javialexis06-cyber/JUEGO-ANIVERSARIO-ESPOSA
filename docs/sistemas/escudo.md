@@ -141,7 +141,7 @@ el recibo `escudo-mision-P23` vale como la desactivación de la proyección de N
 (El Escudo)» y «Ya defendí el Borde» en `historia-ui.ts`; el recibo llega por `MotorGranja({escudo})`). El expediente
 P23 de Astra (los relevos de la red) no se tocó: no es la batalla.
 
-### Lo que se había propuesto
+### Propuesta histórica · integración ya realizada
 
 ### 1. El Cuarto de Juegos de la casa (`src/casa/main.ts`)
 
@@ -159,7 +159,7 @@ vuelve solo a `./index.html` al salir (en modo amigo, a `./amigos.html`).
 `escudo.html` ya está en `PAGINAS_AMIGOS`, en `PERMITIDOS_AMIGOS` (`src/escudo/`), en `SUSTITUTOS`
 (`src/escudo/pareja.ts` → `src/amigos/sin_pareja/escudo.ts`) y la versión de amigos copia sus modelos, sus voces
 (`audio/escudo/`, nunca `audio/escudo-pareja/`), las tres criaturas y M16/M19/M20 (`vite.config.ts`;
-`verificar-amigos.mjs` ya deja pasar esos audios). Falta la tarjeta en `JUEGOS`:
+`verificar-amigos.mjs` ya deja pasar esos audios). La propuesta pedía esta tarjeta en `JUEGOS`, ya integrada:
 
 ```ts
 const ARTE_ESCUDO = `<svg viewBox="0 0 200 110" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
@@ -187,7 +187,7 @@ torres y 60 ✦ de más), y al ganar muestra la escena del final, guarda el reci
 escudo-mision-P23 = {"v":1,"mision":"P23","ganada":true,"estrellas":2,"fecha":1760000000000}
 ```
 
-Lo que falta en la granja (sin tocar el motor de Astra más de lo necesario):
+La propuesta histórica de integración de granja indicaba lo siguiente; no es trabajo activo:
 
 1. **Un paso nuevo en P23** (`astra-campana-datos.ts` / `astra-misiones-datos.ts`, o su generador), como primer paso
    real después de los testimonios:

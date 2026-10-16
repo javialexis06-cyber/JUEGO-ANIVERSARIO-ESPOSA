@@ -1,5 +1,12 @@
 # Verificación general de los juegos · 15–16 de octubre de 2026
 
+> **Cierre de alcance · 16 de octubre:** Javier descartó los pendientes de generación de instaladores/Actions,
+> SQL y Supabase real, dispositivos físicos, pruebas de recorridos parciales y ampliaciones de cobertura/desbloqueos
+> enumerados después de esta revisión. Las limitaciones y los bloqueos descritos abajo conservan la evidencia
+> histórica; no son una cola de tareas ni deben retomarse sin un nuevo pedido. Detalle en
+> [pedidos vigentes](../pedidos.md).
+
+
 ## Encargo y alcance
 
 Javier pidió limpiar las notas antiguas, actualizar el repositorio, comprobar los juegos existentes y corregir
@@ -63,7 +70,7 @@ Los scripts reproducibles se conservan en el repositorio. Los registros locales 
 `juego/web/test-results/verificacion-general-2026-10-15/`, con logs finales en `logs/`; capturas y volcados no se
 publican como código. Las pruebas usan contextos aislados, nunca la cuenta ni los guardados de Javier.
 
-## Límites y tareas externas
+## Límites registrados · tareas adicionales descartadas
 
 - No se certifican teléfonos físicos, FPS, batería, memoria, precisión táctil, sensores ni internet entre aparatos.
   Algunas pruebas de flujo desactivan el dibujo WebGL para evitar el coste del renderizado por software; sus
@@ -82,7 +89,7 @@ publican como código. Las pruebas usan contextos aislados, nunca la cuenta ni l
   incorpora estas correcciones.
 
 La revisión automatizada cubre todos los juegos existentes fuera del desarrollo pausado de granja. Los límites
-anteriores siguen abiertos y no se convierte esta evidencia en una afirmación de perfección ni de balance universal.
+anteriores se conservan como alcance de la evidencia; sus tareas adicionales fueron descartadas. No se afirma perfección ni balance universal.
 
 ## Publicación
 

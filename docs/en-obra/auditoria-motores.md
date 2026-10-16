@@ -1,5 +1,12 @@
 # Motor y partidas completas: seguimiento de verificación
 
+> **Cierre de alcance · 16 de octubre:** Javier descartó los pendientes de generación de instaladores/Actions,
+> SQL y Supabase real, dispositivos físicos, pruebas de recorridos parciales y ampliaciones de cobertura/desbloqueos
+> enumerados después de esta revisión. Las limitaciones y los bloqueos descritos abajo conservan la evidencia
+> histórica; no son una cola de tareas ni deben retomarse sin un nuevo pedido. Detalle en
+> [pedidos vigentes](../pedidos.md).
+
+
 ## Encargo vigente · 13 de octubre de 2026
 
 Javier encargó terminar lo que falte para que los motores funcionen correctamente y probar una partida de inicio
@@ -225,7 +232,7 @@ correcciones. La cuenta debe recuperar Actions para repetir el workflow.
 7. Registrar fallos funcionales, correcciones y resultados. Las propuestas de balance llevan aprobación explícita.
 
 **Estado:** revisión automatizada terminada con los alcances y límites registrados arriba y en la verificación general.
-Permanecen comprobaciones físicas y externas; no se declara perfección ni cobertura de todas las combinaciones.
+Las comprobaciones adicionales fueron descartadas por Javier. Se conservan los límites de lo probado; no se declara perfección ni cobertura de todas las combinaciones.
 
 ## Cómo repetir esta tanda
 

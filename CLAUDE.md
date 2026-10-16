@@ -1,5 +1,10 @@
 # CLAUDE.md · Nuestro Hogar (juego de aniversario)
 
+> **Cierre vigente (16 de octubre de 2026):** revisión terminada. Javier descartó los pendientes de instaladores/
+> Actions, SQL/Supabase real, dispositivos físicos y ampliación de pruebas de recorridos, desbloqueos, modos y combinaciones
+> enumerados al cierre. No retomarlos ni exigirlos como condición de cierre. Granja pausada; no hay otra tarea
+> activa. Las mejoras opcionales documentadas esperan un nuevo encargo. Prevalece [`docs/pedidos.md`](docs/pedidos.md).
+
 > **Instrucción vigente (15 de octubre de 2026):** completar la comprobación y corrección de los juegos existentes y limpiar notas antiguas. **Granja pausada.** Se descartan escenas premium no realizadas y contenido futuro del sótano; conservar escenas ya programadas y partidas. `docs/pedidos.md` prevalece sobre las prioridades históricas siguientes.
 >
 > **Frente de granja compartido (10 de octubre de 2026):** Javier pidió integrar la granja y subir cada avance. Su motor, sistemas, historia y misiones continúan en el frente de granja; Claude se encarga de sus gráficos, personajes y presentación visual. Antes de tocarla, leer [`docs/en-obra/granja-coordinacion.md`](docs/en-obra/granja-coordinacion.md). Fuente única: `juego/web/src/granja-v3/`; no crear otro motor ni borrar progreso.
@@ -42,7 +47,7 @@ minijuegos adentro. Cada uno juega en su celular Android y la casa está siempre
   pida.
 - **Commit y push al terminar cada cosa** (un hook no deja cerrar con cambios sin subir). Cada push que toque
   `juego/web/` corre `.github/workflows/apk.yml`, que publica en Releases `NuestroHogar.apk/.exe` (la pareja) y
-  `NuestroHogar-Amigos.apk/.exe` (amigos). Revisa que la corrida «APK Android» salga en verde; si falla, arréglala.
+  `NuestroHogar-Amigos.apk/.exe` (amigos). El seguimiento y generación de instaladores de este cierre fue descartado el 16 de octubre; no reintentarlo por esta regla histórica.
   Él prueba descargando:
   `https://github.com/javialexis06-cyber/juego-aniversario-esposa/releases/latest/download/NuestroHogar.apk`.
 - Commits: título corto en español y cuerpo con viñetas de lo que cambia **para el jugador**. Sin nombres ni versiones
@@ -203,7 +208,7 @@ Lo hecho está descrito en `docs/sistemas/`; el encargo y los límites vigentes 
 La cola anterior se conserva como historia en `docs/archivo/pedidos-hasta-2026-10-15.md` y no se retoma. El Show de Nosotros ya está juntado (la rama
 `trabajo/show` quedó vieja: no se retoma).
 
-**Para Javier** (no lo puede hacer Claude): pegar `supabase/cambios-pendientes.sql` en el SQL Editor de Supabase.
+**Referencia histórica:** el SQL de `supabase/cambios-pendientes.sql` se conserva. Javier descartó su aplicación/confirmación como tarea de este cierre el 16 de octubre.
 
 Cuando termines algo, actualiza `docs/pedidos.md` y el documento de `docs/sistemas/` que corresponda.
 
@@ -211,7 +216,7 @@ Cuando termines algo, actualiza `docs/pedidos.md` y el documento de `docs/sistem
 
 - «**Sigue con lo que haga falta en la lista**»: toma el siguiente punto de `docs/pedidos.md` en orden, saltando lo
   que espera algo de él (está marcado). Por cada punto: hacerlo completo, probarlo (capturas incluidas), commit, push,
-  APK en verde, tacharlo en `pedidos.md` con «**hecho**» y una línea de qué quedó, actualizar `docs/sistemas/`,
+  comprobar la APK solo si un nuevo encargo lo requiere, tacharlo en `pedidos.md` con «**hecho**» y una línea de qué quedó, actualizar `docs/sistemas/`,
   contarle en 3-6 líneas qué cambió y cómo probarlo en el celular, y seguir con el siguiente sin preguntar.
 - «**Revisa todas las tareas que he dicho de X para que no apliques cambios 1 x 1**»: junta todo lo que ha pedido de
   ese juego (pedidos, docs, el chat) y hazlo en una sola tanda. Antes, pregúntale SOLO las decisiones que cambian el
