@@ -47,11 +47,39 @@ Tres estrellas si quedan todos los faroles; dos si queda al menos la mitad; una 
 abierta y ofrece reintento; no se abandona el resultado pendiente. Salir de una batalla sin terminar la descarta,
 como indica el menú de pausa. No se concede dinero ni se modifica la economía de la casa.
 
-## Pruebas
+## Plantas contra zombis · dos jugadores
+
+El botón **Plantas contra zombis · jugar dos** abre `jardin-duelo.html`. Se puede jugar en una pantalla o crear
+una sala para exactamente dos personas, cada una en su dispositivo. La Sala de Juegos de amigos también ofrece
+crear o unirse a estas salas. Quien la crea elige su bando; puede intercambiarlos antes de empezar.
+
+Las plantas recogen luz, siembran las ocho macetas y usan la pala. Los zombis escogen una de las cinco unidades y
+un carril mediante sus botones o tocando el campo. La ronda dura tres minutos, incluidos veinte segundos de
+preparación. Las plantas ganan si la casa resiste; los zombis ganan si cruzan un carril después de consumir su
+farol. No hay oleadas automáticas en el duelo: las envía la persona que ataca.
+
+La luz, daño, vida, velocidades y ataques de las figuras conservan los valores de campaña. La niebla es un recurso
+exclusivo del nuevo duelo: empieza en 150, recibe 20 cada cuatro segundos y tiene un límite de 600. Los reclutas
+cuestan 50/100/75/100/225 de niebla (remendado/olla/corredor/paraguas/grandote), con recargas de 5/11/9/12/35 s.
+Estas reglas iniciales no cambian precios ni dificultad de los doce patios. El duelo no concede estrellas,
+monedas, compras ni desbloqueos de campaña. Los ajustes posteriores de balance siguen requiriendo aprobación.
+
+El anfitrión simula el motor y valida bando, recursos, recargas, carril, sesión y secuencia de cada orden. El
+invitado interpola posiciones entre fotos; no calcula impactos ni inventa recursos o ganadores. Las órdenes y
+el primer resultado usan confirmación y reenvío. La partida espera a que las figuras carguen en los dos aparatos.
+
+Cualquiera puede poner pausa; cada uno retira solo su propia pausa. Cambiar de aplicación pausa también en
+Android. Los cortes detienen el reloj y no conceden una victoria; salir del anfitrión cierra la sala. La revancha
+necesita que ambos acepten, crea otra sesión e intercambia los bandos, rechazando fotos y órdenes de la anterior.
+Las salas usan el transporte Realtime existente y no necesitan tablas nuevas de Supabase.
+
+## Pruebas del motor y la interfaz
 
 ```sh
 node scripts/probar-jardin-motor.mjs
+node scripts/probar-jardin-duelo.mjs
 CHROME_PATH=/usr/bin/chromium node scripts/probar-jardin-interfaz.mjs http://127.0.0.1:4184/ test-results/jardin
+CHROME_PATH=/usr/bin/chromium node scripts/probar-jardin-duelo-interfaz.mjs http://127.0.0.1:4184/ test-results/jardin-duelo
 ```
 
 El motor completa los doce patios con tres semillas mediante un piloto que usa los costes, recargas y casillas
@@ -59,3 +87,10 @@ normales. También comprueba derrota sin defensa, pala, límites y recogida úni
 toques reales sin piloto y después la campaña con piloto y paso fijo; no certifica habilidad humana ni teléfonos.
 Escenarios unitarios separados comprueban la ráfaga doble, esporas entre carriles, ralentización y reparación
 de plantas vivas. El banco lateral y la cámara adaptan el campo a los tres, cuatro y cinco carriles en horizontal.
+
+El recorrido de dos jugadores usa contextos separados y un transporte Supabase simulado con un 8 % de pérdida,
+demora aleatoria y corte controlado. Comprueba toques, ambos resultados, pausa, tercer jugador, revancha y salida.
+`REAL=1` usa una sala efímera en Supabase Realtime real y omite el corte simulado. La conexión real debe comprobarse
+por separado; pasar el transporte falso no la acredita. Los escenarios acelerados no certifican balance competitivo humano.
+El 16 de octubre de 2026 también pasó el recorrido con `REAL=1`, ambas victorias y revancha entre dos contextos
+aislados, sin errores ni recursos fallidos. [Registro y límites](../en-obra/jardin-dos-jugadores-2026-10-16.md).

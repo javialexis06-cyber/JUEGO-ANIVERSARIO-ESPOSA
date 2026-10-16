@@ -141,7 +141,8 @@ export const JUEGOS: JuegoAmigos[] = [
     urlCrear: './carreras.html?sala', urlUnirse: (c) => `./carreras.html?unirse=${encodeURIComponent(c)}` },
   { id: 'celular', nombre: 'Desaparecidos de Astra', desc: 'Revisa celulares encontrados y resuelve 12 casos', arte: ARTE_CELULAR, tema: 'celular', url: './celular.html' },
   { id: 'mente', nombre: 'Un ratito en el patio', desc: '16 juegos de memoria y lógica · reto diario y clasificación', arte: ARTE_MENTE, tema: 'celular', url: './mente.html' },
-  { id: 'jardin', nombre: 'Jardín de los Desvelados', desc: '12 patios · plantas de peluche contra zombis remendados', arte: ARTE_JARDIN, tema: 'escudo', url: './jardin.html' },
+  { id: 'jardin', nombre: 'Jardín de los Desvelados', desc: '12 patios · plantas contra zombis para dos', arte: ARTE_JARDIN, tema: 'escudo', url: './jardin.html', sala:'jardin',
+    urlCrear:'./jardin-duelo.html?sala',urlUnirse:c=>`./jardin-duelo.html?unirse=${encodeURIComponent(c)}` },
   { id: 'peleas', nombre: 'Torneo de peleas', desc: 'Uno contra uno · contra la máquina, de a dos o en línea', arte: ARTE_PELEAS, tema: 'peleas',
     url: './peleas.html', sala: 'peleas' },
 ];

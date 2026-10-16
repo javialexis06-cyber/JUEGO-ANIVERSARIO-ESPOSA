@@ -43,6 +43,7 @@ solo conectar Supabase para habilitar su clasificación real. Voces nuevas desca
 
 | Archivo | Estado |
 |---|---|
+| [`jardin-dos-jugadores-2026-10-16.md`](en-obra/jardin-dos-jugadores-2026-10-16.md) | Duelo de plantas contra zombis en una pantalla o por sala; reglas y comprobaciones. |
 | [`ampliacion-patio-2026-10-16.md`](en-obra/ampliacion-patio-2026-10-16.md) | Seis mapas, cuatro casos, dieciséis juegos mentales y Jardín; pruebas y estado de la clasificación real. |
 | [`mejoras-y-limpieza-2026-10-16.md`](en-obra/mejoras-y-limpieza-2026-10-16.md) | Cierre de mejoras de Torneo/Carreras y limpieza del repositorio, con verificaciones; voces nuevas descartadas. |
 | [`auditoria-motores.md`](en-obra/auditoria-motores.md) | Revisión de motores cerrada con cobertura y límites explícitos; historial y aprobación previa de balance. |

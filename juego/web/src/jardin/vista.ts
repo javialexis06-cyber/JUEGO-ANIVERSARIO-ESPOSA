@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { PLANTAS } from './datos';
 import type { MotorJardin } from './motor';
+export type EstadoVisualJardin=Pick<MotorJardin,'nivel'|'t'|'plantas'|'zombis'|'semillas'|'soles'|'guardianes'>;
 export class VistaJardin {
  readonly renderer:THREE.WebGLRenderer;readonly escena=new THREE.Scene();readonly camara=new THREE.PerspectiveCamera(35,1,.1,100);
  private kit=new Map<string,THREE.Object3D>();private figuras=new Map<string,THREE.Object3D>();private campo=new THREE.Group();private piezas=new THREE.Group();private objetivo=new THREE.Vector3(3.5,0,2);
@@ -17,7 +18,7 @@ export class VistaJardin {
  private redimensionar(){const w=this.cont.clientWidth,h=this.cont.clientHeight;this.renderer.setSize(w,h,false);this.camara.aspect=w/Math.max(1,h);this.camara.updateProjectionMatrix();if(this.filas)this.encuadrar();}
  async cargar(){const gltf=await new GLTFLoader().loadAsync('./jardin/figuras.glb');for(const o of gltf.scene.children)this.kit.set(o.name,o);}
  private caja(w:number,h:number,d:number,color:string){return new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:1}));}
- montar(m:MotorJardin){
+ montar(m:Pick<EstadoVisualJardin,'nivel'>){
   this.limpiar(this.campo);this.limpiarFiguras();this.escena.background=new THREE.Color(m.nivel.cielo);
   const filas=m.nivel.filas;this.filas=filas;this.encuadrar();
   const borde=this.caja(11,.3,filas*1.12+1.4,'#b89c7c');borde.position.set(3.6,-.20,(filas-1)*.56);this.campo.add(borde);
@@ -32,7 +33,7 @@ export class VistaJardin {
   this.camara.updateMatrixWorld(true);
  }
  private modelo(clave:string,id:string){let o=this.figuras.get(id);if(o)return o;const original=this.kit.get(clave);o=original?original.clone(true):new THREE.Group();o.scale.multiplyScalar(.57);this.figuras.set(id,o);this.piezas.add(o);return o;}
- dibujar(m:MotorJardin,seleccion?:{fila:number;col:number}){
+ dibujar(m:EstadoVisualJardin,seleccion?:{fila:number;col:number}){
   const presentes=new Set<string>();
   for(const p of m.plantas){const id='p'+p.id;presentes.add(id);const o=this.modelo('planta_'+p.tipo,id);o.position.set(p.col,0,p.fila*1.12);o.rotation.y=-Math.PI/2;o.rotation.z=Math.sin(m.t*2+p.id)*.025;
    if(p.vida<PLANTAS[p.tipo].vida*.3)o.rotation.z+=.08;}

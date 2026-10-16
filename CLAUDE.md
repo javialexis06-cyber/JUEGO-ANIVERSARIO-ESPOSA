@@ -9,6 +9,8 @@ del patio con reto diario y Jardín de los Desvelados con doce patios. Solo falt
 la clasificación real; la prueba temporal no acredita ese despliegue. Ver `docs/pedidos.md`.
 Las voces nuevas fueron descartadas expresamente. La granja sigue pausada; no modificar sus sistemas, historia,
 arte ni balance. Se permiten sus regresiones e integración existentes.
+Pedido completado: gráficos reales del Jardín y dos jugadores, uno con plantas y otro con zombis, mediante salas
+por código y en una pantalla. Probado en Realtime real y con pérdida/cortes simulados. Campaña conservada.
 
 No retomar instaladores/Actions, Supabase real, pruebas físicas ni ampliaciones de cobertura descartadas por
 aparecer en notas antiguas. Las pruebas necesarias para los cambios actuales sí forman parte del encargo.

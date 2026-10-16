@@ -10,7 +10,8 @@ export class MotorJardin {
  plantas:Planta[]=[];zombis:Zombi[]=[];semillas:Semilla[]=[];soles:Luz[]=[];guardianes:boolean[];
  recargas:Record<string,number>={};eventos:{t:string;fila?:number;x?:number;tipo?:string}[]=[];
  private cola:Aparicion[]=[];private proximo=1;private rndEstado:number;private cieloT=6;
- constructor(nivel:NivelJardin,semilla=23){this.nivel=nivel;this.rndEstado=semilla>>>0||1;this.guardianes=Array(nivel.filas).fill(true);
+ constructor(nivel:NivelJardin,semilla=23,private duelo?:{duracion:number}){this.nivel=nivel;this.rndEstado=semilla>>>0||1;this.guardianes=Array(nivel.filas).fill(true);
+  if(duelo)return;
   const i=['bienvenida','macetas','rocío','naranjos','llovizna','costuras','faroles','lavanda','luciernagas','tapiz','medianoche','amanecer'].indexOf(nivel.id);
   for(let o=0;o<nivel.oleadas;o++)for(let k=0;k<nivel.porOleada+Math.floor(o/2);k++){
    const tipo=nivel.tipos[this.n(nivel.tipos.length)],fila=this.n(nivel.filas);
@@ -21,6 +22,8 @@ export class MotorJardin {
  }
  private rnd(){let s=this.rndEstado;s^=s<<13;s^=s>>>17;s^=s<<5;this.rndEstado=s>>>0;return this.rndEstado/4294967296;}
  private n(n:number){return Math.floor(this.rnd()*n);}
+ /** Solo el duelo permite reclutar enemigos; la campaña conserva su cola original. */
+ enviarZombi(tipo:IdZombi,fila:number){if(!this.duelo||this.terminado||!Object.hasOwn(ZOMBIS,tipo)||!Number.isInteger(fila)||fila<0||fila>=this.nivel.filas||this.zombis.length>=60)return false;this.zombis.push({id:this.proximo++,tipo,fila,x:8.8,vida:ZOMBIS[tipo].vida,lento:0,mordiendo:false});return true;}
  plantar(tipo:IdPlanta,fila:number,col:number){const p=PLANTAS[tipo];if(this.terminado||!p||!this.nivel.plantas.includes(tipo)||!Number.isInteger(fila)||fila<0||fila>=this.nivel.filas||!Number.isInteger(col)||col<0||col>=this.columnas||this.plantas.some(p=>p.fila===fila&&p.col===col)||this.luces<p.costo||(this.recargas[tipo]??0)>0)return false;
   this.luces-=p.costo;this.recargas[tipo]=p.recarga;this.plantas.push({id:this.proximo++,tipo,fila,col,vida:p.vida,reloj:tipo==='chile'?1.2:tipo==='margarita'?10:.3});this.sembradas++;this.eventos.push({t:'siembra',fila,x:col,tipo});return true;}
  quitar(fila:number,col:number){if(this.terminado)return false;const i=this.plantas.findIndex(p=>p.fila===fila&&p.col===col);if(i<0)return false;this.plantas.splice(i,1);return true;}
@@ -50,7 +53,7 @@ export class MotorJardin {
     else{this.terminado='perdio';this.eventos.push({t:'fin'});break;}}
   }
   this.plantas=this.plantas.filter(p=>p.vida>0);this.zombis=this.zombis.filter(z=>z.vida>0);
-  if(!this.terminado&&!this.cola.length&&!this.zombis.length){this.terminado='gano';this.eventos.push({t:'fin'});}
+  if(!this.terminado&&(this.duelo?this.t>=this.duelo.duracion:!this.cola.length&&!this.zombis.length)){this.terminado='gano';this.eventos.push({t:'fin'});}
  }
  estrellas(){return this.terminado==='gano'?this.guardianes.every(Boolean)?3:this.guardianes.filter(Boolean).length>=Math.ceil(this.nivel.filas/2)?2:1:0;}
  get restante(){return this.cola.length;}

@@ -62,6 +62,10 @@ sus exportadores y pruebas específicas.
 - La orientación es horizontal. Los guardados y compras se conservan entre versiones compatibles.
 - [Pedidos vigentes](../../docs/pedidos.md) registra la granja pausada y los trabajos descartados.
 
+El Jardín incluye `jardin-duelo.html`: dos en una pantalla o sala para dos dispositivos, uno con plantas y otro
+con zombis; pausa compartida y revancha con bandos invertidos. Se abre desde el botón del Jardín y desde las
+opciones de sala de amigos. [Reglas y comprobaciones](../../docs/sistemas/jardin.md).
+
 Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistemas/patio-mental.md) y
 [Jardín de los Desvelados](../../docs/sistemas/jardin.md). La clasificación compartida necesita la migración
 específica de Supabase documentada allí; la marca local funciona sin red.

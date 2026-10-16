@@ -13,7 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
 //   que en dist-amigos no quede ni una palabra de la pareja (docs/sistemas/salas.md, «Versión para amigos»).
 
 /** Páginas de la versión para amigos. Un juego nuevo para amigos se agrega aquí (y en la lista de `src/amigos/juegos.ts`). */
-export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html', 'carreras.html', 'celular.html', 'peleas.html', 'mente.html', 'jardin.html'];
+export const PAGINAS_AMIGOS = ['amigos.html', 'sangre.html', 'super.html', 'retrete.html', 'cocina.html', 'mesa.html', 'escudo.html', 'carreras.html', 'celular.html', 'peleas.html', 'mente.html', 'jardin.html', 'jardin-duelo.html'];
 
 /** Lo que se cambia, en la versión para amigos, por su versión vacía o sin nada personal. */
 const SUSTITUTOS: Record<string, string> = {
@@ -196,7 +196,7 @@ export default defineConfig(({ mode, command }) => {
             carreras: resolve(raiz, 'carreras.html'),
             celular: resolve(raiz, 'celular.html'),
             peleas: resolve(raiz, 'peleas.html'),
-            mente: resolve(raiz, 'mente.html'), jardin: resolve(raiz, 'jardin.html'),
+            mente: resolve(raiz, 'mente.html'), jardin: resolve(raiz, 'jardin.html'), jardinDuelo:resolve(raiz,'jardin-duelo.html'),
           },
       },
     },

@@ -8,6 +8,8 @@ Ampliación implementada y comprobada: El Escudo y Desaparecidos con doce mapas/
 del patio con reto diario y Jardín de los Desvelados con doce patios. Solo falta conectar Supabase y aplicar
 la clasificación real; la prueba temporal no acredita ese despliegue. Ver `docs/pedidos.md`.
 **Granja pausada:** no modificar sus sistemas, historia, arte ni balance; solo regresiones e integración existentes.
+Pedido completado: gráficos reales del Jardín y dos jugadores, uno con plantas y otro con zombis, mediante salas
+por código y en una pantalla. Probado en Realtime real y con pérdida/cortes simulados. Campaña conservada.
 Los descartes anteriores de instaladores, Supabase real y pruebas adicionales siguen vigentes.
 
 Conservar IDs, claves, partidas y compras. Antes de tocar dificultad, balance, costes, precios o recompensas,

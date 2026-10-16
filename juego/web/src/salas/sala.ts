@@ -759,7 +759,7 @@ export async function unirseSala(codigo: string, juego: string, yo?: OpcionesSal
   }
   s.salir();
   if (!r) throw new Error('No encontramos esa sala. Revisa el código (y que quien la creó siga adentro).');
-  throw new Error(r.motivo === 'llena' ? 'La sala está llena (ya son 4).' : r.motivo === 'cerrada' ? 'Esa partida ya empezó: espera a que vuelvan a la sala.' : 'Ese código es de otro juego.');
+  throw new Error(r.motivo === 'llena' ? 'La sala está llena.' : r.motivo === 'cerrada' ? 'Esa partida ya empezó: espera a que vuelvan a la sala.' : 'Ese código es de otro juego.');
 }
 
 export const salas: ApiSalas = { crearSala, unirseSala, yoMismo };

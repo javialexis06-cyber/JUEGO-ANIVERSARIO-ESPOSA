@@ -11,7 +11,12 @@ Actualizado el 16 de octubre de 2026. Esta lista sustituye las prioridades contr
 - Completado Jardín de los Desvelados: doce patios con ocho plantas y cinco zombis originales.
 - Completadas las pruebas, integración y documentación. Publicación en ambas ramas autorizadas al cerrar el avance.
 
-**Única tarea pendiente:** conectar la cuenta de Supabase y habilitar allí la clasificación compartida del patio.
+**Completado el pedido adicional:** gráficos reales del Jardín y modo para dos: uno ataca con zombis y otro defiende
+con plantas, con salas por código, opción en una pantalla y revancha intercambiando bandos. Conserva la campaña
+y sus estadísticas. [Implementación y comprobaciones, incluida una sala real](en-obra/jardin-dos-jugadores-2026-10-16.md).
+
+**Pendiente anterior:** habilitar en Supabase la clasificación compartida del patio. El plugin aparece instalado,
+pero este chat aún no dispone de sus herramientas; no certificar ese despliegue ni pedirle escribir SQL.
 La granja continúa pausada; las voces nuevas siguen descartadas.
 
 [Contenido y verificaciones](en-obra/ampliacion-patio-2026-10-16.md). La clasificación pasa las pruebas en PostgreSQL
