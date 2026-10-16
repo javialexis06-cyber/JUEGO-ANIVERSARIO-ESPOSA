@@ -8,7 +8,7 @@ const b=await chromium.launch({executablePath:process.env.CHROME_PATH??'/usr/bin
 const ctx=await b.newContext({viewport:{width:844,height:390},hasTouch:true}),a=await ctx.newPage(),c=await ctx.newPage(),errores=[],resultados=[];
 for(const p of [a,c]){p.setDefaultTimeout(90000);p.on('pageerror',e=>errores.push(e.message));await p.routeWebSocket(u=>u.host===new URL(base).host&&u.searchParams.has('token'),s=>s.send(JSON.stringify({type:'connected'})));}
 const abrir=async(p,rol)=>{
- await p.goto(new URL(`peleas.html?rol=${rol}&salas=local&bot1=7&sin-presentacion`,base).href,{waitUntil:'domcontentloaded'});
+ await p.goto(new URL(`peleas.html?rol=${rol}&salas=local&bot1=7&sin-presentacion${process.env.RED_MALA==='1'?'&red=mala':''}`,base).href,{waitUntil:'domcontentloaded'});
  await p.locator('[data-m="versus"]').waitFor();await p.evaluate(()=>{const e=window.__peleasEscena();e.__dibujarOriginal=e.dibujar.bind(e);e.dibujar=()=>{};});
 };
 const elegir=async(p,id)=>{const tarjeta=p.locator(`.seleccion [data-id="${id}"]`);const activa=await tarjeta.evaluate(e=>e.classList.contains('activa'));await tarjeta.tap();if(!activa)await p.locator('.seleccion [data-listo]').tap();};

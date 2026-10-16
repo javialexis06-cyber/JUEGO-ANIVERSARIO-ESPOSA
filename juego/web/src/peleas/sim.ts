@@ -72,6 +72,9 @@ export interface Peleador {
   ko: boolean;
 }
 
+/** Copia de reconciliación: las definiciones y funciones se conservan en cada aparato. */
+export type FotoPeleador = Omit<Peleador, 'def' | 'golpe'> & { golpe: string | null };
+
 export type TipoProy = 'bala' | 'trampa' | 'rayo' | 'lluvia' | 'caida' | 'ola';
 export interface Proyectil {
   id: number;
@@ -264,6 +267,36 @@ export class Sim {
       this.proyectiles();
     }
     for (const p of this.L) this.temporizar(p);
+  }
+
+  fotoMovimiento(): FotoPeleador[] {
+    return this.L.map(({ def: _def, golpe, ...p }) => structuredClone({ ...p, golpe: golpe?.id ?? null }));
+  }
+
+  restaurarMovimiento(fotos: FotoPeleador[], fase: Fase, pausaGolpe = 0, pausaSuper = 0) {
+    this.fase = fase;
+    this.pausaGolpe = pausaGolpe;
+    this.pausaSuper = pausaSuper;
+    fotos.forEach((f, i) => {
+      const p = this.L[i];
+      if (p) Object.assign(p, structuredClone(f), { golpe: f.golpe ? p.def.golpes[f.golpe as IdGolpe] : null });
+    });
+    this.eventos = [];
+  }
+
+  /** Solo anticipa movimiento y pose en una copia de vista; no resuelve impactos ni resultados. */
+  predecirMovimiento(i: number, entrada: Entrada) {
+    if (this.fase !== 'pelea') return;
+    const p = this.L[i];
+    this.leer(p, entrada);
+    if (this.pausaGolpe > 0) { this.pausaGolpe--; return; }
+    if (this.pausaSuper > 0) { this.pausaSuper--; return; }
+    this.olvidar(p);
+    this.pensar(p, true);
+    this.moverse(p);
+    this.separar();
+    this.temporizar(p);
+    this.eventos = [];
   }
 
   // ------------------------------------------------------------------------------------------------ Entrada

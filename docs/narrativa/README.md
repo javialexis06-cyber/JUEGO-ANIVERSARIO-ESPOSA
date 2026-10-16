@@ -1,5 +1,9 @@
 # Astra · La vida que no cabe en una vasija
 
+> Granja pausada. Esta biblia se conserva como fuente narrativa; sus planes y producción no son tareas activas.
+> Consultar [pedidos vigentes](../pedidos.md) antes de modificarla o integrarla.
+
+
 Biblia narrativa encargada por Javier el 11 de octubre de 2026. **Autoría nueva sobre el canon de [mitologia.md](../mitologia.md), no recuperación de la conversación perdida.** Los acontecimientos añadidos, apellidos institucionales y relaciones son ficción del juego. No describen recuerdos reales de la pareja.
 
 Esta entrega contiene historia y especificaciones de producción; no activa por sí sola misiones, portales, voces ni recompensas en el motor. El usuario autorizó publicar todo el trabajo. La primera versión de armas está integrada en las expediciones actuales; la expansión narrativa y Confluencia siguen pendientes de implementación. Las 142 identidades del reparto original y sus cinco figuras narrativas se conservan; Fuatia se añade como sexta figura; Sangrevil y los protagonistas se documentan aparte porque no están en ese catálogo. Los nombres antes propuestos se adoptan en esta biblia, sin modificar todavía las etiquetas de la partida.

@@ -1,5 +1,10 @@
 # Guiones para producción de voces
 
+> Registro de producción de granja pausado. Conservar los guiones y audio existentes; no generar nuevas voces
+> por esta lista. Este catálogo de guion no mide el audio integrado; consultar [voces actuales](../../sistemas/voces.md).
+> [Alcance vigente](../../pedidos.md).
+
+
 2750 líneas en 152 identidades de voz; 2749 combinaciones únicas de hablante y texto. 181192 caracteres únicos de texto pronunciado, sin direcciones ni segundas tomas.
 
 Lectura estimada: 211.1 minutos a 145 palabras por minuto, antes de pausas. No es duración medida ni costo contratado.

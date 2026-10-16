@@ -1,7 +1,7 @@
 # Referencias (wikis de otros juegos)
 
 Copias en texto de wikis de juegos que sirven de modelo, transcritas por Javier el 7 de octubre de 2026 para que no
-haya que salir a internet (la red del contenedor bloquea esas páginas). Son material de consulta: no se cargan en el
+haya que depender de acceso a esas páginas. Son material de consulta: no se cargan en el
 juego ni en la APK. El contenido es de cada wiki y de sus autores, con su licencia (CC BY-SA); aquí solo se guarda
 para estudiarlo.
 
@@ -26,4 +26,4 @@ Los de Vampire Survivors, por tema:
 | `07_mecanicas_dlc_general.md` | Mecánicas, DLC, logros y general (59) |
 | `08_guias.md` | Guías (3) |
 
-Para buscar algo sin abrir todo: `grep -n "^# Nombre" docs/referencias/vampire-survivors/*.md`.
+Para buscar algo sin abrir todo: `rg -n "^# Nombre" docs/referencias/vampire-survivors/*.md`.

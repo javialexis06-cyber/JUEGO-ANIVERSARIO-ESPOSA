@@ -728,8 +728,10 @@ async function mirarComoInvitado(cfg: { defs: [DefLuchador, DefLuchador]; escena
     cfg.linea.alFin(() => terminar({ ganador: -1, salir: true }));
     director = {
       cuadro(dt) {
-        cfg.linea.mandarEntrada(mando.leer(0));
-        espejo.avanzar(dt);
+        const entrada = mando.leer(0);
+        if (cfg.linea.cortado()) espejo.suspender();
+        espejo.avanzar(cfg.linea.cortado() ? 0 : dt, entrada);
+        cfg.linea.mandarEntrada(entrada, espejo.secuencia);
         vista.cuadro(dt, espejo);
         mando.superLista(0, espejo.L[1].barra >= BARRA_MAX);
         if (espejo.fase === 'fin' && espejo.faseT > 100) terminar({ ganador: espejo.ganador });

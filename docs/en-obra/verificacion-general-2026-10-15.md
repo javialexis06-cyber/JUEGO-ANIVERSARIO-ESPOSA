@@ -1,5 +1,10 @@
 # Verificación general de los juegos · 15–16 de octubre de 2026
 
+> Este documento conserva la evidencia de la revisión general anterior. Las mejoras posteriores autorizadas de
+> Torneo y Carreras y la limpieza documental se registran en [mejoras del 16 de octubre](mejoras-y-limpieza-2026-10-16.md).
+> Consultar [pedidos vigentes](../pedidos.md) para el alcance actual.
+
+
 > **Cierre de alcance · 16 de octubre:** Javier descartó los pendientes de generación de instaladores/Actions,
 > SQL y Supabase real, dispositivos físicos, pruebas de recorridos parciales y ampliaciones de cobertura/desbloqueos
 > enumerados después de esta revisión. Las limitaciones y los bloqueos descritos abajo conservan la evidencia

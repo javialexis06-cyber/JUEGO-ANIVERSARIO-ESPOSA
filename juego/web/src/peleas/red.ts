@@ -6,7 +6,7 @@
 import { esperarEnSala } from '../salas/espera';
 import type { AspectoJugador, JugadorSala, Sala } from '../salas/tipos';
 import { retador } from './luchadores';
-import type { Evento, Fase, Peleador, Proyectil, Sim, TipoProy, Estado } from './sim';
+import { Sim, type Evento, type Fase, type Peleador, type Proyectil, type TipoProy, type Estado, type FotoPeleador } from './sim';
 import { desempacar, empacar, NADA, type DefLuchador, type Efecto, type Entrada, type IdEscenario, type IdGolpe } from './tipos';
 import { ESCENARIOS } from './vista/escena';
 import type { EstadoVista } from './vista/pelea';
@@ -24,7 +24,7 @@ export interface Linea {
   /** (anfitrión) Manda la foto de la pelea (cada 50 ms). */
   mandarFoto(sim: Sim): void;
   /** (invitado) Manda lo que aprieta. */
-  mandarEntrada(e: Entrada): void;
+  mandarEntrada(e: Entrada, secuencia?: number): void;
   /** (invitado) La pelea que llega del anfitrión. */
   espejo(defs: [DefLuchador, DefLuchador]): Espejo;
   /** El otro está cortado (la pelea espera). */
@@ -46,6 +46,10 @@ interface Foto {
   L: (number | string)[][];
   P: number[][];
   E: Evento[];
+  mov?: FotoPeleador[];
+  pgol?: number;
+  ack?: number;
+  sesion?: number;
 }
 
 export function fotoDe(sim: Sim, desde: number): Foto {
@@ -56,6 +60,7 @@ export function fotoDe(sim: Sim, desde: number): Foto {
       p.ultimoGolpe, p.ko ? 1 : 0, empacar(p.entrada), p.suelo ? 1 : 0, p.rondas, Math.round(p.comboDano)]),
     P: sim.P.map((x) => [x.id, x.dueno, TIPOS.indexOf(x.tipo), r2(x.x), r2(x.y), r2(x.vx), r2(x.vy), x.lado, x.t, x.vida, EFECTOS.indexOf(x.efecto)]),
     E: sim.eventosDesde(desde).slice(-24),
+    mov: sim.fotoMovimiento(), pgol: sim.pausaGolpe,
   };
 }
 
@@ -78,9 +83,16 @@ export class Espejo implements EstadoVista {
   private eventos: Evento[] = [];
   private metas: { x: number; y: number }[] = [{ x: -2.1, y: 0 }, { x: 2.1, y: 0 }];
   private desdeFoto = 0;
+  private motor: Sim;
+  private anticipar = false;
+  private acumulado = 0;
+  private pendientes: { n: number; e: Entrada }[] = [];
+  private error = { x: 0, y: 0 };
+  secuencia = 0;
   ultimoEvento = 0;
 
   constructor(private defs: [DefLuchador, DefLuchador]) {
+    this.motor = new Sim({ luchadores: defs, borde: this.borde });
     this.L = defs.map((def, i) => ({
       i, def, x: i ? 2.1 : -2.1, y: 0, vx: 0, vy: 0, lado: i ? -1 : 1, suelo: true, vida: def.vida, barra: 0, aturd: 0, sinGolpe: 0, estado: 'entrada', t: 0, dur: 0, golpe: null,
       pego: false, veces: 0, combo: 0, invul: 0, saltos: 0, armadura: 0, caeTumbado: false, agarre: -1, mareoPendiente: false, rondas: 0, entrada: { ...NADA }, previo: { ...NADA },
@@ -90,6 +102,8 @@ export class Espejo implements EstadoVista {
 
   recibir(f: Foto) {
     if (f.pa < this.pasos) return;
+    const anterior = { x: this.L[1].x, y: this.L[1].y };
+    const nuevaRonda = this.ronda !== f.r || this.fase !== FASES[f.f] && FASES[f.f] !== 'pelea';
     this.fase = FASES[f.f] ?? 'pelea';
     this.faseT = f.ft;
     this.ronda = f.r;
@@ -127,20 +141,58 @@ export class Espejo implements EstadoVista {
     }
     if (this.eventos.length > 60) this.eventos.splice(0, this.eventos.length - 60);
     this.desdeFoto = 0;
+    this.anticipar = !!f.mov && this.fase === 'pelea';
+    if (f.mov) {
+      this.pendientes = nuevaRonda ? [] : this.pendientes.filter(p => p.n > (f.ack ?? this.secuencia)).slice(-15);
+      this.motor.restaurarMovimiento(f.mov, this.fase, f.pgol, this.pausaSuper);
+      for (const p of this.pendientes) this.motor.predecirMovimiento(1, p.e);
+      const p = this.motor.L[1];
+      const brusco = nuevaRonda || Math.hypot(anterior.x - p.x, anterior.y - p.y) > 1.5;
+      this.error = brusco ? { x: 0, y: 0 } : { x: anterior.x - p.x, y: anterior.y - p.y };
+      if (this.anticipar) this.pintarAnticipo();
+    }
+  }
+
+  private pintarAnticipo() {
+    const p = this.motor.L[1];
+    // Vida, barra, golpes confirmados, proyectiles y resultado siempre vienen del anfitrión.
+    Object.assign(this.L[1], { x: p.x + this.error.x, y: Math.max(0, p.y + this.error.y), vx: p.vx, vy: p.vy,
+      lado: p.lado, estado: p.estado, t: p.t, dur: p.dur, golpe: p.golpe, entrada: p.entrada, suelo: p.suelo });
+  }
+
+  suspender() {
+    this.anticipar = false;
+    this.pendientes = [];
+    this.acumulado = 0;
+    this.error = { x: 0, y: 0 };
   }
 
   /** Entre foto y foto: se acerca suavecito a donde va y sigue moviéndose con su velocidad. */
-  avanzar(dt: number) {
+  avanzar(dt: number, entrada: Entrada = NADA) {
     this.desdeFoto += dt;
+    if (this.anticipar && this.desdeFoto <= 0.25) {
+      this.acumulado += Math.min(dt, 0.1);
+      while (this.acumulado >= 1 / 60) {
+        this.acumulado -= 1 / 60;
+        const e = { ...entrada };
+        this.pendientes.push({ n: ++this.secuencia, e });
+        if (this.pendientes.length > 30) this.pendientes.shift();
+        this.motor.predecirMovimiento(1, e);
+      }
+      const k = Math.exp(-18 * dt);
+      this.error.x *= k; this.error.y *= k;
+      this.pintarAnticipo();
+    }
     const extra = Math.min(this.desdeFoto, 0.12);
     this.L.forEach((p, i) => {
+      if (i === 1 && this.anticipar) return;
       const m = this.metas[i];
       const tx = m.x + p.vx * extra, ty = Math.max(0, m.y + p.vy * extra);
       const k = Math.min(1, dt * 18);
       p.x += (tx - p.x) * k;
       p.y += (ty - p.y) * k;
     });
-    for (const x of this.P) {
+    for (const x of this.desdeFoto <= 0.25 ? this.P : []) {
       x.x += x.vx * dt;
       x.y += x.vy * dt;
     }
@@ -283,7 +335,7 @@ async function enSala(g: Ganchos, sala: Sala) {
     const nombres = js.map((j) => j.nombre) as [string, string];
     sala.ponerDatos({ jugando: true, listo: false });
     const otro = js.find((j) => j.id !== sala.yo.id)!;
-    const linea = crearLinea(sala, otro);
+    const linea = crearLinea(sala, otro, datos.semilla);
     const esc = ESCENARIOS[datos.escenario] ? datos.escenario : 'plaza';
     const res = sala.soyAnfitrion
       ? await g.pelear({ defs, escenario: esc, controles: [{ k: 'mando', i: 0 }, { k: 'red' }], linea, nombres, aspectos, semilla: datos.semilla })
@@ -296,9 +348,10 @@ async function enSala(g: Ganchos, sala: Sala) {
   }
 }
 
-export function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): void } {
+export function crearLinea(sala: Sala, otro: JugadorSala, sesion?: number): Linea & { soltar(): void } {
   let ultima = 0;
   let entradaOtro = NADA;
+  let entradaN = -1;
   let fotoT = 0;
   let mandadoN = 0;
   let mandadoT = 0;
@@ -309,11 +362,19 @@ export function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): v
   let cortado = false;
   const quitar: (() => void)[] = [];
   quitar.push(
-    sala.al('pe:e', (d) => {
-      entradaOtro = desempacar(Number(d) || 0);
+    sala.al('pe:e', (d, de) => {
+      if (de && de.id !== otro.id) return;
+      if (typeof d === 'number') { entradaOtro = desempacar(d); return; }
+      const p = d as { e: number; n: number; sesion?: number };
+      if(sesion!==undefined&&p?.sesion!==sesion)return;
+      if (!p || !Number.isSafeInteger(p.n) || p.n < entradaN || !Number.isInteger(p.e)) return;
+      entradaN = p.n;
+      entradaOtro = desempacar(p.e);
     }),
-    sala.al('pe:f', (d) => {
+    sala.al('pe:f', (d, de) => {
+      if(de&&de.id!==otro.id)return;
       const f = d as Foto;
+      if(sesion!==undefined&&f.sesion!==sesion)return;
       if (fotoRecibida && f.pa < fotoRecibida.pa) return;
       fotoRecibida = f;
       espejo?.recibir(f);
@@ -335,18 +396,20 @@ export function crearLinea(sala: Sala, otro: JugadorSala): Linea & { soltar(): v
       fotoT = ahora;
       // Los eventos van repetidos en varias fotos seguidas (por si se pierde una): el espejo los cuenta una vez
       const f = fotoDe(sim, Math.max(0, ultima - 12));
+      f.ack = entradaN;
+      f.sesion = sesion;
       ultima = sim.ultimoEvento;
       // El anfitrión deja de simular al cerrar: esta última foto debe llegar incluso si se pierde un paquete.
       sala.mandar('pe:f', f, { rapido: !final });
     },
-    mandarEntrada(e) {
+    mandarEntrada(e, secuencia = 0) {
       const n = empacar(e);
       const ahora = performance.now();
       if (n === mandadoN && ahora - mandadoT < 100) return;
       mandadoN = n;
       mandadoT = ahora;
       enviados++;
-      sala.mandar('pe:e', n, { rapido: true });
+      sala.mandar('pe:e', { e: n, n: secuencia, sesion }, { rapido: true });
     },
     espejo(defs) {
       espejo = new Espejo(defs);

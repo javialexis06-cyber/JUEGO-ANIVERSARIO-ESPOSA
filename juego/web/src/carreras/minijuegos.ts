@@ -16,6 +16,7 @@ export interface Recogible {
  caduca?:number;
 }
 export interface ResumenMinijuego { tipo:TipoMinijuego;puntos:number[];globos:number[];duracion:number }
+export interface FotoMinijuego { puntos:number[];globos:number[];recogibles:Recogible[];orden:number[] }
 
 const limitar=(x:number,a=-1,b=1)=>Math.max(a,Math.min(b,x));
 
@@ -59,6 +60,20 @@ export class Minijuego {
  eliminado(k:Kart){return this.tipo==='globos'&&this.globos[k.i]<=0;}
  get restante(){return Math.max(0,this.duracion-Math.max(0,this.sim.t));}
  resumen():ResumenMinijuego{return {tipo:this.tipo,puntos:[...this.puntos],globos:[...this.globos],duracion:Math.max(0,this.sim.t)};}
+ foto():FotoMinijuego{return {puntos:[...this.puntos],globos:[...this.globos],recogibles:structuredClone(this.recogibles),orden:[...this.sim.orden]};}
+ recibir(f:FotoMinijuego){
+  const s=this.sim,n=s.karts.length;if(s.autoridad||f.puntos.length!==n||f.globos.length!==n||f.orden.length!==n)return;
+  this.puntos.splice(0,n,...f.puntos);this.globos.splice(0,n,...f.globos);
+  this.recogibles.splice(0,this.recogibles.length,...structuredClone(f.recogibles));
+  s.orden=[...f.orden];s.orden.forEach((i,p)=>{s.karts[i].puesto=p;if(this.eliminado(s.karts[i])){s.karts[i].invisible=99999;s.karts[i].v=0;}});
+ }
+
+ /** Las maniobras de cada conductor se registran una vez en el anfitrión, con las mismas reglas locales. */
+ maniobra(ev:Evento){
+  if(!this.sim.autoridad||this.tipo!=='trucos'||this.sim.t<0||this.sim.terminada)return;
+  if(ev.t==='aterriza'&&ev.truco)this.sumar(ev.k,3);
+  if(ev.t==='turbo'&&ev.por==='derrape')this.sumar(ev.k,ev.nivel);
+ }
 
  private recogible(tipo:Recogible['tipo'],x:number,y:number,z:number):Recogible{
   return {id:this.siguienteId++,tipo,x,y,z,rumbo:0,s:0,lat:0,vuelve:0,pasadas:Array(this.sim.karts.length).fill(-999)};
@@ -135,7 +150,7 @@ export class Minijuego {
  }
  private sumar(k:number,n:number){this.puntos[k]+=n;this.ultimoPunto[k]=this.sim.t;}
  actualizar(eventos:Evento[],dt:number){
-  const s=this.sim;if(s.t<0||s.terminada)return;
+  const s=this.sim;if(!s.autoridad||s.t<0||s.terminada)return;
   for(const ev of eventos){
    if(ev.t==='golpe'){
     this.impactos[ev.k]++;
@@ -155,8 +170,7 @@ export class Minijuego {
      }
     }
    }
-   if(this.tipo==='trucos'&&ev.t==='aterriza'&&ev.truco)this.sumar(ev.k,3);
-   if(this.tipo==='trucos'&&ev.t==='turbo'&&ev.por==='derrape')this.sumar(ev.k,ev.nivel);
+   this.maniobra(ev);
   }
   for(const c of this.recogibles){
    if(c.vuelve>0){c.vuelve=Math.max(0,c.vuelve-dt);continue;}
@@ -174,6 +188,7 @@ export class Minijuego {
  }
  ordenar(){
   const s=this.sim;
+  if(!s.autoridad){if(s.orden.length!==s.karts.length)s.orden=s.karts.map(k=>k.i);return;}
   s.orden=s.karts.map(k=>k.i).sort((a,b)=>(this.tipo==='globos'?this.globos[b]-this.globos[a]:0)||this.puntos[b]-this.puntos[a]
    ||this.eliminadosEn[b]-this.eliminadosEn[a]||this.impactos[a]-this.impactos[b]||this.ultimoPunto[a]-this.ultimoPunto[b]||a-b);
   s.orden.forEach((i,n)=>{s.karts[i].puesto=n;});

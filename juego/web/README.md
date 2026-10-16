@@ -1,44 +1,61 @@
-# Nuestro Hogar · el juego (web, Android y computador)
+# Aplicación web, Android y escritorio
 
-Vite + TypeScript + three.js, empacado con Capacitor (Android) y Electron (`../escritorio/`). Las reglas de trabajo,
-cómo se prueba y las trampas conocidas están en el [`CLAUDE.md`](../../CLAUDE.md) de la raíz; cómo funciona cada parte, en
-[`docs/sistemas/`](../../docs/sistemas/).
+Vite + TypeScript + three.js. El contenedor Android usa Capacitor; el de escritorio está en `../escritorio/`.
+[Inicio del repositorio](../../README.md) · [Guía de trabajo](../../CLAUDE.md) · [Sistemas](../../docs/README.md).
 
-## Páginas
+## Páginas y código
 
-| Página | Código | Qué es |
+| Página | Código principal | Función |
 |---|---|---|
-| `index.html` | `src/casa/` | La casa (el juego principal). Con un perfil de amigo, manda a `amigos.html`. |
-| `super.html` | `src/*.ts` | Súper Manía (en pareja, en sala de hasta 4 o con amigos). |
-| `puertas.html` | `src/puertas/` | Cien Puertas. |
-| `mesa.html` | `src/mesa/` | Juegos de mesa (Dados, Mancala, Puntos y Cajas, Parchís). |
+| `index.html` | `src/casa/` | Casa y cuidados de la pareja; los amigos usan su sala aparte. |
+| `amigos.html` | `src/amigos/` | Perfil y Sala de Juegos para amigos. |
+| `super.html` | `src/main.ts` | Súper Manía, 100 días, local y salas. |
+| `puertas.html` | `src/puertas/` | Cien Puertas, historia y pareja. |
+| `mesa.html` | `src/mesa/` | Dados, Mancala, Cajas, ambos Parchís, Clue y Show de Nosotros (solo pareja). |
 | `sangre.html` | `src/sangre/` | Sangre y Ceniza. |
-| `amigos.html` | `src/amigos/` | La sala de juegos de los amigos (creador de personajes y salas). |
-| `retrete.html`, `cocina.html` | `src/sueltos/` | El retrete espacial y la cocina sin la casa (para amigos). |
+| `retrete.html` | `src/sueltos/retrete.ts` | Retrete espacial sin la casa, para amigos. |
+| `cocina.html` | `src/sueltos/cocina.ts` | Wafles, Fresas y Frappés sin la casa. |
+| `escudo.html` | `src/escudo/` | El Escudo de las Hermanas. |
+| `carreras.html` | `src/carreras/` | Dieciséis pistas, copas, contrarreloj y cuatro desafíos locales o en sala. |
+| `celular.html` | `src/celular/` | Los ocho teléfonos de Desaparecidos de Astra. |
+| `peleas.html` | `src/peleas/` | El Torneo del Despertar Dorado. |
+| `granja-v3.html` | `src/granja-v3/` | Granja V5 integrada; desarrollo pausado. |
 
-## Comandos
+Lavarse la cara se abre desde la casa y desde la sala de amigos mediante `src/casa/lavado.ts`.
+Los transportes y perfiles compartidos están en `src/salas/`. El contenido de pareja usa módulos separados con
+sustitutos neutros declarados en `vite.config.ts`.
 
-```bash
+## Desarrollo y verificación
+
+Node.js 22 o posterior. Desde esta carpeta:
+
+```sh
 npm ci
-npm run dev              # http://localhost:5173 y las demás páginas
-npx tsc --noEmit -p .    # tipos
-npx vite build           # versión de la pareja → dist/
-npm run build:amigos     # versión para amigos («Sala de Juegos») → dist-amigos/, revisada con verificar-amigos.mjs
-npm run optimizar        # modelos de modelos-crudos/ → public/modelos/
+npm run dev
+npm run verificar:repo
+npm run probar:motores
+npm run probar:granja
+npm run build
+npm run build:amigos
 ```
 
-Las pruebas con Playwright están en `scripts/probar-*.mjs` (cada una dice arriba cómo se usa).
+`build` revisa tipos y produce `dist/`. `build:amigos` produce `dist-amigos/` y revisa que no contenga recursos o
+textos personales. `npm run preview` sirve la compilación completa; un servidor estático también sirve ambos builds.
 
-## Versiones que se publican
+Los scripts de navegador están en `scripts/probar-*.mjs`. Usar un navegador instalado mediante `CHROME_PATH` y
+seguir la URL indicada en cada cabecera. Los recorridos que importan módulos fuente requieren Vite sin HMR;
+los demás pueden ejecutarse contra `dist`. Capturas, logs, perfiles y resultados van a `test-results/` (excluido).
+No borrar las partidas del usuario para preparar una prueba; crear contextos aislados.
 
-GitHub Actions (`.github/workflows/apk.yml`) compila en cada cambio de `juego/web/` y publica en Releases:
-`NuestroHogar.apk` y `NuestroHogar.exe` (la pareja) y `NuestroHogar-Amigos.apk` y `NuestroHogar-Amigos.exe` (amigos,
-con `android-amigos/` y `../escritorio/build-amigos/`). La más reciente siempre está en
-`https://github.com/javialexis06-cyber/juego-aniversario-esposa/releases/latest/download/<archivo>`.
+Las poses del Torneo se regeneran con `personajes/blender/peleas_poses.py` desde la raíz. Los modelos sin optimizar
+van a `modelos-crudos/`; publicar únicamente los recursos usados por el juego. Las guías de cada sistema explican
+sus exportadores y pruebas específicas.
 
-- La app va en horizontal, a pantalla completa y sin apagar la pantalla.
-- El servidor (Supabase) va en `src/casa/servidor.ts` o en las variables del repositorio `SUPABASE_URL` y
-  `SUPABASE_ANON_KEY`.
-- Se firma con la clave de depuración de Android (`android/app/debug.keystore`, pública por diseño) para que cada
-  versión se instale encima de la anterior sin perder el progreso.
-- A mano (con Android SDK): `npm run build && npx cap sync android && cd android && ./gradlew assembleDebug`.
+## Empaquetado y configuración
+
+- `android/` y `android-amigos/`: proyectos Capacitor. `../escritorio/`: Electron.
+- En la raíz, `.github/workflows/apk.yml` define el empaquetado de ambas versiones. Su existencia no garantiza que haya un
+  instalador de cada commit; la generación y el seguimiento de instaladores están fuera del encargo vigente.
+- Supabase usa la URL y clave publicable configuradas en la aplicación o sus variables de compilación; nunca una clave privada.
+- La orientación es horizontal. Los guardados y compras se conservan entre versiones compatibles.
+- [Pedidos vigentes](../../docs/pedidos.md) registra la granja pausada y los trabajos descartados.

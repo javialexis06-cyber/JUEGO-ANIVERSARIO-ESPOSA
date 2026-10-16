@@ -98,7 +98,7 @@ Esas 7 suman unos 18 minutos y unos 12.700 créditos.
 (−16 LUFS) en `public/audio/astra/musica/` y las declara en `public/granja/astra/medios.json` → `musica` (≈ 29 MB).
 Para cambiar una pista, se cambia su entrada en `MUSICA_GRANJA` y se vuelve a correr: rehace solo esa.
 
-## Pendiente
+## Audio existente y variantes de granja pausadas
 
 - La granja: ya tiene su música (arriba). Faltaría una variación por estación, si Javier la quiere.
   Lo que costó de verdad (11–12 de octubre de 2026):

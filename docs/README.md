@@ -2,8 +2,10 @@
 
 Lee solo lo que vayas a tocar. Lo de siempre está aquí arriba; lo demás, en su carpeta.
 
-Cierre del 16 de octubre: revisión terminada, sin tareas activas. Los pendientes adicionales enumerados al cierre
-fueron descartados por Javier; la granja continúa pausada. `pedidos.md` prevalece sobre notas históricas.
+Encargo del 16 de octubre completado: mejoras de Torneo y Carreras y limpieza del repositorio. Voces nuevas descartadas;
+granja pausada. [Pedidos vigentes](pedidos.md) prevalece sobre planes y registros históricos.
+
+[Inicio del repositorio](../README.md) · [Aplicación y pruebas](../juego/web/README.md) · [Guía de colaboración](../CLAUDE.md)
 
 | Archivo | Para qué |
 |---|---|
@@ -33,10 +35,11 @@ fueron descartados por Javier; la granja continúa pausada. `pedidos.md` prevale
 | [`voces.md`](sistemas/voces.md) | Las voces de Él y Ella (ElevenLabs): dónde suenan, el guion con sus emociones y cómo se generan. |
 | [`supabase.md`](sistemas/supabase.md) | La base en línea: tablas, cuentas con contraseña, cambios pendientes, latido. |
 
-## `en-obra/` · frentes a medias o en pausa
+## `en-obra/` · revisiones, referencias de diseño y granja pausada
 
 | Archivo | Estado |
 |---|---|
+| [`mejoras-y-limpieza-2026-10-16.md`](en-obra/mejoras-y-limpieza-2026-10-16.md) | Cierre de mejoras de Torneo/Carreras y limpieza del repositorio, con verificaciones; voces nuevas descartadas. |
 | [`auditoria-motores.md`](en-obra/auditoria-motores.md) | Revisión de motores cerrada con cobertura y límites explícitos; historial y aprobación previa de balance. |
 | [`verificacion-general-2026-10-15.md`](en-obra/verificacion-general-2026-10-15.md) | Resultado de la revisión del 15–16 de octubre: campañas, salas, correcciones, regresión final y límites físicos/externos. |
 | [`pelicula-de-astra.md`](en-obra/pelicula-de-astra.md) | Plan histórico de una producción integrada; no autoriza nuevas tareas ni desarrollo de granja. |
@@ -54,6 +57,6 @@ para estudiarlas sin salir a internet. Índice y cómo buscar en [`referencias/R
 
 ## `archivo/` · historia (no hace falta leerlo)
 
-Decisiones ya tomadas y estudios de arranque: el estudio de Supermarket Mania (`diseno-juego.md`), la viabilidad del
+[Índice del archivo](archivo/README.md). Decisiones ya tomadas y estudios de arranque: el estudio de Supermarket Mania (`diseno-juego.md`), la viabilidad del
 juego en línea entre Sopetrán y Bucaramanga y la auditoría completa con sus pruebas de estrés. Los renders aprobados
 de referencia (personajes, súper y casa) están en [`archivo/renders/`](../archivo/renders/).

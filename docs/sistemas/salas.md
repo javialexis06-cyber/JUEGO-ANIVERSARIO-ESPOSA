@@ -1,8 +1,8 @@
 # Salas: jugar de 2 a 4 (Javier, Laura y amigos)
 
 Las salas conectan hasta 4 celulares o computadores con un **código corto** para jugar juntos: Javier, Laura y
-amigos. Las usan **Lavarse la cara**, **Sangre y Ceniza** y la **cocina de chef** (juego `cocina`,
-`src/casa/cocina/sala.ts`). Código en `juego/web/src/salas/`.
+amigos. Las usan Lavado, Sangre y Ceniza, Cocina, Súper, mesa, Carreras y Torneo, con los límites propios de cada juego.
+Carreras incluye sus cuatro desafíos; Torneo conecta dos luchadores. Código en `juego/web/src/salas/`.
 
 | Archivo | Qué es |
 |---|---|
@@ -88,7 +88,7 @@ Reglas para los juegos:
 - La **sala de juegos de amigos** (`amigos.html`, `src/amigos/main.ts`): su muñeco, los juegos aptos (`juegos.ts`:
   solo los que tienen `<meta name="apto-amigos" content="si">`; los demás salen «Muy pronto»), «Crear sala» y
   «Unirme con un código». **Sangre y Ceniza** usa el muñeco del amigo tal cual lo vistió.
-- **Nunca carga la casa**: index.html, puertas.html, mesa.html y super.html tienen una guardia en el `<head>` que
+- **Nunca carga la casa**: las páginas con contenido exclusivo de pareja tienen una guardia de perfil que
   manda a `amigos.html` mientras el perfil esté activo (también al recargar o con atrás). En Android, atrás desde su
   sala cierra la app. Si Javier o Laura tocaron el botón por error: «¿Eres Javier o Laura?» (abajo, pequeñito) pide
   confirmar y vuelve al inicio.
@@ -100,7 +100,7 @@ Reglas para los juegos:
 Para pasarle el juego a amigos sin que se lleven nada de la pareja hay una **compilación aparte**:
 
 - `npm run build:amigos` (`vite build --mode amigos`, carpeta `dist-amigos`): solo las páginas de `PAGINAS_AMIGOS`
-  (`amigos.html`, `sangre.html`, `super.html`, `retrete.html`, `cocina.html` y `mesa.html`; un juego nuevo para amigos
+  (la lista actual está en `vite.config.ts`, incluidos Escudo, Carreras, Desaparecidos y Torneo; un juego nuevo para amigos
   se agrega ahí y en `src/amigos/juegos.ts`, y su página lleva `<meta name="apto-amigos" content="si">`). De `src/`
   solo entra lo de `PERMITIDOS_AMIGOS` (si algo más se cuela, la compilación falla con el nombre del archivo) y lo
   personal se cambia por su versión vacía o neutra (`src/amigos/sin_pareja/`, la lista está en `SUSTITUTOS`):

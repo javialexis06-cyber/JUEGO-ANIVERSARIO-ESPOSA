@@ -12,7 +12,8 @@ import { esperarEnSala } from '../salas/espera';
 import { caritaSvg } from '../salas/carita';
 import type { JugadorSala, Sala } from '../salas/tipos';
 import { avisoSuelto } from '../sueltos/comun';
-import { CRIATURAS, CIRCUITOS, COPAS, PISTAS, PUNTOS, CARROS, type Corredor, type Dificultad, type IdCarro, type IdCriatura, type IdObjeto, type IdPista } from './datos';
+import { ARENAS, CRIATURAS, CIRCUITOS, COPAS, PISTAS, PUNTOS, CARROS, type Corredor, type Dificultad, type IdCarro, type IdCriatura, type IdObjeto, type IdPista } from './datos';
+import { MINIJUEGOS, type TipoMinijuego, type OpcionesMinijuego, type FotoMinijuego } from './minijuegos';
 import type { OpcionesCarrera, Resultado } from './main';
 import type { Control, Evento, Kart, Sim, TipoCosa } from './sim';
 import { escapar } from './hud';
@@ -25,6 +26,7 @@ export interface Red {
   empezar(sim: Sim, mio: number, alEvento: (e: Evento) => void, alSalir: () => void): void;
   paso(): void;
   meta(tiempo: number): void;
+  finalConfirmado(): boolean;
   detener(): void;
 }
 
@@ -41,10 +43,11 @@ interface Contexto {
   vaciar(): void;
   arrancarGaraje(): void;
   ganarCopa(copa: string, dificultad?: Dificultad): void;
+  guardarReto(r: Resultado, pista: IdPista, op: OpcionesMinijuego, dificultad: Dificultad): void;
 }
 
-interface Config {
-  modo: 'suelta' | 'gp';
+export interface Config {
+  modo: 'suelta' | 'gp' | 'mini';
   pista: IdPista;
   n: number;
   semilla: number;
@@ -52,6 +55,7 @@ interface Config {
   lista: { j: string | null; c: Corredor }[];
   copa?: string;
   dificultad?: Dificultad;
+  minijuego?: OpcionesMinijuego;
 }
 
 const JUEGO = 'carreras';
@@ -86,6 +90,7 @@ export async function abrirEnLinea(ctx: Contexto) {
       <div class="car-opciones">
         <button class="car-boton grande" data-c="suelta">Crear sala · Carrera</button>
         <button class="car-boton" data-c="gp">Crear sala · Gran Premio</button>
+        <button class="car-boton" data-c="mini">Crear sala · Batallas y desafíos</button>
         <div class="car-unirse"><input maxlength="5" placeholder="CÓDIGO" autocapitalize="characters"><button class="car-boton" data-c="unirse">Unirme</button></div>
         <button class="car-boton suave" data-c="garaje">🛠️ Mi carro</button>
         <button class="car-boton suave" data-c="atras">⟵ Atrás</button>
@@ -102,7 +107,9 @@ export async function abrirEnLinea(ctx: Contexto) {
         sala = await unirseSala(codigo, JUEGO);
       } else {
         sala = await crearSala({ juego: JUEGO, max: 4 });
-        modoSala = que as 'suelta' | 'gp';
+        modoSala = que as Config['modo'];
+        if (modoSala === 'mini') pistaSala = pistasReto()[0];
+        else if (!CIRCUITOS.includes(pistaSala)) pistaSala = CIRCUITOS[0];
       }
     } catch (e) {
       avisoSuelto((e as Error).message);
@@ -112,18 +119,30 @@ export async function abrirEnLinea(ctx: Contexto) {
   await lobby(ctx, sala);
 }
 
-let modoSala: 'suelta' | 'gp' = 'suelta';
+let modoSala: Config['modo'] = 'suelta';
 let pistaSala: IdPista = 'valle';
 let copaSala = 'clasica';
+let retoSala: TipoMinijuego = 'globos';
+let duracionSala = 120;
 const copaDe = (id?: string) => COPAS.find(c => c.id === id) ?? COPAS[0];
+const pistasReto = () => retoSala === 'globos' || retoSala === 'monedas' ? ARENAS : CIRCUITOS;
+const textoSala = () => modoSala === 'gp' ? copaDe(copaSala).nombre : modoSala === 'mini'
+  ? `${MINIJUEGOS[retoSala].nombre} · ${PISTAS[pistaSala].nombre} · ${duracionSala / 60} min`
+  : `Carrera · ${PISTAS[pistaSala].nombre}`;
 
 async function lobby(ctx: Contexto, sala: Sala) {
   ctx.pantalla('', 'vacia');
   ctx.arrancarGaraje();
   const mio = ctx.miCorredor();
   sala.ponerDatos({ criatura: mio.criatura, carro: mio.carro, color: mio.color, jugando: false });
+  const anunciar = () => {
+    sala.ponerDatos({ opcionesCarrera: textoSala() });
+    const sub = document.querySelector('.sala-espera .se-sub');
+    if (sub) sub.textContent = textoSala();
+  };
+  if (sala.soyAnfitrion) anunciar();
   const e = esperarEnSala({
-    sala, titulo: 'La Carrera de las Tres Lunas', subtitulo: sala.soyAnfitrion ? (modoSala === 'gp' ? copaDe(copaSala).nombre : `Carrera · ${PISTAS[pistaSala].nombre}`) : 'Carrera en línea',
+    sala, titulo: 'La Carrera de las Tres Lunas', subtitulo: sala.soyAnfitrion ? textoSala() : 'Carrera en línea',
     tema: 'burbujas', minimo: 1,
     retrato: (j) => `<span class="car-carita grande" style="--c:${corredorDe(j).color}">${caritaSvg(j.aspecto, 64, 'feliz')}</span>`,
     detalle: (j) => `${CRIATURAS[corredorDe(j).criatura].nombre}`,
@@ -132,14 +151,31 @@ async function lobby(ctx: Contexto, sala: Sala) {
       const sub = document.querySelector('.sala-espera .se-sub');
       if (sub) sub.textContent = `Carrera · ${PISTAS[pistaSala].nombre}`;
       avisoSuelto(`Pista: ${PISTAS[pistaSala].nombre}`, 1600);
-    } }] : sala.soyAnfitrion ? [{ id:'copa',texto:'🏆 Cambiar copa',alTocar:()=>{
+      anunciar();
+    } }] : sala.soyAnfitrion && modoSala === 'gp' ? [{ id:'copa',texto:'🏆 Cambiar copa',alTocar:()=>{
       copaSala=COPAS[(COPAS.findIndex(c=>c.id===copaSala)+1)%COPAS.length].id;
       const sub=document.querySelector('.sala-espera .se-sub');if(sub)sub.textContent=copaDe(copaSala).nombre;
       avisoSuelto(copaDe(copaSala).nombre,1600);
-    } }] : [],
+      anunciar();
+    } }] : sala.soyAnfitrion ? [
+      { id:'reto',texto:'🎈 Cambiar desafío',alTocar:()=>{
+        const tipos=Object.keys(MINIJUEGOS) as TipoMinijuego[];
+        retoSala=tipos[(tipos.indexOf(retoSala)+1)%tipos.length];
+        if(!pistasReto().includes(pistaSala))pistaSala=pistasReto()[0];anunciar();
+      } },
+      { id:'pista',texto:'🗺️ Cambiar escenario',alTocar:()=>{const ps=pistasReto();pistaSala=ps[(ps.indexOf(pistaSala)+1)%ps.length];anunciar();} },
+      { id:'duracion',texto:'⏱️ Duración',alTocar:()=>{duracionSala=duracionSala===180?60:duracionSala+60;anunciar();} },
+    ] : [],
     alEmpezar: () => armarConfig(ctx, sala, modoSala === 'gp' ? copaDe(copaSala).pistas[0] : pistaSala, 0),
   });
+  const quitarOpciones=sala.alCambiar(js=>{
+    if(sala.soyAnfitrion)return;
+    const texto=js.find(j=>j.puesto===0)?.datos?.opcionesCarrera;
+    const sub=document.querySelector('.sala-espera .se-sub');if(sub&&typeof texto==='string')sub.textContent=texto;
+  });
+  if(!sala.soyAnfitrion){const texto=sala.jugadores.find(j=>j.puesto===0)?.datos?.opcionesCarrera;const sub=document.querySelector('.sala-espera .se-sub');if(sub&&typeof texto==='string')sub.textContent=texto;}
   const r = await e.resultado;
+  quitarOpciones();
   if (r.que !== 'empezar') {
     if (r.motivo) avisoSuelto(r.motivo);
     sala.salir();
@@ -161,7 +197,8 @@ function armarConfig(ctx: Contexto, sala: Sala, pista: IdPista, n: number, punto
     lista = [...maquina, ...humanos];
   }
   if (puntos) lista = lista.sort((a, b) => (puntos.get(a.c.id) ?? 0) - (puntos.get(b.c.id) ?? 0));
-  return { modo: modoSala, pista, n, semilla: (Math.random() * 1e9) | 0, lista, copa:copaSala, dificultad:ctx.ajustes().dificultad };
+  return { modo: modoSala, pista, n, semilla: (Math.random() * 1e9) | 0, lista, copa:copaSala, dificultad:ctx.ajustes().dificultad,
+    ...(modoSala==='mini'?{minijuego:{tipo:retoSala,duracion:duracionSala}}:{}) };
 }
 
 async function partida(ctx: Contexto, sala: Sala, cfg: Config) {
@@ -176,7 +213,7 @@ async function partida(ctx: Contexto, sala: Sala, cfg: Config) {
       c: x.c, humano: x.j !== null,
       control: (x.j === yo ? 'local' : x.j === null && sala.soyAnfitrion ? 'ia' : 'remoto') as Control,
     }));
-    const r = await ctx.correr({ pista: config.pista, corredores, mio, semilla: config.semilla, red });
+    const r = await ctx.correr({ pista: config.pista, corredores, mio, semilla: config.semilla, red, minijuego: config.minijuego, dificultad: config.dificultad });
     if (r.salio || red.seAcabo) {
       sala.salir();
       return ctx.portada();
@@ -188,10 +225,11 @@ async function partida(ctx: Contexto, sala: Sala, cfg: Config) {
       puntos.set(c.id, (puntos.get(c.id) ?? 0) + (PUNTOS[idx] ?? 0));
     });
     const gp = config.modo === 'gp';
+    if (config.minijuego) ctx.guardarReto(r, config.pista, config.minijuego, config.dificultad ?? ctx.ajustes().dificultad);
     const copa=copaDe(config.copa),pistas=copa.pistas;
     const ultima = !gp || config.n >= pistas.length - 1;
     const porPuntos = gp ? { ...r, orden: [...r.orden].sort((a, b) => (puntos.get(r.corredores[b].id) ?? 0) - (puntos.get(r.corredores[a].id) ?? 0)) } : r;
-    await ctx.resultados(porPuntos, gp ? `${copa.nombre} · ${config.n + 1}/${pistas.length}` : PISTAS[config.pista].nombre, gp ? puntos : undefined, gp ? ganados : undefined, !gp);
+    await ctx.resultados(porPuntos, gp ? `${copa.nombre} · ${config.n + 1}/${pistas.length}` : config.minijuego ? `${MINIJUEGOS[config.minijuego.tipo].nombre} · ${PISTAS[config.pista].nombre}` : PISTAS[config.pista].nombre, gp ? puntos : undefined, gp ? ganados : undefined, !gp);
     if (gp && ultima) {
       const final = porPuntos.orden.map(i => r.corredores[i]);
       if(final[0]?.id===config.lista[mio].c.id)ctx.ganarCopa(copa.id,config.dificultad);
@@ -250,7 +288,7 @@ interface Meta {
   t: number;
 }
 
-class RedCarrera implements Red {
+export class RedCarrera implements Red {
   soyAnfitrion: boolean;
   hayAmigos: boolean;
   seAcabo = false;
@@ -263,6 +301,13 @@ class RedCarrera implements Red {
   private alSalir: () => void = () => undefined;
   private dueno = new Map<number, string>();
   private cortados = new Set<string>();
+  private fotoN = 0;
+  private fotoRecibida = -1;
+  private maniobraN = 0;
+  private maniobrasVistas = new Map<string, Set<number>>();
+  private finRecibido = false;
+
+  private delAnfitrion(de: JugadorSala) { return de?.puesto === 0; }
 
   constructor(private sala: Sala, private cfg: Config) {
     this.soyAnfitrion = sala.soyAnfitrion;
@@ -319,13 +364,16 @@ class RedCarrera implements Red {
     const s = this.sala;
     this.quitar.push(
       s.al('k', (d) => this.aplicar(d as Foto, true)),
-      s.al('f', (d) => {
-        if (this.soyAnfitrion) return;
-        const f = d as { k: Foto[]; c: number[][]; cj: number; t: number };
+      s.al('f', (d, de) => {
+        if (this.soyAnfitrion || !this.delAnfitrion(de) || sim.terminada) return;
+        const f = d as { k: Foto[]; c: number[][]; cj: number; t: number; n?: number; r?: number; mini?: FotoMinijuego };
+        if(f.r!==undefined&&f.r!==this.cfg.semilla||f.n!==undefined&&f.n<=this.fotoRecibida)return;
+        this.fotoRecibida=f.n??this.fotoRecibida;
         for (const x of f.k) this.aplicar(x, false);
         this.cosas(f.c);
         sim.cajas.forEach((c, i) => (c.vuelve = f.cj & (1 << i) ? 1 : 0));
         if (Math.abs(sim.t - f.t) > 0.5 && sim.t < 0) sim.t = f.t;
+        if(f.mini&&sim.mini){sim.mini.recibir(f.mini);sim.t=f.t;}
       }),
       s.al('obj', (d) => {
         const { k, o } = d as { k: number; o: IdObjeto };
@@ -359,12 +407,18 @@ class RedCarrera implements Red {
         kart.objeto = null;
       }),
       s.al('meta', (d) => {
+        if (sim.mini) return;
         const { k, tiempo } = d as { k: number; tiempo: number };
         const kart = sim.karts[k];
         if (kart && !kart.terminado) sim.llegar(kart, tiempo);
       }),
-      s.al('fin', (d) => {
-        const f = d as { orden: number[]; tiempos: number[] };
+      s.al('fin', (d, de) => {
+        if(this.soyAnfitrion||!this.delAnfitrion(de))return;
+        const f = d as { orden: number[]; tiempos: number[]; t?:number; mini?:FotoMinijuego; r?:number };
+        if(f.r!==undefined&&f.r!==this.cfg.semilla||this.finRecibido)return;
+        this.finRecibido = true;
+        if(f.mini&&sim.mini)sim.mini.recibir(f.mini);
+        if(f.t!==undefined)sim.t=f.t;
         f.orden.forEach((i, idx) => {
           const k = sim.karts[i];
           if (!k) return;
@@ -374,6 +428,21 @@ class RedCarrera implements Red {
         });
         sim.orden = f.orden;
         sim.terminada = true;
+        if(sim.mini)alEvento({t:'meta',k:this.mio,puesto:sim.karts[this.mio].puesto+1,tiempo:sim.t});
+      }),
+      s.al('mini:maniobra',(d,de)=>{
+        if(!this.soyAnfitrion||!sim.mini||sim.mini.tipo!=='trucos')return;
+        const p=d as {r:number;n:number;ev:Evento};
+        if(p.r!==this.cfg.semilla||!Number.isSafeInteger(p.n)||p.n<0||!p.ev||!('k' in p.ev)||this.dueno.get(p.ev.k)!==de.id)return;
+        const ev=p.ev;
+        if(!(ev.t==='aterriza'&&ev.truco===true||ev.t==='turbo'&&ev.por==='derrape'&&Number.isInteger(ev.nivel)&&ev.nivel>=1&&ev.nivel<=3))return;
+        let vistos=this.maniobrasVistas.get(de.id);if(!vistos)this.maniobrasVistas.set(de.id,vistos=new Set());
+        if(vistos.has(p.n))return;vistos.add(p.n);
+        sim.mini.maniobra(ev);
+      }),
+      s.al('mini:efecto',(d,de)=>{
+        if(this.soyAnfitrion||!this.delAnfitrion(de))return;
+        const p=d as {r:number;ev:Evento};if(p.r===this.cfg.semilla&&['recoge','globo'].includes(p.ev?.t))alEvento(p.ev);
       }),
       s.alCorte((cortado, quien) => {
         if (cortado) this.cortados.add(quien.id);
@@ -462,6 +531,7 @@ class RedCarrera implements Red {
     }
     // El anfitrión reparte cajas, golpes y lluvia a los dueños
     if (this.soyAnfitrion) {
+      for(const ev of sim.eventos)if(ev.t==='globo'||ev.t==='recoge')this.sala.mandar('mini:efecto',{r:this.cfg.semilla,ev});
       for (const ev of sim.eventos) {
         if (!('k' in ev)) continue;
         const dueno = this.dueno.get(ev.k);
@@ -478,6 +548,9 @@ class RedCarrera implements Red {
       // (en el anfitrión, el objeto de un invitado se entrega de una vez: la ruleta la ve el invitado)
       for (const [i, d] of this.dueno) if (d !== this.sala.yo.id && sim.karts[i]) sim.karts[i].objeto = null;
     } else {
+      for(const ev of sim.eventos)if(sim.mini?.tipo==='trucos'&&'k' in ev&&ev.k===this.mio&&(ev.t==='aterriza'&&ev.truco||ev.t==='turbo'&&ev.por==='derrape')){
+        this.sala.mandar('mini:maniobra',{r:this.cfg.semilla,n:++this.maniobraN,ev});
+      }
       // El invitado le cuenta al anfitrión cuando usa un objeto
       for (const ev of sim.eventos) if (ev.t === 'usa' && ev.k === this.mio) {
         const k = sim.karts[this.mio];
@@ -495,18 +568,23 @@ class RedCarrera implements Red {
       const c = sim.cosas.map((x) => [x.id, tipos.indexOf(x.tipo), Math.round(x.x * 10) / 10, Math.round(x.y * 10) / 10, Math.round(x.z * 10) / 10, Math.round(x.h * 100) / 100, Math.round(x.t * 10) / 10, x.charco ? 1 : 0]);
       let cj = 0;
       sim.cajas.forEach((x, i) => x.vuelve > 0 && (cj |= 1 << i));
-      this.sala.mandar('f', { k: ia, c, cj, t: Math.round(sim.t * 100) / 100 }, { rapido: true });
+      this.sala.mandar('f', { k: ia, c, cj, t: Math.round(sim.t * 100) / 100, n:++this.fotoN, r:this.cfg.semilla,
+        ...(sim.mini?{mini:sim.mini.foto()}:{}) }, { rapido: true });
       // ¿Ya llegaron todas las personas? Se cierra la carrera para todos
       if (sim.terminada && !this.finMandado) {
         this.finMandado = true;
-        this.sala.mandar('fin', { orden: sim.orden, tiempos: sim.karts.map((k) => k.tiempo) });
+        this.sala.mandar('fin', { orden: sim.orden, tiempos: sim.karts.map((k) => k.tiempo), t:sim.t, r:this.cfg.semilla,
+          ...(sim.mini?{mini:sim.mini.foto()}:{}) });
       }
     }
   }
 
   private finMandado = false;
 
+  finalConfirmado() { return this.soyAnfitrion ? this.finMandado : this.finRecibido; }
+
   meta(tiempo: number) {
+    if(this.sim?.mini)return;
     this.sala.mandar('meta', { k: this.mio, tiempo });
   }
 

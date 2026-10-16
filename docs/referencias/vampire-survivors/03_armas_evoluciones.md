@@ -22445,7 +22445,7 @@ This Arcana applies to the following items:
 -  Celestial Voulge has a 5% chance of critical hitting and freezing enemies hit.
 -  Mirage Robe [DLC] and  J'Odore [DLC]
 -  Prism Lass [DLC],  Prism Damsel [DLC],  Time Warp [DLC]
--  Icebrand [DLC](unlisted)
+-  Icebrand DLC (sin enlace en la fuente)
 -  Fleuret [DLC],  Dress Sword [DLC], and  Espada Ropera [DLC]
 -  Orologion pickup
 -  Sorbetto pickup

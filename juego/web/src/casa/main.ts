@@ -2151,7 +2151,7 @@ function botonesCuarto(): Boton[] {
         { id: 'jugar-sangre', texto: 'Sangre y Ceniza', icono: '<span class="ico ico-emoji">⚔️</span>' },
         { id: 'jugar-granja', texto: 'Nuestra granjita', icono: '<span class="ico ico-emoji">🌱</span>' },
         { id: 'jugar-escudo', texto: 'El Escudo de las Hermanas', icono: '<span class="ico ico-emoji">🛡️</span>' },
-        { id: 'jugar-carreras', texto: 'Carrera de las Tres Lunas', icono: '<span class="ico ico-emoji">🏁</span>' },
+        { id: 'jugar-carreras', texto: 'Carrera de las Tres Lunas', icono: '<img src="./carreras/emblema.svg" alt="">' },
         { id: 'jugar-celular', texto: 'Desaparecidos de Astra', icono: '<span class="ico ico-emoji">📱</span>' },
         { id: 'jugar-peleas', texto: 'Torneo de peleas', icono: '<span class="ico ico-emoji">🥊</span>' },
         { id: 'tienda-retrete', texto: 'Tienda del retrete', icono: '<img src="./modelos/iconos/cohete_rollito.webp" alt="">' },

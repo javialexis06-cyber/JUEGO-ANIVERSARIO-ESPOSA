@@ -14,8 +14,8 @@ amigos. Página: `juego/web/carreras.html`; código: `juego/web/src/carreras/`.
   - **Contrarreloj**: solo, sin cajas, con tres chispas de turbo al salir. Guarda el récord de cada pista, la mejor
     vuelta y un **fantasma** de la mejor carrera, que corre transparente la próxima vez.
   - **En línea**: sala de hasta 4 (código corto), carrera suelta en cualquiera de los 16 circuitos o una de las cuatro
-    copas; la máquina completa los ocho.
-  - **Batallas y desafíos**: cuatro minijuegos locales contra siete rivales de la máquina; partidas de uno, dos o tres
+    copas o los cuatro desafíos; la máquina completa los ocho.
+  - **Batallas y desafíos**: cuatro minijuegos locales o de sala, con rivales de la máquina hasta completar ocho; partidas de uno, dos o tres
     minutos, tabla y podio. Las marcas se guardan por modo, escenario, dificultad y duración. No dan monedas de la casa.
 - **Quién corre**: en la versión de la pareja, Javier o Laura (quien juega) y el otro como rival de la máquina, más
   seis vecinos de Astra. Con amigos (o en la app de amigos), el muñeco de perfil del amigo y siete vecinos.
@@ -166,7 +166,7 @@ Presentador: «Zabra» de la biblioteca (`voces-guion/carreras-reparto.json`); l
 - Gancho: `window.__carreras` = `{ sim, vista, hud, mio }`.
 - `window.__carreras.avanzar(n)` ejecuta el mismo cuadro del juego, con física, eventos, guardado de vueltas y
   muestras del fantasma; no entrega objetos ni fuerza resultados. Las pruebas desactivan el dibujo entre capturas.
-- Versión para amigos: `npm run build:amigos && node scripts/verificar-amigos.mjs`.
+- Versión para amigos: `npm run build:amigos` (incluye el filtro de contenido).
 
 ```sh
 node scripts/probar-carreras-motor.mjs        # cuatro pistas, tres vueltas, puestos y puntos del Gran Premio
@@ -181,8 +181,9 @@ CHROME_PATH=/usr/bin/chromium AMIGO=0 GRAN_PREMIO=0 FALLOS=1 node scripts/probar
 Verificados desde progreso nuevo: carrera suelta, pausa por botón, contrarreloj después de recargar, fantasma con
 muestras para su duración, y Gran Premio de cuatro pistas en «Carrera», con copa ganada, dos fallos de guardado
 recuperados y recarga sin duplicar el premio. Carrera, contrarreloj, fallo de escritura y retorno a casa también
-comprobados en la edición de pareja. Siguen pendientes precisión física, repetición del fantasma en pantalla y
-verificación propia de la red. Se conservan los valores de dificultad y recompensas.
+comprobados en la edición de pareja. Estas pruebas no certifican controles físicos ni la repetición visual del
+fantasma; Javier descartó ampliar esa cobertura. La verificación de red se detalla abajo. Se conservan los valores
+de dificultad y recompensas.
 
 Comprobación de la ampliación: 96 carreras completas (16 circuitos × tres dificultades × dos semillas) y 38
 minijuegos completos del motor. Los cuatro tiempos clásicos de referencia permanecen idénticos. El navegador de
@@ -194,37 +195,35 @@ nuevos y los cuatro modos. La pareja completa los cuatro desafíos en el build f
 por puntero en arena sin piloto automático. Se repiten carrera suelta y contrarreloj con escritura fallida recuperada
 y fantasma conservado. Evidencia local: `test-results/carreras-ampliacion-2026-10-15/`.
 
-## Integración (hecha el 14 de octubre de 2026: casa, Sala de Juegos con su arte y su tema `carreras`)
+## Integración
 
-### Lo que se había propuesto
+El cuarto de juegos usa `jugar-carreras` en `src/casa/main.ts` y el emblema propio descrito abajo. La tarjeta de
+amigos está en `src/amigos/juegos.ts`, con arte `ARTE_CARRERAS`, tema `carreras` y accesos para crear o unirse a sala.
 
-**Cuarto de juegos de la casa** (`src/casa/main.ts`):
-
-```ts
-// en JUEGOS
-carreras: { punto: 'arcade', url: './carreras.html', nombre: 'La Carrera de las Tres Lunas' },
-// en case 'juegos': (con los demás botones)
-{ id: 'jugar-carreras', texto: 'Carrera de las Tres Lunas', icono: '<span class="ico ico-emoji">🏁</span>' },
-```
-
-y donde se atienden los `jugar-…` (junto a `jugar-sangre`): `case 'jugar-carreras': return jugar('carreras');`.
-
-**Sala de juegos de amigos** (`src/amigos/juegos.ts`, en `JUEGOS`; el tema puede ser `'retrete'` mientras no haya uno
-propio):
-
-```ts
-{ id: 'carreras', nombre: 'La Carrera de las Tres Lunas', desc: 'Carros y criaturas por Astra · de 1 a 4', arte: ARTE_RETRETE,
-  tema: 'retrete', url: './carreras.html', sala: 'carreras',
-  urlCrear: './carreras.html?sala', urlUnirse: (c) => `./carreras.html?unirse=${encodeURIComponent(c)}` },
-```
-
-Ya está hecho en esta rama: `carreras.html` en el `input` de rollup, en `PAGINAS_AMIGOS`, `src/carreras/` en
+`carreras.html` está en el `input` de rollup, en `PAGINAS_AMIGOS`, `src/carreras/` en
 `PERMITIDOS_AMIGOS`, la sustitución de `src/carreras/pareja.ts` en `SUSTITUTOS` y en `PUBLICOS_AMIGOS` los modelos
 (`modelos/carreras/`, las tres criaturas de la granja), `carreras/` (íconos y fotos) y `audio/carreras/` (sin la
 pareja). La música usa pistas que la app de amigos ya trae (súper, lavado, retrete, mesa, cocina).
 
-## Pendiente o por mejorar
+## Desafíos en sala e icono · 16 de octubre de 2026
 
-- La sala de amigos ya tiene arte propio (`ARTE_CARRERAS`). El ícono del cuarto usa una bandera; sustituirlo por arte específico sería una mejora visual futura.
-- Los cuatro desafíos nuevos tienen competición local contra la máquina; su sincronización multijugador queda pendiente.
-- Pruebas de rendimiento, controles físicos y conexiones entre teléfonos Android.
+En «En línea» → «Crear sala · Batallas y desafíos», el anfitrión elige Globos, Monedas, Anillos o Trucos,
+escenario compatible y duración de uno, dos o tres minutos. Las opciones aparecen también en el invitado.
+Las salas conservan de uno a cuatro jugadores y la máquina completa los ocho; las reglas y presupuestos de
+los modos locales se conservan. El icono del cuarto usa `public/carreras/emblema.svg`, con carro, bandera y tres lunas.
+
+El anfitrión confirma globos, puntos, monedas/aros disponibles y clasificación. El invitado conserva el mando
+inmediato de su carro; sus aterrizajes y miniturbos se entregan una vez al anfitrión con las mismas reglas de puntos.
+Fotos antiguas o de otra partida se descartan y el estado final viaja de forma fiable, con puntos, tiempos y orden juntos.
+El cierre de las carreras clásicas también espera la confirmación final: el invitado ya no presenta tiempos
+redondeados de una foto anterior mientras llega la clasificación definitiva.
+Las marcas de sala usan el prefijo `sala:` y no sustituyen las locales; cada perfil conserva su puntuación y el
+resultado espera la confirmación del guardado antes de seguir. No se añaden monedas de casa ni cambios de dificultad.
+
+`probar-carreras-red.mjs` completa los cuatro modos con dos y cuatro jugadores, demora, pérdida de fotos y
+reenvío de maniobras. Añade dos carreras clásicas de regresión y comprueba finales idénticos, puntos únicos y
+retirada de receptores. El recorrido de interfaz está en `probar-carreras-desafios-linea.mjs`; usa contextos aislados
+y Supabase simulado.
+
+La compilación de amigos conserva arte propio (`ARTE_CARRERAS`) y excluye el contenido de pareja. Las pruebas
+físicas y el servicio real permanecen fuera del encargo por decisión de Javier.

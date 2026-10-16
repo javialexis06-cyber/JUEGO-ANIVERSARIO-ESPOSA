@@ -329,6 +329,7 @@ export interface OpcionesCarrera {
   titulo?: string;
   red?: Red;
   minijuego?: OpcionesMinijuego;
+  dificultad?: Dificultad;
 }
 
 let carreraViva = false;
@@ -351,7 +352,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
   const vueltas = Number(params.get('vueltas')) || undefined;
   const sim = new Sim({
     pista, corredores: o.corredores,
-    ia: DIFICULTADES[ajustes.dificultad].ia, semilla: o.semilla ?? (Math.random() * 1e9) | 0, contrarreloj: o.contrarreloj, vueltas,
+    ia: DIFICULTADES[o.dificultad ?? ajustes.dificultad].ia, semilla: o.semilla ?? (Math.random() * 1e9) | 0, contrarreloj: o.contrarreloj, vueltas,
     autoridad: o.red ? o.red.soyAnfitrion : true,
     minijuego: o.minijuego,
   });
@@ -630,7 +631,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
     // Después de la meta: un rato mirando y luego los resultados
     const yoK = sim.karts[mio];
     if (yoK?.terminado && terminoT > 0 && ahora - terminoT > 3200) {
-      if (!o.red || sim.terminada) {
+      if (!o.red || sim.terminada && o.red.finalConfirmado()) {
         if (!sim.terminada) sim.terminarResto();
         if (o.contrarreloj) {
           const r = progreso.records[o.pista] ?? { mejor: Infinity, vuelta: Infinity };
@@ -843,6 +844,10 @@ async function enLinea() {
     pantalla, miCorredor, rivales, ajustes: () => ajustes, garaje: (luego: () => void) => garaje(luego, 'Listo'), correr,
     resultados: (r: Resultado, titulo: string, puntos?: Map<string, number>, ganados?: Map<string, number>, conPodio?: boolean) => mostrarResultados(r, titulo, [], puntos, ganados, conPodio),
     podio, portada, vaciar: () => vista.vaciar(), arrancarGaraje, ganarCopa,
+    guardarReto: (r, id, op, dificultad) => {
+      const clave=`sala:${op.tipo}:${id}:${dificultad}:${op.duracion ?? 120}`;
+      progreso.retos[clave]=Math.max(progreso.retos[clave]??0,r.minijuego!.puntos[r.mio]);guardarProgreso();
+    },
   });
 }
 

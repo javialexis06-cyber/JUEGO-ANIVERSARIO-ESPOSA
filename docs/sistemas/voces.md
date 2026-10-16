@@ -93,9 +93,11 @@ node scripts/granja-v3/voces-astra.mjs             # genera lo que falte
   no suena ambiente.
 - El botón de audio de la granja también los calla. Si un efecto falta, suena el pitido sintetizado de antes.
 
-## Pendiente o por mejorar
+## Ampliación descartada · 16 de octubre de 2026
 
-- Frases que todavía no están en el guion (suenan escritas): lo que dicen en las coreografías de la casa (la
+Javier descartó añadir voces nuevas en el encargo del 16 de octubre. Conservar las grabaciones y sus ganchos actuales; no generar audio por esta nota.
+
+- Referencia de frases que todavía no están en el guion (suenan escritas): lo que dicen en las coreografías de la casa (la
   nalgada, el cohete al despegar, «¡Soy todo un chef!»…), los textos sueltos del cohete (granizo, récord, patico) y
   otras reacciones ya existentes. Las escenas premium conservan la decisión de efectos sin voces en los globitos; no ampliar las escenas descartadas. Las frases que se autoricen se agregan a `PARTES` y se generan con los tres pasos.
 

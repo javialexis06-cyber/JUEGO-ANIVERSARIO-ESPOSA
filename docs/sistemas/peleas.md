@@ -112,7 +112,7 @@ CHROME_PATH=/usr/bin/chromium node scripts/probar-peleas-arcade.mjs http://127.0
 
 El parámetro de pruebas `bot1=7` también puede pilotar al jugador local del arcade. `__peleasAvanzar(n)` ejecuta el
 director del combate y conserva eventos, rondas y transiciones; el dibujo se desactiva entre capturas. Siguen
-pendientes controles físicos e internet entre dispositivos.
+fuera del encargo las pruebas físicas e internet real descartadas por Javier.
 El arcade no tiene un guardado de etapa implementado: la prueba termina sus seis combates en una misma sesión.
 
 La revisión del 16 de octubre añade 400 cruces de los diez luchadores y las cuatro dificultades, dos mandos
@@ -130,7 +130,7 @@ Cinco grupos de regresión cubren el envío final, reenvíos, orden, retirada de
 | `presentador.ts` | Lo que dice el presentador |
 | `sim.ts` | La pelea (60 pasos por segundo, sin three.js): estados, cajas de golpe, tapar, agarres, proyectiles, súper, rondas, eventos |
 | `ia.ts` | La máquina (reflejos, tapar, castigar, combos, gancho contra saltos, escape de agarres, juego por estilo) |
-| `poses.ts` | Las poses de pelea hueso por hueso (convención de `poses.py`) con brazos y piernas que se estiran |
+| `poses.ts`, `poses-blender.json` | Las poses de pelea hueso por hueso (convención de `poses.py`) con brazos y piernas que se estiran |
 | `vista/muneco.ts` | El muñeco de cada luchador (vestido, poses, caras, tumbado, vueltas, sacudidas) |
 | `vista/escena.ts` | Renderizador, cámara lateral que sigue y hace zoom, luces y cielo de cada escenario, lo que flota |
 | `vista/efectos.ts` | Chispas, letreros «¡PAF!», polvo, niebla, fuego, rayo, proyectiles (modelos de `cosas.glb`) |
@@ -200,9 +200,18 @@ Ya está hecho en esta rama: `peleas.html` en el `input` de `vite.config.ts`, en
 `PERMITIDOS_AMIGOS`, `modelos/peleas/` y `audio/peleas/comun/` en `PUBLICOS_AMIGOS`, el sustituto de `pareja.ts` en
 `SUSTITUTOS`, y en `scripts/verificar-amigos.mjs` el permiso para los audios de `audio/peleas/comun/`.
 
-## Pendiente o por mejorar
+## Poses y respuesta del invitado · 16 de octubre de 2026
 
-- La compilación de amigos ya pasa con el sustituto neutral de `cine-lineas-lugares.ts`; el bloqueo de la rama antigua está resuelto.
+La biblioteca de 51 poses propias se edita en `personajes/blender/peleas_poses.py` y se hornea desde una
+armadura de Blender a `src/peleas/poses-blender.json`. El juego mezcla los cuaterniones exportados y sus espejos;
+no modifica cuerpos, vestuario ni animaciones compartidas con granja. Incluye el jab bajo, que antes caía en reposo.
 
-- Las poses de pelea se arman sobre el esqueleto en el juego (el muñeco no trae poses de pelea propias en Blender).
-- En línea el invitado ve la pelea con el retraso de la red (no hay predicción de su propio muñeco).
+El invitado anticipa movimiento y poses mediante una copia de las mismas reglas del motor. Cada foto confirma
+los controles procesados; los que siguen pendientes se repiten sobre esa copia y las correcciones pequeñas se
+suavizan. Vida, barra, impactos, proyectiles y resultados siguen viniendo del anfitrión. Sin fotos nuevas se deja
+de anticipar a los 250 ms. Un corte descarta los controles pendientes y el fin desactiva la anticipación; una identificación de pelea evita que paquetes
+tardíos contaminen la revancha. No cambian daño, velocidad, saltos ni dificultad.
+
+`probar-peleas-red.mjs` comprueba respuestas a 30/60/120 FPS, demora de 100 y 200 ms por trayecto, jitter,
+fotos perdidas, controles antiguos, impactos y final confirmados. También comprueba todas las poses y sus espejos.
+Las poses de entrada, victoria y derrota conservan los clips existentes del personaje.

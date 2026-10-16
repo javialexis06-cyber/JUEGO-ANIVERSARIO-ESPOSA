@@ -2,7 +2,7 @@
 
 La wiki es un repositorio separado: <https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/wiki>.
 El usuario autorizó completarla y después pidió «has push a todo» el 11 de octubre de 2026.
-La pausa del código queda levantada; se integra primero el trabajo remoto de Claude y se publican el juego y la wiki.
+Ese permiso y esa secuencia son históricos. El alcance actual está en `docs/pedidos.md`; la granja está pausada y este documento no ordena publicar la wiki.
 
 Primera publicación completa: commit de wiki `537d04bdf186737746da98000703af57e81b42d4`.
 Comprobado que el remoto coincide y responde HTTP 200 en inicio, una ficha de NPC, una misión secreta
