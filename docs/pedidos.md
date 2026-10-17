@@ -3,24 +3,25 @@
 Actualizado el 17 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
-## Encargo nuevo · Jardín completo (plan esperando aprobación)
+## Encargo activo · Plantas contra Zombis en el Jardín
 
-Javier pidió terminar el Jardín de los Desvelados como un juego completo del estilo de PvZ 1 y 2:
+Javier revisó el primer plan y decidió:
 
-- arreglar los gráficos y la jugabilidad;
-- todas las plantas, con el nivel donde se ganan;
-- una historia propia;
-- un modo de fusiones aparte («Injertos»), con sus propias reglas e historia.
+- mismos nombres, diseño adaptado, interfaz y jugabilidad de Plants vs. Zombies, como una mezcla de PvZ 1 y 2;
+- una historia propia de apocalipsis zombi, sin el lore de Astra;
+- se pueden cambiar escenarios y algunas plantas;
+- libertad total de diseño.
 
-Primero pidió el plan. **[Plan entregado el 17 de octubre](en-obra/jardin-plan-2026-10-17.md):**
+Por eso los valores de PvZ (costos, recargas, vidas, precios de la tienda) cuentan como aprobados.
 
-- 51 plantas, 27 Desvelados y 4 jefes de mundo;
-- 50 noches de Historia;
-- Injertos con 40 recetas y 32 niveles;
-- valores, pétalos y precios propuestos.
+[Plan vigente: «La Semilla Madre»](en-obra/jardin-plan-2026-10-17.md) · [arquitectura](en-obra/pvz-arquitectura.md).
 
-No hay plan anterior de ChatGPT en el repositorio. **No implementar nada hasta que Javier lo apruebe.** Los
-patios clásicos, sus estrellas y el duelo para dos se conservan.
+- La aventura tiene 88 niveles en 10 mundos, más el modo Fusión aparte, minijuegos, rompecabezas y supervivencia.
+- Se conservan los 12 patios (como «Patios clásicos») y el duelo para dos.
+- Todo el arte y el sonido se hacen en código.
+
+**Estado:** investigación de datos de PvZ en curso. Después vienen la base (motor, arte, interfaz y mundo 1) y los
+demás mundos.
 
 ## Encargo activo · ampliación de juegos y patio
 
