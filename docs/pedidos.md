@@ -1,6 +1,6 @@
 # Pedidos de Javier · estado vigente
 
-Actualizado el 16 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
+Actualizado el 17 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
 ## Encargo activo · ampliación de juegos y patio
@@ -45,9 +45,14 @@ Se corrigieron los guardados de Súper/Puertas y el resultado remoto del Torneo.
 [registrados](en-obra/verificacion-general-2026-10-15.md); no confundir escenarios preparados con progresión ordinaria.
 El [historial](archivo/pedidos-hasta-2026-10-15.md) conserva la cola antigua sin reactivarla.
 
+## Publicación vigente
+
+La APK e instaladores **apk-223** (17 de octubre) se compilaron desde `9f9630b8`, el último commit de la rama, al
+correr Javier el workflow a mano: incluyen todo lo descrito arriba. Actions sigue sin dispararse solo en cada push.
+
 ## Pausado y descartado
 
-- Granja: desarrollo pausado, incluidas historia, arte y balance. Solo regresión e integración existentes.
+- Granja: **congelada por decisión de Javier (17 de octubre)**; no se seguirá avanzando (historia, arte, balance, guía de misiones ni rendimiento). Solo se conservan su regresión e integración existentes.
 - Voces nuevas: descartadas expresamente en este encargo. Conservar las grabaciones anteriores.
 - Escenas premium no realizadas y su tienda: descartadas. Conservar catálogo, IDs y propiedad ya implementados.
 - Contenido futuro del sótano: descartado. Se conservan el sótano de Clue y Desaparecidos de Astra.

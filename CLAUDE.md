@@ -7,7 +7,7 @@ completado: poses y predicción de Torneo, icono y salas de desafíos de Carrera
 Ampliación implementada y comprobada: El Escudo y Desaparecidos con doce mapas/casos, los 16 juegos mentales
 del patio con reto diario y Jardín de los Desvelados con doce patios. Solo falta conectar Supabase y aplicar
 la clasificación real; la prueba temporal no acredita ese despliegue. Ver `docs/pedidos.md`.
-Las voces nuevas fueron descartadas expresamente. La granja sigue pausada; no modificar sus sistemas, historia,
+Las voces nuevas fueron descartadas expresamente. La granja quedó congelada (17 de octubre): no modificar sus sistemas, historia,
 arte ni balance. Se permiten sus regresiones e integración existentes.
 Pedido completado: gráficos reales del Jardín y dos jugadores, uno con plantas y otro con zombis, mediante salas
 por código y en una pantalla. Probado en Realtime real y con pérdida/cortes simulados. Campaña conservada.
