@@ -11,6 +11,8 @@ Las voces nuevas fueron descartadas expresamente. La granja quedó congelada (17
 arte ni balance. Se permiten sus regresiones e integración existentes.
 Pedido completado: gráficos reales del Jardín y dos jugadores, uno con plantas y otro con zombis, mediante salas
 por código y en una pantalla. Probado en Realtime real y con pérdida/cortes simulados. Campaña conservada.
+Nuevo pedido: Jardín completo del estilo PvZ 1 y 2, más el modo Injertos aparte. El plan está entregado en
+`docs/en-obra/jardin-plan-2026-10-17.md` y espera la aprobación de Javier; no implementar antes.
 
 No retomar instaladores/Actions, Supabase real, pruebas físicas ni ampliaciones de cobertura descartadas por
 aparecer en notas antiguas. Las pruebas necesarias para los cambios actuales sí forman parte del encargo.

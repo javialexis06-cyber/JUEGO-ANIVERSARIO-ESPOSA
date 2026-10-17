@@ -3,6 +3,25 @@
 Actualizado el 17 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
+## Encargo nuevo · Jardín completo (plan esperando aprobación)
+
+Javier pidió terminar el Jardín de los Desvelados como un juego completo del estilo de PvZ 1 y 2:
+
+- arreglar los gráficos y la jugabilidad;
+- todas las plantas, con el nivel donde se ganan;
+- una historia propia;
+- un modo de fusiones aparte («Injertos»), con sus propias reglas e historia.
+
+Primero pidió el plan. **[Plan entregado el 17 de octubre](en-obra/jardin-plan-2026-10-17.md):**
+
+- 51 plantas, 27 Desvelados y 4 jefes de mundo;
+- 50 noches de Historia;
+- Injertos con 40 recetas y 32 niveles;
+- valores, pétalos y precios propuestos.
+
+No hay plan anterior de ChatGPT en el repositorio. **No implementar nada hasta que Javier lo apruebe.** Los
+patios clásicos, sus estrellas y el duelo para dos se conservan.
+
 ## Encargo activo · ampliación de juegos y patio
 
 - Completado El Escudo: seis mapas añadidos con recorridos propios; doce en total y balance existente conservado.

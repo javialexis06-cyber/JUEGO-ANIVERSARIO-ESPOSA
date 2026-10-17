@@ -10,6 +10,8 @@ la clasificación real; la prueba temporal no acredita ese despliegue. Ver `docs
 **Granja congelada (17 de octubre):** no modificar sus sistemas, historia, arte ni balance; solo regresiones e integración existentes.
 Pedido completado: gráficos reales del Jardín y dos jugadores, uno con plantas y otro con zombis, mediante salas
 por código y en una pantalla. Probado en Realtime real y con pérdida/cortes simulados. Campaña conservada.
+Nuevo pedido: Jardín completo del estilo PvZ 1 y 2, más el modo Injertos aparte. El plan está entregado en
+`docs/en-obra/jardin-plan-2026-10-17.md` y espera la aprobación de Javier; no implementar antes.
 Los descartes anteriores de instaladores, Supabase real y pruebas adicionales siguen vigentes.
 
 Conservar IDs, claves, partidas y compras. Antes de tocar dificultad, balance, costes, precios o recompensas,
