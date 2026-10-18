@@ -81,8 +81,8 @@ function tirador(op: OpcionesTirador): DefPersonaje {
     `<circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#${id}-cab)" ${borde()}/>` +
     `<path d="M${cx - R * 0.75},${cy + R * 0.55} Q${cx},${cy + R * 1.08} ${cx + R * 0.8},${cy + R * 0.5} Q${cx},${cy + R * 0.82} ${cx - R * 0.75},${cy + R * 0.55} Z" fill="${op.oscuro}" opacity="0.45"/>` +
     brillo(cx - R * 0.42, cy - R * 0.5, R * 0.32, R * 0.17, -35, 0.6) +
-    ojoPlanta(cx + R * 0.12, cy - R * 0.38, R * 0.2, R * 0.31) +
-    ojoPlanta(cx + R * 0.55, cy - R * 0.42, R * 0.17, R * 0.28) +
+    ojoPlanta(cx + R * 0.1, cy - R * 0.34, R * 0.25, R * 0.38) +
+    ojoPlanta(cx + R * 0.6, cy - R * 0.38, R * 0.21, R * 0.34) +
     (op.frente ?? '');
   const piezas: DefPieza[] = [
     { id: 'sombra', svg: sombra(37, 89, 25, 6.5), pivote: [37, 89], z: -10, sinTinte: true },
@@ -96,7 +96,7 @@ function tirador(op: OpcionesTirador): DefPersonaje {
   return {
     id,
     nombre: op.nombre,
-    ancho: 92,
+    ancho: 102,
     alto: 95,
     ancla: [37, 90],
     piezas,
@@ -150,8 +150,9 @@ const HIELAGUISANTES = tirador({
   nuca: CRESTA_HIELO, frente: ESCARCHA,
 });
 
+// Cejas de hoja fruncidas (bajan hacia el hocico): la cara brava de la Repetidora.
 const CEJAS_HOJA =
-  hoja(36, 20, 13, 3.6, -14, P.verdeHondo, null, 0.3) + hoja(51, 18.5, 11, 3.2, 8, P.verdeHondo, null, 0.2);
+  hoja(31, 19, 15, 4.4, 14, P.verdeHondo, null, 0.2) + hoja(46, 18.5, 13, 4, 22, P.verdeHondo, null, 0.2);
 
 const REPETIDORA = tirador({
   id: 'repetidora', nombre: 'Repetidora', claro: '#a6e06a', medio: '#4e9a2a', oscuro: '#25600f', boca: '#0f300a', radio: 22,
@@ -191,7 +192,9 @@ const GIRASOL: DefPersonaje = (() => {
     `<ellipse cx="${cx - 7.5}" cy="${cy + 2.5}" rx="2.6" ry="1.6" fill="#ff7b59" opacity="0.45"/>` +
     `<ellipse cx="${cx + 11}" cy="${cy + 2.5}" rx="2.4" ry="1.5" fill="#ff7b59" opacity="0.45"/>` +
     brillo(cx - 6, cy - 8, 4, 2, -30, 0.4);
-  const resplandor = `<circle cx="${cx}" cy="${cy}" r="30" fill="#fffbd0" opacity="0.55"/><circle cx="${cx}" cy="${cy}" r="20" fill="#fff" opacity="0.6"/>`;
+  // Al producir sol: halo amarillo detrás de los pétalos y la cara que se aclara (sin taparla).
+  const resplandor = `<circle cx="${cx}" cy="${cy}" r="36" fill="#fff3a0" opacity="0.45"/><circle cx="${cx}" cy="${cy}" r="29" fill="#fffbe0" opacity="0.6"/>`;
+  const caraLuz = `<circle cx="${cx}" cy="${cy}" r="14.5" fill="#fff4b8" opacity="0.55"/>`;
   const hojas =
     hoja(43, 86, 30, 9, 194, P.hoja, P.verdeHondo, -0.6) + hoja(47, 86, 30, 9, -14, P.hoja, P.verdeHondo, 0.6) +
     hoja(44, 87, 20, 6.5, 208, P.verdeOscuro, P.verdeHondo, -0.3) + hoja(46, 87, 20, 6.5, -28, P.verdeOscuro, P.verdeHondo, 0.3);
@@ -202,7 +205,8 @@ const GIRASOL: DefPersonaje = (() => {
     { id: 'petalos_atras', svg: petalosAtras, pivote: [cx, cy], padre: 'cabeza', z: 3 },
     { id: 'petalos', svg: petalosDelante, pivote: [cx, cy], padre: 'cabeza', z: 4 },
     { id: 'cabeza', svg: cara, pivote: [cx, cy + 15], padre: 'tallo', z: 5 },
-    { id: 'resplandor', svg: resplandor, pivote: [cx, cy], padre: 'cabeza', z: 6 },
+    { id: 'resplandor', svg: resplandor, pivote: [cx, cy], padre: 'cabeza', z: 2.5, sinTinte: true },
+    { id: 'cara_luz', svg: caraLuz, pivote: [cx, cy], padre: 'cabeza', z: 4.5 },
   ];
   return {
     id: 'girasol', nombre: 'Girasol', ancho: 90, alto: 95, ancla: [45, 89], piezas, defs,
@@ -221,7 +225,8 @@ const GIRASOL: DefPersonaje = (() => {
         cabeza: { rot: onda(c.t, 0.42, s, 0.8) * 7 + h.cabeza, sx: 1 + brilla * 0.06, sy: 1 + brilla * 0.06 },
         petalos: { rot: onda(c.t, 0.42, s, 1.6) * 3 },
         petalos_atras: { rot: -onda(c.t, 0.42, s, 1.6) * 2 },
-        resplandor: { alfa: brilla * 0.85, oculto: brilla <= 0.01, sx: 0.8 + brilla * 0.3, sy: 0.8 + brilla * 0.3 },
+        resplandor: { alfa: brilla, oculto: brilla <= 0.01, sx: 0.85 + brilla * 0.25, sy: 0.85 + brilla * 0.25 },
+        cara_luz: { alfa: brilla * 0.8, oculto: brilla <= 0.01 },
       };
     },
   };
@@ -288,6 +293,75 @@ const NUEZ: DefPersonaje = (() => {
     },
   };
 })();
+
+// ---------------------------------------------------------------------------------------------------------------
+// Nueces de bolos (minijuego del 1-5): la nuez redonda que rueda y la roja que explota al primer golpe.
+
+function nuezRodante(id: string, nombre: string, explosiva: boolean): DefPersonaje {
+  const cx = 40, cy = 46;
+  const defs = explosiva
+    ? volumen(`${id}-g`, '#ff9a7c', '#e0302a', '#7d0f12', 0.32, 0.25)
+    : volumen(`${id}-g`, '#ecbd7e', P.cafeClaro, '#875022', 0.32, 0.25);
+  const veta = explosiva ? '#8e1418' : '#8a5426';
+  // Casi redonda para que el giro no se vea cojo; vetas de cáscara alrededor.
+  const cuerpo =
+    `<path d="M${cx},${cy - 35} C${cx + 21},${cy - 35} ${cx + 33},${cy - 19} ${cx + 33},${cy} C${cx + 33},${cy + 20} ${cx + 20},${cy + 34} ${cx},${cy + 34} C${cx - 20},${cy + 34} ${cx - 33},${cy + 20} ${cx - 33},${cy} C${cx - 33},${cy - 19} ${cx - 21},${cy - 35} ${cx},${cy - 35} Z" fill="url(#${id}-g)" ${borde()}/>` +
+    `<path d="M${cx - 21},${cy - 18} Q${cx - 27},${cy} ${cx - 21},${cy + 20} M${cx + 21},${cy - 18} Q${cx + 27},${cy + 2} ${cx + 20},${cy + 22} M${cx - 10},${cy + 29} Q${cx},${cy + 32} ${cx + 10},${cy + 29}" fill="none" stroke="${veta}" stroke-width="1.6" opacity="0.55" stroke-linecap="round"/>` +
+    `<circle cx="${cx - 24}" cy="${cy + 8}" r="1.2" fill="${veta}" opacity="0.5"/><circle cx="${cx + 25}" cy="${cy + 12}" r="1.2" fill="${veta}" opacity="0.5"/>` +
+    brillo(cx - 15, cy - 20, 8, 4, -45, explosiva ? 0.45 : 0.35);
+  const ojos = explosiva
+    ? // ojos rabiosos, entrecerrados por las cejas
+      `<ellipse cx="${cx - 9}" cy="${cy - 2}" rx="7.4" ry="8.6" fill="#fff" ${borde(2.2)}/><ellipse cx="${cx + 9}" cy="${cy - 3}" rx="8" ry="9.2" fill="#fff" ${borde(2.2)}/>` +
+      `<circle cx="${cx - 7}" cy="${cy}" r="3.6" fill="#120c06"/><circle cx="${cx + 11}" cy="${cy - 1}" r="3.8" fill="#120c06"/>` +
+      `<path d="M${cx - 17},${cy - 12} L${cx - 2},${cy - 4} L${cx - 2},${cy - 12} Z M${cx + 18},${cy - 13} L${cx + 2},${cy - 4} L${cx + 2},${cy - 13} Z" fill="url(#${id}-g)"/>` +
+      `<path d="M${cx - 18},${cy - 13} L${cx - 2},${cy - 5}" ${borde(3.4)}/><path d="M${cx + 19},${cy - 14} L${cx + 2},${cy - 5}" ${borde(3.4)}/>` +
+      `<path d="M${cx - 8},${cy + 17} Q${cx},${cy + 12} ${cx + 9},${cy + 17}" fill="none" ${borde(2.4)}/>`
+    : `<ellipse cx="${cx - 9}" cy="${cy - 3}" rx="7.6" ry="9.6" fill="#fff" ${borde(2.2)}/><ellipse cx="${cx + 9}" cy="${cy - 4}" rx="8.2" ry="10.2" fill="#fff" ${borde(2.2)}/>` +
+      `<circle cx="${cx - 6.5}" cy="${cy - 2}" r="3.9" fill="#120c06"/><circle cx="${cx - 7.7}" cy="${cy - 3.4}" r="1.3" fill="#fff"/>` +
+      `<circle cx="${cx + 11.5}" cy="${cy - 3}" r="4.1" fill="#120c06"/><circle cx="${cx + 10.2}" cy="${cy - 4.4}" r="1.4" fill="#fff"/>`;
+  const mecha = explosiva
+    ? `<path d="M${cx + 4},${cy - 34} C${cx + 6},${cy - 40} ${cx + 12},${cy - 42} ${cx + 14},${cy - 47}" fill="none" stroke="${TINTA}" stroke-width="4" stroke-linecap="round"/>` +
+      `<path d="M${cx + 4},${cy - 34} C${cx + 6},${cy - 40} ${cx + 12},${cy - 42} ${cx + 14},${cy - 47}" fill="none" stroke="#6b4a2a" stroke-width="2" stroke-linecap="round"/>`
+    : '';
+  const chispa =
+    `<path d="M${cx + 14},${cy - 56} l2.2,5 l5.4,-1.4 l-3.4,4.4 l4.2,3.4 l-5.4,0.4 l-0.6,5.4 l-2.4,-4.8 l-5,2.2 l2.4,-4.8 l-4.4,-3.2 l5.4,-0.6 Z" fill="#ffe14d" ${borde(1.2)}/>` +
+    `<circle cx="${cx + 14}" cy="${cy - 47}" r="2.6" fill="#fff"/>`;
+  const piezas: DefPieza[] = [
+    { id: 'sombra', svg: sombra(cx, 81, 27, 6), pivote: [cx, 81], z: -10, sinTinte: true },
+    { id: 'cuerpo', svg: cuerpo + mecha, pivote: [cx, cy], z: 1 },
+    { id: 'cara', svg: ojos, pivote: [cx, cy], padre: 'cuerpo', z: 2 },
+  ];
+  if (explosiva) piezas.push({ id: 'chispa', svg: chispa, pivote: [cx + 14, cy - 47], padre: 'cuerpo', z: 3, sinTinte: true });
+  return {
+    id, nombre, ancho: 80, alto: 84, ancla: [cx, 81], piezas, defs,
+    estados: explosiva ? ['quieto', 'rueda', 'explota'] : ['quieto', 'rueda'],
+    duraciones: explosiva ? { explota: 0.35 } : undefined,
+    puntos: { cabeza: [cx, cy - 35], centro: [cx, cy] },
+    anim(c) {
+      const s = c.semilla;
+      // 'rueda': da vueltas (vel = multiplicador del giro) y rebota apenas sobre el pasto.
+      const giro = c.estado === 'rueda' ? (c.t * 330 * (c.vel ?? 1) + s * 37) % 360 : onda(c.t, 0.3, s) * 2;
+      const bote = c.estado === 'rueda' ? -Math.abs(Math.sin(c.t * 9 + s)) * 1.6 : 0;
+      const ch = Math.sin(c.t * 30 + s);
+      if (c.estado === 'explota') {
+        const k = suave(c.fase);
+        return {
+          cuerpo: { sx: 1 + k * 0.35, sy: 1 + k * 0.3, alfa: 1 - tramo(c.fase, 0.7, 1) },
+          chispa: { oculto: true },
+          sombra: { alfa: 1 - c.fase },
+        };
+      }
+      return {
+        cuerpo: { rot: giro, y: bote },
+        chispa: { rot: -giro + ch * 20, sx: 0.85 + ch * 0.25, sy: 0.85 + ch * 0.25 },
+        sombra: { sx: 1 + bote * 0.03 },
+      };
+    },
+  };
+}
+
+const NUEZ_BOLOS = nuezRodante('nuez_bolos', 'Nuez de bolos', false);
+const NUEZ_EXPLOSIVA = nuezRodante('nuez_explosiva', 'Nuez explosiva', true);
 
 // ---------------------------------------------------------------------------------------------------------------
 // Petacereza
@@ -375,8 +449,8 @@ const PATATAPUM: DefPersonaje = (() => {
   })();
   const estallido =
     `<path d="${puntas}" fill="#ffcf2e" ${borde(3)}/>` +
-    `<ellipse cx="40" cy="48" rx="34" ry="20" fill="#fff4b0" opacity="0.8"/>` +
-    `<text x="40" y="55" text-anchor="middle" font-family="'Arial Black','Impact','Liberation Sans','DejaVu Sans',sans-serif" font-weight="900" font-size="17" fill="#ff7a12" stroke="${TINTA}" stroke-width="2.4" paint-order="stroke" transform="rotate(-6 40 50)">¡PATAPUM!</text>`;
+    `<ellipse cx="40" cy="49" rx="38" ry="18" fill="#fff4b0" opacity="0.85"/>` +
+    `<text x="40" y="55" text-anchor="middle" font-family="'Arial Black','Impact','Liberation Sans','DejaVu Sans',sans-serif" font-weight="900" font-size="15" textLength="66" lengthAdjust="spacingAndGlyphs" fill="#ff7a12" stroke="${TINTA}" stroke-width="2.4" paint-order="stroke" transform="rotate(-6 40 50)">¡PATAPUM!</text>`;
   const terrones = [[-30, -14], [-18, -30], [6, -36], [28, -24], [36, -6], [-36, 4], [18, -40]]
     .map(([dx, dy], i) => `<path d="M${40 + dx - 3},${50 + dy} l3,-3 l4,1 l1,4 l-4,3 Z" fill="${i % 2 ? '#7a4a22' : '#c4914f'}" ${borde(1.3)}/>`)
     .join('');
@@ -474,7 +548,7 @@ const CARNIVORA: DefPersonaje = (() => {
     { id: 'cerrada', svg: cerrada, pivote: [48, 66], padre: 'tallo', z: 6 },
   ];
   return {
-    id: 'carnivora', nombre: 'Planta carnívora', ancho: 110, alto: 108, ancla: [42, 104], piezas, defs,
+    id: 'carnivora', nombre: 'Planta carnívora', ancho: 124, alto: 108, ancla: [42, 104], piezas, defs,
     estados: ['quieto', 'ataca', 'masticando', 'herida'],
     duraciones: { ataca: 0.7 },
     puntos: { boca: [96, 56], cabeza: [62, 16] },
@@ -497,8 +571,8 @@ const CARNIVORA: DefPersonaje = (() => {
       }
       const ansia = onda(c.t, 0.9, s);
       const h = c.estado === 'herida' ? herida(c) : { tallo: 0, cabeza: 0 };
-      const supRot = -6 + ansia * 4 - abre * 16 + cierra * 15;
-      const infRot = 4 + ansia * 3 + abre * 12 - cierra * 10;
+      const supRot = -11 + ansia * 4 - abre * 14 + cierra * 20;
+      const infRot = 8 + ansia * 3 + abre * 10 - cierra * 14;
       return {
         tallo: { rot: onda(c.t, 0.45, s) * 3 + lanza * 22 + h.tallo, x: lanza * 6 },
         mandibula_sup: { rot: supRot + h.cabeza * 0.5 },
@@ -830,6 +904,8 @@ const PERTIGA: DefPersonaje = (() => {
       p.pertiga = { oculto: apoyo > 0.6 };
       // La pértiga suelta queda clavada en el suelo: se compensa el movimiento de la raíz.
       p.pertiga_suelta = { oculto: apoyo <= 0.6, rot: angPertiga, x: -X / 0.97, y: -Y / 1.05, alfa: 1 - tramo(f, 0.9, 1) };
+      // La sombra sigue al zombi en x pero se queda en el suelo y se encoge mientras vuela.
+      p.sombra = { y: -Y / 1.05, sx: 1 - Math.sin(Math.PI * vuelo) * 0.35, alfa: 1 - Math.sin(Math.PI * vuelo) * 0.4 };
       return p;
     }
     const p = animZombi(c, { ciclo: 2.0 });
@@ -1060,6 +1136,8 @@ export const DEF_ARTE_DIA: Record<string, DefPersonaje> = {
   girasol: GIRASOL,
   petacereza: PETACEREZA,
   nuez: NUEZ,
+  nuez_bolos: NUEZ_BOLOS,
+  nuez_explosiva: NUEZ_EXPLOSIVA,
   patatapum: PATATAPUM,
   hielaguisantes: HIELAGUISANTES,
   carnivora: CARNIVORA,
@@ -1086,4 +1164,7 @@ export const DEF_ARTE_DIA: Record<string, DefPersonaje> = {
 /** Grupos para la galería y el almanaque. */
 export const PLANTAS_DIA = ['lanzaguisantes', 'girasol', 'petacereza', 'nuez', 'patatapum', 'hielaguisantes', 'carnivora', 'repetidora', 'desesporada'];
 export const ZOMBIS_DIA = ['zombi', 'abanderado', 'caracono', 'pertiga', 'caracubo'];
-export const OBJETOS_DIA = ['sol', 'guisante', 'guisante_hielo', 'espora', 'cortacesped', 'moneda_plata', 'moneda_oro', 'diamante', 'bolsa_monedas', 'abono', 'explosion'];
+export const OBJETOS_DIA = [
+  'sol', 'guisante', 'guisante_hielo', 'espora', 'cortacesped', 'moneda_plata', 'moneda_oro', 'diamante', 'bolsa_monedas', 'abono',
+  'nuez_bolos', 'nuez_explosiva', 'explosion',
+];

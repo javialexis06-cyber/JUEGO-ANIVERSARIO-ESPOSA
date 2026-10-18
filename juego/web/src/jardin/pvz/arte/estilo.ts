@@ -216,6 +216,7 @@ export function sumarPoses(...poses: Pose[]): Pose {
   const r: Pose = {};
   for (const p of poses)
     for (const [k, v] of Object.entries(p)) {
+      if (!v) continue;
       const a: PosePieza = r[k] ?? {};
       r[k] = {
         ...a,
@@ -517,7 +518,8 @@ export function animZombi(c: CtxAnim, op: OpcionesAnimZombi = {}): Pose {
     const rebote = Math.sin(tramo(f, 0.55, 0.75) * Math.PI) * 6;
     const giro = -86 * caida + rebote;
     return {
-      _raiz: { rot: giro, y: 0, alfa: 1 - tramo(f, 0.8, 1) },
+      // Al girar sobre los pies, el pecho quedaría bajo el suelo: se levanta la figura mientras cae.
+      _raiz: { rot: giro, y: -17 * caida, alfa: 1 - tramo(f, 0.8, 1) },
       cuerpo: { rot: incl * (1 - caida) },
       cabeza: { rot: 10 * caida },
       mandibula: { rot: -14 * caida },

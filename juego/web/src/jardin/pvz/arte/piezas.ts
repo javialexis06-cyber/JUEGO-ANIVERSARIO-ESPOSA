@@ -1,17 +1,45 @@
-// Motor de arte por piezas de Plantas contra Zombis (como el «reanim» de PvZ). Solo navegador: el motor del juego
-// nunca importa este archivo.
+// Motor de arte por piezas de Plantas contra Zombis (como el «reanim» de PvZ). Solo navegador: lo usan la vista, la
+// interfaz y la galería (herramientas/pvz-galeria.html); el motor del juego NUNCA importa nada de arte/.
 //
-// Cada personaje es un conjunto de piezas SVG dibujadas en un MARCO LOCAL (unidades = px de mundo) con su punto de
-// apoyo en `ancla`. Al cargar, cada pieza (y cada variante) se rasteriza UNA vez a un lienzo fuera de pantalla con la
-// resolución pedida (escala de pantalla × devicePixelRatio), se recorta a su contenido y se guarda en caché. Cada
-// cuadro se dibuja con drawImage y transformaciones jerárquicas: el hijo hereda el giro y la traslación del padre
-// alrededor de los pivotes.
+// MODELO
+// - Cada personaje (DefPersonaje) es un conjunto de piezas SVG dibujadas en su MARCO LOCAL (unidades = px de mundo de
+//   PvZ 1, y hacia abajo) con el punto de apoyo (pies o base de la maceta) en `ancla`. Plantas miran a la derecha y
+//   zombis a la izquierda; `espejo` los voltea.
+// - Al cargar, cada pieza y cada variante (`estados` de la pieza) se rasteriza UNA vez a un lienzo fuera de pantalla
+//   con la resolución pedida (escala de pantalla × devicePixelRatio), se recorta a su contenido y queda en caché.
+// - Cada cuadro se dibuja con drawImage y transformaciones jerárquicas: la pieza hija hereda giro, escala y traslación
+//   de su `padre` alrededor de los pivotes. `anim(ctx)` devuelve la pose del cuadro (procedural: tiempo y estado).
+// - Tintes por entidad (congelado, hipnotizado, golpe, ceniza) cacheados por pieza; las piezas `sinTinte` (sombras)
+//   no se tiñen.
+//
+// API
+//   await cargarPersonajes(defs, escala)          rasteriza todo a `escala` = px de dispositivo por unidad de mundo
+//                                                 (p. ej. alto_lienzo_px / 600). Se puede llamar con varias escalas.
+//   asegurarCarga(def, escala)                    lo mismo para un personaje (promesa que nunca rechaza)
+//   dibujarPersonaje(ctx, def, op)                dibuja en (op.x, op.y) = ancla en UNIDADES DE MUNDO (ver abajo)
+//   retrato(def, tam, estado?, op?)               lienzo con el retrato (sobres de semilla con encuadre 'arriba',
+//                                                 almanaque con 'completo'); se repinta solo si faltaba el arte
+//   piezaSuelta(def, 'brazo' | 'cabeza' | 'casco' | idPieza, op?)
+//                                                 lienzo de la parte desprendida (con sus hijas) en su pose actual,
+//                                                 con su caja relativa al ancla, para que la vista la haga caer
+//   puntoMundo(def, 'boca' | 'cabeza' | …, x, y, escala?, espejo?)
+//                                                 punto con nombre en el mundo (de dónde sale el guisante, dónde va
+//                                                 la mantequilla)
+//   variantesPorDano(def, grupo, restante01)      variantes del casco, la nuez o la bandera según la vida que queda
+//   varianteDe(def, grupo, valor)                 variantes de un grupo con un valor concreto
+//   aplicarPerdidas(def, ['brazo', 'cabeza'])     { ocultar, variantes } para dibujar al zombi sin esas partes
+//   personajeCargado(def), dibujarMarcador(…), liberarArte()   (liberar al salir del juego)
 //
 // COORDENADAS DE DIBUJO: `dibujarPersonaje` recibe x, y en UNIDADES DE MUNDO. Antes de llamarla, la vista deja en
 // el contexto la transformación mundo → píxeles del lienzo, por ejemplo
-//   ctx.setTransform(s, 0, 0, s, -camaraX * s, 0)   con s = píxeles de dispositivo por unidad de mundo.
-// La caché que se usa es la de resolución más parecida a |s| × escala; si no hay ninguna cargada se pinta un
-// marcador (círculo con el nombre) y se pide la carga en segundo plano. Nunca lanza errores por falta de arte.
+//   const s = (lienzo.height / ALTO_MUNDO);          // px de dispositivo por unidad (ya incluye devicePixelRatio)
+//   ctx.setTransform(s, 0, 0, s, -camaraX * s, 0);
+//   dibujarPersonaje(ctx, DEF_ARTE.zombi, { x: z.x, y: centroFila(z.fila) + PIE_ZOMBI, t, estado: 'camina',
+//     semilla: z.id, vel: lento ? 0.5 : 1, tinte, ...aplicarPerdidas(DEF_ARTE.zombi, perdidas) });
+// La caché que se usa es la de resolución más parecida a |s| × escala; si se dibuja mucho más grande se pide otra en
+// segundo plano. Si no hay ninguna cargada se pinta un marcador (círculo con el nombre) y se pide la carga. Nunca lanza
+// errores por falta de arte. Los estados de una sola vez (ataca, muere, salta, explota…) reciben `fase` 0..1: la vista
+// la calcula con `def.duraciones[estado]`; `def.avances[estado]` dice cuánto avanza en x al terminar (salto).
 //
 // ROTACIONES en grados (positivo = sentido horario en pantalla). En el marco local, y crece hacia abajo.
 
@@ -57,8 +85,11 @@ export interface PosePieza {
   variante?: string;
 }
 
-/** Pose de un cuadro. La clave especial `_raiz` mueve el personaje entero alrededor del ancla. */
-export type Pose = Record<string, PosePieza>;
+/**
+ * Pose de un cuadro: id de pieza → transformación relativa a su posición de reposo. Las piezas que no aparecen (o
+ * que valen `undefined`) quedan en reposo. La clave especial `_raiz` mueve el personaje entero alrededor del ancla.
+ */
+export type Pose = Record<string, PosePieza | undefined>;
 
 export interface GrupoVariantes {
   /** Piezas que cambian juntas. */
