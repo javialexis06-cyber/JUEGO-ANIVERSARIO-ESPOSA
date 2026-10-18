@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galería de arte PvZ</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #2c2418; color: #f6ecd2; font: 14px/1.35 system-ui, 'Liberation Sans', sans-serif; }
+    body.escena, body.tira { overflow: hidden; background: #34501f; }
+    header { padding: 12px 16px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+    header h1 { margin: 0; font-size: 20px; }
+    header a { color: #ffd21f; }
+    h2 { margin: 18px 16px 8px; font-size: 16px; color: #ffd21f; }
+    .grupo { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 16px; }
+    .tarjeta { background: #3b3020; border: 2px solid #1d1408; border-radius: 10px; padding: 4px; display: flex; flex-direction: column; align-items: center; }
+    .tarjeta canvas { display: block; border-radius: 6px; }
+    .tarjeta span { font-size: 12px; padding: 2px 4px; text-align: center; max-width: 220px; }
+    .ancho { padding: 0 16px; }
+    .ancho canvas { display: block; max-width: 100%; border: 2px solid #1d1408; border-radius: 8px; }
+    #pantalla { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="./pvz-galeria.ts"></script>
+</body>
+</html>
