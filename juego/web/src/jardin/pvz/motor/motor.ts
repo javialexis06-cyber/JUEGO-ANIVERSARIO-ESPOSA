@@ -1,4 +1,4 @@
-import type {DefNivel,DefPlanta,DefZombi,OpcionesMotorPvZ,PlantaPvZ,ZombiPvZ,ProyectilPvZ,SolPvZ,CortacespedPvZ,EventoPvZ,TipoDano,OrdenPvZ,EstadoPvZ,CapaPlanta} from '../tipos';
+import type {DefNivel,DefPlanta,DefZombi,OpcionesMotorPvZ,PlantaPvZ,ZombiPvZ,ProyectilPvZ,SolPvZ,CortacespedPvZ,EventoPvZ,TipoDano,OrdenPvZ,EstadoPvZ,CapaPlanta,ZonaPvZ} from '../tipos';
 import {semillasAntesDelNivel} from '../datos/dia';
 import {PLANTAS_PVZ} from '../datos/plantas';
 import {ZOMBIS_PVZ} from '../datos/zombis';
@@ -17,9 +17,9 @@ export class MotorPvZ {
  t=0;pasos=0;sol:number;abono:number;oleada=0;terminado:''|'gano'|'perdio'='';eliminados=0;sembradas=0;
  plantas:PlantaPvZ[]=[];zombis:ZombiPvZ[]=[];proyectiles:ProyectilPvZ[]=[];soles:SolPvZ[]=[];
  cortacespedes:CortacespedPvZ[]=[];recargas:Record<string,number>={};eventos:EventoPvZ[]=[];
- cinta:{id:number;planta:string}[]=[];objetivoVida?:number;
+ zonas:ZonaPvZ[]=[];cinta:{id:number;planta:string}[]=[];objetivoVida?:number;
  private proximo=1;private cieloEn=6;private cielosCaidos=0;private cintaEn=0;private sinOleadas:boolean;
- private dentroPaso=false;
+ private dentroPaso=false;private origenAbono:number|null=null;
  constructor(nivel:DefNivel,opciones:OpcionesMotorPvZ={},registros:RegistrosPvZ={}){
   this.nivel=structuredClone(nivel);this.plantasDef=structuredClone(registros.plantas??PLANTAS_PVZ);this.zombisDef=structuredClone(registros.zombis??ZOMBIS_PVZ);
   this.comportamientosP=registros.comportamientoPlantas??COMPORTAMIENTOS_PLANTAS;this.comportamientosZ=registros.comportamientoZombis??COMPORTAMIENTOS_ZOMBIS;
@@ -57,9 +57,23 @@ export class MotorPvZ {
  }
  plantar(tipo:string,fila:number,col:number){if(!this.validaSiembra(tipo,fila,col))return false;const d=this.plantasDef[tipo];this.sol-=d.sol;this.recargas[tipo]=d.recarga;this.sembrar(tipo,fila,col);return true;}
  private sembrar(tipo:string,fila:number,col:number){const d=this.plantasDef[tipo],capa=d.capa??'principal',vieja=this.plantaEn(fila,col,capa);if(vieja){vieja.vida=0;this.plantas=this.plantas.filter(p=>p!==vieja);}const p:PlantaPvZ={id:this.nuevoId(),tipo,fila,col,x:col*80+40,vida:d.vida,edad:0,capa,dormida:!!d.nocturna&&!this.esNoche,congelada:0,datos:{}};this.plantas.push(p);this.sembradas++;this.comportamientosP[tipo]?.iniciar?.(this,p);this.eventos.push({t:'siembra',id:p.id,tipo,fila,col,x:p.x});return p;}
- quitar(fila:number,col:number){if(this.terminado||!this.casilla(fila,col))return false;const orden:CapaPlanta[]=['temporal','cubierta','principal','base'];const p=orden.map(c=>this.plantaEn(fila,col,c)).find(Boolean);if(!p)return false;p.vida=0;this.plantas=this.plantas.filter(v=>v!==p);this.eventos.push({t:'pala',id:p.id,fila,col});return true;}
+ quitar(fila:number,col:number){if(this.terminado||!this.casilla(fila,col))return false;const orden:CapaPlanta[]=['temporal','cubierta','principal','base'];const p=orden.map(c=>this.plantaEn(fila,col,c)).find(Boolean);if(!p||this.protegidaPorAbono(p))return false;p.vida=0;this.plantas=this.plantas.filter(v=>v!==p);this.eventos.push({t:'pala',id:p.id,fila,col});return true;}
  recoger(id:number){if(this.terminado||!entero(id))return false;const i=this.soles.findIndex(s=>s.id===id);if(i<0)return false;const s=this.soles[i];this.sol+=s.valor;this.soles.splice(i,1);this.eventos.push({t:'recogeSol',id,cantidad:s.valor});return true;}
- usarAbono(id:number){if(this.terminado||!entero(id)||this.abono<=0)return false;const p=this.plantas.find(p=>p.id===id&&p.vida>0&&!p.dormida&&!p.congelada),fn=p&&this.comportamientosP[p.tipo]?.abono;if(!p||!fn)return false;this.abono--;fn(this,p);this.eventos.push({t:'abono',id:p.id,fila:p.fila,col:p.col});return true;}
+ protegidaPorAbono(p:PlantaPvZ){return(p.datos.abonoRestantes??0)>0||(p.datos.abonoFinalPendiente??0)>0;}
+ puedeUsarAbono(id:number){const p=this.plantas.find(p=>p.id===id&&p.vida>0);if(this.terminado||!entero(id)||this.abono<=0||!p||p.dormida||p.congelada||this.protegidaPorAbono(p))return false;const c=this.comportamientosP[p.tipo];return !!c?.abono&&(c.puedeAbono?.(this,p)??true);}
+ usarAbono(id:number){
+  if(!this.puedeUsarAbono(id))return false;const p=this.plantas.find(p=>p.id===id)!;
+  this.abono--;this.origenAbono=p.id;
+  try{this.comportamientosP[p.tipo].abono!(this,p);}finally{this.origenAbono=null;}
+  if(!this.protegidaPorAbono(p))p.vida=this.plantasDef[p.tipo].vida;
+  this.eventos.push({t:'abono',id:p.id,fila:p.fila,col:p.col});return true;
+ }
+ /** Reproducción interna de una habilidad: no abre una siembra gratuita para las órdenes del jugador. */
+ casillasParaReproducir(p:PlantaPvZ){const libres:{fila:number;col:number}[]=[];if(this.origenAbono!==p.id)return libres;for(const fila of this.nivel.filas)for(let col=0;col<this.columnas;col++)if(this.validaSiembra(p.tipo,fila,col,true))libres.push({fila,col});return libres;}
+ reproducirPlanta(p:PlantaPvZ,fila:number,col:number){if(this.origenAbono!==p.id||p.vida<=0||!this.plantas.includes(p)||!this.validaSiembra(p.tipo,fila,col,true))return null;const copia=this.sembrar(p.tipo,fila,col);copia.datos.origenAbono=p.id;const evento=this.eventos.at(-1);if(evento?.t==='siembra')evento.origen=p.id;return copia;}
+ crearZonaHielo(p:PlantaPvZ,duracion:number){if(this.origenAbono!==p.id||!finito(duracion)||duracion<=0||duracion>60)return null;const zona:ZonaPvZ={id:this.nuevoId(),tipo:'hielo',origen:p.id,fila:p.fila,desde:p.x,hasta:800,vida:duracion};this.zonas.push(zona);this.eventos.push({t:'zona',tipo:'hielo',id:zona.id,origen:p.id,fila:p.fila,x:p.x,hasta:800,duracion});return zona;}
+ esComestible(z:ZombiPvZ){return this.zombisDef[z.tipo]?.comestible!==false;}
+
  plantarCinta(id:number,fila:number,col:number){if(this.terminado||!entero(id))return false;const i=this.cinta.findIndex(s=>s.id===id),s=this.cinta[i];if(!s||!this.validaSiembra(s.planta,fila,col,true)||this.nivel.minijuego==='bolos'&&col>2)return false;this.cinta.splice(i,1);if(this.nivel.minijuego==='bolos')this.proyectiles.push({id:this.nuevoId(),tipo:'bolo-'+s.planta,origen:0,fila,x:col*80+40,velocidad:240,dano:1800,danoTipo:s.planta==='nuez-explosiva'?'explosion':'aplastar',perforante:s.planta!=='nuez-explosiva',impactados:[]});else this.sembrar(s.planta,fila,col);return true;}
  ordenar(orden:unknown){if(!orden||typeof orden!=='object'||this.terminado)return false;const a=orden as OrdenPvZ;if(a.tipo==='recoger')return entero(a.id)&&this.recoger(a.id!);if(a.tipo==='abono')return entero(a.id)&&this.usarAbono(a.id!);if(!this.casilla(a.fila,a.col))return false;if(a.tipo==='pala')return this.quitar(a.fila!,a.col!);if(a.tipo==='plantar'&&typeof a.planta==='string')return this.plantar(a.planta,a.fila!,a.col!);if(a.tipo==='plantarCinta'&&entero(a.id))return this.plantarCinta(a.id!,a.fila!,a.col!);return false;}
  crearSol(fila:number,x:number,valor=25,origen:'cielo'|'planta'='planta'){
@@ -70,9 +84,9 @@ export class MotorPvZ {
   if(this.terminado||!Object.hasOwn(this.zombisDef,tipo)||!this.nivel.filas.includes(fila)||!finito(x)||x< -60||x>900||this.zombis.length>=300)return null;
   const d=this.zombisDef[tipo],z:ZombiPvZ={id:this.nuevoId(),tipo,fila,x,vida:d.vida,edad:0,sentido:-1,armadura:d.armadura?.vida??0,armaduraInicial:d.armadura?.vida??0,escudo:d.armadura?.tipo==='escudo',metal:d.armadura?.metal??false,lento:0,congelado:0,mantequilla:0,hipnotizado:false,comiendo:null,ceniza:false,sinBrazo:false,sinCabeza:false,datos:{},oleada};this.zombis.push(z);this.comportamientosZ[tipo]?.iniciar?.(this,z);return z;
  }
- disparar(p:PlantaPvZ,dano:number,tipo:TipoDano='recto',lento=0){if(this.terminado||p.vida<=0||!finito(dano)||dano<=0||this.proyectiles.length>=500)return false;this.proyectiles.push({id:this.nuevoId(),tipo:tipo==='hielo'?'guisante-hielo':'guisante',origen:p.id,fila:p.fila,x:p.x+30,velocidad:330,dano,danoTipo:tipo,lento,impactados:[]});p.datos.atacaHasta=this.t+.2;this.eventos.push({t:'disparo',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x});return true;}
+ disparar(p:PlantaPvZ,dano:number,tipo:TipoDano='recto',lento=0,proyectil?:string){if(this.terminado||p.vida<=0||!finito(dano)||dano<=0||this.proyectiles.length>=500)return false;this.proyectiles.push({id:this.nuevoId(),tipo:proyectil??(tipo==='hielo'?'guisante-hielo':'guisante'),origen:p.id,fila:p.fila,x:p.x+30,velocidad:330,dano,danoTipo:tipo,lento,impactados:[]});p.datos.atacaHasta=this.t+.2;this.eventos.push({t:'disparo',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x,cantidad:dano,proyectil:proyectil??(tipo==='hielo'?'guisante-hielo':'guisante')});return true;}
  hayBlanco(p:PlantaPvZ,alcance=800){return this.zombis.some(z=>z.vida>0&&!z.hipnotizado&&!z.sinCabeza&&z.fila===p.fila&&z.x>=p.x-10&&z.x<800&&z.x-p.x<=alcance);}
- danarPlanta(p:PlantaPvZ,cantidad:number,origen?:ZombiPvZ){if(this.terminado||p.vida<=0||!finito(cantidad)||cantidad<=0)return false;const absorbido=Math.min(cantidad,p.datos.abonoEscudo??0);if(absorbido)p.datos.abonoEscudo-=absorbido;p.vida=Math.max(0,p.vida-(cantidad-absorbido));this.comportamientosP[p.tipo]?.alDanar?.(this,p,cantidad,origen);if(p.vida===0){this.comportamientosP[p.tipo]?.alMorir?.(this,p);this.eventos.push({t:'muere',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x});}return true;}
+ danarPlanta(p:PlantaPvZ,cantidad:number,origen?:ZombiPvZ){if(this.terminado||p.vida<=0||this.protegidaPorAbono(p)||!finito(cantidad)||cantidad<=0)return false;const absorbido=Math.min(cantidad,p.datos.abonoEscudo??0);if(absorbido)p.datos.abonoEscudo-=absorbido;p.vida=Math.max(0,p.vida-(cantidad-absorbido));this.comportamientosP[p.tipo]?.alDanar?.(this,p,cantidad,origen);if(p.vida===0){this.comportamientosP[p.tipo]?.alMorir?.(this,p);this.eventos.push({t:'muere',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x});}return true;}
  danarZombi(z:ZombiPvZ,cantidad:number,tipo:TipoDano='recto'){
   if(this.terminado||z.vida<=0||!finito(cantidad)||cantidad<=0)return false;let cuerpo=cantidad;
   const armaduraAntes=z.armadura;
@@ -103,6 +117,7 @@ export class MotorPvZ {
     if(nueva?.aviso)this.eventos.push({t:'oleadaEnorme',oleada:this.oleada+1});
     if(nueva&&!nueva.aviso){this.oleada=this.director.actual;this.vidaOleada=0;for(const a of nueva.apariciones){const z=this.crearZombi(a.tipo,a.fila,a.x,a.oleada);if(z)this.vidaOleada+=z.vida+z.armadura;}this.eventos.push({t:nueva.ultima?'ultimaOleada':'oleada',oleada:this.oleada});}
    }
+   for(const zona of this.zonas){zona.vida-=dt;if(zona.vida<=0)continue;for(const z of this.zombis)if(z.vida>0&&!z.hipnotizado&&z.fila===zona.fila&&z.x>=zona.desde&&z.x<=zona.hasta)z.lento=Math.max(z.lento,dt*2);}this.zonas=this.zonas.filter(z=>z.vida>1e-9);
    for(const p of [...this.plantas]){if(p.vida<=0)continue;p.edad+=dt;p.congelada=Math.max(0,p.congelada-dt);if(!p.dormida&&!p.congelada)this.comportamientosP[p.tipo]?.paso(this,p,dt);}
    this.avanzarProyectiles(dt);this.avanzarCortacespedes(dt);
    for(const z of [...this.zombis]){if(z.vida<=0)continue;this.avanzarZombi(z,dt);if(this.terminado)break;}
@@ -149,5 +164,5 @@ export class MotorPvZ {
  consumirEventos(){const eventos=this.eventos;this.eventos=[];return eventos;}
  /** Varios pasos para ×2: conserva todos los eventos entre pasos y nunca depende del dibujo. */
  avanzar(cantidad=1){if(!entero(cantidad)||cantidad<0||cantidad>600)throw new Error('Cantidad de pasos inválida');const eventos=this.consumirEventos();for(let i=0;i<cantidad;i++){this.paso();eventos.push(...this.consumirEventos());if(this.terminado)break;}return eventos;}
- estado():EstadoPvZ {return structuredClone({version:1,nivel:this.nivel.id,t:this.t,pasos:this.pasos,sol:this.sol,abono:this.abono,oleada:this.oleada,terminado:this.terminado,plantas:this.plantas,zombis:this.zombis,proyectiles:this.proyectiles,soles:this.soles,cortacespedes:this.cortacespedes,recargas:this.recargas,cinta:this.cinta,objetivoVida:this.objetivoVida,eliminados:this.eliminados,sembradas:this.sembradas});}
+ estado():EstadoPvZ {return structuredClone({version:1,nivel:this.nivel.id,t:this.t,pasos:this.pasos,sol:this.sol,abono:this.abono,oleada:this.oleada,terminado:this.terminado,plantas:this.plantas,zombis:this.zombis,proyectiles:this.proyectiles,soles:this.soles,cortacespedes:this.cortacespedes,recargas:this.recargas,cinta:this.cinta,zonas:this.zonas,objetivoVida:this.objetivoVida,eliminados:this.eliminados,sembradas:this.sembradas});}
 }

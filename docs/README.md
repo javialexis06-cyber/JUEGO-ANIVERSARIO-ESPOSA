@@ -45,6 +45,8 @@ solo conectar Supabase para habilitar su clasificación real. Voces nuevas desca
 |---|---|
 | [`jardin-plan-2026-10-17.md`](en-obra/jardin-plan-2026-10-17.md) | Plan vigente de Plantas contra Zombis «La Semilla Madre»: historia propia, 10 mundos, 88 niveles y Fusión. |
 | [`pvz-arquitectura.md`](en-obra/pvz-arquitectura.md) | Arquitectura, contratos, estilo y pruebas obligatorias de la nueva aventura de PvZ. |
+| [`pvz-motor-2026-10-19.md`](en-obra/pvz-motor-2026-10-19.md) | Motor determinista, diez niveles del día y treinta partidas de campaña. |
+| [`pvz-abono-guardado-2026-10-19.md`](en-obra/pvz-abono-guardado-2026-10-19.md) | Abono del día, progreso, persistencia y recuperación; contrato para la interfaz. |
 | [`jardin-dos-jugadores-2026-10-16.md`](en-obra/jardin-dos-jugadores-2026-10-16.md) | Duelo de plantas contra zombis en una pantalla o por sala; reglas y comprobaciones. |
 | [`ampliacion-patio-2026-10-16.md`](en-obra/ampliacion-patio-2026-10-16.md) | Seis mapas, cuatro casos, dieciséis juegos mentales y Jardín; pruebas y estado de la clasificación real. |
 | [`mejoras-y-limpieza-2026-10-16.md`](en-obra/mejoras-y-limpieza-2026-10-16.md) | Cierre de mejoras de Torneo/Carreras y limpieza del repositorio, con verificaciones; voces nuevas descartadas. |

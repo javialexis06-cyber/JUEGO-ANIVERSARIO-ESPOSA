@@ -10,7 +10,7 @@ export interface DefPlanta {
 }
 export interface DefZombi {
  id:string;nombre:string;vida:number;armadura?:{tipo:'casco'|'escudo';vida:number;metal?:boolean};
- velocidad:number;mordida:number;area:Area;desbloqueo:string;descripcion:string;datos?:Record<string,number>;
+ velocidad:number;mordida:number;comestible?:boolean;area:Area;desbloqueo:string;descripcion:string;datos?:Record<string,number>;
 }
 export interface DefNivel {
  id:string;parte:1|2;area:Area;filas:number[];zombis:string[];banderas:number;
@@ -41,19 +41,20 @@ export interface ProyectilPvZ {
  id:number;tipo:string;origen:number;fila:number;x:number;velocidad:number;dano:number;
  danoTipo:TipoDano;y?:number;velocidadY?:number;lento?:number;perforante?:boolean;impactados:number[];
 }
+export interface ZonaPvZ {id:number;tipo:'hielo';origen:number;fila:number;desde:number;hasta:number;vida:number}
 export interface SolPvZ {id:number;fila:number;x:number;valor:number;edad:number;vida:number;origen:'cielo'|'planta'}
 export interface CortacespedPvZ {fila:number;x:number;estado:'listo'|'activo'|'gastado'}
 export interface EventoPvZ {
  t:'siembra'|'pala'|'sol'|'recogeSol'|'disparo'|'impacto'|'muerde'|'pierdeBrazo'|'pierdeCabeza'|
  'pierdeArmadura'|'explosion'|'muere'|'oleada'|'oleadaEnorme'|'ultimaOleada'|'cortacesped'|'fin'|
- 'estado'|'abono'|'cinta'|'objetivo';
- id?:number;tipo?:string;fila?:number;col?:number;x?:number;cantidad?:number;oleada?:number;gano?:boolean;
+ 'estado'|'abono'|'cinta'|'objetivo'|'zona';
+ id?:number;tipo?:string;fila?:number;col?:number;x?:number;cantidad?:number;oleada?:number;gano?:boolean;origen?:number;duracion?:number;hasta?:number;proyectil?:string;
 }
 export interface EstadoPvZ {
  version:1;nivel:string;t:number;pasos:number;sol:number;abono:number;oleada:number;
  terminado:''|'gano'|'perdio';plantas:PlantaPvZ[];zombis:ZombiPvZ[];proyectiles:ProyectilPvZ[];
  soles:SolPvZ[];cortacespedes:CortacespedPvZ[];recargas:Record<string,number>;cinta:{id:number;planta:string}[];
- objetivoVida?:number;eliminados:number;sembradas:number;
+ zonas?:ZonaPvZ[];objetivoVida?:number;eliminados:number;sembradas:number;
 }
 export interface OrdenPvZ {
  tipo:'plantar'|'pala'|'recoger'|'abono'|'plantarCinta';planta?:string;fila?:number;col?:number;id?:number;

@@ -90,5 +90,6 @@ El nuevo pedido sí autoriza habilitar y comprobar la clasificación del patio e
 Usar la conexión Supabase cuando esté autorizada, sin pedir al usuario escribir SQL ni pegar claves privadas.
 
 Reparto confirmado el 19 de octubre: Claude tiene toda la parte gráfica del Jardín; Codex apoya motor,
-mecánicas, niveles y pruebas en `src/jardin/pvz/`. La base del mundo 1 está implementada y probada sin UI nueva;
-ver `docs/en-obra/pvz-motor-2026-10-19.md` antes de integrar. Los patios clásicos y el duelo se conservan intactos.
+mecánicas, niveles y pruebas en `src/jardin/pvz/`. La base del mundo 1, el abono del día y el contrato de
+guardado están implementados sin UI nueva; ver `docs/en-obra/pvz-motor-2026-10-19.md` y
+`docs/en-obra/pvz-abono-guardado-2026-10-19.md` antes de integrar. Los patios clásicos y el duelo se conservan intactos.

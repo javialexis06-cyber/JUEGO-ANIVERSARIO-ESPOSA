@@ -1,6 +1,7 @@
 # Plantas contra Zombis · arquitectura y contrato de trabajo
 
-Avance de motor del 19 de octubre: [contratos, alcance y pruebas](pvz-motor-2026-10-19.md).
+Avances del 19 de octubre: [base del motor](pvz-motor-2026-10-19.md) y
+[abono, progreso y recuperación de guardado](pvz-abono-guardado-2026-10-19.md).
 Claude tiene todos los gráficos; Codex desarrolla motor, mecánicas, datos de niveles y pruebas.
 
 Documento interno para construir la nueva aventura del Jardín ([plan](jardin-plan-2026-10-17.md)). Todo agente o
@@ -74,7 +75,7 @@ src/jardin/pvz/
   ui/pvz.css
   historia/<parte>.ts      diálogos, notas y escenas
   sonido.ts                efectos y música sintetizados
-  guardado.ts              progreso
+  guardado.ts              progreso y persistencia (Codex; la interfaz llama a este contrato)
   aventura.ts              une motor, vista, interfaz y guardado para jugar un nivel
 src/jardin/main.ts         pantalla de título y navegación (reemplaza el menú de patios)
 src/jardin/clasicos.ts     los 12 patios de antes, movidos tal cual desde main.ts
@@ -111,6 +112,7 @@ interface DefPlanta { id: string; nombre: string; sol: number; recarga: number; 
   mejoraDe?: string; desbloqueo: string; descripcion: string; datos?: Record<string, number> }
 interface DefZombi { id: string; nombre: string; vida: number; armadura?: {tipo:'casco'|'escudo'; vida: number;
   metal?: boolean}; velocidad: number /* px/s */; mordida: number /* daño/s */; area: Area;
+  comestible?: boolean /* false para gigantes/vehículos; true por defecto */;
   desbloqueo: string; descripcion: string; datos?: Record<string, number> }
 interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: number[] /* activas */;
   zombis: string[]; banderas: number; tipo: 'normal'|'cinta'|'minijuego'|'jefe'; minijuego?: string;
@@ -122,7 +124,7 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
 - **Comportamientos.** `comportamiento/index.ts` registra un objeto por planta y otro por zombi que lo necesite:
 
   ```ts
-  { iniciar?(m,p), paso(m,p,dt), abono?(m,p), alDanar?(m,p,cant,origen), alMorir?(m,p) }
+  { iniciar?(m,p), paso(m,p,dt), puedeAbono?(m,p), abono?(m,p), alDanar?(m,p,cant,origen), alMorir?(m,p) }
   ```
 
   - El motor resuelve todo lo común: caminar, morder, armaduras, estados, colisiones, cortacésped,
@@ -148,6 +150,13 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   - `{t:'pierdeBrazo'}`, `{t:'pierdeCabeza'}`, `{t:'pierdeArmadura'}`;
   - `{t:'explosion'}`, `{t:'sol'}`, `{t:'oleadaEnorme'}`, `{t:'ultimaOleada'}`, `{t:'cortacesped'}`;
   - `{t:'fin', gano}`.
+- **Abono:** `puedeUsarAbono(id)` valida sin consumir; `usarAbono(id)` consume una carga solo al aceptar.
+  El comportamiento puede rechazarlo antes del cobro con `puedeAbono(m,p)` (p. ej., límite de soles).
+  Las ráfagas activas bloquean daño, pala y otro abono; al finalizar curan la planta y reanudan la cadencia normal.
+  `EstadoPvZ.zonas` es opcional para compatibilidad: contiene zonas de hielo con ID, origen, fila, `desde`,
+  `hasta` y vida restante. El evento `zona` anuncia su duración; `siembra.origen` identifica copias de Patatapum;
+  `disparo.cantidad` indica daño y `disparo.proyectil` distingue el guisante grande. `estado` con tipo
+  `abono-fin` marca el fin de la ráfaga. La vista decide cómo representar esos datos.
 - **Consumo de eventos:** `consumirEventos()` tras órdenes; `avanzar(n)` reúne los eventos de cada paso. No leer solo el último paso con ×2.
 - **Determinismo:** misma semilla, mismo nivel y mismas órdenes dan el mismo resultado.
 
@@ -238,6 +247,15 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
 - Lecturas y escrituras protegidas con `try/catch`. Si falla la escritura, se muestra un aviso con
   «Reintentar» sin perder el resultado, como hacen los patios.
 - Nunca se borra ni se migra `jardin-v1`.
+- `GuardadoPvZ` recibe un almacén `{getItem,setItem}` y `{amigo}`; no accede al DOM ni al almacenamiento al
+  importar. `abrirNivel` valida desbloqueo y selección, devuelve nivel, opciones y un recibo de partida.
+  `confirmarResultado(recibo, estado)` acepta un final una vez; los premios se conceden al primer triunfo.
+- `bloqueo`, `pendiente`, `guardado` y `reintentar()` permiten mostrar y resolver el aviso. Un fallo de escritura
+  conserva el resultado en memoria y bloquea nuevas partidas. Un archivo roto, de versión futura o estructura
+  desconocida se conserva y bloquea escrituras. Un cambio de otra pestaña produce conflicto sin sobrescribirlo.
+- Se guardan premios, objetos y notas, incluidas semillas de áreas todavía no registradas. Compras, monedas,
+  ranuras y los bloques de modos se conservan; todavía no se implementan tienda ni modos. La batalla activa no
+  se restaura al recargar. El contrato completo y sus límites están en el registro de abono y guardado.
 
 ## Prohibiciones y cuidados
 
@@ -264,6 +282,9 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   - capturas en `test-results/pvz/`.
 - Galería de desarrollo `herramientas/pvz-galeria.html`, que Vite sirve y no entra al build: muestra todo el arte
   en todos sus estados, para revisar capturas.
+- `scripts/probar-pvz-abono.mjs` y `scripts/probar-pvz-guardado.mjs`: habilidades, progresión legal y fallos.
+- `scripts/probar-pvz-persistencia-navegador.mjs`: contrato de motor y `localStorage` real, recarga, cuota,
+  aislamiento de claves y archivos incompatibles. No sustituye la prueba visual de la aventura.
 - Antes de publicar:
   - `npm run verificar:repo`, `npm run build` y `npm run build:amigos`, con su filtro;
   - las pruebas antiguas del Jardín y del duelo;

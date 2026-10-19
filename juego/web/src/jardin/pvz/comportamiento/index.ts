@@ -3,7 +3,7 @@ import type {PlantaPvZ,ZombiPvZ,TipoDano} from '../tipos';
 import {COMPORTAMIENTO_DIA_PLANTAS,COMPORTAMIENTO_DIA_ZOMBIS} from './dia';
 export interface ComportamientoPlantaPvZ {
  iniciar?(m:MotorPvZ,p:PlantaPvZ):void;paso(m:MotorPvZ,p:PlantaPvZ,dt:number):void;
- abono?(m:MotorPvZ,p:PlantaPvZ):void;alDanar?(m:MotorPvZ,p:PlantaPvZ,cantidad:number,origen?:ZombiPvZ):void;
+ puedeAbono?(m:MotorPvZ,p:PlantaPvZ):boolean;abono?(m:MotorPvZ,p:PlantaPvZ):void;alDanar?(m:MotorPvZ,p:PlantaPvZ,cantidad:number,origen?:ZombiPvZ):void;
  alMorir?(m:MotorPvZ,p:PlantaPvZ):void;
 }
 export interface ComportamientoZombiPvZ {
