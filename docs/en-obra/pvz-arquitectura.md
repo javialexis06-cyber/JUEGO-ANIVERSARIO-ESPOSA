@@ -1,5 +1,8 @@
 # Plantas contra Zombis · arquitectura y contrato de trabajo
 
+Avance de motor del 19 de octubre: [contratos, alcance y pruebas](pvz-motor-2026-10-19.md).
+Claude tiene todos los gráficos; Codex desarrolla motor, mecánicas, datos de niveles y pruebas.
+
 Documento interno para construir la nueva aventura del Jardín ([plan](jardin-plan-2026-10-17.md)). Todo agente o
 sesión que trabaje en `src/jardin/pvz/` sigue estas reglas. Si una regla estorba, se cambia aquí primero.
 
@@ -77,8 +80,9 @@ src/jardin/main.ts         pantalla de título y navegación (reemplaza el menú
 src/jardin/clasicos.ts     los 12 patios de antes, movidos tal cual desde main.ts
 ```
 
-- Cada área se trabaja en sus propios archivos. Los índices se crean desde el principio con todas las áreas
-  importadas, aunque estén vacías, para que dos agentes no editen el mismo archivo.
+- Cada área se trabaja en sus propios archivos. Con el reparto del 19 de octubre, Codex mantiene los índices
+  de datos y comportamientos e incorpora cada área al construirla. Claude mantiene los registros gráficos;
+  ampliar una zona no requiere que ambos editen los índices del otro.
 - Lo que falte de arte se dibuja con un marcador simple, como un círculo con el nombre. Nunca debe romper el juego.
 
 ## Coordenadas y tiempo
@@ -97,7 +101,7 @@ src/jardin/clasicos.ts     los 12 patios de antes, movidos tal cual desde main.t
   - la vista interpola entre pasos;
   - la velocidad ×2 simplemente llama a `paso()` el doble.
 
-## Contrato del motor (resumen; el detalle vive en `tipos.ts`)
+## Contrato del motor (resumen; el detalle vive en `tipos.ts`; las extensiones del tutorial, cinta y presupuesto se registran allí)
 
 ```ts
 type Area = 'dia'|'noche'|'piscina'|'niebla'|'tejado'|'rio'|'vias'|'desierto'|'paramo'|'invernadero';
@@ -136,7 +140,7 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   - lento: mitad de velocidad y de mordida, tinte azul;
   - congelado: quieto;
   - mantequilla: quieto 4 s;
-  - hipnotizado: camina a la izquierda y muerde zombis, tinte morado;
+  - hipnotizado: camina a la derecha, hacia la entrada de enemigos, y muerde zombis, tinte morado;
   - ceniza: muere sin animación normal.
 - **Eventos:** `m.eventos` se vacía en cada paso. La vista y el sonido lo leen, y el motor nunca toca la vista.
   Ejemplos:
@@ -144,11 +148,12 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   - `{t:'pierdeBrazo'}`, `{t:'pierdeCabeza'}`, `{t:'pierdeArmadura'}`;
   - `{t:'explosion'}`, `{t:'sol'}`, `{t:'oleadaEnorme'}`, `{t:'ultimaOleada'}`, `{t:'cortacesped'}`;
   - `{t:'fin', gano}`.
+- **Consumo de eventos:** `consumirEventos()` tras órdenes; `avanzar(n)` reúne los eventos de cada paso. No leer solo el último paso con ×2.
 - **Determinismo:** misma semilla, mismo nivel y mismas órdenes dan el mismo resultado.
 
 ## Oleadas (PvZ 1)
 
-- Cada nivel tiene `banderas × 10` oleadas. La décima de cada bandera es una oleada enorme: aviso, zombi
+- Cada nivel normal tiene `banderas × 10` oleadas; `oleadas`/`enormes` explicitan excepciones del tutorial y bolos. La décima de cada bandera es una oleada enorme: aviso, zombi
   bandera y más puntos.
 - Cada oleada gasta un presupuesto de puntos que crece con el número de oleada. Cada tipo de zombi cuesta según
   su fuerza y solo salen los tipos del nivel.

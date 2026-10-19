@@ -125,6 +125,13 @@ se copian archivos del juego original. Los 12 patios actuales y el duelo para do
 - Las listas con nivel de desbloqueo, costos y vidas quedan en `src/jardin/pvz/datos/` cuando se construya cada
   mundo, con los valores de PvZ.
 
+## Avance del 19 de octubre
+
+Motor y datos del mundo 1 desarrollados por Codex, separados del arte de Claude. Treinta partidas simuladas
+(diez niveles × tres semillas) pasan con órdenes legales. La conexión de la aventura con los gráficos y el
+guardado nuevos sigue pendiente; este resultado no certifica todavía la interfaz.
+[Entrega, contrato y límites](pvz-motor-2026-10-19.md).
+
 ## Orden de construcción
 
 1. **Base:**

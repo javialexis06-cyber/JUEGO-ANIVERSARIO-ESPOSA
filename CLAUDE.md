@@ -88,3 +88,7 @@ Usar `CHROME_PATH` si el Chromium instalado no coincide con el de Playwright.
 El nuevo pedido sí autoriza habilitar y comprobar la clasificación del patio en Supabase. Limitarse a
 `supabase/patio-clasificacion.sql`; no aplicar el SQL antiguo de la casa. Javier pidió que lo haga el agente.
 Usar la conexión Supabase cuando esté autorizada, sin pedir al usuario escribir SQL ni pegar claves privadas.
+
+Reparto confirmado el 19 de octubre: Claude tiene toda la parte gráfica del Jardín; Codex apoya motor,
+mecánicas, niveles y pruebas en `src/jardin/pvz/`. La base del mundo 1 está implementada y probada sin UI nueva;
+ver `docs/en-obra/pvz-motor-2026-10-19.md` antes de integrar. Los patios clásicos y el duelo se conservan intactos.

@@ -3,6 +3,14 @@
 Actualizado el 17 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
+## Apoyo activo al Jardín · 19 de octubre
+
+Javier confirmó que trabajan Claude y Codex. Claude se encarga de todo lo gráfico; Codex apoya motor,
+mecánicas, niveles y pruebas conforme al [plan de La Semilla Madre](en-obra/jardin-plan-2026-10-17.md).
+La base nueva y los diez niveles del primer mundo pasan sus simulaciones; falta conectarlos con la aventura
+visual y el guardado nuevos de Claude. [Contrato y pruebas](en-obra/pvz-motor-2026-10-19.md).
+No integrar el borrador anterior del catálogo sobre el motor clásico. Granja congelada; voces descartadas.
+
 ## Encargo activo · Plantas contra Zombis en el Jardín
 
 Javier revisó el primer plan y decidió:
