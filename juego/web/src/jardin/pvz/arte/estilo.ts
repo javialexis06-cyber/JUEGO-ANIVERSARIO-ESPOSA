@@ -277,27 +277,32 @@ export const HUESOS_ZOMBI = {
   caderaDer: [69, 100] as [number, number],
 };
 
-/** Manga de saco colgando entre (x, y0) y (x, y1), con puño rasgado opcional. */
+/** Manga de saco colgando entre (x, y0) y (x, y1): se ensancha en el codo, con arrugas y el puño rasgado opcional. */
 function manga(x: number, y0: number, y1: number, ancho: number, relleno: string, oscuro: string, rasgada: boolean, hombro: boolean): string {
   const a = ancho / 2;
-  const top = hombro
-    ? `M${x - a},${y0 + 3} C${x - a},${y0 - 3} ${x + a},${y0 - 3} ${x + a},${y0 + 3}`
-    : `M${x - a},${y0} L${x + a},${y0}`;
-  const fondo = rasgada
-    ? `L${x + a - 0.6},${y1 - 1} L${x + a * 0.45},${y1 + 2.2} L${x},${y1 - 0.4} L${x - a * 0.45},${y1 + 2.4} L${x - a + 0.6},${y1 - 0.6}`
-    : `L${x + a - 0.6},${y1} L${x - a + 0.6},${y1}`;
+  const m = (y0 + y1) / 2;
+  const arriba = hombro ? `M${x - a},${y0 + 4} C${x - a},${y0 - 3.5} ${x + a},${y0 - 3.5} ${x + a},${y0 + 4}` : `M${x - a},${y0} L${x + a},${y0}`;
+  const abajo = rasgada
+    ? `Q${x + a * 0.75},${y1 + 3.5} ${x + a * 0.3},${y1 + 0.2} Q${x},${y1 + 4.5} ${x - a * 0.35},${y1 + 0.6} Q${x - a * 0.8},${y1 + 3.2} ${x - a + 0.8},${y1 - 0.3}`
+    : `Q${x},${y1 + 1.8} ${x - a + 0.8},${y1}`;
   return (
-    `<path d="${top} ${fondo} Z" fill="${relleno}" ${borde()}/>` +
-    `<path d="M${x + a * 0.35},${y0 + 4} L${x + a * 0.3},${y1 - 3}" stroke="${oscuro}" stroke-width="2" stroke-linecap="round" opacity="0.6"/>`
+    `<path d="${arriba} C${x + a + 0.8},${m - 4} ${x + a + 0.2},${y1 - 6} ${x + a - 0.8},${y1} ${abajo} C${x - a - 0.6},${y1 - 6} ${x - a + 0.6},${m - 2} ${x - a},${y0 + 4} Z" fill="${relleno}" ${borde()}/>` +
+    `<path d="M${x + a * 0.2},${y0 + 3} C${x + a + 0.5},${m - 6} ${x + a * 0.6},${y1 - 7} ${x + a - 1},${y1 - 1} Q${x + a * 0.2},${y1 - 2} ${x + a * 0.1},${y1 - 6} Z" fill="${oscuro}" opacity="0.45"/>` +
+    `<path d="M${x - a + 1.2},${m - 1} q${a * 0.9},${3} ${a * 1.7},${0.4} M${x - a + 1.6},${m + 2.4} q${a * 0.8},${2} ${a * 1.5},${0.2}" fill="none" stroke="${oscuro}" stroke-width="1.15" stroke-linecap="round" opacity="0.7"/>` +
+    `<path d="M${x - a + 1.4},${y0 + 5} C${x - a + 1.2},${m - 4} ${x - a + 1.6},${m} ${x - a + 2},${m + 2}" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity="0.18"/>`
   );
 }
 
-/** Mano de zombi colgando desde la muñeca (x, y): palma y dedos largos hacia abajo y al frente. */
+/** Mano gris colgando, gordita: palma, cuatro dedos redondeados con nudillos, pulgar y uñas negras. */
 export function manoZombi(x: number, y: number, piel: string, oscura: string): string {
+  const dedos = [[-4.5, 14.5], [-1.4, 17.2], [1.8, 16.5], [4.6, 13]];
   return (
-    `<path d="M${x - 4.5},${y - 1} C${x - 6},${y + 4} ${x - 6.5},${y + 9} ${x - 5},${y + 13} L${x - 3},${y + 16} L${x - 1.6},${y + 12} L${x},${y + 16.5} L${x + 1.5},${y + 11.5} L${x + 3.4},${y + 14.5} L${x + 4},${y + 9} C${x + 5},${y + 6} ${x + 5},${y + 2} ${x + 4},${y - 1} Z" fill="${piel}" ${borde(TRAZO * 0.85)}/>` +
-    `<path d="M${x - 7},${y + 5} C${x - 9},${y + 7} ${x - 9},${y + 10} ${x - 7.5},${y + 11}" fill="none" ${borde(TRAZO * 0.8)}/>` +
-    `<path d="M${x - 2},${y + 2} L${x - 1.5},${y + 9}" stroke="${oscura}" stroke-width="1.2" opacity="0.6"/>`
+    `<path d="M${x - 5.2},${y - 1} C${x - 7.2},${y + 4} ${x - 7.6},${y + 9} ${x - 6.2},${y + 13} C${x - 5.5},${y + 16.5} ${x - 2.6},${y + 16.8} ${x - 2},${y + 13.4} C${x - 1.8},${y + 17.4} ${x + 1.2},${y + 18} ${x + 1.8},${y + 14.2} C${x + 2.4},${y + 17.2} ${x + 5.4},${y + 16.8} ${x + 5.2},${y + 12.6} C${x + 6.8},${y + 8.5} ${x + 6.4},${y + 3} ${x + 4.8},${y - 1} Z" fill="${piel}" ${borde(TRAZO * 0.85)}/>` +
+    `<path d="M${x - 7},${y + 4} C${x - 11},${y + 5.5} ${x - 11.6},${y + 10.5} ${x - 8.4},${y + 12} C${x - 6.6},${y + 12.6} ${x - 5.4},${y + 10} ${x - 6},${y + 8}" fill="${piel}" ${borde(TRAZO * 0.8)}/>` +
+    `<path d="M${x + 3},${y + 1} C${x + 6.4},${y + 5} ${x + 6.4},${y + 11} ${x + 5.2},${y + 12.6} C${x + 4.6},${y + 8} ${x + 3.4},${y + 4} ${x + 1},${y + 1} Z" fill="${oscura}" opacity="0.5"/>` +
+    `<path d="M${x - 2.2},${y + 8} L${x - 2.1},${y + 13} M${x + 1.5},${y + 8} L${x + 1.6},${y + 13.6}" stroke="${oscura}" stroke-width="1.1" stroke-linecap="round" opacity="0.75"/>` +
+    dedos.map(([dx, dy]) => `<ellipse cx="${x + dx}" cy="${y + dy}" rx="1.5" ry="1" fill="#3f4a35"/>`).join('') +
+    `<path d="M${x - 3.6},${y + 2.2} q1,-1.6 2.6,-0.6 M${x + 0.6},${y + 1.8} q1.2,-1.6 2.6,-0.4" fill="none" stroke="${oscura}" stroke-width="1" opacity="0.55"/>`
   );
 }
 
@@ -310,58 +315,68 @@ function hueso(x: number, y: number): string {
   );
 }
 
-/** Pierna de pantalón (de la cadera al tobillo) con remiendo opcional. */
+/** Pierna de pantalón (de la cadera al tobillo): ancha, con el dobladillo deshilachado, pliegues y remiendo cosido. */
 function pierna(x: number, y0: number, y1: number, relleno: string, oscuro: string, remiendo: boolean): string {
+  const rod = y0 + (y1 - y0) * 0.55;
   return (
-    `<path d="M${x - 7},${y0 - 4} L${x + 7},${y0 - 4} L${x + 6},${y1} L${x + 3},${y1 + 1.6} L${x},${y1 - 0.5} L${x - 3},${y1 + 1.5} L${x - 6.2},${y1} Z" fill="${relleno}" ${borde()}/>` +
-    `<path d="M${x + 3},${y0} L${x + 2.5},${y1 - 4}" stroke="${oscuro}" stroke-width="2" opacity="0.55"/>` +
-    (remiendo ? `<path d="M${x - 5},${y0 + 14} l7,-1 l0.6,7 l-7,1 Z" fill="${oscuro}" ${borde(1.2)} opacity="0.9"/>` : '')
+    `<path d="M${x - 7.6},${y0 - 4} C${x - 8.4},${y0 + 10} ${x - 7.4},${y1 - 14} ${x - 6.8},${y1 - 2} C${x - 8.6},${y1 + 0.6} ${x - 7.2},${y1 + 3.4} ${x - 4.4},${y1 + 1.4} C${x - 3.2},${y1 + 3.8} ${x - 0.4},${y1 + 3.2} ${x + 0.8},${y1 + 0.6} C${x + 2.8},${y1 + 3.4} ${x + 6},${y1 + 2.4} ${x + 6.6},${y1 - 2} C${x + 7.2},${y1 - 14} ${x + 8.4},${y0 + 8} ${x + 7.6},${y0 - 4} Z" fill="${relleno}" ${borde()}/>` +
+    `<path d="M${x + 2.6},${y0 - 2} C${x + 4},${y0 + 14} ${x + 4.4},${y1 - 12} ${x + 6},${y1 - 1} L${x + 6.6},${y1 - 2} C${x + 7.2},${y1 - 14} ${x + 8.4},${y0 + 8} ${x + 7.6},${y0 - 4} Z" fill="${oscuro}" opacity="0.5"/>` +
+    `<path d="M${x - 6},${rod} q6,2.6 12,0 M${x - 5.2},${rod + 3} q5,1.6 10,0" fill="none" stroke="${oscuro}" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>` +
+    (remiendo
+      ? `<path d="M${x - 6},${y0 + 13} Q${x - 0.5},${y0 + 11.6} ${x + 4.6},${y0 + 13} Q${x + 5.6},${y0 + 18} ${x + 4.4},${y0 + 21.6} Q${x - 0.5},${y0 + 23} ${x - 5.6},${y0 + 21.6} Q${x - 6.8},${y0 + 17} ${x - 6},${y0 + 13} Z" fill="#9b7a45" ${borde(1.5)}/>` +
+        `<path d="M${x - 4.6},${y0 + 14.6} L${x + 3.4},${y0 + 14.6} M${x - 4.6},${y0 + 20} L${x + 3.4},${y0 + 20}" stroke="#f1e6c8" stroke-width="0.9" stroke-dasharray="1.6 1.4"/>`
+      : '')
   );
 }
 
-/** Zapato que apunta a la izquierda, con el tobillo en (x, y). */
+/** Bota gastada y grande, apunta a la izquierda, con el tobillo en (x, y): punta redonda, suela y cordón. */
 function zapato(x: number, y: number, color: string): string {
   return (
-    `<path d="M${x + 6},${y - 3} C${x + 7},${y + 2} ${x + 7},${y + 6} ${x + 6},${y + 8} L${x - 13},${y + 8} C${x - 16},${y + 8} ${x - 16},${y + 3} ${x - 12},${y + 1} C${x - 7},${y} ${x - 5},${y - 2} ${x - 5},${y - 3} Z" fill="${color}" ${borde()}/>` +
-    `<path d="M${x - 11},${y + 2.5} Q${x - 8},${y + 1} ${x - 5},${y + 2}" stroke="#fff" stroke-width="1.4" opacity="0.25" fill="none"/>`
+    `<path d="M${x + 6.6},${y - 4} C${x + 8.6},${y + 1.6} ${x + 8.6},${y + 6.4} ${x + 6.8},${y + 9} L${x - 13},${y + 9} C${x - 18.4},${y + 9} ${x - 19.2},${y + 2.4} ${x - 13.4},${y + 0.2} C${x - 9},${y - 1} ${x - 6.2},${y - 2.2} ${x - 5.4},${y - 4} Z" fill="${color}" ${borde()}/>` +
+    `<path d="M${x - 18.2},${y + 6.4} L${x + 7.6},${y + 6.4} L${x + 7.4},${y + 9.6} L${x - 15},${y + 9.6} C${x - 18},${y + 9.6} ${x - 19},${y + 8} ${x - 18.2},${y + 6.4} Z" fill="#2a1a0c" ${borde(1.6)}/>` +
+    `<path d="M${x - 14},${y + 1.6} C${x - 11},${y - 0.4} ${x - 8},${y - 0.6} ${x - 6},${y + 0.4}" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.3"/>` +
+    `<path d="M${x - 6},${y - 1} L${x - 3.4},${y + 2.4} M${x - 2.4},${y - 1.6} L${x + 0.2},${y + 2}" stroke="#d8c9a4" stroke-width="1.2" stroke-linecap="round"/>`
   );
 }
 
-/** Cabeza calva del zombi clásico (sin mandíbula), mirando a la izquierda. */
+/** Cabeza del zombi: cráneo grande y calvo, ceño pesado, ojos enormes y desiguales, nariz de bola y dientes chuecos. */
 export function cabezaZombi(id: string, piel: string, pielClara: string, pielOscura: string, pelo: string, ojos = true): string {
   const cabeza =
-    'M60,58 C72,55 77,40 73,26 C69,12 54,6 41,9 C29,12 22,23 23,35 C23,41 25,45 27,48 C26,50 27,52 29,52 C38,54 48,54 56,58 Z';
+    'M60,58 C72,55 79,42 76,27 C73,11 58,4 43,7 C28,10 19,22 21.5,35 C22.4,41 24,45 26.5,48 C25.4,50.6 26.6,53 29.6,53 C39,56 49,56 58,57.6 Z';
   return (
-    // cuello por detrás (lo tapa la cabeza)
-    `<path d="${cabeza}" fill="url(#${id}-piel)" ${borde()}/>` +
-    // sombra del lado de atrás
-    `<path d="M70,22 C77,36 73,52 60,57 C66,48 70,36 66,22 Z" fill="${pielOscura}" opacity="0.55"/>` +
+    `<path d="${cabeza}" fill="${piel}" ${borde()}/>` +
+    // luz de la calva y sombra del lado de atrás (sombreado plano, como una ilustración)
+    `<path d="M30,16 C36,9 48,7 56,10 C48,10 38,13 33,20 C29,24 28,29 28,34 C25,28 25,21 30,16 Z" fill="${pielClara}" opacity="0.85"/>` +
+    `<path d="M71,18 C80,34 74,52 60,57.6 C68,48 72,36 66,22 Z" fill="${pielOscura}" opacity="0.6"/>` +
     // oreja
-    `<path d="M66,34 C72,32 74,40 71,44 C69,47 66,46 65,44" fill="${piel}" ${borde(TRAZO * 0.85)}/>` +
-    `<path d="M68,37 C70,38 70,41 68,42" fill="none" stroke="${pielOscura}" stroke-width="1.3"/>` +
-    // frente y cejas caídas
-    `<path d="M27,25 Q34,20 41,23" fill="none" stroke="${pielOscura}" stroke-width="1.6" opacity="0.7"/>` +
+    `<path d="M65,33 C72.6,30.6 75.4,40 71.4,45 C69,47.6 65.6,46.6 64.6,43.6" fill="${piel}" ${borde(TRAZO * 0.85)}/>` +
+    `<path d="M67.6,36.6 C70,37.4 70.4,41 68,42.4" fill="none" stroke="${pielOscura}" stroke-width="1.4"/>` +
+    // arrugas de la frente y cicatriz cosida en la sien
+    `<path d="M27,23 Q34.5,17.4 42,21.6 M30,17.6 Q35,14.6 40,16" fill="none" stroke="${pielOscura}" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>` +
+    `<path d="M55,14 C59,18 62,22 62.4,28" fill="none" stroke="${TINTA}" stroke-width="1.5" stroke-linecap="round"/>` +
+    `<path d="M56.2,16.6 l3,-2 M58.4,19.6 l3.2,-1.8 M60.4,23 l3.2,-1.4 M61.6,26.6 l3,-0.8" stroke="${TINTA}" stroke-width="1.1" stroke-linecap="round"/>` +
     (ojos
-      ? ojoZombi(31.5, 32.5, 5.6, [-0.5, 0.2], 0.32, piel) + ojoZombi(46, 30.5, 8.4, [-0.55, 0.15], 0.26, piel) +
-        // ojeras
-        `<path d="M40,40 Q46,43 53,39" fill="none" stroke="${pielOscura}" stroke-width="1.6" opacity="0.75"/>` +
-        `<path d="M27,39 Q31,41 35,39" fill="none" stroke="${pielOscura}" stroke-width="1.4" opacity="0.7"/>`
+      ? ojoZombi(31.5, 33, 5.8, [-0.5, 0.2], 0.32, piel) + ojoZombi(46.5, 30.6, 9, [-0.55, 0.15], 0.26, piel) +
+        `<path d="M38.4,41.4 Q46.5,45.4 54.6,40.4" fill="none" stroke="${pielOscura}" stroke-width="1.8" stroke-linecap="round" opacity="0.8"/>` +
+        `<path d="M26.4,40 Q31.4,42.6 36.4,40" fill="none" stroke="${pielOscura}" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>`
       : '') +
-    // nariz
-    `<path d="M27,37 C23,40 22,44 25,46 C27,47 29,46 30,45" fill="${pielClara}" ${borde(TRAZO * 0.8)}/>` +
-    // labio de arriba con dientes torcidos
+    // nariz de bola con fosa
+    `<path d="M27,36.6 C21.6,39 20.6,44.4 24.6,46.6 C27.4,47.8 29.6,46.4 30.4,44.6" fill="${pielClara}" ${borde(TRAZO * 0.8)}/>` +
+    `<path d="M24.2,42.6 q1.2,1 2.6,0.6" fill="none" stroke="${pielOscura}" stroke-width="1.3" stroke-linecap="round"/>` +
+    // pómulo y labio con dientes chuecos
+    `<path d="M41,47 Q47,50 53,48" fill="none" stroke="${pielOscura}" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/>` +
     dientes(31, 45, 51, 3, 4.6) +
-    `<path d="M28.5,50.5 C35,53 44,53 50,52" fill="none" ${borde(TRAZO * 0.9)}/>` +
-    // brillo de la calva
-    brillo(39, 15, 9, 3.4, -12, 0.35) +
+    `<path d="M28.4,50.4 C35,53.4 44,53.4 50.6,52" fill="none" ${borde(TRAZO * 0.9)}/>` +
+    brillo(39, 14.6, 9, 3.2, -14, 0.5) +
     pelo
   );
 }
 
 const PELO_POCOS =
-  `<path d="M48,9 C47,4 50,1 53,0" fill="none" ${borde(1.6)}/>` +
-  `<path d="M54,9.5 C55,5 59,3 61,4" fill="none" ${borde(1.6)}/>` +
-  `<path d="M42,10 C40,6 41,3 43,1.5" fill="none" ${borde(1.5)}/>`;
+  `<path d="M47.6,8.4 C43,2.4 48,-3.4 54.4,-1.4 C58.4,0 58.6,4 56,6" fill="none" ${borde(1.9)}/>` +
+  `<path d="M54,8.4 C56.4,3.4 61.6,2.4 64,5.6" fill="none" ${borde(1.8)}/>` +
+  `<path d="M42,9 C37.4,5.4 38,-0.4 42.6,-2.6" fill="none" ${borde(1.8)}/>` +
+  `<path d="M60.6,10 C65,8.4 68,10.4 68,13.4" fill="none" ${borde(1.6)}/>`;
 
 /**
  * Piezas del zombi clásico de PvZ (cabeza calva con pocos pelos, mandíbula con dientes, piel gris verdosa, camisa
@@ -391,34 +406,41 @@ export function zombiBase(op: OpcionesZombi): { piezas: DefPieza[]; defs: string
 
   const cuerpo =
     // cuello (queda a la vista si se cae la cabeza)
-    `<path d="M49,56 L61,56 L62,68 L49,68 Z" fill="${pielOscura}" ${borde()}/>` +
-    `<ellipse cx="55.5" cy="57.5" rx="6" ry="2.4" fill="#5e1f1a" ${borde(1.4)}/>` +
-    // saco
-    `<path d="M45,67 C52,62 70,62 79,66 C83,74 84,90 85,105 L80,103 L76,108 L70,104 L63,109 L57,104 L51,108 L46,104 L43,106 C42,92 42,76 45,67 Z" fill="url(#${id}-saco)" ${borde()}/>` +
-    // camisa blanca por el frente
-    `<path d="M45.5,67 L58,65 L57,94 L51,101 L46,100 C44,88 44,76 45.5,67 Z" fill="${camisa}" ${borde(TRAZO * 0.9)}/>` +
-    `<path d="M47,90 L56,88 M46.5,80 L57,79" stroke="${PALETA.camisaSombra}" stroke-width="1.3"/>` +
-    // solapa
-    `<path d="M58,65 L63,66 L58,84 L57,94 Z" fill="${sacoOscuro}" ${borde(TRAZO * 0.8)}/>` +
-    // cuello de la camisa
-    `<path d="M47,64 L53,63 L50,70 Z M53,63 L59,64 L56,70 Z" fill="${camisa}" ${borde(1.6)}/>` +
-    // bolsillo, botón y remiendo
-    `<path d="M66,88 L77,87" stroke="${sacoOscuro}" stroke-width="2"/>` +
-    `<circle cx="60" cy="96" r="1.6" fill="${sacoOscuro}"/>` +
-    `<path d="M71,74 l6,-0.5 l0.3,6 l-6,0.6 Z" fill="${sacoClaro}" ${borde(1.2)}/>` +
-    `<path d="M80,84 Q82,92 80,100" stroke="${sacoOscuro}" stroke-width="2" fill="none" opacity="0.7"/>`;
+    `<path d="M48.6,56 C50,60 50.4,64 49.6,68 L62,68 C61,64 61.6,60 62.4,56 Z" fill="${pielOscura}" ${borde()}/>` +
+    `<ellipse cx="55.6" cy="57.4" rx="6.4" ry="2.6" fill="#5e1f1a" ${borde(1.4)}/>` +
+    // saco ancho y caído, con el borde de abajo gastado
+    `<path d="M45.6,66.4 C53,60.6 71,60.6 80.4,66 C86,76 88.6,92 87.4,106 C85.4,108.4 82.6,106.4 80.6,108.6 C78.4,111.6 75.6,108.4 73.4,110.6 C70.6,107.6 67.6,109.8 64.4,108.6 C62.2,111.6 58.4,108.6 56.2,110.6 C53.4,108.2 49.6,110.4 46.6,107.4 C43,100 42,90 42.8,80 C43,74 44,70 45.6,66.4 Z" fill="url(#${id}-saco)" ${borde()}/>` +
+    `<path d="M79,66 C86,76 88.6,92 87.4,106 C85,108 82.6,106.4 80.6,108.6 C83,98 82,80 74,66 Z" fill="${sacoOscuro}" opacity="0.55"/>` +
+    // camisa por el frente y solapas anchas
+    `<path d="M46,66.4 C51,63.4 58,63 60,64.6 C60.4,78 58.4,92 55.6,101 C51.6,103.4 46.4,101.4 45,98 C43,88 43.6,76 46,66.4 Z" fill="${camisa}" ${borde(TRAZO * 0.9)}/>` +
+    `<path d="M47.4,90 Q52,88.4 56.4,89.4 M46.6,80 Q52,78.6 57.4,79.4" fill="none" stroke="${PALETA.camisaSombra}" stroke-width="1.3" stroke-linecap="round"/>` +
+    `<path d="M58,64.4 C62.4,64.6 65.4,66 67,68.4 C64.4,78 61.4,88 59.6,98 C57,92 57.4,76 58,64.4 Z" fill="${sacoOscuro}" ${borde(TRAZO * 0.8)}/>` +
+    `<path d="M47,63.6 L53.6,62.6 L50.4,70.4 Z M53.6,62.6 L60,63.6 L56.4,70.6 Z" fill="${camisa}" ${borde(1.6)}/>` +
+    // bolsillo con solapa, botón, remiendo y pliegues
+    `<path d="M66.4,88 Q72,86.4 77.4,87.6" fill="none" stroke="${sacoOscuro}" stroke-width="2.2" stroke-linecap="round"/>` +
+    `<circle cx="61.4" cy="96.4" r="1.8" fill="${sacoOscuro}" ${borde(0.9)}/>` +
+    `<path d="M70.6,73.6 Q74.4,72.6 77.6,73.4 Q78.4,77 77.4,80 Q74,81 70.4,80 Q69.6,76.6 70.6,73.6 Z" fill="${sacoClaro}" ${borde(1.2)}/>` +
+    `<path d="M74.4,74.6 L74.2,79.4" stroke="#f1e6c8" stroke-width="0.8" stroke-dasharray="1.2 1.2"/>` +
+    `<path d="M80.6,84 Q83,92 80.6,100 M66,100 Q69,96 71,100" fill="none" stroke="${sacoOscuro}" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/>` +
+    `<path d="M47.4,72 C46,80 46.4,90 48,98" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity="0.15"/>`;
 
   const corbataSvg = corbata
-    ? `<path d="M50,66 L55,66 L54,70 L56.5,88 L52.5,93 L49,88 L51,70 Z" fill="${corbata}" ${borde(TRAZO * 0.85)}/>` +
-      `<path d="M52.5,72 L53.5,86" stroke="${PALETA.corbataOscura}" stroke-width="1.4" opacity="0.6"/>`
+    ? `<path d="M49.4,65.6 C51.6,64 55.6,64 57.4,65.8 L56.2,70.4 C54.4,71.4 52.2,71.4 50.6,70.4 Z" fill="${corbata}" ${borde(TRAZO * 0.85)}/>` +
+      `<path d="M50.8,70.2 L56,70.2 C57.6,78 59.6,87 57.4,93.6 C55.4,96.4 52,96.6 50,93.8 C47.8,87 49.4,78 50.8,70.2 Z" fill="${corbata}" ${borde(TRAZO * 0.85)}/>` +
+      `<path d="M50.6,76 L57.2,74.2 M50.2,80.6 L58,78.6 M49.8,85.2 L58.4,83.2" stroke="#f2e8e4" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>` +
+      `<path d="M55,71 C56.6,79 57.2,87 56,93" fill="none" stroke="${PALETA.corbataOscura}" stroke-width="1.6" stroke-linecap="round" opacity="0.55"/>`
     : '';
 
+  // Mandibula y boca: la boca queda abierta (un hueco oscuro) y la mandíbula baja con su fila de dientes.
   const mandibula =
-    `<path d="M28,49 C27,56 30,63 38,64.5 C47,65.5 55,62 59,56 L58,52 C49,53 39,52 28,49 Z" fill="url(#${id}-mandibula)" ${borde()}/>` +
-    dientes(34, 44, 52.5, 2, -3.8) +
-    `<path d="M34,60 Q40,62 47,60" fill="none" stroke="${pielOscura}" stroke-width="1.4" opacity="0.7"/>`;
+    `<g transform="translate(0 4.2)">` +
+    `<path d="M27.6,49 C26,57.6 30,65 39,66.4 C48,67.2 56,63.4 60,56.6 L58.6,52 C49,53.4 38,52.6 27.6,49 Z" fill="url(#${id}-mandibula)" ${borde()}/>` +
+    `<path d="M33,64 C40,66.2 49,65 55.4,60.6" fill="none" stroke="${pielOscura}" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/>` +
+    dientes(34, 44, 52.6, 2, -3.8) +
+    `<path d="M31.6,52 C37,56 46,57 54,54" fill="#9a4a46" opacity="0.9"/>` +
+    `</g>`;
 
-  const boca = `<path d="M29,50 C33,58 47,60 57,55 L56,51 C47,53 38,53 29,50 Z" fill="${PALETA.bocaZombi}"/>`;
+  const boca = `<path d="M28.4,49 C30,60 48,64.6 59,58 L58,50 C48,53 38,53 28.4,49 Z" fill="${PALETA.bocaZombi}"/>`;
 
   const brazoDer = manga(H.hombroDer[0], H.hombroDer[1] - 4, H.codoDer[1] + 1, 11, sacoOscuro, '#2f1d0e', false, true);
   const antebrazoDer = manga(H.codoDer[0], H.codoDer[1] - 2, H.munecaDer[1] + 1, 9.5, sacoOscuro, '#2f1d0e', true, false);
