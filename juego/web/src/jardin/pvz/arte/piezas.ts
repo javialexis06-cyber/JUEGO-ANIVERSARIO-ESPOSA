@@ -59,6 +59,22 @@ export interface DefPieza {
   estados?: Record<string, string>;
   /** No se tiñe (sombras en el suelo). */
   sinTinte?: boolean;
+  /** Pieza renderizada en Blender (manda sobre `svg`): rectángulo en su hoja y esquina en el marco local. */
+  img?: ImagenPieza;
+  /** Variantes renderizadas en Blender (mismas claves que `estados`). */
+  imgEstados?: Record<string, ImagenPieza>;
+}
+
+/** Recorte de una hoja de piezas hecha en Blender (personajes/blender/pvz_sprites.py y pvz_atlas.py). */
+export interface ImagenPieza {
+  /** URL de la hoja webp. */
+  hoja: string;
+  /** x, y, ancho, alto en px de la hoja. */
+  rect: [number, number, number, number];
+  /** Esquina superior izquierda del recorte en el marco local (px de mundo). */
+  pos: [number, number];
+  /** px de la hoja por px de mundo. */
+  escala: number;
 }
 
 export interface CtxAnim {
@@ -185,8 +201,10 @@ interface Orden {
 }
 
 const PAD = 8;
-const caches = new Map<string, Cache[]>();
-const pendientes = new Map<string, Promise<Cache | null>>();
+// Por definición (no por id): el dibujo SVG y el de Blender del mismo personaje tienen pivotes y marcos distintos y
+// no deben mezclar sus piezas.
+const caches = new Map<DefPersonaje, Cache[]>();
+const pendientes = new Map<DefPersonaje, Map<number, Promise<Cache | null>>>();
 const ordenes = new WeakMap<DefPersonaje, Orden>();
 let medidor: SVGSVGElement | null = null;
 
@@ -202,32 +220,33 @@ export async function cargarPersonajes(defs: DefPersonaje[] | Record<string, Def
 /** Carga un personaje a una escala (o reutiliza la caché). Nunca rechaza: si algo falla, devuelve null. */
 export function asegurarCarga(def: DefPersonaje, escala: number): Promise<Cache | null> {
   const esc = redondearEscala(escala);
-  const ya = (caches.get(def.id) ?? []).find((c) => c.escala === esc);
+  const ya = (caches.get(def) ?? []).find((c) => c.escala === esc);
   if (ya) return Promise.resolve(ya);
-  const clave = def.id + '@' + esc;
-  let p = pendientes.get(clave);
+  let porEscala = pendientes.get(def);
+  if (!porEscala) pendientes.set(def, (porEscala = new Map()));
+  let p = porEscala.get(esc);
   if (!p) {
     p = rasterizar(def, esc)
       .then((c) => {
-        const lista = caches.get(def.id) ?? [];
+        const lista = caches.get(def) ?? [];
         lista.push(c);
         lista.sort((a, b) => a.escala - b.escala);
-        caches.set(def.id, lista);
+        caches.set(def, lista);
         return c;
       })
       .catch((e) => {
         console.warn('[pvz-arte] no se pudo rasterizar', def.id, e);
         return null;
       })
-      .finally(() => pendientes.delete(clave));
-    pendientes.set(clave, p);
+      .finally(() => porEscala!.delete(esc));
+    porEscala.set(esc, p);
   }
   return p;
 }
 
 /** ¿Hay alguna caché lista para este personaje? */
 export function personajeCargado(def: DefPersonaje): boolean {
-  return (caches.get(def.id)?.length ?? 0) > 0;
+  return (caches.get(def)?.length ?? 0) > 0;
 }
 
 /** Suelta todas las cachés (al salir del juego). Vacía los lienzos para liberar memoria de una vez. */
@@ -238,6 +257,9 @@ export function liberarArte(): void {
       for (const r of c.tintes.values()) r.lienzo.width = r.lienzo.height = 0;
     }
   caches.clear();
+  pendientes.clear();
+  recortesHoja.clear();
+  hojas.clear();
   if (medidor) medidor.remove();
   medidor = null;
 }
@@ -247,12 +269,57 @@ function redondearEscala(e: number): number {
   return Math.max(0.25, Math.round(e * 8) / 8);
 }
 
+const hojas = new Map<string, Promise<HTMLImageElement>>();
+const recortesHoja = new Map<string, Promise<Raster | null>>();
+
+function cargarHoja(url: string): Promise<HTMLImageElement> {
+  let p = hojas.get(url);
+  if (!p) {
+    p = new Promise((ok, mal) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => ok(img);
+      img.onerror = () => mal(new Error('No se pudo cargar ' + url));
+      img.src = url;
+    });
+    hojas.set(url, p);
+  }
+  return p;
+}
+
+/** Recorte de una hoja de Blender: el lienzo tiene la resolución del render y sirve para todas las escalas. */
+function rasterImagen(img: ImagenPieza): Promise<Raster | null> {
+  const clave = img.hoja + '#' + img.rect.join(',');
+  let p = recortesHoja.get(clave);
+  if (!p) {
+    p = cargarHoja(img.hoja).then((h) => {
+      const [x, y, w, hh] = img.rect;
+      const L = lienzo(w, hh);
+      L.getContext('2d')!.drawImage(h, x, y, w, hh, 0, 0, w, hh);
+      return { lienzo: L, x: img.pos[0], y: img.pos[1], w: w / img.escala, h: hh / img.escala };
+    });
+    recortesHoja.set(clave, p);
+  }
+  return p;
+}
+
 async function rasterizar(def: DefPersonaje, escala: number): Promise<Cache> {
+  const mapa = new Map<string, Raster | null>();
+  // Piezas de Blender: recortes de su hoja (no dependen de la escala).
+  const deBlender: Promise<void>[] = [];
+  for (const p of def.piezas) {
+    if (!p.img) continue;
+    deBlender.push(rasterImagen(p.img).then((r) => void mapa.set(p.id, r)));
+    for (const [v, im] of Object.entries(p.imgEstados ?? {})) deBlender.push(rasterImagen(im).then((r) => void mapa.set(p.id + '|' + v, r)));
+  }
+  await Promise.all(deBlender);
   const trabajos: { clave: string; svg: string }[] = [];
   for (const p of def.piezas) {
+    if (p.img) continue;
     trabajos.push({ clave: p.id, svg: p.svg });
     for (const [v, s] of Object.entries(p.estados ?? {})) trabajos.push({ clave: p.id + '|' + v, svg: s });
   }
+  if (!trabajos.length) return { escala, rasters: mapa, tintes: new Map() };
   const cajas = medir(trabajos.map((t) => t.svg), def.defs ?? '');
   const rasters = await Promise.all(
     trabajos.map((t, i) =>
@@ -262,7 +329,6 @@ async function rasterizar(def: DefPersonaje, escala: number): Promise<Cache> {
       }),
     ),
   );
-  const mapa = new Map<string, Raster | null>();
   trabajos.forEach((t, i) => mapa.set(t.clave, rasters[i]));
   return { escala, rasters: mapa, tintes: new Map() };
 }
@@ -450,7 +516,7 @@ function rasterDe(c: Cache, p: DefPieza, variante: string | undefined): Raster |
 }
 
 function elegirCache(def: DefPersonaje, necesaria: number): Cache | null {
-  const lista = caches.get(def.id);
+  const lista = caches.get(def);
   if (!lista || !lista.length) return null;
   let elegida = lista[lista.length - 1];
   for (const c of lista)
@@ -474,8 +540,9 @@ function tintado(c: Cache, clave: string, r: Raster, tinte: Exclude<Tinte, null>
   const g = L.getContext('2d')!;
   g.drawImage(r.lienzo, 0, 0);
   if (tinte === 'golpe') {
+    // Aclarar sin lavar el color: con varios tiradores el zombi pasa mucho tiempo con este tinte y debe leerse bien.
     g.globalCompositeOperation = 'source-atop';
-    g.fillStyle = 'rgba(255,255,255,0.62)';
+    g.fillStyle = 'rgba(255,255,255,0.28)';
     g.fillRect(0, 0, L.width, L.height);
   } else if (tinte === 'ceniza') {
     g.globalCompositeOperation = 'source-atop';
@@ -555,27 +622,61 @@ export function dibujarPersonaje(ctx: CanvasRenderingContext2D, def: DefPersonaj
   const alfaOp = op.alfa ?? 1;
   const tinte = op.tinte ?? null;
   try {
-    for (const i of o.porZ) {
-      if (!o.visible[i]) continue;
-      const a = o.alfa[i] * alfaOp;
-      if (a <= 0.003) continue;
-      const p = o.jerarquia[i];
-      let r = rasterDe(cache, p, o.variante[i]);
-      if (!r) continue;
-      if (tinte && !p.sinTinte) {
-        const v = o.variante[i];
-        const clave = v && p.estados?.[v] !== undefined ? p.id + '|' + v : p.id;
-        r = tintado(cache, clave, r, tinte);
+    // Al desvanecerse entero (muere, ceniza) se compone aparte y luego se baja el alfa: si no, las piezas que se
+    // tapan (brazo sobre el cuerpo) se transparentan unas sobre otras.
+    if (alfaOp < 0.995 && alfaOp > 0.003) {
+      const caja = cajaPose(def, o, cache, () => true);
+      if (caja) {
+        const x0 = Math.floor(caja.x0) - 2;
+        const y0 = Math.floor(caja.y0) - 2;
+        const w = Math.ceil(caja.x1) - x0 + 4;
+        const h = Math.ceil(caja.y1) - y0 + 4;
+        if (w > 0 && h > 0 && w * h <= 4_000_000) {
+          lienzoAlfa ??= document.createElement('canvas');
+          if (lienzoAlfa.width < w) lienzoAlfa.width = w;
+          if (lienzoAlfa.height < h) lienzoAlfa.height = h;
+          const g = lienzoAlfa.getContext('2d')!;
+          g.setTransform(1, 0, 0, 1, 0, 0);
+          g.clearRect(0, 0, w, h);
+          pintarPiezas(g, o, cache, tinte, 1, -x0, -y0);
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.globalAlpha = alfa0 * alfaOp;
+          ctx.drawImage(lienzoAlfa, 0, 0, w, h, x0, y0, w, h);
+          return;
+        }
       }
-      const k = i * 6;
-      ctx.setTransform(o.m[k], o.m[k + 1], o.m[k + 2], o.m[k + 3], o.m[k + 4], o.m[k + 5]);
-      ctx.globalAlpha = alfa0 * a;
-      ctx.drawImage(r.lienzo, r.x, r.y, r.w, r.h);
     }
+    ctx.globalAlpha = alfa0;
+    pintarPiezas(ctx, o, cache, tinte, alfaOp, 0, 0);
   } finally {
     ctx.setTransform(tr);
     ctx.globalAlpha = alfa0;
   }
+}
+
+let lienzoAlfa: HTMLCanvasElement | null = null;
+
+/** Dibuja las piezas ya posadas (matrices en `o.m`, en px del destino) corridas dx, dy. */
+function pintarPiezas(ctx: CanvasRenderingContext2D, o: Orden, cache: Cache, tinte: Tinte | null, alfaMul: number, dx: number, dy: number): void {
+  const alfa0 = ctx.globalAlpha;
+  for (const i of o.porZ) {
+    if (!o.visible[i]) continue;
+    const a = o.alfa[i] * alfaMul;
+    if (a <= 0.003) continue;
+    const p = o.jerarquia[i];
+    let r = rasterDe(cache, p, o.variante[i]);
+    if (!r) continue;
+    if (tinte && !p.sinTinte) {
+      const v = o.variante[i];
+      const clave = v && p.estados?.[v] !== undefined ? p.id + '|' + v : p.id;
+      r = tintado(cache, clave, r, tinte);
+    }
+    const k = i * 6;
+    ctx.setTransform(o.m[k], o.m[k + 1], o.m[k + 2], o.m[k + 3], o.m[k + 4] + dx, o.m[k + 5] + dy);
+    ctx.globalAlpha = alfa0 * a;
+    ctx.drawImage(r.lienzo, r.x, r.y, r.w, r.h);
+  }
+  ctx.globalAlpha = alfa0;
 }
 
 /** Marcador simple cuando falta el arte: nunca rompe el juego. */
@@ -661,11 +762,12 @@ export function retrato(def: DefPersonaje, tam: number, estado = 'quieto', op: O
 }
 
 function pintarRetrato(L: HTMLCanvasElement, def: DefPersonaje, estado: string, op: OpcionesRetrato): boolean {
-  const lista = caches.get(def.id);
+  const lista = caches.get(def);
   if (!lista?.length) return false;
   const cache = lista[lista.length - 1];
   const o = orden(def);
-  const pose = poseDe(def, { t: op.t ?? 0, estado, fase: op.fase ?? 0, semilla: 0 });
+  // t = 1,0 por defecto: a los 0 s varios personajes están parpadeando (la Nuez del sobre salía con sueño).
+  const pose = poseDe(def, { t: op.t ?? 1, estado, fase: op.fase ?? 0, semilla: 0 });
   posar(def, o, pose, [1, 0, 0, 1, 0, 0], undefined, op.variantes);
   const filtro = (i: number) => !!op.conSombra || !o.jerarquia[i].sinTinte;
   const caja = cajaPose(def, o, cache, filtro);
@@ -724,7 +826,7 @@ export function piezaSuelta(
   cual: string | string[],
   op: { t?: number; estado?: string; fase?: number; semilla?: number; variantes?: Record<string, string>; tinte?: Tinte } = {},
 ): Suelta | null {
-  const lista = caches.get(def.id);
+  const lista = caches.get(def);
   if (!lista?.length) return null;
   const cache = lista[lista.length - 1];
   const raices = Array.isArray(cual) ? cual : def.perdidas?.[cual]?.ocultar ?? [cual];

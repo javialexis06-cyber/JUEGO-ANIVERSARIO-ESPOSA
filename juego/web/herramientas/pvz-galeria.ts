@@ -5,6 +5,7 @@
 //   herramientas/pvz-galeria.html             galería completa
 //   herramientas/pvz-galeria.html?escena      escena de prueba a pantalla completa (fondo, plantas, zombis)
 //   …&t=2.5                                   reloj fijo (capturas repetibles)
+//   …&svg                                     sin el arte de Blender (solo el dibujo SVG)
 //
 // Para capturas: `await window.__galeria.listo` y luego `window.__galeria.fijar(t)` dibuja el cuadro del segundo t.
 
@@ -13,6 +14,7 @@ import {
   aplicarPerdidas, cargarPersonajes, dibujarFondoDia, dibujarPersonaje, piezaSuelta, puntoMundo, retrato, varianteDe,
   type DefPersonaje, type OpcionesDibujo, type Suelta, type Tinte,
 } from '../src/jardin/pvz/arte/index';
+import { cargarArteBlender } from '../src/jardin/pvz/arte/blender';
 import { ALTO_MUNDO, X_CORTACESPED, X_MAX, X_MIN, centroCol, centroFila } from '../src/jardin/pvz/arte/geometria';
 
 declare global {
@@ -584,11 +586,14 @@ let arrancar: () => void = () => {
 };
 
 const esEscena = params.has('escena');
-if (esEscena) escena();
-else if (params.has('tira')) tira();
-else galeria();
 
 const listo = (async () => {
+  // El arte de Blender reemplaza al SVG con el mismo id (?svg muestra solo el dibujo SVG); las tarjetas se arman
+  // después, con la definición que quedó.
+  if (!params.has('svg')) await cargarArteBlender('../jardin/pvz/');
+  if (esEscena) escena();
+  else if (params.has('tira')) tira();
+  else galeria();
   const todas = Object.values(DEF_ARTE);
   const escala = esEscena ? (window.innerHeight / ALTO_MUNDO) * dpr : dpr * 1.3;
   await cargarPersonajes(todas, escala);

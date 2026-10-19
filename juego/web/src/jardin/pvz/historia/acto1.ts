@@ -61,12 +61,13 @@ const MUNDO_1: Record<string, EscenaNivel> = {
       dave('¡La pala! Sirve para sacar plantas y cambiarlas de sitio. ¡No la uses para cavar túneles como yo!', 'loco'),
       dave('Y un costal de abono. Dáselo a una planta y hace su ataque especial. ¡Úsalo cuando la cosa se ponga fea!'),
     ],
-    consejo: 'Toca el abono y luego una planta: hará su ataque especial.',
+    consejo: 'Las Nueces aguantan mordiscos: ponlas delante de tus Lanzaguisantes.',
   },
   '1-5': {
     antes: [
-      dave('¡Hoy jugamos bolos! Las nueces llegan por la cinta: arrástralas y suéltalas. ¡A tumbar zombis!', 'loco'),
-      dave('Si una nuez le pega a un zombi, rebota y sigue para otra fila. ¡Chuzas de dos y tres!'),
+      dave('¡Hoy jugamos bolos! Pero primero estrena la pala: arranca esos Lanzaguisantes que dejé en el patio.', 'loco'),
+      dave('Después las nueces llegan por la cinta: arrástralas y suéltalas. Si una le pega a un zombi, rebota a otra fila.'),
+      dave('¿Y las rojas? Esas explotan. ¡No me preguntes por qué tengo nueces que explotan!', 'feliz'),
     ],
     despues: [
       dave('¡Chuza! Ganaste una Patatapum. Se entierra, se arma y cuando un zombi la pisa… ¡PATATAPUM!', 'feliz'),
@@ -88,7 +89,7 @@ const MUNDO_1: Record<string, EscenaNivel> = {
     despues: [
       dave('¡Una Planta carnívora! Se traga un zombi entero de un bocado. Luego mastica despacio. ¡Modales!', 'loco'),
     ],
-    consejo: 'La Planta carnívora tarda en masticar: protégela con una Nuez.',
+    consejo: 'Contra grupos grandes: el Hielaguisantes los frena y una Nuez los detiene.',
   },
   '1-8': {
     antes: [
@@ -98,7 +99,7 @@ const MUNDO_1: Record<string, EscenaNivel> = {
     despues: [
       dave('¡La Repetidora! Dispara dos guisantes por vez. El doble de guisantes, el doble de diversión.', 'feliz'),
     ],
-    consejo: 'Contra el Zombi caracubo: Repetidoras, Hielaguisantes o una Patatapum bien puesta.',
+    consejo: 'Contra el Zombi caracubo: una Planta carnívora, Hielaguisantes o una Patatapum bien puesta.',
   },
   '1-9': {
     antes: [dave('Hoy vienen de todos los tipos. ¡Usa todo lo que te he dado! Menos mi olla. La olla es mía.')],

@@ -1,0 +1,1 @@
+{"id":"sol","hoja":"sol.webp","escala":4.0,"ancho":88.5,"alto":76.75,"ancla":[40.61,36.82],"puntos":{},"piezas":[{"id":"rayos","z":1,"pivote":[40.61,36.82],"rect":[0,0,281,240],"pos":[5.5,6.75]},{"id":"disco","z":2,"pivote":[40.61,36.82],"rect":[283,0,177,172],"pos":[18.5,15.25]}],"conservar":["halo"]}

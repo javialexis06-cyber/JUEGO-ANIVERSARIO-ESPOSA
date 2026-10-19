@@ -1,0 +1,1 @@
+{"id":"bolsa_monedas","hoja":"bolsa_monedas.webp","escala":4.0,"ancho":62.5,"alto":73.5,"ancla":[27.53,54.62],"puntos":{},"piezas":[{"id":"sombra","z":-10,"pivote":[27.53,54.62],"rect":[178,0,235,125],"pos":[2.0,39.5],"sinTinte":true},{"id":"bolsa","z":1,"pivote":[27.53,54.62],"rect":[0,0,176,215],"pos":[5.5,6.5]}]}

@@ -12,11 +12,19 @@ export { dibujarFondoDia, lienzoFondoDia, liberarFondoDia, COLOR_BORDE_DIA } fro
 export type { LienzoFondo, OpcionesFondo } from './fondos/dia';
 export { DEF_ARTE_DIA, OBJETOS_DIA, PLANTAS_DIA, ZOMBIS_DIA, DEF_PERSONAJES };
 
-/** Todo el arte por id: plantas, zombis, objetos y personajes de la historia. */
-export const DEF_ARTE: Readonly<Record<string, DefPersonaje>> = {
+/**
+ * Todo el arte por id: plantas, zombis, objetos y personajes de la historia. Empieza con los dibujos SVG; los
+ * personajes renderizados en Blender (arte/blender.ts) los reemplazan al cargar el juego.
+ */
+export const DEF_ARTE: Record<string, DefPersonaje> = {
   ...DEF_ARTE_DIA,
   ...DEF_PERSONAJES,
 };
+
+/** Reemplaza (o agrega) el arte de un id. Hay que hacerlo antes de dibujarlo por primera vez. */
+export function registrarArte(def: DefPersonaje): void {
+  DEF_ARTE[def.id] = def;
+}
 
 /** Arte de un id, o undefined si todavía no tiene (la vista dibuja entonces el marcador). */
 export function arteDe(id: string): DefPersonaje | undefined {

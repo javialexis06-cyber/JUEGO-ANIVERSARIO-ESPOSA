@@ -13,8 +13,10 @@ sesión que trabaje en `src/jardin/pvz/` sigue estas reglas. Si una regla estorb
 - Libertad total de diseño. Los valores de PvZ (costos, recargas, vidas, daño, precios de la tienda) cuentan como
   aprobados porque Javier pidió la misma jugabilidad. Cualquier invento fuera de PvZ se anota en el plan.
 
-Todo el arte, el sonido y la música se hacen aquí, en código: dibujos SVG propios del estilo PvZ, efectos y música
-sintetizados con WebAudio. No se descargan ni se copian imágenes, sonidos, música ni textos largos del juego original.
+Todo el arte, el sonido y la música se hacen aquí: personajes y escenarios modelados en Blender por código (pedido
+de Javier del 19 de octubre: «has los gráficos con Blender»), el dibujo SVG propio solo como respaldo y para efectos,
+y efectos y música sintetizados con WebAudio. No se descargan ni se copian imágenes, sonidos, música ni textos largos
+del juego original.
 
 ## Qué se conserva
 
@@ -158,6 +160,34 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
 
 ## Arte
 
+### Blender (arte principal)
+
+- `personajes/blender/pvz_sprites.py` modela cada personaje con los ayudantes de `clay.py`, separado en las mismas
+  piezas que anima el juego (mismos id que el SVG), y renderiza cada pieza y cada variante sola en Cycles: cámara
+  ortográfica a 16°, contorno de caricatura (casco invertido que solo ve la cámara), materiales pintados con
+  degradado vertical, moteado y manchas, y la sombra del personaje aparte sobre el suelo. 1 unidad = 100 px de mundo;
+  `PX=4` px de render por px de mundo. `VISTA=1` saca una prueba del personaje entero (`OCULTAR`, `VARIANTES`).
+- `personajes/blender/pvz_atlas.py` recorta y empaca las piezas en `public/jardin/pvz/<id>.webp` + `<id>.json`
+  (rectángulo, esquina, pivote, z, padre, variantes, puntos y `conservar`) y el índice `indice.json`; con
+  `--fondos` pasa los escenarios a webp.
+- `personajes/blender/pvz_fondos.py` renderiza el escenario con la cámara alineada a la cuadrícula del juego (34°,
+  la fila f de y = 80 + 100 f a 180 + 100 f): casa con porche de tablas, césped en ajedrez con matas y florecitas,
+  cerca con tulipanes y rosales, acera de losas, calle con alcantarilla. Variantes `todas`, `tres` y `una` según las
+  filas con pasto. `RECORTE=x0,x1,y0,y1` revisa una zona de cerca.
+- `arte/blender.ts` carga el índice y registra cada personaje: piezas de imagen + la animación, variantes y pérdidas
+  del SVG con el mismo id. `conservar` deja piezas SVG encima (halos, chispas, «zzz», estallidos), alineadas por
+  ancla o por un punto. Si algo falla, quedan los SVG. La vista dibuja el escenario de Blender si existe.
+- Comandos (bpy 4.2 de pip para python3.11, que trae el quitarruido):
+
+  ```sh
+  python3.11 personajes/blender/pvz_sprites.py juego/web/modelos-crudos/pvz [ids…]
+  python3 personajes/blender/pvz_atlas.py juego/web/modelos-crudos/pvz juego/web/public/jardin/pvz
+  python3.11 personajes/blender/pvz_fondos.py juego/web/modelos-crudos/pvz-fondos [todas tres una]
+  python3 personajes/blender/pvz_atlas.py --fondos juego/web/modelos-crudos/pvz-fondos juego/web/public/jardin/pvz
+  ```
+
+### Piezas y animación (contrato común)
+
 - **Marco local por personaje.** Unidades de mundo, con el punto de apoyo (los pies o la base de la maceta) en
   `ancla`. Las plantas miden unos 70–90 de alto y los zombis unos 110–130, como en PvZ 1.
 - **Pieza:**
@@ -256,7 +286,8 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   - sembrar tocando y recoger sol;
   - nivel completo con el piloto;
   - planta nueva, guardado, recarga de página y fallo de guardado recuperado;
-  - capturas en `test-results/pvz/`.
+  - mundo 1 completo con el piloto, guardado de cada premio y recarga;
+  - capturas en `test-results/pvz-interfaz/`.
 - Galería de desarrollo `herramientas/pvz-galeria.html`, que Vite sirve y no entra al build: muestra todo el arte
   en todos sus estados, para revisar capturas.
 - Antes de publicar:

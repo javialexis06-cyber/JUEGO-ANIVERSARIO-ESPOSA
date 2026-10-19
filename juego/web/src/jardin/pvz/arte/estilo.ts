@@ -517,6 +517,9 @@ export function animZombi(c: CtxAnim, op: OpcionesAnimZombi = {}): Pose {
     const caida = Math.pow(tramo(f, 0, 0.55), 1.8);
     const rebote = Math.sin(tramo(f, 0.55, 0.75) * Math.PI) * 6;
     const giro = -86 * caida + rebote;
+    // La sombra no gira con el cuerpo: se compensa el giro y el levantón de la raíz y se corre bajo el cuerpo caído.
+    const g = (giro * Math.PI) / 180;
+    const dx = -34 * caida, dy = 17 * caida;
     return {
       // Al girar sobre los pies, el pecho quedaría bajo el suelo: se levanta la figura mientras cae.
       _raiz: { rot: giro, y: -17 * caida, alfa: 1 - tramo(f, 0.8, 1) },
@@ -529,7 +532,7 @@ export function animZombi(c: CtxAnim, op: OpcionesAnimZombi = {}): Pose {
       antebrazo_der: { rot: 10 + 15 * caida },
       pierna_izq: { rot: 14 * caida },
       pierna_der: { rot: -6 * caida },
-      sombra: { sx: 1 + caida * 0.6, alfa: 1 - caida * 0.4 },
+      sombra: { rot: -giro, x: dx * Math.cos(g) + dy * Math.sin(g), y: -dx * Math.sin(g) + dy * Math.cos(g), sx: 1 + caida * 0.9, alfa: 1 - caida * 0.4 },
     };
   }
 

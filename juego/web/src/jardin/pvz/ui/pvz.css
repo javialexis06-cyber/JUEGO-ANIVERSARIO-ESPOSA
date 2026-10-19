@@ -1,0 +1,259 @@
+/* Plantas contra Zombis: La Semilla Madre. Estilo de PvZ adaptado: madera, sobres beige con ventana verde,
+   letras gruesas con contorno oscuro. Horizontal en celular (banco en columna) y en computador (banco arriba). */
+
+body.pvz {
+  margin: 0;
+  overflow: hidden;
+  background: #1d1408;
+  color: #1d1408;
+  font-family: 'Arial Rounded MT Bold', 'Nunito', 'Trebuchet MS', 'Liberation Sans', system-ui, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+.pvz-app { position: fixed; inset: 0; overflow: hidden; }
+.pvz-app button { font: inherit; touch-action: manipulation; }
+.pvz-partida { position: absolute; inset: 0; }
+.pvz-lienzo { display: block; position: absolute; inset: 0; touch-action: none; }
+
+/* ---------------------------------------------------------------------------------------------------------- Botones */
+.pvz-boton {
+  min-height: 44px; padding: 8px 18px; border: 3px solid #1d1408; border-radius: 12px;
+  background: linear-gradient(#f7e9b8, #d8b867); color: #2b1a08; font-weight: 900; font-size: 16px;
+  box-shadow: 0 4px 0 #6b4519, inset 0 2px 0 #fff6d8; cursor: pointer;
+}
+.pvz-boton:active { transform: translateY(3px); box-shadow: 0 1px 0 #6b4519; }
+.pvz-boton.grande { font-size: 20px; padding: 10px 26px; background: linear-gradient(#b9f07a, #62b330); color: #10300a; box-shadow: 0 4px 0 #2e6a17, inset 0 2px 0 #e6ffc6; }
+.pvz-boton:disabled { filter: grayscale(0.8) brightness(0.8); }
+
+/* ---------------------------------------------------------------------------------------------------------- HUD */
+.pvz-hud { position: absolute; inset: 0; pointer-events: none; }
+.pvz-hud > * { pointer-events: auto; }
+.pvz-banco {
+  position: absolute; display: flex; gap: 6px; padding: 6px; box-sizing: border-box; border: 3px solid #1d1408;
+  background: linear-gradient(#a5693a, #6c3f1e); box-shadow: 0 4px 10px #0007, inset 0 2px 0 #c98d55;
+}
+.pvz-contador-sol {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid #1d1408;
+  border-radius: 8px; background: linear-gradient(#fbf1cf, #e8d49a); box-sizing: border-box;
+}
+.pvz-contador-sol .icono { display: block; }
+.pvz-contador-sol b { font-weight: 900; line-height: 1; }
+.pvz-contador-sol.oculto { display: none; }
+.pvz-sobres { display: grid; gap: 4px; }
+.pvz-sobre {
+  position: relative; padding: 0; border: 3px solid #1d1408; border-radius: 7px; overflow: hidden; cursor: pointer;
+  background: linear-gradient(#fbf6d8, #d9cc93); box-shadow: 0 2px 0 #3a230c; transition: transform 0.08s;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+}
+.pvz-sobre .ventana {
+  display: block; width: calc(100% - 6px); flex: 1; margin-top: 3px; border-radius: 4px; overflow: hidden;
+  background: linear-gradient(#c3e893, #79b94a); border: 1.5px solid #1d140899;
+}
+.pvz-sobre .ventana canvas, .pvz-sobre .ventana .pvz-retrato, .pvz-sobre .ventana .pvz-retrato canvas { display: block; width: 100%; height: 100%; }
+.pvz-sobre .costo { font-weight: 900; line-height: 1.1; color: #1d1408; padding: 1px 0 2px; }
+.pvz-sobre .recarga {
+  position: absolute; left: 0; right: 0; top: 0; height: calc(var(--r, 0) * 100%); background: #000a; pointer-events: none;
+}
+.pvz-sobre.sin-sol .ventana, .pvz-sobre.sin-sol .costo { filter: brightness(0.55) saturate(0.6); }
+.pvz-sobre.elegido { transform: translateY(-4px) scale(1.04); border-color: #fff7a1; box-shadow: 0 0 0 3px #1d1408, 0 0 14px #fff36b; }
+.pvz-sobre.usado { opacity: 0.35; }
+
+.pvz-herramientas { position: absolute; top: 6px; right: 6px; display: flex; gap: 6px; align-items: flex-start; }
+.pvz-pala, .pvz-abono {
+  width: 58px; height: 58px; border: 3px solid #1d1408; border-radius: 10px; padding: 4px; cursor: pointer;
+  background: linear-gradient(#8d5a2e, #5a3518); box-shadow: 0 3px 0 #2b1a08;
+}
+.pvz-pala svg { width: 100%; height: 100%; }
+.pvz-abono { position: relative; background: linear-gradient(#3f7d2a, #1f4a13); }
+.pvz-abono .icono { display: block; width: 100%; height: 76%; }
+.pvz-abono .cargas { display: block; color: #b9ff7a; font-size: 11px; letter-spacing: 1px; line-height: 1; text-shadow: 0 1px 0 #000; }
+.pvz-abono.vacio .icono { filter: grayscale(1) brightness(0.6); }
+.pvz-pala.elegido, .pvz-abono.elegido { outline: 3px solid #fff36b; outline-offset: 1px; transform: translateY(-2px); }
+.pvz-boton-menu {
+  min-width: 76px; height: 44px; border: 3px solid #1d1408; border-radius: 10px; font-weight: 900; font-size: 17px; color: #fff3cc;
+  background: linear-gradient(#5aa63a, #2f6d1c); box-shadow: 0 3px 0 #173d0c; cursor: pointer; text-shadow: 0 2px 0 #173d0c;
+}
+
+.pvz-progreso {
+  position: absolute; right: 10px; bottom: 8px; display: flex; flex-direction: column; align-items: flex-end; gap: 3px;
+  font-weight: 900; color: #fff6c8; text-shadow: 0 2px 0 #1d1408, 0 0 4px #1d1408;
+}
+.pvz-progreso .barra {
+  position: relative; display: block; width: 170px; height: 16px; border: 3px solid #1d1408; border-radius: 9px;
+  background: #3c2a12; overflow: visible;
+}
+.pvz-progreso .relleno {
+  position: absolute; right: 0; top: 0; bottom: 0; width: calc(var(--p, 0) * 100%); border-radius: 6px;
+  background: linear-gradient(#b5ef61, #5ea92a);
+}
+.pvz-progreso .cabeza {
+  position: absolute; top: -12px; width: 34px; height: 34px; right: calc(var(--p, 0) * 100% - 17px);
+}
+.pvz-progreso .bandera {
+  position: absolute; bottom: 10px; right: calc(var(--p) * 100% - 4px); width: 4px; height: 22px; background: #5b3a17;
+}
+.pvz-progreso .bandera::after { content: ''; position: absolute; left: 4px; top: 0; width: 14px; height: 10px; background: #c62828; border: 2px solid #1d1408; }
+.pvz-progreso .bandera.alzada { bottom: 16px; }
+
+.pvz-aviso {
+  position: absolute; left: 0; right: 0; top: 40%; text-align: center; pointer-events: none !important; opacity: 0;
+  font-family: 'Arial Black', 'Liberation Sans', sans-serif; font-weight: 900; font-size: clamp(24px, 6.4vh, 54px);
+  color: #fff3a6; -webkit-text-stroke: 2px #1d1408; text-shadow: 0 4px 0 #1d1408; transition: opacity 0.2s;
+}
+.pvz-aviso.visible { opacity: 1; animation: pvz-golpe 0.35s ease-out; }
+.pvz-aviso.rojo { color: #ff4a3a; }
+.pvz-aviso.grande { font-size: clamp(32px, 10vh, 80px); }
+.pvz-aviso.plantar { color: #ff3b2c; font-size: clamp(40px, 13vh, 104px); }
+.pvz-aviso.listos { color: #ffe36a; }
+.pvz-aviso.consejo { top: auto; bottom: 16%; font-size: clamp(15px, 4.2vh, 26px); color: #fff; -webkit-text-stroke: 1px #1d1408; padding: 0 20%; }
+@keyframes pvz-golpe { from { transform: scale(1.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* Banco arriba (computador, tableta) */
+.pvz-hud.horizontal .pvz-banco { top: 0; left: 6px; height: calc(var(--alto) * 0.14); max-height: 110px; min-height: 64px; border-radius: 0 0 12px 12px; border-top: 0; }
+.pvz-hud.horizontal .pvz-contador-sol { width: calc(min(110px, max(64px, var(--alto) * 0.14)) * 0.9); }
+.pvz-hud.horizontal .pvz-contador-sol .icono { width: 60%; height: 52%; }
+.pvz-hud.horizontal .pvz-contador-sol b { font-size: clamp(16px, 2.6vh, 24px); }
+.pvz-hud.horizontal .pvz-sobres { grid-auto-flow: column; grid-auto-columns: calc(min(110px, max(64px, var(--alto) * 0.14)) * 0.66); }
+.pvz-hud.horizontal .pvz-sobre .costo { font-size: clamp(12px, 2vh, 17px); }
+.pvz-hud.horizontal .pvz-cinta { position: relative; width: calc(min(110px, max(64px, var(--alto) * 0.14)) * 0.7 * 10); }
+.pvz-hud.horizontal .pvz-cinta .pvz-sobre { position: absolute; top: 0; bottom: 0; width: calc(min(110px, max(64px, var(--alto) * 0.14)) * 0.64); left: calc(var(--x) * min(110px, max(64px, var(--alto) * 0.14)) * 0.7); }
+
+/* Banco en columna (celular horizontal, como el PvZ de celular) */
+.pvz-hud.vertical .pvz-banco {
+  top: 0; left: 0; bottom: 0; width: clamp(112px, calc(var(--ancho) * 0.165), 176px); flex-direction: column; border-radius: 0 12px 12px 0;
+  border-left: 0; overflow: hidden;
+}
+.pvz-hud.vertical .pvz-contador-sol { flex-direction: row; gap: 4px; height: 44px; flex: none; }
+.pvz-hud.vertical .pvz-contador-sol .icono { width: 34px; height: 34px; }
+.pvz-hud.vertical .pvz-contador-sol b { font-size: 22px; }
+.pvz-hud.vertical .pvz-sobres { grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(0, calc((var(--alto) - 70px) / 5 - 4px)); flex: 1; align-content: start; }
+.pvz-hud.vertical .pvz-sobre .costo { font-size: 14px; }
+.pvz-hud.vertical .pvz-cinta { position: relative; flex: 1; }
+.pvz-hud.vertical .pvz-cinta .pvz-sobre { position: absolute; left: 6px; right: 6px; height: calc((var(--alto) - 80px) / 6); top: calc(var(--x) * (var(--alto) - 80px) / 6); }
+.pvz-hud.vertical .pvz-herramientas .pvz-pala, .pvz-hud.vertical .pvz-herramientas .pvz-abono { width: 52px; height: 52px; }
+.pvz-cinta { background: repeating-linear-gradient(90deg, #3d3d3d 0 10px, #2c2c2c 10px 20px); border: 3px solid #1d1408; border-radius: 6px; min-height: 40px; }
+.pvz-cinta .pvz-sobre { transition: left 0.1s linear, top 0.1s linear; }
+.pvz-cinta .pvz-sobre .costo { display: none; }
+
+/* ---------------------------------------------------------------------------------------------------------- Diálogo */
+.pvz-dialogo { position: absolute; inset: 0; z-index: 30; display: flex; align-items: flex-end; background: linear-gradient(transparent 45%, #0006); animation: pvz-aparece 0.25s; }
+.pvz-dialogo.saliendo { opacity: 0; transition: opacity 0.25s; }
+.pvz-dialogo .retrato { position: relative; width: clamp(140px, 30vh, 280px); height: clamp(180px, 46vh, 360px); margin-left: 2%; flex: none; }
+.pvz-dialogo .retrato canvas { width: 100%; height: 100%; }
+.pvz-dialogo .retrato .icono { position: absolute; left: 10%; bottom: 12%; width: 70%; }
+.pvz-dialogo .retrato .icono svg { width: 100%; filter: drop-shadow(0 4px 0 #0005); }
+.pvz-dialogo .globo {
+  position: relative; flex: 1; margin: 0 4% 6vh 1%; padding: 14px 18px 22px; background: #fffdf2; border: 4px solid #1d1408;
+  border-radius: 22px; box-shadow: 0 6px 0 #0005; max-width: 720px; align-self: flex-end; margin-bottom: max(6vh, 18px);
+}
+.pvz-dialogo .globo::before { content: ''; position: absolute; left: -22px; bottom: 26px; border: 12px solid transparent; border-right: 18px solid #1d1408; }
+.pvz-dialogo .quien { display: block; font-size: 14px; color: #6a3e14; margin-bottom: 4px; }
+.pvz-dialogo .texto { margin: 0; font-size: clamp(16px, 4.6vh, 24px); font-weight: 800; line-height: 1.3; min-height: 2.6em; }
+.pvz-dialogo[data-quien="dave"] .texto { font-size: clamp(17px, 5vh, 26px); }
+.pvz-dialogo[data-quien="narrador"] .globo { background: #2b2216; color: #fff3d6; font-style: italic; }
+.pvz-dialogo[data-quien="narrador"] .retrato { width: 0; margin: 0; }
+.pvz-dialogo[data-quien="zomboss"] .globo { background: #e9f1e0; }
+.pvz-dialogo .sigue { position: absolute; right: 14px; bottom: 6px; opacity: 0; animation: pvz-latido 0.8s infinite; }
+.pvz-dialogo.completa .sigue { opacity: 1; }
+.pvz-dialogo .saltar { position: absolute; top: 10px; right: 10px; min-height: 40px; padding: 4px 14px; border-radius: 999px; border: 2px solid #fff8; background: #0008; color: #fff; }
+@keyframes pvz-aparece { from { opacity: 0; } }
+@keyframes pvz-latido { 50% { transform: translateX(4px); } }
+
+.pvz-nota { position: absolute; inset: 0; z-index: 32; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0009; }
+.pvz-nota .papel {
+  width: min(80vw, 560px); max-height: 70vh; overflow: auto; padding: 22px 28px; background: #fffdf0; border: 3px solid #1d1408;
+  transform: rotate(-1.5deg); box-shadow: 0 10px 30px #000a; font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe Print', cursive;
+}
+.pvz-nota small { display: block; color: #7b5a2d; margin-bottom: 8px; font-family: inherit; }
+.pvz-nota p { white-space: pre-line; font-size: clamp(17px, 4.6vh, 24px); line-height: 1.35; margin: 0 0 12px; color: #262626; }
+.pvz-nota b { display: block; text-align: right; color: #7a1f1f; }
+
+/* ---------------------------------------------------------------------------------------------------------- Título */
+.pvz-titulo {
+  position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 2vh 3vw; padding: 3vh 4vw; box-sizing: border-box;
+  background: radial-gradient(ellipse at 30% 110%, #4f8d2c 0 30%, transparent 31%), linear-gradient(#2a3d6b 0%, #6d5a8a 45%, #e3925a 70%, #3f6e25 70.5%, #2e5419);
+}
+.pvz-titulo .logo { grid-column: 1; grid-row: 1 / span 2; display: flex; flex-direction: column; align-items: center; transform: rotate(-3deg); }
+.pvz-titulo .logo span { font-family: 'Arial Black', 'Liberation Sans', sans-serif; font-weight: 900; line-height: 0.95; -webkit-text-stroke: 3px #1d1408; text-shadow: 0 6px 0 #1d1408; }
+.pvz-titulo .logo .plantas { font-size: clamp(38px, 12vh, 104px); color: #8de04a; }
+.pvz-titulo .logo .contra { font-size: clamp(18px, 5vh, 40px); color: #fff3d6; -webkit-text-stroke: 2px #1d1408; }
+.pvz-titulo .logo .zombis { font-size: clamp(40px, 13vh, 112px); color: #b9c3a3; }
+.pvz-titulo .logo small { margin-top: 1.5vh; font-size: clamp(16px, 4.4vh, 30px); font-weight: 900; color: #ffe27a; text-shadow: 0 3px 0 #1d1408; }
+.pvz-titulo .lapida {
+  position: relative; border: 4px solid #1d1408; border-radius: 40px 40px 10px 10px; background: linear-gradient(#cfd2c8, #8e9384);
+  box-shadow: 0 6px 0 #3d4136, inset 0 3px 0 #eef0e8; cursor: pointer; padding: 10px 14px; min-height: 52px; color: #2a2d24;
+}
+.pvz-titulo .lapida b { display: block; font-family: 'Arial Black', 'Liberation Sans', sans-serif; font-size: clamp(15px, 4vh, 24px); }
+.pvz-titulo .lapida small { display: block; font-size: 12px; font-weight: 800; color: #4c513f; min-height: 1em; }
+.pvz-titulo .lapida.principal { grid-column: 2; grid-row: 1; background: linear-gradient(#b8ef72, #5aa82e); box-shadow: 0 7px 0 #2c5f16, inset 0 3px 0 #e2ffc0; min-height: 84px; color: #10300a; }
+.pvz-titulo .lapida.principal b { font-size: clamp(22px, 7vh, 40px); }
+.pvz-titulo .lapida.principal small { color: #24501a; font-size: 14px; }
+.pvz-titulo .lapidas { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pvz-titulo .extras { grid-column: 1 / span 2; grid-row: 3; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.pvz-titulo .bloqueado { filter: grayscale(0.7) brightness(0.8); }
+.pvz-titulo .sacude, .pvz-sacude { animation: pvz-sacude 0.35s; }
+@keyframes pvz-sacude { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.pvz-aviso-breve { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); padding: 8px 16px; border-radius: 999px; background: #000c; color: #fff; font-weight: 800; z-index: 40; }
+
+/* ---------------------------------------------------------------------------------------------------------- Mapa */
+.pvz-mapa { position: absolute; inset: 0; display: flex; flex-direction: column; box-sizing: border-box; padding: 10px 14px; background: linear-gradient(#8fd0ef, #c9edf5 40%, #7cc455 40.5%, #4f9a2f); overflow: hidden; }
+.pvz-mapa header { display: flex; align-items: center; gap: 14px; }
+.pvz-mapa h2 { margin: 0; font-family: 'Arial Black', 'Liberation Sans', sans-serif; font-size: clamp(18px, 5vh, 32px); color: #fff8d6; -webkit-text-stroke: 2px #1d1408; text-shadow: 0 3px 0 #1d1408; flex: 1; }
+.pvz-mapa .acto { font-weight: 900; color: #1d1408; background: #fff8; border-radius: 999px; padding: 4px 12px; }
+.pvz-mapa .mundos { display: flex; gap: 6px; margin: 8px 0; flex-wrap: wrap; }
+.pvz-mapa .mundo { width: 46px; height: 44px; border: 3px solid #1d1408; border-radius: 10px; background: #f3e1a6; font-weight: 900; font-size: 18px; cursor: pointer; }
+.pvz-mapa .mundo.activo { background: #9be05a; transform: translateY(-3px); }
+.pvz-mapa .mundo.pronto { opacity: 0.55; }
+.pvz-mapa .camino { flex: 1; position: relative; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: 1fr 1fr; align-items: center; justify-items: center; gap: 2vh 1vw; padding: 2vh 2vw; }
+.pvz-mapa .nodo {
+  width: clamp(64px, 17vh, 110px); height: clamp(64px, 17vh, 110px); border-radius: 50%; border: 4px solid #1d1408; cursor: pointer;
+  background: radial-gradient(circle at 35% 30%, #fff8d0, #e6c55f); box-shadow: 0 6px 0 #6b4a12; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.pvz-mapa .nodo b { font-family: 'Arial Black', 'Liberation Sans', sans-serif; font-size: clamp(16px, 4.4vh, 26px); }
+.pvz-mapa .nodo small { font-weight: 900; color: #2c6312; }
+.pvz-mapa .nodo.hecho { background: radial-gradient(circle at 35% 30%, #e7ffd0, #7ccd45); box-shadow: 0 6px 0 #2f6a16; }
+.pvz-mapa .nodo.actual { animation: pvz-salta 1s infinite; outline: 4px solid #fff36b; }
+.pvz-mapa .nodo.cerrado { filter: grayscale(1) brightness(0.75); cursor: default; }
+.pvz-mapa .pronto-texto { text-align: center; font-weight: 900; color: #fff; text-shadow: 0 2px 0 #1d1408; }
+@keyframes pvz-salta { 50% { transform: translateY(-6px); } }
+
+/* ---------------------------------------------------------------------------------------------------------- Selección */
+.pvz-seleccion { position: absolute; left: 0; top: 0; bottom: 0; width: min(62vw, 640px); z-index: 20; display: flex; flex-direction: column; gap: 8px; padding: 10px; box-sizing: border-box; background: linear-gradient(90deg, #2b1a0bf2, #2b1a0bcc 85%, transparent); animation: pvz-entra 0.35s ease-out; }
+.pvz-seleccion .banco-eleccion { background: linear-gradient(#a5693a, #6c3f1e); border: 3px solid #1d1408; border-radius: 10px; padding: 6px; }
+.pvz-seleccion .banco-eleccion b { color: #fff3cc; display: block; margin-bottom: 4px; text-shadow: 0 2px 0 #1d1408; }
+.pvz-seleccion .ranuras { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.pvz-seleccion .ranura-vacia { aspect-ratio: 0.72; border-radius: 6px; background: #0004; border: 2px dashed #fff5; }
+.pvz-seleccion .catalogo { flex: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); grid-auto-rows: 74px; gap: 6px; overflow: auto; padding: 6px; background: #f3e4b6; border: 3px solid #1d1408; border-radius: 10px; }
+.pvz-seleccion .pvz-sobre { aspect-ratio: auto; min-height: 60px; }
+.pvz-seleccion .pvz-sobre .costo { font-size: 14px; }
+.pvz-seleccion .jugar { align-self: center; }
+@keyframes pvz-entra { from { transform: translateX(-100%); } }
+
+/* ---------------------------------------------------------------------------------------------------------- Premio, derrota, pausa */
+.pvz-premio, .pvz-derrota, .pvz-pausa, .pvz-mensaje { position: absolute; inset: 0; z-index: 35; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vh; }
+.pvz-premio { background: radial-gradient(circle, #fffbe0, #f2d36b 70%, #b47a1f); animation: pvz-aparece 0.6s; }
+.pvz-premio h2 { margin: 0; font-family: 'Arial Black', 'Liberation Sans', sans-serif; font-size: clamp(20px, 6vh, 40px); color: #fff; -webkit-text-stroke: 2px #1d1408; text-shadow: 0 4px 0 #1d1408; text-align: center; }
+.pvz-premio .tarjeta { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto 1fr; column-gap: 18px; align-items: start; width: min(86vw, 640px); padding: 14px; background: #fffaf0; border: 4px solid #1d1408; border-radius: 16px; box-shadow: 0 8px 0 #0004; }
+.pvz-premio .foto { grid-row: 1 / span 3; width: clamp(110px, 34vh, 220px); height: clamp(110px, 34vh, 220px); background: linear-gradient(#c3e893, #79b94a); border: 3px solid #1d1408; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 72px; }
+.pvz-premio .foto .pvz-retrato, .pvz-premio .foto canvas { width: 100%; height: 100%; display: block; }
+.pvz-premio h3 { margin: 0; font-size: clamp(20px, 5vh, 30px); }
+.pvz-premio .costo { margin: 2px 0 6px; font-weight: 900; color: #7b5a12; }
+.pvz-premio .texto { margin: 0; font-size: clamp(14px, 3.8vh, 19px); line-height: 1.35; }
+.pvz-derrota { background: #000c; animation: pvz-aparece 0.8s; }
+.pvz-derrota h1 { margin: 0; text-align: center; font-family: 'Arial Black', 'Liberation Sans', sans-serif; font-size: clamp(26px, 9vh, 64px); color: #95c24f; -webkit-text-stroke: 3px #1d1408; text-shadow: 0 6px 0 #3b1010; animation: pvz-golpe 0.6s; }
+.pvz-derrota .botones, .pvz-mensaje .botones { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.pvz-pausa, .pvz-mensaje { background: #0009; }
+.pvz-pausa .libro, .pvz-mensaje .libro { display: flex; flex-direction: column; gap: 8px; min-width: min(80vw, 300px); max-width: 90vw; max-height: 92vh; overflow: auto; padding: 16px 18px; box-sizing: border-box; background: linear-gradient(#5b8f3a, #3c6b24); border: 4px solid #1d1408; border-radius: 16px; box-shadow: 0 8px 0 #0006; }
+.pvz-pausa h2, .pvz-mensaje h2 { margin: 0 0 4px; text-align: center; color: #fff6cf; font-family: 'Arial Black', 'Liberation Sans', sans-serif; -webkit-text-stroke: 1.5px #1d1408; text-shadow: 0 3px 0 #1d1408; }
+.pvz-mensaje p { margin: 0 0 6px; color: #fff; font-weight: 700; text-align: center; }
+.pvz-retrato { display: block; }
+
+@media (max-height: 420px) {
+  .pvz-titulo { gap: 1vh 3vw; padding: 2vh 3vw; }
+  .pvz-titulo .lapida { min-height: 44px; padding: 6px 10px; }
+  .pvz-titulo .lapida small { font-size: 11px; }
+  .pvz-titulo .extras .pvz-boton { min-height: 40px; padding: 4px 12px; font-size: 14px; }
+  .pvz-boton { font-size: 15px; }
+}
