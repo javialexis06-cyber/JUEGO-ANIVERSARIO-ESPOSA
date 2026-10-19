@@ -228,6 +228,13 @@ export interface DefNivel {
   premio?: { planta?: IdPlanta; objeto?: string; nota?: boolean };
 }
 
+/**
+ * Nivel tal como lo escribe datos/<area>.ts: el índice (datos/niveles.ts) completa las plantas disponibles (las
+ * ganadas en los niveles anteriores de la aventura), las ranuras y si hay selección.
+ */
+export type DefNivelBase = Omit<DefNivel, 'plantasDisponibles' | 'seleccion' | 'ranuras'> &
+  Partial<Pick<DefNivel, 'plantasDisponibles' | 'seleccion' | 'ranuras'>>;
+
 // ---------------------------------------------------------------------------------------------------------------
 // Entidades vivas del motor (la vista las lee; solo el motor y los comportamientos las cambian)
 
@@ -537,5 +544,5 @@ export interface RegistroComportamientos {
 export interface DatosArea {
   plantas: DefPlanta[];
   zombis: DefZombi[];
-  niveles: DefNivel[];
+  niveles: DefNivelBase[];
 }
