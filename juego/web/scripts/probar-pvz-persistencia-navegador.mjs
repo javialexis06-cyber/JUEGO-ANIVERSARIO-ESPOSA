@@ -17,7 +17,7 @@ let servidor,browser,context,origen;
 await mkdir(salida,{recursive:true});
 try{
  const compilado=await build({
-  stdin:{contents:"import {MotorPvZ} from './src/jardin/pvz/motor/motor';import {crearPilotoPvZ} from './src/jardin/pvz/motor/bot';import {GuardadoPvZ,progresoInicialPvZ} from './src/jardin/pvz/guardado';globalThis.__pvz={MotorPvZ,crearPilotoPvZ,GuardadoPvZ,progresoInicialPvZ};",resolveDir:resolve(import.meta.dirname,'..')},
+  stdin:{contents:"import {MotorPvZ} from './src/jardin/pvz/motor/motor';import {crearPilotoPvZ,seleccionPilotoPvZ} from './src/jardin/pvz/motor/bot';import {NIVEL_PVZ} from './src/jardin/pvz/datos/niveles';import {GuardadoPvZ,progresoInicialPvZ} from './src/jardin/pvz/guardado';globalThis.__pvz={MotorPvZ,crearPilotoPvZ,seleccionPilotoPvZ,NIVEL_PVZ,GuardadoPvZ,progresoInicialPvZ};",resolveDir:resolve(import.meta.dirname,'..')},
   write:false,bundle:true,platform:'browser',format:'iife',target:'es2022',logLevel:'silent'
  });
  const codigo=compilado.outputFiles[0].text;
@@ -105,6 +105,46 @@ try{
   assert.deepEqual(bloqueado.bloqueo,{motivo});assert.deepEqual(bloqueado.abrir,{ok:false,motivo:'guardado'});assert.equal(bloqueado.ajustes,false);assert.equal(bloqueado.reintento,false);assert.equal(bloqueado.conservado,texto);assert.equal(bloqueado.recuperado,true);assert.equal(bloqueado.siguiente,'1-3');
   registrar(nombre+' bloquea escrituras y conserva los bytes originales');
  }
+ // Fixture literal de la edición publicada de diez niveles; no se fabrica con el catálogo actual.
+ // Su lectura debe reconocer la antigua frontera sin escribir ni otorgar una victoria nocturna.
+ const legado=await pagina.evaluate(()=>{
+  const historico={
+   version:1,nivelAlcanzado:'1-10',completados:['1-1','1-2','1-3','1-4','1-5','1-6','1-7','1-8','1-9','1-10'],
+   plantasDesbloqueadas:['lanzaguisantes','girasol','petacereza','nuez','patatapum','hielaguisantes','planta-carnivora','repetidora','seta-desesporada','semilla-comprada'],
+   objetos:['pala'],notas:['nota-1'],monedas:3210,compras:{'semilla-comprada':true,abono:2},ranuras:6,
+   ajustes:{sonido:false,musica:false,velocidad:2},minijuegos:{completados:['bolos'],marcas:{bolos:15}},
+   rompecabezas:{completados:[],marcas:{}},supervivencia:{completados:[],marcas:{}},fusion:{completados:[],marcas:{},descubiertas:[]},
+  };
+  const texto=JSON.stringify(historico),amigo=localStorage.getItem('amigo-pvz-v1'),control={escrituras:0};
+  localStorage.setItem('pvz-v1',texto);
+  const almacen={getItem:k=>localStorage.getItem(k),setItem(k,v){control.escrituras++;localStorage.setItem(k,v);}};
+  const g=new globalThis.__pvz.GuardadoPvZ(almacen);
+  globalThis.__ensayoNoche={g,control,historico,amigo};
+  return {historico,progreso:g.progreso,siguiente:g.siguienteNivel,bloqueo:g.bloqueo,escrituras:control.escrituras,texto,conservado:localStorage.getItem('pvz-v1'),disponibles:g.disponibles()};
+ });
+ assert.equal(legado.bloqueo,null);assert.equal(legado.siguiente,'2-1');assert.equal(legado.progreso.nivelAlcanzado,'2-1');assert.deepEqual(legado.progreso.completados,legado.historico.completados);assert.equal(legado.progreso.completados.includes('2-1'),false);assert.equal(legado.progreso.plantasDesbloqueadas.includes('seta-solar'),false);assert.equal(legado.escrituras,0);assert.equal(legado.conservado,legado.texto);assert.equal(legado.disponibles.includes('seta-desesporada'),true);assert.equal(legado.disponibles.includes('semilla-comprada'),false);
+ for(const k of ['plantasDesbloqueadas','objetos','notas','monedas','compras','ranuras','ajustes','minijuegos','rompecabezas','supervivencia','fusion'])assert.deepEqual(legado.progreso[k],legado.historico[k],k);
+ registrar('guardado histórico 1-10 habilita noche sin escribir ni alterar compras o ajustes');
+
+ const noche=await pagina.evaluate(()=>{
+  const {MotorPvZ,crearPilotoPvZ,seleccionPilotoPvZ,NIVEL_PVZ}=globalThis.__pvz,{g,control,historico,amigo}=globalThis.__ensayoNoche;
+  const disponibles=g.disponibles(),seleccion=seleccionPilotoPvZ(disponibles,NIVEL_PVZ['2-1']),a=g.abrirNivel('2-1',seleccion,23);
+  if(!a.ok)throw new Error('No se pudo abrir 2-1: '+JSON.stringify(a));
+  const m=new MotorPvZ(a.nivel,a.opciones),piloto=crearPilotoPvZ();let finales=0;
+  for(let pasos=0;pasos<60*1500&&!m.terminado;pasos++){piloto(m);m.paso();finales+=m.eventos.filter(e=>e.t==='fin').length;}
+  if(m.terminado!=='gano')throw new Error('El piloto no ganó 2-1: '+m.terminado);
+  const confirmacion=g.confirmarResultado(a.partida,m.estado()),repetida=g.confirmarResultado(a.partida,m.estado());
+  return {tiempo:m.t,seleccion,disponibles,finales,confirmacion,repetida,progreso:g.progreso,siguiente:g.siguienteNivel,escrituras:control.escrituras,texto:localStorage.getItem('pvz-v1'),amigoIntacto:localStorage.getItem('amigo-pvz-v1')===amigo,historico};
+ });
+ assert.equal(noche.finales,1);assert.ok(noche.seleccion.length<=6);assert.ok(noche.seleccion.every(id=>noche.disponibles.includes(id)));assert.deepEqual(noche.confirmacion,{ok:true,gano:true,aplicado:true,guardado:true});assert.deepEqual(noche.repetida,{ok:true,gano:true,aplicado:false,guardado:true});assert.equal(noche.escrituras,1);assert.equal(noche.siguiente,'2-2');assert.deepEqual(noche.progreso.completados,[...legado.historico.completados,'2-1']);assert.deepEqual(noche.progreso.plantasDesbloqueadas,[...legado.historico.plantasDesbloqueadas,'seta-solar']);assert.equal(noche.amigoIntacto,true);
+ for(const k of ['objetos','notas','monedas','compras','ranuras','ajustes','minijuegos','rompecabezas','supervivencia','fusion'])assert.deepEqual(noche.progreso[k],legado.historico[k],k);
+ registrar('victoria nocturna legal 2-1 guarda una vez conservando economía y ajustes',{tiempo:noche.tiempo,semillas:noche.seleccion});
+ await recargar();
+ const nocheRecarga=await pagina.evaluate(()=>{const g=new globalThis.__pvz.GuardadoPvZ(localStorage);return {siguiente:g.siguienteNivel,progreso:g.progreso,texto:localStorage.getItem('pvz-v1'),clasica:localStorage.getItem('jardin-v1'),clasicaAmigos:localStorage.getItem('amigo-jardin-v1')};});
+ assert.equal(nocheRecarga.siguiente,'2-2');
+ // La normalización coloca premios conocidos antes de extras comprados; los desbloqueos son un conjunto.
+ assert.deepEqual({...nocheRecarga.progreso,plantasDesbloqueadas:[...nocheRecarga.progreso.plantasDesbloqueadas].sort()},{...noche.progreso,plantasDesbloqueadas:[...noche.progreso.plantasDesbloqueadas].sort()});assert.equal(nocheRecarga.texto,noche.texto);assert.equal(nocheRecarga.clasica,'clásica pareja intacta');assert.equal(nocheRecarga.clasicaAmigos,'clásica amigos intacta');
+ registrar('recargar tras noche conserva 2-2 desbloqueado y partidas clásicas');
  assert.deepEqual(errores,[]);assert.deepEqual(peticionesExternas,[]);
  registrar('sin errores de página ni peticiones externas');
  console.log('OK',resultados.length,'verificaciones de motor y persistencia en Chromium; sin aventura visual');
@@ -112,5 +152,5 @@ try{
 finally{
  await context?.close().catch(()=>{});await browser?.close().catch(()=>{});
  if(servidor)await new Promise(ok=>servidor.close(ok));
- await writeFile(join(salida,'resultado.json'),JSON.stringify({ok:errores.length===0,alcance:'Contrato de MotorPvZ y GuardadoPvZ con localStorage real. Piloto legal en 1-1 y 1-2; fallo de cuota inyectado en el adaptador. No carga ni acredita la aventura visual ni dispositivos físicos.',origen:origen??null,pruebas:resultados,errores,peticionesExternas},null,2));
+ await writeFile(join(salida,'resultado.json'),JSON.stringify({ok:errores.length===0,alcance:'Contrato de MotorPvZ y GuardadoPvZ con localStorage real. Piloto legal en 1-1, 1-2 y 2-1; frontera histórica de diez niveles, recargas y fallo de cuota inyectado en el adaptador. No carga ni acredita la aventura visual ni dispositivos físicos.',origen:origen??null,pruebas:resultados,errores,peticionesExternas},null,2));
 }

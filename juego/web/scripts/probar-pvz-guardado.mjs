@@ -8,9 +8,9 @@ import {pathToFileURL} from 'node:url';
 const tmp=await mkdtemp(join(tmpdir(),'pvz-guardado-')),resultados=[];
 try{
  const fichero=join(tmp,'guardado.mjs');
- await build({stdin:{contents:"export * from './src/jardin/pvz/guardado';export * from './src/jardin/pvz/motor/motor';export * from './src/jardin/pvz/motor/bot';export * from './src/jardin/pvz/datos/niveles';",resolveDir:resolve(import.meta.dirname,'..')},outfile:fichero,bundle:true,platform:'node',format:'esm',logLevel:'silent'});
+ await build({stdin:{contents:"export * from './src/jardin/pvz/guardado';export * from './src/jardin/pvz/motor/motor';export * from './src/jardin/pvz/motor/bot';export * from './src/jardin/pvz/datos/niveles';export * from './src/jardin/pvz/datos/plantas';",resolveDir:resolve(import.meta.dirname,'..')},outfile:fichero,bundle:true,platform:'node',format:'esm',logLevel:'silent'});
  for(const k of ['window','document','localStorage'])Object.defineProperty(globalThis,k,{get(){throw new Error('Importación dependiente del navegador: '+k);},configurable:true});
- const {GuardadoPvZ,normalizarProgresoPvZ,progresoInicialPvZ,claveGuardadoPvZ,MotorPvZ,crearPilotoPvZ,NIVELES_PVZ}=await import(pathToFileURL(fichero));
+ const {GuardadoPvZ,normalizarProgresoPvZ,progresoInicialPvZ,claveGuardadoPvZ,MotorPvZ,crearPilotoPvZ,seleccionPilotoPvZ,NIVELES_PVZ,PLANTAS_PVZ}=await import(pathToFileURL(fichero));
  for(const k of ['window','document','localStorage'])delete globalThis[k];
  const prueba=(nombre,fn)=>{fn();resultados.push({nombre,ok:true});console.log('OK',nombre);};
  const memoria=(inicial={})=>({datos:new Map(Object.entries(inicial)),lecturas:[],escrituras:[],fallaLeer:false,fallaEscribir:false,getItem(k){this.lecturas.push(k);if(this.fallaLeer)throw new Error('Lectura no disponible');return this.datos.get(k)??null;},setItem(k,v){if(this.fallaEscribir)throw new Error('QuotaExceededError');this.escrituras.push({k,v});this.datos.set(k,v);}});
@@ -132,13 +132,15 @@ try{
    if(n.cinta)assert.equal(g.abrirNivel(n.id,['lanzaguisantes']).ok,false);
    const a=abrir(g,n.id),r=g.confirmarResultado(a.partida,final(a));assert.equal(r.aplicado,true);assert.equal(r.guardado,true);assert.equal(g.confirmarResultado(a.partida,final(a)).aplicado,false);g=new GuardadoPvZ(s);
    if(n.premio?.planta)assert.equal(g.progreso.plantasDesbloqueadas.includes(n.premio.planta),true);
+   if(n.id==='1-10'){assert.equal(g.siguienteNivel,'2-1');assert.equal(g.disponibles().includes('seta-desesporada'),true);assert.equal(g.progreso.completados.includes('2-1'),false);}
   }
-  assert.deepEqual(g.progreso.completados,NIVELES_PVZ.map(n=>n.id));assert.deepEqual(g.progreso.objetos,['pala']);assert.deepEqual(g.progreso.notas,['nota-1']);assert.equal(g.siguienteNivel,null);assert.equal(g.progreso.plantasDesbloqueadas.includes('seta-desesporada'),true);assert.equal(g.disponibles().includes('seta-desesporada'),false);assert.equal(g.progreso.monedas,0);assert.equal(s.escrituras.length,10);
+  assert.deepEqual(g.progreso.completados,NIVELES_PVZ.map(n=>n.id));assert.deepEqual(g.progreso.objetos,[...new Set(NIVELES_PVZ.map(n=>n.premio?.objeto).filter(Boolean))]);assert.deepEqual(g.progreso.notas,[...new Set(NIVELES_PVZ.map(n=>n.premio?.nota).filter(Boolean))]);assert.equal(g.siguienteNivel,null);assert.equal(g.progreso.plantasDesbloqueadas.includes('seta-desesporada'),true);assert.equal(g.disponibles().includes('seta-desesporada'),Object.hasOwn(PLANTAS_PVZ,'seta-desesporada'));assert.equal(g.progreso.monedas,0);assert.equal(s.escrituras.length,NIVELES_PVZ.length);assert.equal(g.progreso.plantasDesbloqueadas.includes('nenufar'),true);assert.equal(g.disponibles().includes('nenufar'),false);
  });
  // Acredita también el recorrido real del contrato abrir -> MotorPvZ -> ganar -> guardar -> recargar.
  const s=memoria();let g=new GuardadoPvZ(s);
  for(const n of NIVELES_PVZ){
-  const a=abrir(g,n.id),m=new MotorPvZ(a.nivel,a.opciones),piloto=crearPilotoPvZ();
+  const seleccion=n.area==='noche'&&!n.cinta&&!n.semillas?seleccionPilotoPvZ(g.disponibles(),n):undefined;
+  const a=abrir(g,n.id,seleccion),m=new MotorPvZ(a.nivel,a.opciones),piloto=crearPilotoPvZ();
   for(let pasos=0;pasos<60*1500&&!m.terminado;pasos++){piloto(m);m.paso();}
   assert.equal(m.terminado,'gano',n.id+' partida real con selección desbloqueada');assert.equal(g.confirmarResultado(a.partida,m.estado()).guardado,true);g=new GuardadoPvZ(s);
   resultados.push({nombre:'campaña real y guardado '+n.id,ok:true,t:m.t,semillas:[...m.semillas]});console.log('OK campaña real y guardado',n.id,Math.round(m.t)+'s');

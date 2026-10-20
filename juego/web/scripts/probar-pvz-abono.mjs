@@ -11,8 +11,8 @@ const resultados = [];
 try {
  const fichero = join(tmp, 'motor.mjs');
  await build({stdin: {contents: "export * from './src/jardin/pvz/motor/motor';export * from './src/jardin/pvz/datos/dia';export * from './src/jardin/pvz/datos/plantas';export * from './src/jardin/pvz/datos/zombis';", resolveDir: resolve(import.meta.dirname, '..')}, outfile: fichero, bundle: true, platform: 'node', format: 'esm', logLevel: 'silent'});
- const {MotorPvZ, NIVELES_DIA, PLANTAS_PVZ, ZOMBIS_PVZ} = await import(pathToFileURL(fichero));
- const preparado = (op = {}, nivel = {}, registros = {}) => new MotorPvZ({...NIVELES_DIA[8], id: 'prueba-abono', solInicial: 10000, sinSolCielo: true, ...nivel}, {sinOleadas: true, semillas: Object.keys(PLANTAS_PVZ), abono: 3, ...op}, registros);
+ const {MotorPvZ, NIVELES_DIA, PLANTAS_DIA, PLANTAS_PVZ, ZOMBIS_PVZ} = await import(pathToFileURL(fichero));
+ const preparado = (op = {}, nivel = {}, registros = {}) => new MotorPvZ({...NIVELES_DIA[8], id: 'prueba-abono', solInicial: 10000, sinSolCielo: true, ...nivel}, {sinOleadas: true, semillas: PLANTAS_DIA.map(p=>p.id), abono: 3, ...op}, registros);
  const prueba = (nombre, fn) => {const detalle = fn(); resultados.push({nombre, ok: true, ...detalle}); console.log('OK', nombre);};
  const pasos = (m, cantidad) => {const eventos = []; for (let i = 0; i < cantidad; i++) {m.paso(); eventos.push(...m.consumirEventos());} return eventos;};
  const segundos = (m, s) => pasos(m, Math.ceil(s * 60));
@@ -152,7 +152,7 @@ try {
  const relleno = {...PLANTAS_PVZ.nuez, id: 'relleno-prueba', sol: 0, recarga: 0};
  for (const libres of [0, 1]) prueba(`Patatapum respeta el tablero ocupado con ${libres} huecos disponibles`, () => {
   const plantas = {...PLANTAS_PVZ, [relleno.id]: relleno};
-  const m = preparado({semillas: Object.keys(plantas)}, {filas: [2]}, {plantas}), p = siembra(m, 'patatapum');
+  const m = preparado({semillas: ['patatapum',relleno.id]}, {filas: [2]}, {plantas}), p = siembra(m, 'patatapum');
   for (let c = 1; c < 9 - libres; c++) siembra(m, relleno.id, 2, c);
   const antes = m.plantas.length; assert.ok(m.usarAbono(p.id));
   assert.equal(m.plantas.length, antes + libres); assert.equal(m.plantas.filter(q => q.datos.origenAbono === p.id).length, libres);
@@ -162,7 +162,7 @@ try {
  for (const area of ['piscina', 'tejado']) prueba(`Patatapum reproduce solo en casillas válidas de ${area}`, () => {
   const base = {...PLANTAS_PVZ.nuez, id: 'base-prueba', sol: 0, recarga: 0, capa: 'base', agua: 'tambien'};
   const plantas = {...PLANTAS_PVZ, [base.id]: base};
-  const m = preparado({semillas: Object.keys(plantas)}, {area, filas: [2], ...(area === 'piscina' ? {filasAgua: [2]} : {})}, {plantas});
+  const m = preparado({semillas: ['patatapum',base.id]}, {area, filas: [2], ...(area === 'piscina' ? {filasAgua: [2]} : {})}, {plantas});
   for (const c of [0, 1, 8]) siembra(m, base.id, 2, c);
   const p = siembra(m, 'patatapum'); assert.ok(m.usarAbono(p.id));
   assert.deepEqual(m.plantas.filter(q => q.tipo === 'patatapum').map(q => q.col).sort((a, b) => a - b), [0, 1, 8]);

@@ -1,5 +1,7 @@
-import type {DefNivel,DefPlanta,DefZombi,OpcionesMotorPvZ,PlantaPvZ,ZombiPvZ,ProyectilPvZ,SolPvZ,CortacespedPvZ,EventoPvZ,TipoDano,OrdenPvZ,EstadoPvZ,CapaPlanta,ZonaPvZ} from '../tipos';
-import {semillasAntesDelNivel} from '../datos/dia';
+import type {DefNivel,DefPlanta,DefZombi,OpcionesMotorPvZ,PlantaPvZ,ZombiPvZ,ProyectilPvZ,SolPvZ,CortacespedPvZ,EventoPvZ,TipoDano,OrdenPvZ,EstadoPvZ,CapaPlanta,ZonaPvZ,LapidaPvZ,CraterPvZ} from '../tipos';
+import {semillasAntesDelNivel} from '../datos/niveles';
+import {prepararTerrenoPvZ,alzarLapidasPvZ} from './terreno';
+import {AplastazombisPvZ} from './aplastazombis';
 import {PLANTAS_PVZ} from '../datos/plantas';
 import {ZOMBIS_PVZ} from '../datos/zombis';
 import {COMPORTAMIENTOS_PLANTAS,COMPORTAMIENTOS_ZOMBIS,type ComportamientoPlantaPvZ,type ComportamientoZombiPvZ} from '../comportamiento';
@@ -17,8 +19,9 @@ export class MotorPvZ {
  t=0;pasos=0;sol:number;abono:number;oleada=0;terminado:''|'gano'|'perdio'='';eliminados=0;sembradas=0;
  plantas:PlantaPvZ[]=[];zombis:ZombiPvZ[]=[];proyectiles:ProyectilPvZ[]=[];soles:SolPvZ[]=[];
  cortacespedes:CortacespedPvZ[]=[];recargas:Record<string,number>={};eventos:EventoPvZ[]=[];
- zonas:ZonaPvZ[]=[];cinta:{id:number;planta:string}[]=[];objetivoVida?:number;
+ lapidas:LapidaPvZ[]=[];crateres:CraterPvZ[]=[];zonas:ZonaPvZ[]=[];cinta:{id:number;planta:string}[]=[];objetivoVida?:number;
  private proximo=1;private cieloEn=6;private cielosCaidos=0;private cintaEn=0;private sinOleadas:boolean;
+ private aplastazombis:AplastazombisPvZ|null=null;private alzamientoEn:number|null=null;private cintaEmitida:Record<string,number>={};
  private dentroPaso=false;private origenAbono:number|null=null;
  constructor(nivel:DefNivel,opciones:OpcionesMotorPvZ={},registros:RegistrosPvZ={}){
   this.nivel=structuredClone(nivel);this.plantasDef=structuredClone(registros.plantas??PLANTAS_PVZ);this.zombisDef=structuredClone(registros.zombis??ZOMBIS_PVZ);
@@ -26,7 +29,7 @@ export class MotorPvZ {
   this.filas=nivel.area==='piscina'||nivel.area==='niebla'?6:5;
   if(!nivel.filas.length||new Set(nivel.filas).size!==nivel.filas.length||nivel.filas.some(f=>!entero(f)||f<0||f>=this.filas)||!finito(nivel.solInicial)||nivel.solInicial<0)throw new Error('Nivel inválido');
   if(nivel.zombis.some(id=>!Object.hasOwn(this.zombisDef,id)))throw new Error('Zombi de nivel desconocido');
-  const semillas=opciones.semillas??nivel.semillas??semillasAntesDelNivel(nivel.id);if(semillas.length>10||new Set(semillas).size!==semillas.length||semillas.some(id=>!Object.hasOwn(this.plantasDef,id)))throw new Error('Selección de semillas inválida');this.semillas=[...semillas];
+  const semillas=opciones.semillas??nivel.semillas??semillasAntesDelNivel(nivel.id).slice(0,10);if(semillas.length>10||new Set(semillas).size!==semillas.length||semillas.some(id=>!Object.hasOwn(this.plantasDef,id)))throw new Error('Selección de semillas inválida');this.semillas=[...semillas];
   if(nivel.cinta&&nivel.cinta.length===0||nivel.tipo==='cinta'&&!nivel.cinta)throw new Error('Cinta vacía');
   if(nivel.cinta?.some(id=>!Object.hasOwn(this.plantasDef,id)))throw new Error('Semilla de cinta desconocida');
   for(const d of Object.values(this.plantasDef))if(![d.sol,d.vida,d.recarga].every(finito)||d.sol<0||d.vida<=0||d.recarga<0)throw new Error('Definición de planta inválida');
@@ -37,7 +40,12 @@ export class MotorPvZ {
   for(const d of Object.values(this.zombisDef))if(d.datos?.puntos!==undefined&&(!entero(d.datos.puntos)||d.datos.puntos<1)||d.datos?.peso!==undefined&&(!finito(d.datos.peso)||d.datos.peso<=0))throw new Error('Peso de zombi inválido');
   this.azar=new AzarPvZ(opciones.semilla??23);this.sol=nivel.solInicial;this.abono=opciones.abono??0;if(!entero(this.abono)||this.abono<0||this.abono>3)throw new Error('Abono inválido');
   this.cortacespedes=nivel.filas.map(fila=>({fila,x:-40,estado:'listo'}));this.sinOleadas=opciones.sinOleadas??false;
-  this.director=this.sinOleadas?null:new DirectorOleadasPvZ(this.nivel,this.azar,this.zombisDef);
+  this.director=this.sinOleadas||nivel.minijuego==='aplastazombis'?null:new DirectorOleadasPvZ(this.nivel,this.azar,this.zombisDef);
+  if(!this.sinOleadas&&nivel.minijuego==='aplastazombis')this.aplastazombis=new AplastazombisPvZ();
+  if(nivel.lapidas!==undefined&&(!entero(nivel.lapidas)||nivel.lapidas<0||nivel.lapidas>nivel.filas.length*6))throw new Error('Lápidas inválidas');
+  if(nivel.distribucionLapidas){const entradas=Object.entries(nivel.distribucionLapidas);if(entradas.some(([c,n])=>!entero(Number(c))||Number(c)<3||Number(c)>8||!entero(n)||n<0||n>nivel.filas.length)||entradas.reduce((s,[,n])=>s+n,0)!==nivel.lapidas)throw new Error('Distribución de lápidas inválida');}
+  if(nivel.maximosCinta&&Object.entries(nivel.maximosCinta).some(([id,n])=>!nivel.cinta?.includes(id)||!entero(n)||n<0))throw new Error('Máximo de cinta inválido');
+  prepararTerrenoPvZ(this);
   if(nivel.objetivo){if(!this.casilla(nivel.objetivo.fila,nivel.objetivo.col)||!finito(nivel.objetivo.vida)||nivel.objetivo.vida<=0)throw new Error('Objetivo inválido');this.objetivoVida=nivel.objetivo.vida;}
  }
  nuevoId(){return this.proximo++;}
@@ -47,6 +55,7 @@ export class MotorPvZ {
  plantaEn(fila:number,col:number,capa:CapaPlanta='principal'){return this.plantas.find(p=>p.vida>0&&p.fila===fila&&p.col===col&&p.capa===capa);}
  private validaSiembra(tipo:string,fila:number,col:number,gratis=false){
   if(this.terminado||!Object.hasOwn(this.plantasDef,tipo)||!this.casilla(fila,col)||!gratis&&(!this.semillas.includes(tipo)||this.nivel.tipo==='cinta'||!!this.nivel.cinta))return false;
+  const tumba=this.lapidaEn(fila,col);if(this.crateres.some(q=>q.fila===fila&&q.col===col)||tipo==='comepiedras'&&!tumba||tipo!=='comepiedras'&&tumba)return false;
   const d=this.plantasDef[tipo],capa=d.capa??'principal',existente=this.plantaEn(fila,col,capa),agua=this.nivel.filasAgua?.includes(fila);
   if(existente&&d.mejoraDe!==existente.tipo)return false;if(d.mejoraDe&&!existente)return false;
   if(d.agua==='solo'&&!agua)return false;
@@ -57,7 +66,30 @@ export class MotorPvZ {
  }
  plantar(tipo:string,fila:number,col:number){if(!this.validaSiembra(tipo,fila,col))return false;const d=this.plantasDef[tipo];this.sol-=d.sol;this.recargas[tipo]=d.recarga;this.sembrar(tipo,fila,col);return true;}
  private sembrar(tipo:string,fila:number,col:number){const d=this.plantasDef[tipo],capa=d.capa??'principal',vieja=this.plantaEn(fila,col,capa);if(vieja){vieja.vida=0;this.plantas=this.plantas.filter(p=>p!==vieja);}const p:PlantaPvZ={id:this.nuevoId(),tipo,fila,col,x:col*80+40,vida:d.vida,edad:0,capa,dormida:!!d.nocturna&&!this.esNoche,congelada:0,datos:{}};this.plantas.push(p);this.sembradas++;this.comportamientosP[tipo]?.iniciar?.(this,p);this.eventos.push({t:'siembra',id:p.id,tipo,fila,col,x:p.x});return p;}
- quitar(fila:number,col:number){if(this.terminado||!this.casilla(fila,col))return false;const orden:CapaPlanta[]=['temporal','cubierta','principal','base'];const p=orden.map(c=>this.plantaEn(fila,col,c)).find(Boolean);if(!p||this.protegidaPorAbono(p))return false;p.vida=0;this.plantas=this.plantas.filter(v=>v!==p);this.eventos.push({t:'pala',id:p.id,fila,col});return true;}
+ quitar(fila:number,col:number){if(this.terminado||!this.casilla(fila,col))return false;const orden:CapaPlanta[]=['temporal','cubierta','principal','base'];const p=orden.map(c=>this.plantaEn(fila,col,c)).find(Boolean);if(!p||p.tipo==='comepiedras'||this.protegidaPorAbono(p))return false;p.vida=0;this.plantas=this.plantas.filter(v=>v!==p);this.eventos.push({t:'pala',id:p.id,fila,col});return true;}
+ /** Una casilla destruida retira sus capas incluso si una habilidad las protege del daño. */
+ private retirarPorTerreno(p:PlantaPvZ){if(p.vida<=0)return;p.vida=0;this.comportamientosP[p.tipo]?.alMorir?.(this,p);this.eventos.push({t:'muere',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x});}
+ lapidaEn(fila:number,col:number){return this.lapidas.find(q=>q.fila===fila&&q.col===col);}
+ crearLapida(fila:number,col:number,aplastar=false){
+  if(this.terminado||!this.casilla(fila,col)||col<3||this.lapidaEn(fila,col)||this.crateres.some(q=>q.fila===fila&&q.col===col))return null;
+  const plantas=this.plantas.filter(p=>p.vida>0&&p.fila===fila&&p.col===col);if(plantas.length&&!aplastar)return null;
+  for(const p of plantas)this.retirarPorTerreno(p);
+  const q:LapidaPvZ={id:this.nuevoId(),fila,col,x:col*80+40};this.lapidas.push(q);this.eventos.push({t:'terreno',tipo:'lapida',id:q.id,fila,col,x:q.x});return q;
+ }
+ quitarLapida(fila:number,col:number){if(this.terminado)return false;const q=this.lapidaEn(fila,col);if(!q)return false;this.lapidas=this.lapidas.filter(v=>v!==q);this.eventos.push({t:'terreno',tipo:'lapida-quitada',id:q.id,fila,col,x:q.x});return true;}
+ crearCrater(fila:number,col:number,vida=180){
+  if(this.terminado||!this.casilla(fila,col)||!finito(vida)||vida<=0||vida>180||this.lapidaEn(fila,col))return null;
+  for(const p of [...this.plantas])if(p.vida>0&&p.fila===fila&&p.col===col)this.retirarPorTerreno(p);
+  let q=this.crateres.find(q=>q.fila===fila&&q.col===col);if(q){q.vida=Math.max(q.vida,vida);return q;}
+  q={id:this.nuevoId(),fila,col,x:col*80+40,vida};this.crateres.push(q);this.eventos.push({t:'terreno',tipo:'crater',id:q.id,fila,col,x:q.x,duracion:vida});return q;
+ }
+ golpear(id:number){
+  if(this.terminado||this.nivel.minijuego!=='aplastazombis'||!entero(id))return false;
+  const z=this.zombis.find(z=>z.id===id&&z.vida>0&&!z.hipnotizado&&z.x>=-60&&z.x<=800);if(!z)return false;
+  this.eventos.push({t:'martillo',id:z.id,fila:z.fila,x:z.x});
+  if(z.armadura>0){z.armadura=Math.max(0,z.armadura-900);if(!z.armadura)this.eventos.push({t:'pierdeArmadura',id:z.id,tipo:z.tipo,fila:z.fila,x:z.x});}
+  else this.danarZombi(z,z.vida,'aplastar');return true;
+ }
  recoger(id:number){if(this.terminado||!entero(id))return false;const i=this.soles.findIndex(s=>s.id===id);if(i<0)return false;const s=this.soles[i];this.sol+=s.valor;this.soles.splice(i,1);this.eventos.push({t:'recogeSol',id,cantidad:s.valor});return true;}
  protegidaPorAbono(p:PlantaPvZ){return(p.datos.abonoRestantes??0)>0||(p.datos.abonoFinalPendiente??0)>0;}
  puedeUsarAbono(id:number){const p=this.plantas.find(p=>p.id===id&&p.vida>0);if(this.terminado||!entero(id)||this.abono<=0||!p||p.dormida||p.congelada||this.protegidaPorAbono(p))return false;const c=this.comportamientosP[p.tipo];return !!c?.abono&&(c.puedeAbono?.(this,p)??true);}
@@ -75,7 +107,7 @@ export class MotorPvZ {
  esComestible(z:ZombiPvZ){return this.zombisDef[z.tipo]?.comestible!==false;}
 
  plantarCinta(id:number,fila:number,col:number){if(this.terminado||!entero(id))return false;const i=this.cinta.findIndex(s=>s.id===id),s=this.cinta[i];if(!s||!this.validaSiembra(s.planta,fila,col,true)||this.nivel.minijuego==='bolos'&&col>2)return false;this.cinta.splice(i,1);if(this.nivel.minijuego==='bolos')this.proyectiles.push({id:this.nuevoId(),tipo:'bolo-'+s.planta,origen:0,fila,x:col*80+40,velocidad:240,dano:1800,danoTipo:s.planta==='nuez-explosiva'?'explosion':'aplastar',perforante:s.planta!=='nuez-explosiva',impactados:[]});else this.sembrar(s.planta,fila,col);return true;}
- ordenar(orden:unknown){if(!orden||typeof orden!=='object'||this.terminado)return false;const a=orden as OrdenPvZ;if(a.tipo==='recoger')return entero(a.id)&&this.recoger(a.id!);if(a.tipo==='abono')return entero(a.id)&&this.usarAbono(a.id!);if(!this.casilla(a.fila,a.col))return false;if(a.tipo==='pala')return this.quitar(a.fila!,a.col!);if(a.tipo==='plantar'&&typeof a.planta==='string')return this.plantar(a.planta,a.fila!,a.col!);if(a.tipo==='plantarCinta'&&entero(a.id))return this.plantarCinta(a.id!,a.fila!,a.col!);return false;}
+ ordenar(orden:unknown){if(!orden||typeof orden!=='object'||this.terminado)return false;const a=orden as OrdenPvZ;if(a.tipo==='golpear')return entero(a.id)&&this.golpear(a.id!);if(a.tipo==='recoger')return entero(a.id)&&this.recoger(a.id!);if(a.tipo==='abono')return entero(a.id)&&this.usarAbono(a.id!);if(!this.casilla(a.fila,a.col))return false;if(a.tipo==='pala')return this.quitar(a.fila!,a.col!);if(a.tipo==='plantar'&&typeof a.planta==='string')return this.plantar(a.planta,a.fila!,a.col!);if(a.tipo==='plantarCinta'&&entero(a.id))return this.plantarCinta(a.id!,a.fila!,a.col!);return false;}
  crearSol(fila:number,x:number,valor=25,origen:'cielo'|'planta'='planta'){
   if(this.terminado||!this.nivel.filas.includes(fila)||!finito(x)||x<0||x>800||!finito(valor)||valor<=0||this.soles.length>=100)return null;
   const s:SolPvZ={id:this.nuevoId(),fila,x,valor,edad:0,vida:8,origen};this.soles.push(s);this.eventos.push({t:'sol',id:s.id,fila,x,cantidad:valor});return s;
@@ -84,7 +116,7 @@ export class MotorPvZ {
   if(this.terminado||!Object.hasOwn(this.zombisDef,tipo)||!this.nivel.filas.includes(fila)||!finito(x)||x< -60||x>900||this.zombis.length>=300)return null;
   const d=this.zombisDef[tipo],z:ZombiPvZ={id:this.nuevoId(),tipo,fila,x,vida:d.vida,edad:0,sentido:-1,armadura:d.armadura?.vida??0,armaduraInicial:d.armadura?.vida??0,escudo:d.armadura?.tipo==='escudo',metal:d.armadura?.metal??false,lento:0,congelado:0,mantequilla:0,hipnotizado:false,comiendo:null,ceniza:false,sinBrazo:false,sinCabeza:false,datos:{},oleada};this.zombis.push(z);this.comportamientosZ[tipo]?.iniciar?.(this,z);return z;
  }
- disparar(p:PlantaPvZ,dano:number,tipo:TipoDano='recto',lento=0,proyectil?:string){if(this.terminado||p.vida<=0||!finito(dano)||dano<=0||this.proyectiles.length>=500)return false;this.proyectiles.push({id:this.nuevoId(),tipo:proyectil??(tipo==='hielo'?'guisante-hielo':'guisante'),origen:p.id,fila:p.fila,x:p.x+30,velocidad:330,dano,danoTipo:tipo,lento,impactados:[]});p.datos.atacaHasta=this.t+.2;this.eventos.push({t:'disparo',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x,cantidad:dano,proyectil:proyectil??(tipo==='hielo'?'guisante-hielo':'guisante')});return true;}
+ disparar(p:PlantaPvZ,dano:number,tipo:TipoDano='recto',lento=0,proyectil?:string,alcance?:number){if(this.terminado||p.vida<=0||!finito(dano)||dano<=0||this.proyectiles.length>=500||alcance!==undefined&&(!finito(alcance)||alcance<=0))return false;this.proyectiles.push({id:this.nuevoId(),tipo:proyectil??(tipo==='hielo'?'guisante-hielo':'guisante'),origen:p.id,fila:p.fila,x:p.x+30,velocidad:330,dano,danoTipo:tipo,lento,...(alcance===undefined?{}:{hasta:p.x+alcance}),impactados:[]});p.datos.atacaHasta=this.t+.2;this.eventos.push({t:'disparo',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x,cantidad:dano,proyectil:proyectil??(tipo==='hielo'?'guisante-hielo':'guisante')});return true;}
  hayBlanco(p:PlantaPvZ,alcance=800){return this.zombis.some(z=>z.vida>0&&!z.hipnotizado&&!z.sinCabeza&&z.fila===p.fila&&z.x>=p.x-10&&z.x<800&&z.x-p.x<=alcance);}
  danarPlanta(p:PlantaPvZ,cantidad:number,origen?:ZombiPvZ){if(this.terminado||p.vida<=0||this.protegidaPorAbono(p)||!finito(cantidad)||cantidad<=0)return false;const absorbido=Math.min(cantidad,p.datos.abonoEscudo??0);if(absorbido)p.datos.abonoEscudo-=absorbido;p.vida=Math.max(0,p.vida-(cantidad-absorbido));this.comportamientosP[p.tipo]?.alDanar?.(this,p,cantidad,origen);if(p.vida===0){this.comportamientosP[p.tipo]?.alMorir?.(this,p);this.eventos.push({t:'muere',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x});}return true;}
  danarZombi(z:ZombiPvZ,cantidad:number,tipo:TipoDano='recto'){
@@ -101,7 +133,7 @@ export class MotorPvZ {
   if(z.vida>0&&!z.sinCabeza&&z.vida<this.zombisDef[z.tipo].vida/3){z.sinCabeza=true;z.comiendo=null;this.eventos.push({t:'pierdeCabeza',id:z.id,tipo:z.tipo,fila:z.fila,x:z.x});}
   this.eventos.push({t:'impacto',id:z.id,tipo,fila:z.fila,x:z.x,cantidad});if(z.vida===0)this.morirZombi(z);return true;
  }
- private morirZombi(z:ZombiPvZ){if(z.datos.contado)return;z.datos.contado=1;this.eliminados++;this.comportamientosZ[z.tipo]?.alMorir?.(this,z);this.eventos.push({t:'muere',id:z.id,tipo:z.tipo,fila:z.fila,x:z.x});}
+ private morirZombi(z:ZombiPvZ){if(z.datos.contado)return;z.datos.contado=1;this.eliminados++;this.aplastazombis?.premiar(this,z);this.comportamientosZ[z.tipo]?.alMorir?.(this,z);this.eventos.push({t:'muere',id:z.id,tipo:z.tipo,fila:z.fila,x:z.x});}
  aplicarEstado(z:ZombiPvZ,estado:'lento'|'congelado'|'mantequilla'|'hipnotizado',segundos=0){if(this.terminado||z.vida<=0||!finito(segundos)||segundos<0)return false;if(estado==='hipnotizado'){z.hipnotizado=true;z.sentido=1;z.comiendo=null;}else z[estado]=Math.max(z[estado],segundos);this.eventos.push({t:'estado',id:z.id,tipo:estado,fila:z.fila,x:z.x});return true;}
  explosion(fila:number,x:number,dano:number,radioFilas=1,radioX=120){if(this.terminado||!finito(x)||!finito(dano)||dano<=0)return;for(const z of this.zombis)if(z.vida>0&&!z.hipnotizado&&Math.abs(z.fila-fila)<=radioFilas&&Math.abs(z.x-x)<=radioX)this.danarZombi(z,dano,'explosion');this.eventos.push({t:'explosion',fila,x});}
  get esNoche(){return this.nivel.area==='noche'||this.nivel.area==='niebla';}
@@ -109,27 +141,30 @@ export class MotorPvZ {
   if(this.terminado){this.eventos=[];return;}if(this.dentroPaso)return;this.dentroPaso=true;
   try{
    const dt=this.pasoFijo;this.pasos++;this.t=this.pasos/60;this.eventos=[];
+   for(const c of this.crateres)c.vida-=dt;for(const c of this.crateres)if(c.vida<=1e-9)this.eventos.push({t:'terreno',tipo:'crater-fin',id:c.id,fila:c.fila,col:c.col,x:c.x});this.crateres=this.crateres.filter(c=>c.vida>1e-9);
    for(const id of Object.keys(this.recargas))this.recargas[id]=Math.max(0,this.recargas[id]-dt);
-   if(this.nivel.cinta){this.cintaEn-=dt;if(this.cintaEn<=0&&this.cinta.length<10){const planta=this.siguienteCinta();if(planta){this.cinta.push({id:this.nuevoId(),planta});this.eventos.push({t:'cinta',tipo:planta});}this.cintaEn=4;}}
+   if(this.nivel.cinta){this.cintaEn-=dt;if(this.cintaEn<=0&&this.cinta.length<10){const planta=this.siguienteCinta();if(planta){this.cinta.push({id:this.nuevoId(),planta});this.cintaEmitida[planta]=(this.cintaEmitida[planta]??0)+1;this.eventos.push({t:'cinta',tipo:planta});}this.cintaEn=4;}}
    else if(!this.esNoche&&!this.nivel.sinSolCielo){this.cieloEn-=dt;if(this.cieloEn<=0){this.crearSol(this.nivel.filas[this.azar.entero(this.nivel.filas.length)],this.azar.entre(25,695),25,'cielo');this.cielosCaidos++;this.cieloEn=Math.min(this.cielosCaidos*.1+4.25,9.5)+this.azar.entre(0,2.75);}}
    for(const s of this.soles){s.edad+=dt;s.vida-=dt;}this.soles=this.soles.filter(s=>s.vida>0);
+   this.aplastazombis?.paso(this);
    if(this.director){const actuales=this.zombis.filter(z=>z.oleada===this.oleada&&z.vida>0);const vida=actuales.reduce((a,z)=>a+z.vida+z.armadura,0),inicial=actuales.reduce((a,z)=>a+this.zombisDef[z.tipo].vida+z.armaduraInicial,0);const nueva=this.director.paso(this.t,{vida,inicial:Math.max(inicial,this.vidaOleada),pendientes:0,plantas:this.sembradas});
     if(nueva?.aviso)this.eventos.push({t:'oleadaEnorme',oleada:this.oleada+1});
-    if(nueva&&!nueva.aviso){this.oleada=this.director.actual;this.vidaOleada=0;for(const a of nueva.apariciones){const z=this.crearZombi(a.tipo,a.fila,a.x,a.oleada);if(z)this.vidaOleada+=z.vida+z.armadura;}this.eventos.push({t:nueva.ultima?'ultimaOleada':'oleada',oleada:this.oleada});}
+    if(nueva&&!nueva.aviso){this.oleada=this.director.actual;this.vidaOleada=0;for(const a of nueva.apariciones){const z=this.crearZombi(a.tipo,a.fila,a.x,a.oleada);if(z)this.vidaOleada+=z.vida+z.armadura;}this.eventos.push({t:nueva.ultima?'ultimaOleada':'oleada',oleada:this.oleada});if(nueva.ultima&&this.esNoche&&this.lapidas.length)this.alzamientoEn=this.t+2.1;}
    }
+   if(this.alzamientoEn!==null&&this.t+1e-9>=this.alzamientoEn){alzarLapidasPvZ(this);this.alzamientoEn=null;}
    for(const zona of this.zonas){zona.vida-=dt;if(zona.vida<=0)continue;for(const z of this.zombis)if(z.vida>0&&!z.hipnotizado&&z.fila===zona.fila&&z.x>=zona.desde&&z.x<=zona.hasta)z.lento=Math.max(z.lento,dt*2);}this.zonas=this.zonas.filter(z=>z.vida>1e-9);
    for(const p of [...this.plantas]){if(p.vida<=0)continue;p.edad+=dt;p.congelada=Math.max(0,p.congelada-dt);if(!p.dormida&&!p.congelada)this.comportamientosP[p.tipo]?.paso(this,p,dt);}
    this.avanzarProyectiles(dt);this.avanzarCortacespedes(dt);
    for(const z of [...this.zombis]){if(z.vida<=0)continue;this.avanzarZombi(z,dt);if(this.terminado)break;}
    this.plantas=this.plantas.filter(p=>p.vida>0);this.zombis=this.zombis.filter(z=>z.vida>0);
-   if(!this.terminado&&this.director?.terminado&&!this.zombis.some(z=>!z.hipnotizado))this.finalizar(true);
+   if(!this.terminado&&(this.director?.terminado||this.aplastazombis?.terminado)&&this.alzamientoEn===null&&!this.zombis.some(z=>!z.hipnotizado))this.finalizar(true);
   }finally{this.dentroPaso=false;}
  }
  private vidaOleada=0;
- private siguienteCinta(){const ids=this.nivel.cinta??[],pesos=ids.map(id=>this.nivel.pesosCinta?.[id]??1);let dado=this.azar.siguiente()*pesos.reduce((a,b)=>a+b,0),i=0;while(i<pesos.length-1&&dado>=pesos[i])dado-=pesos[i++];return ids[i];}
+ private siguienteCinta(){const ids=(this.nivel.cinta??[]).filter(id=>(this.cintaEmitida[id]??0)<(this.nivel.maximosCinta?.[id]??Infinity));if(!ids.length)return undefined;const pesos=ids.map(id=>this.nivel.pesosCinta?.[id]??1);let dado=this.azar.siguiente()*pesos.reduce((a,b)=>a+b,0),i=0;while(i<pesos.length-1&&dado>=pesos[i])dado-=pesos[i++];return ids[i];}
  private avanzarProyectiles(dt:number){
   for(const p of this.proyectiles){
-   const antes=p.x,yAntes=p.y??this.centroFila(p.fila);p.x+=p.velocidad*dt;
+   const antes=p.x,yAntes=p.y??this.centroFila(p.fila);p.x=Math.min(p.x+p.velocidad*dt,p.hasta??Infinity);
    if(p.tipo.startsWith('bolo-')){p.y=yAntes+(p.velocidadY??0)*dt;const min=this.centroFila(Math.min(...this.nivel.filas)),max=this.centroFila(Math.max(...this.nivel.filas));if(p.y<min){p.y=min+(min-p.y);p.velocidadY=Math.abs(p.velocidadY??0);}if(p.y>max){p.y=max-(p.y-max);p.velocidadY=-Math.abs(p.velocidadY??0);}p.fila=Math.max(0,Math.min(this.filas-1,Math.floor(p.y/this.altoFila)));}
    const y=p.y??yAntes,dx=p.x-antes,dy=y-yAntes,distancia=(z:ZombiPvZ)=>{const u=Math.max(0,Math.min(1,((z.x-antes)*dx+(this.centroFila(z.fila)-yAntes)*dy)/(dx*dx+dy*dy||1)));return Math.hypot(z.x-antes-u*dx,this.centroFila(z.fila)-yAntes-u*dy);};
    const blancos=this.zombis.filter(z=>z.vida>0&&!z.hipnotizado&&!p.impactados.includes(z.id)&&distancia(z)<=18).sort((a,b)=>a.x-b.x);
@@ -142,14 +177,15 @@ export class MotorPvZ {
     }else this.danarZombi(z,p.dano,p.danoTipo);
     if(p.lento&&!(z.escudo&&z.armadura>0))this.aplicarEstado(z,'lento',p.lento);p.impactados.push(z.id);if(!p.perforante){p.x=9999;break;}
    }
-  }this.proyectiles=this.proyectiles.filter(p=>p.x>=-100&&p.x<=850);
+  }this.proyectiles=this.proyectiles.filter(p=>p.x>=-100&&p.x<=850&&(p.hasta===undefined||p.x<p.hasta));
  }
  private avanzarCortacespedes(dt:number){for(const c of this.cortacespedes){if(c.estado!=='activo')continue;const antes=c.x;c.x+=400*dt;for(const z of this.zombis)if(z.vida>0&&!z.hipnotizado&&z.fila===c.fila&&z.x>=antes-35&&z.x<=c.x+35)this.danarZombi(z,999999,'aplastar');if(c.x>850)c.estado='gastado';}}
  private avanzarZombi(z:ZombiPvZ,dt:number){
   z.edad+=dt;z.lento=Math.max(0,z.lento-dt);z.congelado=Math.max(0,z.congelado-dt);z.mantequilla=Math.max(0,z.mantequilla-dt);
   if(z.sinCabeza){z.comiendo=null;z.datos.sangrado=(z.datos.sangrado??0)+dt;const prob=this.zombisDef[z.tipo].vida>=500?.6:.2;while(z.datos.sangrado>=.01&&z.vida>0){z.datos.sangrado-=.01;if(this.azar.siguiente()<prob)z.vida=Math.max(0,z.vida-1);}if(!z.vida)this.morirZombi(z);return;}
   if(z.congelado>0||z.mantequilla>0){z.comiendo=null;return;}
-  this.comportamientosZ[z.tipo]?.paso?.(this,z,dt);if(z.vida<=0)return;
+  if((z.datos.emergeHasta??0)>this.t){z.comiendo=null;return;}
+  const seguir=this.comportamientosZ[z.tipo]?.paso?.(this,z,dt);if(z.vida<=0||seguir===false)return;
   const d=this.zombisDef[z.tipo],vel=(z.datos.velocidad??d.velocidad)*(z.lento>0?.5:1);
   if(z.hipnotizado){const enemigo=this.zombis.filter(v=>v!==z&&v.vida>0&&!v.hipnotizado&&!v.sinCabeza&&v.fila===z.fila&&Math.abs(v.x-z.x)<35).sort((a,b)=>a.x-b.x)[0];if(enemigo){z.comiendo=enemigo.id;this.danarZombi(enemigo,d.mordida*(z.lento>0?.5:1)*dt,'recto');}else{z.comiendo=null;z.x+=vel*dt;if(z.x>850)z.vida=0;}return;}
   const aliado=this.zombis.find(v=>v!==z&&v.vida>0&&v.hipnotizado&&v.fila===z.fila&&Math.abs(v.x-z.x)<35);if(aliado){z.comiendo=aliado.id;this.danarZombi(aliado,d.mordida*(z.lento>0?.5:1)*dt,'recto');return;}
@@ -164,5 +200,5 @@ export class MotorPvZ {
  consumirEventos(){const eventos=this.eventos;this.eventos=[];return eventos;}
  /** Varios pasos para ×2: conserva todos los eventos entre pasos y nunca depende del dibujo. */
  avanzar(cantidad=1){if(!entero(cantidad)||cantidad<0||cantidad>600)throw new Error('Cantidad de pasos inválida');const eventos=this.consumirEventos();for(let i=0;i<cantidad;i++){this.paso();eventos.push(...this.consumirEventos());if(this.terminado)break;}return eventos;}
- estado():EstadoPvZ {return structuredClone({version:1,nivel:this.nivel.id,t:this.t,pasos:this.pasos,sol:this.sol,abono:this.abono,oleada:this.oleada,terminado:this.terminado,plantas:this.plantas,zombis:this.zombis,proyectiles:this.proyectiles,soles:this.soles,cortacespedes:this.cortacespedes,recargas:this.recargas,cinta:this.cinta,zonas:this.zonas,objetivoVida:this.objetivoVida,eliminados:this.eliminados,sembradas:this.sembradas});}
+ estado():EstadoPvZ {return structuredClone({version:1,nivel:this.nivel.id,t:this.t,pasos:this.pasos,sol:this.sol,abono:this.abono,oleada:this.oleada,terminado:this.terminado,plantas:this.plantas,zombis:this.zombis,proyectiles:this.proyectiles,soles:this.soles,cortacespedes:this.cortacespedes,recargas:this.recargas,cinta:this.cinta,zonas:this.zonas,lapidas:this.lapidas,crateres:this.crateres,objetivoVida:this.objetivoVida,eliminados:this.eliminados,sembradas:this.sembradas});}
 }

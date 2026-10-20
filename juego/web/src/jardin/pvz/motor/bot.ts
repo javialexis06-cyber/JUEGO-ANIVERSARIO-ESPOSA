@@ -1,6 +1,9 @@
 import type {MotorPvZ} from './motor';
+import {crearPilotoNochePvZ} from './bot-noche';
+export {seleccionPilotoPvZ} from './bot-noche';
 /** Piloto: usa órdenes legales y los recursos recibidos; no concede ventajas al motor. */
-export function crearPilotoPvZ(){let actuarEn=0;return(m:MotorPvZ)=>{
+export function crearPilotoPvZ(){let actuarEn=0;const noche=crearPilotoNochePvZ();return(m:MotorPvZ)=>{
+ if(m.esNoche||m.nivel.minijuego==='aplastazombis'){noche(m);return;}
  for(const s of [...m.soles])m.recoger(s.id);if(m.terminado||m.t<actuarEn)return;actuarEn=m.t+.1;
  const amenaza=[...m.nivel.filas].sort((a,b)=>Math.min(999,...m.zombis.filter(z=>z.vida>0&&!z.hipnotizado&&z.fila===a).map(z=>z.x))-Math.min(999,...m.zombis.filter(z=>z.vida>0&&!z.hipnotizado&&z.fila===b).map(z=>z.x)));
  if(m.nivel.cinta){for(const s of [...m.cinta]){

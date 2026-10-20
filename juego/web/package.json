@@ -12,7 +12,7 @@
     "probar:granja": "node scripts/granja-v3/probar-todo.mjs",
     "probar:motores": "node scripts/probar-mesa-motor.mjs && node scripts/probar-show-motor.mjs && node scripts/probar-super-guardado.mjs && node scripts/probar-puertas-guardado.mjs && node scripts/probar-cocina-guardado.mjs && node scripts/probar-escudo-motor.mjs && node scripts/probar-celular-guardado.mjs && node scripts/probar-celular-historial.mjs && node scripts/probar-carreras-motor.mjs && node scripts/probar-carreras-guardado.mjs && node scripts/probar-carreras-variedad.mjs && node scripts/probar-carreras-red.mjs && node scripts/probar-peleas-motor.mjs && node scripts/probar-peleas-red.mjs && node scripts/probar-retrete-guardado.mjs && node scripts/probar-sangre-combate.mjs && node scripts/probar-lavado-enemigos.mjs && node scripts/probar-lavado-movimiento.mjs && node scripts/probar-mente-motor.mjs && node scripts/probar-jardin-motor.mjs && node scripts/probar-jardin-duelo.mjs && npm run probar:pvz",
     "verificar:repo": "node scripts/verificar-repositorio.mjs",
-    "probar:pvz": "node scripts/probar-pvz-motor.mjs && node scripts/probar-pvz-abono.mjs && node scripts/probar-pvz-guardado.mjs",
+    "probar:pvz": "node scripts/probar-pvz-motor.mjs && node scripts/probar-pvz-abono.mjs && node scripts/probar-pvz-noche.mjs && node scripts/probar-pvz-guardado.mjs && node scripts/probar-pvz-transicion-noche.mjs",
     "probar:pvz:guardado-navegador": "node scripts/probar-pvz-persistencia-navegador.mjs"
   },
   "dependencies": {

@@ -132,6 +132,13 @@ Motor y datos del mundo 1 desarrollados por Codex, separados del arte de Claude.
 guardado nuevos sigue pendiente; este resultado no certifica todavía la interfaz.
 [Entrega, contrato y límites](pvz-motor-2026-10-19.md).
 
+## Avance del 20 de octubre
+
+Motor y datos de los diez niveles nocturnos, hongos, lápidas, cráteres, zombis especiales y Aplastazombis de
+aventura implementados por Codex. El guardado reconoce el final anterior de 1-10 y permite seguir a 2-1
+conservando el progreso. La conexión gráfica sigue a cargo de Claude.
+[Entrega, pruebas y límites](pvz-noche-2026-10-20.md).
+
 ## Orden de construcción
 
 1. **Base:**

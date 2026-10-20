@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';import{build}from'esbuild';import{mkdtem
 const tmp=await mkdtemp(join(tmpdir(),'pvz-motor-'));const resultados=[];
 try{
  const fichero=join(tmp,'motor.mjs');await build({stdin:{contents:"export * from './src/jardin/pvz/motor/motor';export * from './src/jardin/pvz/motor/bot';export * from './src/jardin/pvz/motor/azar';export * from './src/jardin/pvz/motor/oleadas';export * from './src/jardin/pvz/datos/dia';export * from './src/jardin/pvz/datos/plantas';export * from './src/jardin/pvz/datos/zombis';",resolveDir:resolve(import.meta.dirname,'..')},outfile:fichero,bundle:true,platform:'node',format:'esm',logLevel:'silent'});
- const{MotorPvZ,crearPilotoPvZ,AzarPvZ,DirectorOleadasPvZ,NIVELES_DIA,semillasAntesDelNivel,PLANTAS_PVZ,ZOMBIS_PVZ}=await import(pathToFileURL(fichero));
+ const{MotorPvZ,crearPilotoPvZ,AzarPvZ,DirectorOleadasPvZ,NIVELES_DIA,PLANTAS_DIA,semillasAntesDelNivel,PLANTAS_PVZ,ZOMBIS_PVZ}=await import(pathToFileURL(fichero));
  const pasar=(m,s)=>{for(let i=0;i<Math.ceil(s*60);i++)m.paso();};
- const preparado=(op={},nivel={},reg={})=>new MotorPvZ({...NIVELES_DIA[8],id:'prueba',solInicial:10000,...nivel},{sinOleadas:true,semillas:Object.keys(PLANTAS_PVZ),...op},reg);
+ const preparado=(op={},nivel={},reg={})=>new MotorPvZ({...NIVELES_DIA[8],id:'prueba',solInicial:10000,...nivel},{sinOleadas:true,semillas:PLANTAS_DIA.map(p=>p.id),...op},reg);
  const prueba=(nombre,fn)=>{fn();resultados.push({nombre,ok:true});console.log('OK',nombre);};
  prueba('datos de tutorial, oleadas y premios al vencer',()=>{
   assert.deepEqual(NIVELES_DIA.map(n=>n.oleadas??n.banderas*10),[4,6,8,10,8,10,20,10,20,20]);assert.deepEqual(NIVELES_DIA.slice(0,3).map(n=>n.filas),[[2],[1,2,3],[1,2,3]]);

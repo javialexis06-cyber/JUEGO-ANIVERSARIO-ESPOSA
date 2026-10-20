@@ -20,7 +20,7 @@ export interface DefNivel {
  /** Excepciones del tutorial; el resto usa banderas × 10. */
  oleadas?:number;enormes?:number[];
  fijos?:Record<number,Record<string,number>>;composicionCompleta?:boolean;
- pesosCinta?:Record<string,number>;primeraOleadaTrasPlantas?:number[];
+ pesosCinta?:Record<string,number>;maximosCinta?:Record<string,number>;distribucionLapidas?:Record<number,number>;primeraOleadaTrasPlantas?:number[];
  multiplicadorOleadas?:number;presupuesto?:number[];desdeOleada?:Record<string,number>;
  /** Datos funcionales del terreno; nunca coordenadas de dibujo de la interfaz. */
  filasAgua?:number[];sinSolCielo?:boolean;semillas?:string[];cinta?:string[];
@@ -39,25 +39,27 @@ export interface ZombiPvZ {
 }
 export interface ProyectilPvZ {
  id:number;tipo:string;origen:number;fila:number;x:number;velocidad:number;dano:number;
- danoTipo:TipoDano;y?:number;velocidadY?:number;lento?:number;perforante?:boolean;impactados:number[];
+ danoTipo:TipoDano;y?:number;velocidadY?:number;lento?:number;perforante?:boolean;hasta?:number;impactados:number[];
 }
+export interface LapidaPvZ {id:number;fila:number;col:number;x:number}
+export interface CraterPvZ {id:number;fila:number;col:number;x:number;vida:number}
 export interface ZonaPvZ {id:number;tipo:'hielo';origen:number;fila:number;desde:number;hasta:number;vida:number}
 export interface SolPvZ {id:number;fila:number;x:number;valor:number;edad:number;vida:number;origen:'cielo'|'planta'}
 export interface CortacespedPvZ {fila:number;x:number;estado:'listo'|'activo'|'gastado'}
 export interface EventoPvZ {
  t:'siembra'|'pala'|'sol'|'recogeSol'|'disparo'|'impacto'|'muerde'|'pierdeBrazo'|'pierdeCabeza'|
  'pierdeArmadura'|'explosion'|'muere'|'oleada'|'oleadaEnorme'|'ultimaOleada'|'cortacesped'|'fin'|
- 'estado'|'abono'|'cinta'|'objetivo'|'zona';
+ 'estado'|'abono'|'cinta'|'objetivo'|'zona'|'terreno'|'martillo';
  id?:number;tipo?:string;fila?:number;col?:number;x?:number;cantidad?:number;oleada?:number;gano?:boolean;origen?:number;duracion?:number;hasta?:number;proyectil?:string;
 }
 export interface EstadoPvZ {
  version:1;nivel:string;t:number;pasos:number;sol:number;abono:number;oleada:number;
  terminado:''|'gano'|'perdio';plantas:PlantaPvZ[];zombis:ZombiPvZ[];proyectiles:ProyectilPvZ[];
  soles:SolPvZ[];cortacespedes:CortacespedPvZ[];recargas:Record<string,number>;cinta:{id:number;planta:string}[];
- zonas?:ZonaPvZ[];objetivoVida?:number;eliminados:number;sembradas:number;
+ zonas?:ZonaPvZ[];lapidas?:LapidaPvZ[];crateres?:CraterPvZ[];objetivoVida?:number;eliminados:number;sembradas:number;
 }
 export interface OrdenPvZ {
- tipo:'plantar'|'pala'|'recoger'|'abono'|'plantarCinta';planta?:string;fila?:number;col?:number;id?:number;
+ tipo:'plantar'|'pala'|'recoger'|'abono'|'plantarCinta'|'golpear';planta?:string;fila?:number;col?:number;id?:number;
 }
 export interface OpcionesMotorPvZ {
  semilla?:number;semillas?:string[];abono?:number;

@@ -1,7 +1,8 @@
 # Plantas contra Zombis · arquitectura y contrato de trabajo
 
 Avances del 19 de octubre: [base del motor](pvz-motor-2026-10-19.md) y
-[abono, progreso y recuperación de guardado](pvz-abono-guardado-2026-10-19.md).
+[abono, progreso y recuperación de guardado](pvz-abono-guardado-2026-10-19.md) y
+[mundo nocturno](pvz-noche-2026-10-20.md).
 Claude tiene todos los gráficos; Codex desarrolla motor, mecánicas, datos de niveles y pruebas.
 
 Documento interno para construir la nueva aventura del Jardín ([plan](jardin-plan-2026-10-17.md)). Todo agente o
@@ -53,7 +54,10 @@ src/jardin/pvz/
   motor/motor.ts           MotorPvZ: cuadrícula, entidades, paso, siembra, sol, cortacéspedes, fin
   motor/oleadas.ts         director de oleadas al estilo PvZ 1
   motor/azar.ts            generador con semilla
-  motor/bot.ts             piloto de pruebas
+  motor/bot.ts             piloto de pruebas y selección de seis sobres
+  motor/bot-noche.ts       decisiones del piloto para noche y Aplastazombis
+  motor/terreno.ts         distribución inicial y alzamiento de lápidas
+  motor/aplastazombis.ts   director de 2-5, grupos, lápidas y soles al derrotar
   datos/plantas.ts         índice: junta las definiciones de cada área
   datos/zombis.ts          índice
   datos/niveles.ts         índice de niveles de aventura
@@ -61,6 +65,7 @@ src/jardin/pvz/
                            tejado, tienda, rio, vias, desierto, paramo, invernadero)
   comportamiento/index.ts  registro de comportamientos
   comportamiento/<area>.ts comportamiento de las plantas y zombis de esa área
+  comportamiento/zombis-noche.ts periódico y formación del bailón
   arte/piezas.ts           motor de arte: definiciones, rasterizado, caché, dibujo, tintes, retratos
   arte/estilo.ts           paleta, contornos y ayudantes SVG comunes (ojos, hojas, degradados, zombi base)
   arte/<area>.ts           arte de las plantas y zombis de esa área
@@ -159,6 +164,25 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   `abono-fin` marca el fin de la ráfaga. La vista decide cómo representar esos datos.
 - **Consumo de eventos:** `consumirEventos()` tras órdenes; `avanzar(n)` reúne los eventos de cada paso. No leer solo el último paso con ×2.
 - **Determinismo:** misma semilla, mismo nivel y mismas órdenes dan el mismo resultado.
+- **Terreno nocturno:** `DefNivel.distribucionLapidas` distribuye cantidades por columna cero-based; suma
+  `lapidas`. `maximosCinta` limita sobres emitidos durante toda la partida, no solo los que están en la cinta.
+  `EstadoPvZ.lapidas` y `crateres` son opcionales por compatibilidad; sus entidades tienen ID, fila, columna y x;
+  el cráter añade vida restante. `lapidaEn`, `crearLapida`, `quitarLapida` y `crearCrater` son primitivas internas.
+  El evento `terreno` usa tipos `lapida`, `lapida-quitada`, `crater` y `crater-fin`. La pala no retira lápidas
+  ni un Comepiedras activo; el cráter bloquea todas las siembras.
+- **Proyectiles y zombis de noche:** `disparar` admite un sexto argumento de alcance desde la planta;
+  `ProyectilPvZ.hasta` marca su límite. El comportamiento de zombi puede devolver `false` para suspender
+  movimiento y mordida en ese paso. `datos.emergeHasta` indica emergencia sin movimiento ni mordida;
+  `enfadoPendiente`, `enfadado`, `faseBaile`, `senalando`, `esperaHasta`, `lider` y `hueco` describen estados
+  del periódico y de la formación. `datos.asustada` y `crecida` describen los hongos.
+- **Aplastazombis:** orden `{tipo:'golpear',id}` solo en el minijuego 2-5; emite `martillo`. No tiene coste
+  ni recarga de sobre; 900 de daño al casco sin transferir excedente, o muerte si ya no hay casco.
+  Usa ocho oleadas y su propio director, no el presupuesto común. La victoria espera su grupo final.
+- **Progresión al ampliar áreas:** las diez victorias de una partida guardada con el antiguo final `1-10`
+  pasan a `2-1` sin conceder una victoria nocturna ni escribir al leer. Solo se reconoce esa frontera publicada.
+  El resto de estructuras incoherentes sigue bloqueado sin reescritura. Los consumidores del motor obtienen
+  semillas previas desde `datos/niveles.ts`; la función de `datos/dia.ts` se conserva por compatibilidad.
+
 
 ## Oleadas (PvZ 1)
 
