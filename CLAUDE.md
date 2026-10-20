@@ -79,6 +79,8 @@ Usar `CHROME_PATH` si el Chromium instalado no coincide con el de Playwright.
 - Compilar antes de abrir recorridos sobre `dist`; no reemplazar los archivos mientras los consume el navegador.
 - Usar Vite sin HMR cuando la prueba importe módulos fuente. Ejecutar los recorridos 3D de uno en uno en una máquina pequeña.
 - Sin GPU: SwiftShader y dibujo por captura cuando lo permita el script. No confundir esa prueba con rendimiento de teléfono.
+  `verificar-demo.mjs` aplica ese perfil desde la carga y usa el modo bajo de la casa; conserva los controles,
+  relojes y estados del juego. No ejecutar el recorrido 3D junto a compilaciones o simulaciones pesadas.
 - Contextos nuevos, nunca las cuentas ni partidas del usuario. Identificar escenarios preparados, pilotos y relojes acelerados.
 - No declarar perfección ni todas las combinaciones comprobadas por pasar reglas o escenarios preparados.
 - Logs y capturas van a `juego/web/test-results/`; temporales de scripts a `scripts/_*.mjs` (excluidos localmente).
