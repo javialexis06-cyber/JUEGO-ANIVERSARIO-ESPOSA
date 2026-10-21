@@ -5,12 +5,12 @@ export type TipoDano='recto'|'lanzado'|'perforante'|'explosion'|'fuego'|'hielo'|
 export interface DefPlanta {
  id:string;nombre:string;sol:number;recarga:number;vida:number;
  familia:'productora'|'tiradora'|'barrera'|'explosiva'|'lanzadora'|'hongo'|'apoyo'|'acuatica';
- nocturna?:boolean;agua?:'solo'|'tambien';capa?:CapaPlanta;mejoraDe?:string;
+ nocturna?:boolean;agua?:'solo'|'tambien';soloTierra?:boolean;capa?:CapaPlanta;mejoraDe?:string;
  desbloqueo:string;descripcion:string;datos?:Record<string,number>;
 }
 export interface DefZombi {
  id:string;nombre:string;vida:number;armadura?:{tipo:'casco'|'escudo';vida:number;metal?:boolean};
- velocidad:number;mordida:number;comestible?:boolean;area:Area;desbloqueo:string;descripcion:string;datos?:Record<string,number>;
+ velocidad:number;mordida:number;comestible?:boolean;agua?:'solo'|'tambien';area:Area;desbloqueo:string;descripcion:string;datos?:Record<string,number>;
 }
 export interface DefNivel {
  id:string;parte:1|2;area:Area;filas:number[];zombis:string[];banderas:number;
@@ -20,10 +20,11 @@ export interface DefNivel {
  /** Excepciones del tutorial; el resto usa banderas × 10. */
  oleadas?:number;enormes?:number[];
  fijos?:Record<number,Record<string,number>>;composicionCompleta?:boolean;
- pesosCinta?:Record<string,number>;maximosCinta?:Record<string,number>;distribucionLapidas?:Record<number,number>;primeraOleadaTrasPlantas?:number[];
+ pesosCinta?:Record<string,number>;atenuarCinta?:Record<string,{cantidad:number;pesoFinal:number}>;maximosCinta?:Record<string,number>;distribucionLapidas?:Record<number,number>;primeraOleadaTrasPlantas?:number[];
  multiplicadorOleadas?:number;presupuesto?:number[];desdeOleada?:Record<string,number>;
  /** Datos funcionales del terreno; nunca coordenadas de dibujo de la interfaz. */
  filasAgua?:number[];sinSolCielo?:boolean;semillas?:string[];cinta?:string[];
+ presionCinta?:boolean;emboscadaAgua?:boolean;cortacespedAgua?:boolean;
  objetivo?:{fila:number;col:number;vida:number};
 }
 export interface PlantaPvZ {
@@ -39,11 +40,12 @@ export interface ZombiPvZ {
 }
 export interface ProyectilPvZ {
  id:number;tipo:string;origen:number;fila:number;x:number;velocidad:number;dano:number;
- danoTipo:TipoDano;y?:number;velocidadY?:number;lento?:number;perforante?:boolean;hasta?:number;impactados:number[];
+ danoTipo:TipoDano;y?:number;velocidadY?:number;lento?:number;perforante?:boolean;hasta?:number;antorchas?:number[];impactados:number[];
 }
 export interface LapidaPvZ {id:number;fila:number;col:number;x:number}
 export interface CraterPvZ {id:number;fila:number;col:number;x:number;vida:number}
 export interface ZonaPvZ {id:number;tipo:'hielo';origen:number;fila:number;desde:number;hasta:number;vida:number}
+export interface PistaHieloPvZ {id:number;fila:number;desde:number;hasta:number;vida:number}
 export interface SolPvZ {id:number;fila:number;x:number;valor:number;edad:number;vida:number;origen:'cielo'|'planta'}
 export interface CortacespedPvZ {fila:number;x:number;estado:'listo'|'activo'|'gastado'}
 export interface EventoPvZ {
@@ -56,7 +58,7 @@ export interface EstadoPvZ {
  version:1;nivel:string;t:number;pasos:number;sol:number;abono:number;oleada:number;
  terminado:''|'gano'|'perdio';plantas:PlantaPvZ[];zombis:ZombiPvZ[];proyectiles:ProyectilPvZ[];
  soles:SolPvZ[];cortacespedes:CortacespedPvZ[];recargas:Record<string,number>;cinta:{id:number;planta:string}[];
- zonas?:ZonaPvZ[];lapidas?:LapidaPvZ[];crateres?:CraterPvZ[];objetivoVida?:number;eliminados:number;sembradas:number;
+ zonas?:ZonaPvZ[];lapidas?:LapidaPvZ[];crateres?:CraterPvZ[];pistasHielo?:PistaHieloPvZ[];objetivoVida?:number;eliminados:number;sembradas:number;
 }
 export interface OrdenPvZ {
  tipo:'plantar'|'pala'|'recoger'|'abono'|'plantarCinta'|'golpear';planta?:string;fila?:number;col?:number;id?:number;

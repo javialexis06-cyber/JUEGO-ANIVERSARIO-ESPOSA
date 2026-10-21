@@ -56,6 +56,9 @@ src/jardin/pvz/
   motor/azar.ts            generador con semilla
   motor/bot.ts             piloto de pruebas y selección de seis sobres
   motor/bot-noche.ts       decisiones del piloto para noche y Aplastazombis
+  motor/bot-piscina.ts     selección y decisiones acuáticas con seis ranuras
+  motor/bot-minizombis.ts  decisiones legales de cinta para 3-5
+  motor/piscina.ts         emboscada de la última oleada acuática
   motor/terreno.ts         distribución inicial y alzamiento de lápidas
   motor/aplastazombis.ts   director de 2-5, grupos, lápidas y soles al derrotar
   datos/plantas.ts         índice: junta las definiciones de cada área
@@ -113,11 +116,11 @@ src/jardin/clasicos.ts     los 12 patios de antes, movidos tal cual desde main.t
 type Area = 'dia'|'noche'|'piscina'|'niebla'|'tejado'|'rio'|'vias'|'desierto'|'paramo'|'invernadero';
 interface DefPlanta { id: string; nombre: string; sol: number; recarga: number; vida: number;
   familia: 'productora'|'tiradora'|'barrera'|'explosiva'|'lanzadora'|'hongo'|'apoyo'|'acuatica';
-  nocturna?: boolean; agua?: 'solo'|'tambien'; capa?: 'base'|'principal'|'cubierta'|'temporal';
+  nocturna?: boolean; agua?: 'solo'|'tambien'; soloTierra?: boolean; capa?: 'base'|'principal'|'cubierta'|'temporal';
   mejoraDe?: string; desbloqueo: string; descripcion: string; datos?: Record<string, number> }
 interface DefZombi { id: string; nombre: string; vida: number; armadura?: {tipo:'casco'|'escudo'; vida: number;
   metal?: boolean}; velocidad: number /* px/s */; mordida: number /* daño/s */; area: Area;
-  comestible?: boolean /* false para gigantes/vehículos; true por defecto */;
+  comestible?: boolean /* true por defecto; Zomboni y trineo se pueden devorar */; agua?: 'solo'|'tambien';
   desbloqueo: string; descripcion: string; datos?: Record<string, number> }
 interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: number[] /* activas */;
   zombis: string[]; banderas: number; tipo: 'normal'|'cinta'|'minijuego'|'jefe'; minijuego?: string;
@@ -179,9 +182,36 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   ni recarga de sobre; 900 de daño al casco sin transferir excedente, o muerte si ya no hay casco.
   Usa ocho oleadas y su propio director, no el presupuesto común. La victoria espera su grupo final.
 - **Progresión al ampliar áreas:** las diez victorias de una partida guardada con el antiguo final `1-10`
-  pasan a `2-1` sin conceder una victoria nocturna ni escribir al leer. Solo se reconoce esa frontera publicada.
+  pasan a `2-1` sin conceder una victoria nocturna ni escribir al leer. También se reconoce el final publicado de veinte victorias con `2-10`, que pasa a `3-1`. Solo se reconocen esas fronteras publicadas.
   El resto de estructuras incoherentes sigue bloqueado sin reescritura. Los consumidores del motor obtienen
   semillas previas desde `datos/niveles.ts`; la función de `datos/dia.ts` se conserva por compatibilidad.
+
+
+- **Piscina:** `DefZombi.agua` restringe apariciones; ausente significa tierra, `solo` agua y `tambien` ambos.
+  `DefPlanta.soloTierra` impide sembrar Patatapum y Pinchohierba sobre agua incluso con soporte.
+  Al destruir un Nenúfar se retiran las plantas terrestres apoyadas, con su callback y evento una sola vez.
+  `DefNivel.filasAgua` debe ser un subconjunto sin repetición de las filas activas.
+- **Hielo de vehículo:** `EstadoPvZ.pistasHielo` es opcional por compatibilidad y contiene
+  `{id,fila,desde,hasta,vida}`. Bloquea sembrar en el tramo; Zomboni renueva treinta segundos y Jalapeño lo
+  elimina. `terreno` con tipo `pista-hielo` o `pista-hielo-fin` informa cambios; no son las zonas de abono.
+  `esAgua`, `pistaHielo`, `crearPistaHielo`, `quitarHielo` y `aplastarPlantas` son primitivas internas.
+- **Objetivos y estados acuáticos:** `puedeRecibirProyectil(z,tipo?)` omite arrastrados, pasajeros protegidos, saltos y el choque del trineo.
+  Un buzo sumergido admite proyectiles lanzados y evita rectos; explosiones y habilidades conservan sus reglas. `datos.sumergido`,
+  `zampalga`, `arrastrado`, `montado`, `delfinEnAgua`, `saltoPendiente`, `enTrineo`, `liderTrineo`,
+  `huecoTrineo`, `choqueTrineoHasta`, `vehiculo` e `intocableTrineo` describen sus fases. Un vehículo activo
+  no pierde cabeza ni recibe frío. `datos.enAire` impide morder Apisonaflor durante su salto.
+- **Guisantes y barreras:** `ProyectilPvZ.antorchas` registra las plantas cruzadas: hielo pasa a guisante
+  normal, y otro cruce puede calentarlo; guisante normal pasa a fuego con daño y salpicadura. No se recalienta
+  cada paso dentro de la misma planta. `datos.bloqueaSalto` identifica la barrera alta y
+  `datos.ignoraMordida` identifica suelo punzante que no detiene enemigos ni se aplasta por vehículos.
+- **Nivel acuático:** `emboscadaAgua` programa la emboscada final y bloquea la victoria mientras está pendiente.
+  `cortacespedAgua` habilita un limpiador que atraviesa el agua; por defecto el cortacésped se hunde al entrar.
+  No se concede ninguna compra: el contrato de tienda sigue pendiente. `presionCinta` adapta el intervalo al
+  número de sobres pendientes. `atenuarCinta` recibe `{cantidad,pesoFinal}` por semilla: interpola su peso
+  según plantas vivas y sobres en espera, permitiendo reponer Nenúfares sin un tope total de emisiones.
+- **Minizombis:** `minijuego:'minizombis'` divide entre cuatro cuerpo y armadura con truncado, mantiene
+  mordida y velocidad y usa 7,5 s entre oleadas. `datos.vidaMaxima` conserva la vida reducida para sus
+  umbrales; `datos.escala=0.5` permite a la vista representarlos. No escala las plantas ni sus costes.
 
 
 ## Oleadas (PvZ 1)

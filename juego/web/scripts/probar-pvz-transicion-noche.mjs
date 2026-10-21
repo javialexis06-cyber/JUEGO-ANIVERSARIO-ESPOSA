@@ -29,11 +29,11 @@ try{
   assert.equal(actual.nivelAlcanzado,'2-1');
  };
  prueba('catálogo consecutivo y premios de frontera sin desbloqueos prematuros',()=>{
-  assert.deepEqual(NIVELES_PVZ.map(n=>n.id),[...Array.from({length:10},(_,i)=>'1-'+(i+1)),...Array.from({length:10},(_,i)=>'2-'+(i+1))]);
+  assert.deepEqual(NIVELES_PVZ.slice(0,20).map(n=>n.id),[...Array.from({length:10},(_,i)=>'1-'+(i+1)),...Array.from({length:10},(_,i)=>'2-'+(i+1))]);
   assert.equal(NIVELES_PVZ.find(n=>n.id==='1-10').premio.planta,'seta-desesporada');
   assert.equal(Object.hasOwn(PLANTAS_PVZ,'seta-desesporada'),true);
   assert.equal(NIVELES_PVZ.find(n=>n.id==='2-10').premio.planta,'nenufar');
-  assert.equal(Object.hasOwn(PLANTAS_PVZ,'nenufar'),false);
+  assert.equal(Object.hasOwn(PLANTAS_PVZ,'nenufar'),true);
   const inicial=progresoInicialPvZ();assert.deepEqual(inicial.plantasDesbloqueadas,['lanzaguisantes']);assert.equal(inicial.nivelAlcanzado,'1-1');assert.deepEqual(inicial.completados,[]);
  });
  prueba('normalizar bytes de la entrega anterior avanza la frontera sin conceder una victoria',()=>{

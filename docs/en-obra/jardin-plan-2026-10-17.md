@@ -139,6 +139,11 @@ aventura implementados por Codex. El guardado reconoce el final anterior de 1-10
 conservando el progreso. La conexión gráfica sigue a cargo de Claude.
 [Entrega, pruebas y límites](pvz-noche-2026-10-20.md).
 
+Mundo 3 incorporado al motor: seis carriles, dos de agua, ocho plantas, variantes acuáticas y vehículos,
+minizombis, diez niveles y continuación de los guardados nocturnos. La parte visual sigue a cargo de Claude.
+[Entrega, pruebas y límites de piscina](pvz-piscina-2026-10-20.md).
+
+
 ## Orden de construcción
 
 1. **Base:**

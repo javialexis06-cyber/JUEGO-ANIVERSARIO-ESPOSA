@@ -6,14 +6,14 @@ export const PLANTAS_DIA:DefPlanta[]=[
  {id:'girasol',nombre:'Girasol',sol:50,recarga:7.5,vida:300,familia:'productora',desbloqueo:'1-1',descripcion:'Produce soles de 25.',datos:{cada:24.25,primero:7}},
  {id:'petacereza',nombre:'Petacereza',sol:150,recarga:50,vida:300,familia:'explosiva',desbloqueo:'1-2',descripcion:'Explota en las nueve casillas cercanas.',datos:{dano:1800,retardo:1.2}},
  {id:'nuez',nombre:'Nuez',sol:50,recarga:30,vida:4000,familia:'barrera',desbloqueo:'1-3',descripcion:'Resiste mientras las demás plantas disparan.'},
- {id:'patatapum',nombre:'Patatapum',sol:25,recarga:30,vida:300,familia:'explosiva',desbloqueo:'1-5',descripcion:'Necesita armarse antes de detonar por contacto.',datos:{dano:1800,armado:14}},
+ {id:'patatapum',soloTierra:true,nombre:'Patatapum',sol:25,recarga:30,vida:300,familia:'explosiva',desbloqueo:'1-5',descripcion:'Necesita armarse antes de detonar por contacto.',datos:{dano:1800,armado:14}},
  {id:'hielaguisantes',nombre:'Hielaguisantes',sol:175,recarga:7.5,vida:300,familia:'tiradora',desbloqueo:'1-6',descripcion:'Sus guisantes ralentizan a los zombis.',datos:{dano:20,cada:1.425,lento:10}},
  {id:'planta-carnivora',nombre:'Planta carnívora',sol:150,recarga:7.5,vida:300,familia:'tiradora',desbloqueo:'1-7',descripcion:'Devora un zombi cercano y después digiere.',datos:{digiere:42}},
  {id:'repetidora',nombre:'Repetidora',sol:200,recarga:7.5,vida:300,familia:'tiradora',desbloqueo:'1-8',descripcion:'Dispara dos guisantes por ataque.',datos:{dano:20,cada:1.425,rafaga:2}},
 ];
 export const ZOMBIS_DIA:DefZombi[]=[
  {id:'zombi',nombre:'Zombi',vida:270,velocidad:80/4.7,mordida:100,area:'dia',desbloqueo:'1-1',descripcion:'Camina hacia la casa y muerde plantas.',datos:{puntos:1,peso:4000}},
- {id:'zombi-bandera',nombre:'Zombi bandera',vida:270,velocidad:80/3.7,mordida:100,area:'dia',desbloqueo:'1-2',descripcion:'Encabeza una oleada enorme.',datos:{puntos:1,peso:4000}},
+ {id:'zombi-bandera',agua:'tambien',nombre:'Zombi bandera',vida:270,velocidad:80/3.7,mordida:100,area:'dia',desbloqueo:'1-2',descripcion:'Encabeza una oleada enorme.',datos:{puntos:1,peso:4000}},
  {id:'caracono',nombre:'Zombi caracono',vida:270,armadura:{tipo:'casco',vida:370},velocidad:80/4.7,mordida:100,area:'dia',desbloqueo:'1-3',descripcion:'El cono recibe daño antes que su cuerpo.',datos:{puntos:2,peso:4000}},
  {id:'saltador',nombre:'Zombi saltador',vida:500,velocidad:80/2.5,mordida:100,area:'dia',desbloqueo:'1-6',descripcion:'Salta una planta y pierde su pértiga.',datos:{puntos:2,peso:2000,velocidadSinPertiga:80/4.7}},
  {id:'caracubo',nombre:'Zombi caracubo',vida:270,armadura:{tipo:'casco',vida:1100,metal:true},velocidad:80/4.7,mordida:100,area:'dia',desbloqueo:'1-8',descripcion:'El cubo metálico protege su cuerpo.',datos:{puntos:4,peso:3000}},

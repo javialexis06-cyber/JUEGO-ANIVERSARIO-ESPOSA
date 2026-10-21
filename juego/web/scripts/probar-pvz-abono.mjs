@@ -159,13 +159,23 @@ try {
   assert.ok(m.plantas.every(q => q.fila === 2)); assert.equal(p.edad, 14);
  });
 
- for (const area of ['piscina', 'tejado']) prueba(`Patatapum reproduce solo en casillas válidas de ${area}`, () => {
+ prueba('Patatapum y sus copias rechazan el agua incluso con soporte', () => {
   const base = {...PLANTAS_PVZ.nuez, id: 'base-prueba', sol: 0, recarga: 0, capa: 'base', agua: 'tambien'};
   const plantas = {...PLANTAS_PVZ, [base.id]: base};
-  const m = preparado({semillas: ['patatapum',base.id]}, {area, filas: [2], ...(area === 'piscina' ? {filasAgua: [2]} : {})}, {plantas});
-  for (const c of [0, 1, 8]) siembra(m, base.id, 2, c);
-  const p = siembra(m, 'patatapum'); assert.ok(m.usarAbono(p.id));
-  assert.deepEqual(m.plantas.filter(q => q.tipo === 'patatapum').map(q => q.col).sort((a, b) => a - b), [0, 1, 8]);
+  const m = preparado({semillas: ['patatapum',base.id]}, {area:'piscina',filas:[1,2],filasAgua:[2]}, {plantas});
+  for (const c of [0,1,8]) siembra(m,base.id,2,c);
+  const antes=m.estado();assert.equal(m.plantar('patatapum',2,0),false);assert.deepEqual(m.estado(),antes);
+  const p=siembra(m,'patatapum',1,0);assert.ok(m.usarAbono(p.id));
+  const minas=m.plantas.filter(q=>q.tipo==='patatapum');assert.equal(minas.length,3);
+  assert.ok(minas.every(q=>q.fila===1));assert.equal(new Set(minas.map(q=>q.col)).size,3);
+ });
+ prueba('Patatapum reproduce solo en casillas con soporte de tejado', () => {
+  const base = {...PLANTAS_PVZ.nuez, id: 'base-prueba', sol: 0, recarga: 0, capa: 'base', agua: 'tambien'};
+  const plantas = {...PLANTAS_PVZ, [base.id]: base};
+  const m = preparado({semillas: ['patatapum',base.id]}, {area:'tejado',filas:[2]}, {plantas});
+  for (const c of [0,1,8]) siembra(m,base.id,2,c);
+  const p=siembra(m,'patatapum');assert.ok(m.usarAbono(p.id));
+  assert.deepEqual(m.plantas.filter(q=>q.tipo==='patatapum').map(q=>q.col).sort((a,b)=>a-b),[0,1,8]);
  });
 
  prueba('reproducir plantas y crear hielo no son órdenes gratuitas fuera de la habilidad', () => {

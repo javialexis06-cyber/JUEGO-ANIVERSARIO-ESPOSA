@@ -13,7 +13,7 @@ import {chromium} from '@playwright/test';
 const salida=resolve(import.meta.dirname,'../test-results/pvz/persistencia-navegador');
 const resultados=[],errores=[],peticionesExternas=[];
 const registrar=(nombre,detalle={})=>{resultados.push({nombre,ok:true,...detalle});console.log('OK',nombre);};
-let servidor,browser,context,origen;
+let servidor,browser,context,origen,completado=false;
 await mkdir(salida,{recursive:true});
 try{
  const compilado=await build({
@@ -145,12 +145,52 @@ try{
  // La normalización coloca premios conocidos antes de extras comprados; los desbloqueos son un conjunto.
  assert.deepEqual({...nocheRecarga.progreso,plantasDesbloqueadas:[...nocheRecarga.progreso.plantasDesbloqueadas].sort()},{...noche.progreso,plantasDesbloqueadas:[...noche.progreso.plantasDesbloqueadas].sort()});assert.equal(nocheRecarga.texto,noche.texto);assert.equal(nocheRecarga.clasica,'clásica pareja intacta');assert.equal(nocheRecarga.clasicaAmigos,'clásica amigos intacta');
  registrar('recargar tras noche conserva 2-2 desbloqueado y partidas clásicas');
+
+ // Forma que la edición de veinte niveles publicaba al terminar 2-10. Se conserva literal
+ // para comprobar que añadir piscina no reinterpreta compras ni concede una victoria en 3-1.
+ const legadoPiscina=await pagina.evaluate(()=>{
+  const historico={
+   version:1,nivelAlcanzado:'2-10',
+   completados:['1-1','1-2','1-3','1-4','1-5','1-6','1-7','1-8','1-9','1-10','2-1','2-2','2-3','2-4','2-5','2-6','2-7','2-8','2-9','2-10'],
+   plantasDesbloqueadas:['lanzaguisantes','girasol','petacereza','nuez','patatapum','hielaguisantes','planta-carnivora','repetidora','seta-desesporada','seta-solar','humoseta','comepiedras','hipnoseta','seta-miedica','seta-congelada','petaseta','nenufar','semilla-comprada'],
+   objetos:['pala','almanaque'],notas:['nota-1','nota-2'],monedas:3210,compras:{'semilla-comprada':true,abono:2},ranuras:6,
+   ajustes:{sonido:false,musica:false,velocidad:2},minijuegos:{completados:['bolos','aplastazombis'],marcas:{bolos:15,aplastazombis:127}},
+   rompecabezas:{completados:[],marcas:{}},supervivencia:{completados:[],marcas:{}},fusion:{completados:[],marcas:{},descubiertas:[]},
+  };
+  const texto=JSON.stringify(historico),amigo=localStorage.getItem('amigo-pvz-v1'),control={escrituras:0};localStorage.setItem('pvz-v1',texto);
+  const almacen={getItem:k=>localStorage.getItem(k),setItem(k,v){control.escrituras++;localStorage.setItem(k,v);}};
+  const g=new globalThis.__pvz.GuardadoPvZ(almacen);globalThis.__ensayoPiscina={g,control,historico,amigo};
+  return {historico,progreso:g.progreso,siguiente:g.siguienteNivel,bloqueo:g.bloqueo,escrituras:control.escrituras,texto,conservado:localStorage.getItem('pvz-v1'),disponibles:g.disponibles()};
+ });
+ assert.equal(legadoPiscina.bloqueo,null);assert.equal(legadoPiscina.siguiente,'3-1');assert.equal(legadoPiscina.progreso.nivelAlcanzado,'3-1');assert.deepEqual(legadoPiscina.progreso.completados,legadoPiscina.historico.completados);assert.equal(legadoPiscina.progreso.completados.includes('3-1'),false);assert.equal(legadoPiscina.progreso.plantasDesbloqueadas.includes('aplastaflor'),false);assert.equal(legadoPiscina.escrituras,0);assert.equal(legadoPiscina.conservado,legadoPiscina.texto);assert.equal(legadoPiscina.disponibles.includes('nenufar'),true);assert.equal(legadoPiscina.disponibles.includes('semilla-comprada'),false);
+ for(const k of ['plantasDesbloqueadas','objetos','notas','monedas','compras','ranuras','ajustes','minijuegos','rompecabezas','supervivencia','fusion'])assert.deepEqual(legadoPiscina.progreso[k],legadoPiscina.historico[k],k);
+ registrar('guardado histórico 2-10 habilita piscina sin escribir ni alterar economía o ajustes');
+
+ const piscina=await pagina.evaluate(()=>{
+  const {MotorPvZ,crearPilotoPvZ,seleccionPilotoPvZ,NIVEL_PVZ}=globalThis.__pvz,{g,control,historico,amigo}=globalThis.__ensayoPiscina;
+  const disponibles=g.disponibles(),seleccion=seleccionPilotoPvZ(disponibles,NIVEL_PVZ['3-1']),a=g.abrirNivel('3-1',seleccion,23);
+  if(!a.ok)throw new Error('No se pudo abrir 3-1: '+JSON.stringify(a));
+  const m=new MotorPvZ(a.nivel,a.opciones),piloto=crearPilotoPvZ();let finales=0;
+  for(let pasos=0;pasos<60*1500&&!m.terminado;pasos++){piloto(m);m.paso();finales+=m.eventos.filter(e=>e.t==='fin').length;}
+  if(m.terminado!=='gano')throw new Error('El piloto no ganó 3-1: '+m.terminado);
+  const confirmacion=g.confirmarResultado(a.partida,m.estado()),repetida=g.confirmarResultado(a.partida,m.estado());
+  return {tiempo:m.t,seleccion,disponibles,finales,confirmacion,repetida,progreso:g.progreso,siguiente:g.siguienteNivel,escrituras:control.escrituras,texto:localStorage.getItem('pvz-v1'),amigoIntacto:localStorage.getItem('amigo-pvz-v1')===amigo,historico};
+ });
+ assert.equal(piscina.finales,1);assert.ok(piscina.seleccion.length<=6);assert.ok(piscina.seleccion.every(id=>piscina.disponibles.includes(id)));assert.ok(piscina.seleccion.includes('nenufar'));assert.deepEqual(piscina.confirmacion,{ok:true,gano:true,aplicado:true,guardado:true});assert.deepEqual(piscina.repetida,{ok:true,gano:true,aplicado:false,guardado:true});assert.equal(piscina.escrituras,1);assert.equal(piscina.siguiente,'3-2');assert.deepEqual(piscina.progreso.completados,[...legadoPiscina.historico.completados,'3-1']);assert.deepEqual(piscina.progreso.plantasDesbloqueadas,[...legadoPiscina.historico.plantasDesbloqueadas,'aplastaflor']);assert.equal(piscina.amigoIntacto,true);
+ for(const k of ['objetos','notas','monedas','compras','ranuras','ajustes','minijuegos','rompecabezas','supervivencia','fusion'])assert.deepEqual(piscina.progreso[k],legadoPiscina.historico[k],k);
+ registrar('victoria acuática legal 3-1 guarda una vez con Nenúfar y seis ranuras',{tiempo:piscina.tiempo,semillas:piscina.seleccion});
+ await recargar();
+ const piscinaRecarga=await pagina.evaluate(()=>{const g=new globalThis.__pvz.GuardadoPvZ(localStorage);return {siguiente:g.siguienteNivel,progreso:g.progreso,texto:localStorage.getItem('pvz-v1'),clasica:localStorage.getItem('jardin-v1'),clasicaAmigos:localStorage.getItem('amigo-jardin-v1')};});
+ assert.equal(piscinaRecarga.siguiente,'3-2');
+ assert.deepEqual({...piscinaRecarga.progreso,plantasDesbloqueadas:[...piscinaRecarga.progreso.plantasDesbloqueadas].sort()},{...piscina.progreso,plantasDesbloqueadas:[...piscina.progreso.plantasDesbloqueadas].sort()});assert.equal(piscinaRecarga.texto,piscina.texto);assert.equal(piscinaRecarga.clasica,'clásica pareja intacta');assert.equal(piscinaRecarga.clasicaAmigos,'clásica amigos intacta');
+ registrar('recargar tras piscina conserva 3-2 desbloqueado y partidas clásicas');
  assert.deepEqual(errores,[]);assert.deepEqual(peticionesExternas,[]);
  registrar('sin errores de página ni peticiones externas');
+ completado=true;
  console.log('OK',resultados.length,'verificaciones de motor y persistencia en Chromium; sin aventura visual');
 }catch(e){errores.push(String(e.stack??e));process.exitCode=1;console.error(e);}
 finally{
  await context?.close().catch(()=>{});await browser?.close().catch(()=>{});
  if(servidor)await new Promise(ok=>servidor.close(ok));
- await writeFile(join(salida,'resultado.json'),JSON.stringify({ok:errores.length===0,alcance:'Contrato de MotorPvZ y GuardadoPvZ con localStorage real. Piloto legal en 1-1, 1-2 y 2-1; frontera histórica de diez niveles, recargas y fallo de cuota inyectado en el adaptador. No carga ni acredita la aventura visual ni dispositivos físicos.',origen:origen??null,pruebas:resultados,errores,peticionesExternas},null,2));
+ await writeFile(join(salida,'resultado.json'),JSON.stringify({ok:completado&&errores.length===0,alcance:'Contrato de MotorPvZ y GuardadoPvZ con localStorage real. Piloto legal en 1-1, 1-2, 2-1 y 3-1; fronteras históricas de diez y veinte niveles, recargas y fallo de cuota inyectado en el adaptador. No carga ni acredita la aventura visual ni dispositivos físicos.',origen:origen??null,pruebas:resultados,errores,peticionesExternas},null,2));
 }

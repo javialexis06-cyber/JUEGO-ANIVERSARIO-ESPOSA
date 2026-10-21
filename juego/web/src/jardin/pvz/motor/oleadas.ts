@@ -1,7 +1,7 @@
 import type {DefNivel,DefZombi} from '../tipos';
 import {AzarPvZ} from './azar';
 export interface AparicionPvZ {tipo:string;fila:number;x:number;oleada:number}
-export interface SituacionOleada {vida:number;inicial:number;pendientes:number;plantas:number}
+export interface SituacionOleada {vida:number;inicial:number;pendientes:number;plantas:number;filasHielo?:number[]}
 /** Director parametrizado. No decide por el nombre del nivel ni depende de la vista. */
 export class DirectorOleadasPvZ {
  readonly total:number;readonly enormes:number[];
@@ -24,10 +24,10 @@ export class DirectorOleadasPvZ {
   const enorme=this.enormes.includes(this.actual+1);
   if(enorme&&!this.aviso&&t>=this.siguiente-2){this.aviso=true;return{aviso:true,apariciones:[],enorme:true,ultima:this.actual+1===this.total};}
   if(t<this.siguiente)return null;
-  this.actual++;this.lanzada=t;this.siguiente=t+this.azar.entre(25,31);this.aviso=false;
+  this.actual++;this.lanzada=t;this.siguiente=t+(this.nivel.minijuego==='minizombis'?7.5:this.azar.entre(25,31));this.aviso=false;
   const fijos=this.nivel.fijos?.[this.actual]??{};
   const apariciones:AparicionPvZ[]=[];
-  for(const [tipo,cantidad] of Object.entries(fijos))for(let k=0;k<cantidad;k++)apariciones.push(this.aparicion(tipo));
+  for(const [tipo,cantidad] of Object.entries(fijos))for(let k=0;k<cantidad;k++)apariciones.push(...this.apariciones(tipo,s));
   if(!this.nivel.composicionCompleta){
    // Presupuesto de PvZ 1; toda aparición fija se descuenta antes de rellenar con elecciones aleatorias.
    // No se afirma que reproduzca cada detalle del ejecutable original.
@@ -38,11 +38,28 @@ export class DirectorOleadasPvZ {
    puntos=Math.max(0,puntos)*(this.nivel.multiplicadorOleadas??1);
    for(const [tipo,cantidad] of Object.entries(fijos))if(!grupo(tipo))puntos-=cantidad*(this.defs[tipo].datos?.puntos??1);
    while(puntos>0){const posibles=this.nivel.zombis.filter(id=>(this.nivel.desdeOleada?.[id]??1)<=this.actual&&(this.defs[id].datos?.puntos??1)<=puntos);if(!posibles.length)break;
-    const pesos=posibles.map(id=>this.defs[id].datos?.peso??1),suma=pesos.reduce((a,b)=>a+b,0);let dado=this.azar.siguiente()*suma,i=0;while(i<pesos.length-1&&dado>=pesos[i])dado-=pesos[i++];const tipo=posibles[i];apariciones.push(this.aparicion(tipo));puntos-=this.defs[tipo].datos?.puntos??1;
+    const pesos=posibles.map(id=>this.defs[id].datos?.peso??1),suma=pesos.reduce((a,b)=>a+b,0);let dado=this.azar.siguiente()*suma,i=0;while(i<pesos.length-1&&dado>=pesos[i])dado-=pesos[i++];const tipo=posibles[i];apariciones.push(...this.apariciones(tipo,s));puntos-=this.defs[tipo].datos?.puntos??1;
    }
   }
   return{aviso:false,apariciones,enorme,ultima:this.actual===this.total};
  }
- private aparicion(tipo:string):AparicionPvZ{return{tipo,fila:this.nivel.filas[this.azar.entero(this.nivel.filas.length)],x:this.azar.entre(760,800),oleada:this.actual};}
+ private apariciones(tipo:string,s:SituacionOleada):AparicionPvZ[]{
+  let filas=this.nivel.filas.filter(f=>this.filaValida(tipo,f));
+  if(tipo==='zombi-trineo'){
+   filas=filas.filter(f=>s.filasHielo?.includes(f));
+   if(!filas.length)return Array.from({length:4},()=>this.apariciones('zombi',s)).flat();
+  }
+  if(!filas.length)return [];
+  const fila=filas[this.azar.entero(filas.length)],agua=this.nivel.filasAgua?.includes(fila);
+  const flotador:Record<string,string>={zombi:'zombi-flotador',caracono:'caracono-flotador',caracubo:'caracubo-flotador'};
+  return[{tipo:agua&&flotador[tipo]&&this.defs[flotador[tipo]]?flotador[tipo]:tipo,fila,x:this.azar.entre(760,800),oleada:this.actual}];
+ }
+ private filaValida(tipo:string,fila:number){
+  const agua=this.nivel.filasAgua?.includes(fila),d=this.defs[tipo];
+  if(!agua)return d.agua!=='solo';
+  if(tipo==='zombi-bandera')return this.actual>=6;
+  if(['zombi','caracono','caracubo'].includes(tipo))return this.actual>=6&&!!this.defs[({zombi:'zombi-flotador',caracono:'caracono-flotador',caracubo:'caracubo-flotador'} as Record<string,string>)[tipo]];
+  return !!d.agua;
+ }
  get terminado(){return this.actual>=this.total;}
 }

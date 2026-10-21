@@ -1,16 +1,16 @@
 # Pedidos de Javier · estado vigente
 
-Actualizado el 20 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
+Actualizado el 21 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
 ## Apoyo activo al Jardín · 19 de octubre
 
 Javier confirmó que trabajan Claude y Codex. Claude se encarga de todo lo gráfico; Codex apoya motor,
 mecánicas, niveles y pruebas conforme al [plan de La Semilla Madre](en-obra/jardin-plan-2026-10-17.md).
-La base de los mundos de día y noche incluye veinte niveles, abono del día y contrato de progreso/guardado.
+La base de los mundos de día, noche y piscina incluye treinta niveles, abono del día y contrato de progreso/guardado.
 Claude conecta motor y persistencia con su aventura visual; Codex verifica las reglas y campañas.
 [Base del motor](en-obra/pvz-motor-2026-10-19.md) · [Abono y guardado](en-obra/pvz-abono-guardado-2026-10-19.md) ·
-[Mundo nocturno](en-obra/pvz-noche-2026-10-20.md).
+[Mundo nocturno](en-obra/pvz-noche-2026-10-20.md) · [Piscina](en-obra/pvz-piscina-2026-10-20.md).
 No integrar el borrador anterior del catálogo sobre el motor clásico. Granja congelada; voces descartadas.
 
 ## Encargo activo · Plantas contra Zombis en el Jardín
@@ -30,8 +30,8 @@ Por eso los valores de PvZ (costos, recargas, vidas, precios de la tienda) cuent
 - Se conservan los 12 patios (como «Patios clásicos») y el duelo para dos.
 - Todo el arte y el sonido se hacen en código.
 
-**Estado:** motor, datos de veinte niveles de los mundos 1–2, abono del día y guardado implementados.
-La integración visual está a cargo de Claude. Los mundos 3–10 y demás modos del plan siguen pendientes.
+**Estado:** motor, datos de treinta niveles de los mundos 1–3, abono del día y guardado implementados.
+La integración visual está a cargo de Claude. Los mundos 4–10 y demás modos del plan siguen pendientes.
 
 ## Encargo activo · ampliación de juegos y patio
 

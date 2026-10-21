@@ -5,7 +5,7 @@ import {mkdtemp,rm,mkdir,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
-const tmp=await mkdtemp(join(tmpdir(),'pvz-guardado-')),resultados=[];
+const tmp=await mkdtemp(join(tmpdir(),'pvz-guardado-')),resultados=[],salida=resolve(import.meta.dirname,'../test-results/pvz/guardado');let fallo=null;
 try{
  const fichero=join(tmp,'guardado.mjs');
  await build({stdin:{contents:"export * from './src/jardin/pvz/guardado';export * from './src/jardin/pvz/motor/motor';export * from './src/jardin/pvz/motor/bot';export * from './src/jardin/pvz/datos/niveles';export * from './src/jardin/pvz/datos/plantas';",resolveDir:resolve(import.meta.dirname,'..')},outfile:fichero,bundle:true,platform:'node',format:'esm',logLevel:'silent'});
@@ -133,17 +133,22 @@ try{
    const a=abrir(g,n.id),r=g.confirmarResultado(a.partida,final(a));assert.equal(r.aplicado,true);assert.equal(r.guardado,true);assert.equal(g.confirmarResultado(a.partida,final(a)).aplicado,false);g=new GuardadoPvZ(s);
    if(n.premio?.planta)assert.equal(g.progreso.plantasDesbloqueadas.includes(n.premio.planta),true);
    if(n.id==='1-10'){assert.equal(g.siguienteNivel,'2-1');assert.equal(g.disponibles().includes('seta-desesporada'),true);assert.equal(g.progreso.completados.includes('2-1'),false);}
+   if(n.id==='2-10'){assert.equal(g.siguienteNivel,'3-1');assert.equal(g.disponibles().includes('nenufar'),true);assert.equal(g.progreso.completados.includes('3-1'),false);}
   }
-  assert.deepEqual(g.progreso.completados,NIVELES_PVZ.map(n=>n.id));assert.deepEqual(g.progreso.objetos,[...new Set(NIVELES_PVZ.map(n=>n.premio?.objeto).filter(Boolean))]);assert.deepEqual(g.progreso.notas,[...new Set(NIVELES_PVZ.map(n=>n.premio?.nota).filter(Boolean))]);assert.equal(g.siguienteNivel,null);assert.equal(g.progreso.plantasDesbloqueadas.includes('seta-desesporada'),true);assert.equal(g.disponibles().includes('seta-desesporada'),Object.hasOwn(PLANTAS_PVZ,'seta-desesporada'));assert.equal(g.progreso.monedas,0);assert.equal(s.escrituras.length,NIVELES_PVZ.length);assert.equal(g.progreso.plantasDesbloqueadas.includes('nenufar'),true);assert.equal(g.disponibles().includes('nenufar'),false);
+  assert.deepEqual(g.progreso.completados,NIVELES_PVZ.map(n=>n.id));assert.deepEqual(g.progreso.objetos,[...new Set(NIVELES_PVZ.map(n=>n.premio?.objeto).filter(Boolean))]);assert.deepEqual(g.progreso.notas,[...new Set(NIVELES_PVZ.map(n=>n.premio?.nota).filter(Boolean))]);assert.equal(g.siguienteNivel,null);assert.equal(g.progreso.plantasDesbloqueadas.includes('seta-desesporada'),true);assert.equal(g.disponibles().includes('seta-desesporada'),Object.hasOwn(PLANTAS_PVZ,'seta-desesporada'));assert.equal(g.progreso.monedas,0);assert.equal(s.escrituras.length,NIVELES_PVZ.length);assert.equal(g.progreso.plantasDesbloqueadas.includes('nenufar'),true);assert.equal(g.disponibles().includes('nenufar'),true);assert.equal(g.progreso.plantasDesbloqueadas.includes('marseta'),true);assert.equal(g.disponibles().includes('marseta'),false);
  });
  // Acredita también el recorrido real del contrato abrir -> MotorPvZ -> ganar -> guardar -> recargar.
  const s=memoria();let g=new GuardadoPvZ(s);
  for(const n of NIVELES_PVZ){
-  const seleccion=n.area==='noche'&&!n.cinta&&!n.semillas?seleccionPilotoPvZ(g.disponibles(),n):undefined;
+  const seleccion=['noche','piscina'].includes(n.area)&&!n.cinta&&!n.semillas?seleccionPilotoPvZ(g.disponibles(),n):undefined;
   const a=abrir(g,n.id,seleccion),m=new MotorPvZ(a.nivel,a.opciones),piloto=crearPilotoPvZ();
   for(let pasos=0;pasos<60*1500&&!m.terminado;pasos++){piloto(m);m.paso();}
   assert.equal(m.terminado,'gano',n.id+' partida real con selección desbloqueada');assert.equal(g.confirmarResultado(a.partida,m.estado()).guardado,true);g=new GuardadoPvZ(s);
   resultados.push({nombre:'campaña real y guardado '+n.id,ok:true,t:m.t,semillas:[...m.semillas]});console.log('OK campaña real y guardado',n.id,Math.round(m.t)+'s');
  }
- const salida=resolve(import.meta.dirname,'../test-results/pvz/guardado');await mkdir(salida,{recursive:true});await writeFile(join(salida,'resultado.json'),JSON.stringify({ok:true,pruebas:resultados},null,2));console.log('OK',resultados.length,'verificaciones del progreso y guardado de PvZ');
-}finally{await rm(tmp,{recursive:true,force:true});}
+ console.log('OK',resultados.length,'verificaciones del progreso y guardado de PvZ');
+}catch(error){fallo=String(error.stack??error);throw error;}
+finally{
+ try{await mkdir(salida,{recursive:true});await writeFile(join(salida,'resultado.json'),JSON.stringify({ok:fallo===null,pruebas:resultados,...(fallo===null?{}:{error:fallo})},null,2));}
+ finally{await rm(tmp,{recursive:true,force:true});}
+}
