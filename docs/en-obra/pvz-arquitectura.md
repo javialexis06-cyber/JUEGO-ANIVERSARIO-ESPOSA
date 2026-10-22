@@ -1,5 +1,10 @@
 # Plantas contra Zombis · arquitectura y contrato de trabajo
 
+La ampliación vigente es [motor completo, carriles por escenario y tipos exclusivos por zona](pvz-pendientes-2026-10-22.md).
+El constructor actual aún infiere cinco/seis filas por área y Conquista tiene otro combate simplificado:
+ambos requieren el diseño e integración señalados en ese seguimiento. Este contrato describe lo ya construido,
+no declara terminada la ampliación ni fija cinco/seis carriles como límite para los escenarios futuros.
+
 Avances del 19 de octubre: [base del motor](pvz-motor-2026-10-19.md) y
 [abono, progreso y recuperación de guardado](pvz-abono-guardado-2026-10-19.md) y
 [mundo nocturno](pvz-noche-2026-10-20.md), [piscina](pvz-piscina-2026-10-20.md) y

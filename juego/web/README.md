@@ -75,3 +75,7 @@ Ver [contratos y límites](../../docs/en-obra/pvz-arte-2026-10-22.md).
 Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistemas/patio-mental.md) y
 [Jardín de los Desvelados](../../docs/sistemas/jardin.md). La clasificación compartida necesita la migración
 específica de Supabase documentada allí; la marca local funciona sin red.
+
+El pedido posterior a probar Conquista se sigue en [la lista de pendientes](../../docs/en-obra/pvz-pendientes-2026-10-22.md)
+y en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). Defensas PvZ completas con carriles según escenario, tipos exclusivos por zona y catálogo
+progresivo completo están pendientes; no confundir ese encargo con las funciones de la base publicada.

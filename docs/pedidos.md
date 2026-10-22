@@ -3,20 +3,28 @@
 Actualizado el 22 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
-## Prioridad actual · base jugable de conquista del 22 de octubre
+## Prioridad actual · motor completo y catálogo tras probar Conquista
 
-Javier pidió desarrollar y entregar la conquista para decidir después de jugar. Empieza solo en casa y termina
-al purificar **el 100%**: el Dr. Zomboid huye con los zombis en su nave. Conservar el PvZ anterior como minijuego,
-equipos y formaciones por zona, frentes simultáneos, fusiones al final de historia y al inicio de versus.
-Menús ilustrados y espera con batallas animadas forman parte del pedido. El último ajuste exige mapas de
-mundo → país → ciudad para navegar, pantalla completa sin paneles de estadísticas y controles redondos
-pequeños. El inicio y el final deben tener el detalle del mapa, sin carteles narrativos.
-[Base y alcance real](en-obra/pvz-conquista-base-2026-10-22.md) ·
-[Diseño del mundo futuro](en-obra/pvz-conquista-propuesta-2026-10-22.md).
+Javier pidió defensas con mecánicas completas de PvZ y carriles configurados por escenario: carretera angosta
+con tres/cuatro, casa con cinco, almacén grande con seis/siete o los que necesite el mapa. Se rota entre zonas
+desde los mapas mientras los tableros continúan. **Cada tipo completo de planta solo puede estar reservado a
+una zona**, no un límite de ejemplares. Plantas y nuevos zombis se introducen al avanzar por territorios.
 
-La base tiene 12 áreas de historia en tres países/seis ciudades y 36 en versus en tres países/nueve ciudades, 32 plantas, 21 zombis y cinco fusiones de muestra.
-Las 240 áreas del mundo final y el catálogo completo todavía no están implementados. Los sprites pendientes
-continúan pausados hasta decidir después de jugar; los minijuegos existentes conservan motor y guardados.
+Se reanuda el catálogo y su arte: todas las plantas y zombis de PvZ 1, PvZ 2 y la última versión publicada de
+Fusión, cuyo inventario y recetas requieren verificación. Se retoman nuevas ideas después de tenerlos
+funcionales y dibujados. Las fusiones siguen siendo tardías en historia y accesibles desde el inicio en versus.
+
+**Seguimiento:** [180 tareas pendientes en 14 grupos](en-obra/pvz-pendientes-2026-10-22.md) ·
+[Issue #1 en GitHub](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). No marcar completado por crear fichas o reciclar arte.
+
+Estado de partida: [base publicada](en-obra/pvz-conquista-base-2026-10-22.md), doce áreas de historia y 36 en
+versus, 32 plantas normales, 21 definiciones de zombis y cinco fusiones de muestra. Su combate de tres carriles
+es simplificado y todavía no cumple el nuevo requisito; tampoco existe exclusividad global de tipos ni
+progresión territorial completa del catálogo. [Dirección del mundo](en-obra/pvz-conquista-propuesta-2026-10-22.md).
+
+Se conservan historia desde casa hasta el 100% con huida del Dr. Zomboid, mapas mundo → país → ciudad → zona,
+interfaz despejada, controles redondos y minijuegos existentes con sus partidas. La cifra de 240 áreas sigue
+siendo el boceto del mundo final, no contenido construido ni una certificación de la escala definitiva.
 
 ## Apoyo activo al Jardín · 19 de octubre
 

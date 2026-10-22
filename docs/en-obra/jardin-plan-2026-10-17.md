@@ -1,9 +1,10 @@
 # Plantas contra Zombis: La Semilla Madre · plan vigente (17 de octubre de 2026)
 
-**Prioridad del 22 de octubre:** base jugable de Conquista solicitada para decidir después de jugar.
-Historia desde casa hasta el 100% y huida del Dr. Zomboid; versus territorial con fusiones desde el comienzo.
-[Entrega y límites actuales](pvz-conquista-base-2026-10-22.md). El catálogo pendiente sigue pausado y los
-cuarenta niveles PvZ permanecen como minijuego. Las cifras de este plan anterior no son contenido implementado.
+**Prioridad tras probar la base:** defensas PvZ completas, carriles por escenario, reserva exclusiva de cada
+tipo de planta por zona y desbloqueos territoriales; catálogo completo funcional y dibujado de PvZ 1, PvZ 2
+y última versión verificada de Fusión. [Lista vigente de pendientes](pvz-pendientes-2026-10-22.md).
+Se reanudan catálogo y arte. El plan de 88 niveles que sigue es una referencia anterior; no impone nuevas
+ampliaciones ni sustituye la historia territorial actual. Los cuarenta niveles construidos se conservan.
 
 **Estado:** en construcción, con libertad de diseño dada por Javier. La versión anterior del plan, con nombres
 propios y la historia de los Desvelados, quedó descartada; está en el historial de git.

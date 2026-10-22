@@ -2,12 +2,14 @@
 
 ## Alcance vigente
 
-Prioridad del 22 de octubre: entregar la base jugable de Conquista que Javier pidió para decidir tras jugar.
-Historia desde la casa hasta purificar el 100% y huida del Dr. Zomboid en nave; fusiones al final de historia
-y desde el comienzo en versus. Navegar mediante mapas de mundo/país/ciudad, sin paneles superior, inferior
-ni lateral; controles redondos pequeños y portada/final con detalle ilustrado. Conservar PvZ y patios como minijuegos. Ver
-`docs/en-obra/pvz-conquista-base-2026-10-22.md` y el diseño territorial. Los perfiles nuevos son provisionales
-y propios del prototipo; no modificar el balance anterior. El catálogo pendiente sigue pausado.
+Prioridad del 22 de octubre tras probar el jugable: defensas con mecánicas completas de PvZ y carriles
+configurables por escenario (carreteras de tres/cuatro, casas con cinco, almacenes de seis/siete o lo que
+requiera el mapa). Cada tipo completo de planta se reserva a una sola zona. Desbloquear plantas e introducir
+zombis al llegar a zonas nuevas; completar comportamientos, arte y pruebas de PvZ 1, PvZ 2 y la última versión
+verificada de Fusión. El catálogo y su arte se reanudan; la pausa gráfica anterior queda sustituida.
+Ver `docs/en-obra/pvz-pendientes-2026-10-22.md` y el issue #1 de GitHub: son 180 tareas pendientes, no trabajo
+ya implementado. Conservar historia desde casa hasta el 100%, mapas mundo/país/ciudad, controles redondos,
+PvZ y patios como minijuegos y sus partidas. El prototipo publicado aún usa su combate simplificado.
 
 La cola y las decisiones actuales están en [docs/pedidos.md](docs/pedidos.md). El encargo del 16 de octubre quedó
 completado: poses y predicción de Torneo, icono y salas de desafíos de Carreras y limpieza del repositorio.

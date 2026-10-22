@@ -1,5 +1,10 @@
 # Conquista · base jugable del 22 de octubre
 
+**Registro del primer prototipo.** Después de jugarlo, el pedido cambió a defensas PvZ completas con carriles
+por escenario, tipos exclusivos por zona y catálogo progresivo completo. Esas funciones siguen pendientes
+y se siguen en [el listado vigente](pvz-pendientes-2026-10-22.md); este documento acredita únicamente la base
+publicada, no ese motor definitivo.
+
 El pedido es probar la gestión territorial antes de seguir ampliando el catálogo. `jardin.html` abre Conquista;
 `?modo=aventura` conserva los cuarenta niveles PvZ y `?modo=clasicos` los doce patios y su acceso al duelo.
 Las claves anteriores permanecen intactas. El [diseño mundial](pvz-conquista-propuesta-2026-10-22.md) separa

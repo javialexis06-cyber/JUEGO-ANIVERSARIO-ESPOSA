@@ -7,6 +7,12 @@ modifican dificultad, precios, estadísticas ni recompensas del PvZ anterior.
 
 ## Decisiones vigentes
 
+Última revisión tras probar la base: [pendientes del motor y catálogo](pvz-pendientes-2026-10-22.md).
+Las defensas deben usar mecánicas completas de PvZ, con carriles configurados por escenario (tres/cuatro
+en carretera angosta, cinco en casa, seis/siete en almacenes grandes o los que requiera el mapa).
+Cada tipo de planta queda reservado a una zona y las plantas/enemigos aparecen progresivamente al llegar
+a nuevos territorios. El catálogo y su arte se reanudan; Fusión debe contrastarse con la última versión real.
+
 - Conquista es el modo principal. La aventura PvZ de cuarenta niveles y los doce patios clásicos se conservan
   como minijuegos con sus propios guardados. Fusión también tendrá un minijuego separado; sigue pendiente.
 - La historia empieza **solo con nuestra casa**. Se purifican casas, calles, ciudades y países progresivamente,
@@ -79,5 +85,5 @@ La presentación aprobada usa mapas ilustrados para mundo, país y ciudad, comba
 controles redondos pequeños. Se eliminaron paneles superior, inferior y lateral y los carteles narrativos del final.
 
 La base permite evaluar legibilidad, duración de batallas, necesidad de intervención, decisiones de ruta y
-presión de las fronteras antes de producir cientos de áreas y el catálogo pendiente. Se mantienen pausados
-los sprites restantes hasta que Javier decida el diseño después de probar. La granja permanece congelada.
+presión de las fronteras antes de producir cientos de áreas y el catálogo pendiente. La última decisión reanuda
+los sprites y comportamientos del catálogo; el seguimiento vigente sustituye esa pausa inicial. La granja permanece congelada.

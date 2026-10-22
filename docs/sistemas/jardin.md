@@ -8,6 +8,10 @@ El modo principal es [Conquista](../en-obra/pvz-conquista-base-2026-10-22.md), c
 versus de 36, equipos por zona y frentes simultáneos. La historia comienza en casa y exige el 100% para
 la huida espacial del Dr. Zomboid.
 
+El pedido posterior a jugar esa base exige defensas PvZ completas con carriles por escenario, tipos de planta
+exclusivos por zona y catálogo/desbloqueos progresivos. **Pendiente de implementar:**
+[listado vigente y seguimiento en GitHub](../en-obra/pvz-pendientes-2026-10-22.md). Se reanuda el arte del catálogo.
+
 La aventura «Plantas contra Zombis: La Semilla Madre» queda en `jardin.html?modo=aventura`. Usa Canvas
 2D y el motor separado de `src/jardin/pvz/`: cuarenta niveles de día, noche, piscina y niebla, selección de
 semillas, progreso propio y almanaque ilustrado. El pedido del 22 de octubre aprobó su arte y encargó la
