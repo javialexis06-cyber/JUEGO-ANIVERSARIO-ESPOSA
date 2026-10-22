@@ -184,6 +184,44 @@ try{
  assert.equal(piscinaRecarga.siguiente,'3-2');
  assert.deepEqual({...piscinaRecarga.progreso,plantasDesbloqueadas:[...piscinaRecarga.progreso.plantasDesbloqueadas].sort()},{...piscina.progreso,plantasDesbloqueadas:[...piscina.progreso.plantasDesbloqueadas].sort()});assert.equal(piscinaRecarga.texto,piscina.texto);assert.equal(piscinaRecarga.clasica,'clásica pareja intacta');assert.equal(piscinaRecarga.clasicaAmigos,'clásica amigos intacta');
  registrar('recargar tras piscina conserva 3-2 desbloqueado y partidas clásicas');
+ // Forma que la edición de treinta niveles publicaba al terminar 4-10. Se conserva literal
+ // para comprobar que añadir niebla no reinterpreta compras ni concede una victoria en 4-1.
+ const legadoNiebla=await pagina.evaluate(()=>{
+  const historico={
+   version:1,nivelAlcanzado:'3-10',
+   completados:['1-1','1-2','1-3','1-4','1-5','1-6','1-7','1-8','1-9','1-10','2-1','2-2','2-3','2-4','2-5','2-6','2-7','2-8','2-9','2-10','3-1','3-2','3-3','3-4','3-5','3-6','3-7','3-8','3-9','3-10'],
+   plantasDesbloqueadas:['lanzaguisantes','girasol','petacereza','nuez','patatapum','hielaguisantes','planta-carnivora','repetidora','seta-desesporada','seta-solar','humoseta','comepiedras','hipnoseta','seta-miedica','seta-congelada','petaseta','nenufar','aplastaflor','tripitidora','zampalga','jalapeno','pinchohierba','plantorcha','nuez-alta','marseta','semilla-comprada'],
+   objetos:['pala','almanaque','llave-tienda'],notas:['nota-1','nota-2','nota-3'],monedas:3210,compras:{'semilla-comprada':true,abono:2},ranuras:6,
+   ajustes:{sonido:false,musica:false,velocidad:2},minijuegos:{completados:['bolos','aplastazombis','minizombis'],marcas:{bolos:15,aplastazombis:127,minizombis:269}},
+   rompecabezas:{completados:[],marcas:{}},supervivencia:{completados:[],marcas:{}},fusion:{completados:[],marcas:{},descubiertas:[]},
+  };
+  const texto=JSON.stringify(historico),amigo=localStorage.getItem('amigo-pvz-v1'),control={escrituras:0};localStorage.setItem('pvz-v1',texto);
+  const almacen={getItem:k=>localStorage.getItem(k),setItem(k,v){control.escrituras++;localStorage.setItem(k,v);}};
+  const g=new globalThis.__pvz.GuardadoPvZ(almacen);globalThis.__ensayoNiebla={g,control,historico,amigo};
+  return {historico,progreso:g.progreso,siguiente:g.siguienteNivel,bloqueo:g.bloqueo,escrituras:control.escrituras,texto,conservado:localStorage.getItem('pvz-v1'),disponibles:g.disponibles()};
+ });
+ assert.equal(legadoNiebla.bloqueo,null);assert.equal(legadoNiebla.siguiente,'4-1');assert.equal(legadoNiebla.progreso.nivelAlcanzado,'4-1');assert.deepEqual(legadoNiebla.progreso.completados,legadoNiebla.historico.completados);assert.equal(legadoNiebla.progreso.completados.includes('4-1'),false);assert.equal(legadoNiebla.progreso.plantasDesbloqueadas.includes('planterna'),false);assert.equal(legadoNiebla.escrituras,0);assert.equal(legadoNiebla.conservado,legadoNiebla.texto);assert.equal(legadoNiebla.disponibles.includes('marseta'),true);assert.equal(legadoNiebla.disponibles.includes('semilla-comprada'),false);
+ for(const k of ['plantasDesbloqueadas','objetos','notas','monedas','compras','ranuras','ajustes','minijuegos','rompecabezas','supervivencia','fusion'])assert.deepEqual(legadoNiebla.progreso[k],legadoNiebla.historico[k],k);
+ registrar('guardado histórico 3-10 habilita niebla sin escribir ni alterar economía o ajustes');
+
+ const niebla=await pagina.evaluate(()=>{
+  const {MotorPvZ,crearPilotoPvZ,seleccionPilotoPvZ,NIVEL_PVZ}=globalThis.__pvz,{g,control,historico,amigo}=globalThis.__ensayoNiebla;
+  const disponibles=g.disponibles(),seleccion=seleccionPilotoPvZ(disponibles,NIVEL_PVZ['4-1']),a=g.abrirNivel('4-1',seleccion,23);
+  if(!a.ok)throw new Error('No se pudo abrir 4-1: '+JSON.stringify(a));
+  const m=new MotorPvZ(a.nivel,a.opciones),piloto=crearPilotoPvZ();let finales=0;
+  for(let pasos=0;pasos<60*1500&&!m.terminado;pasos++){piloto(m);m.paso();finales+=m.eventos.filter(e=>e.t==='fin').length;}
+  if(m.terminado!=='gano')throw new Error('El piloto no ganó 4-1: '+m.terminado);
+  const confirmacion=g.confirmarResultado(a.partida,m.estado()),repetida=g.confirmarResultado(a.partida,m.estado());
+  return {tiempo:m.t,seleccion,disponibles,finales,confirmacion,repetida,progreso:g.progreso,siguiente:g.siguienteNivel,escrituras:control.escrituras,texto:localStorage.getItem('pvz-v1'),amigoIntacto:localStorage.getItem('amigo-pvz-v1')===amigo,historico};
+ });
+ assert.equal(niebla.finales,1);assert.ok(niebla.seleccion.length<=6);assert.ok(niebla.seleccion.every(id=>niebla.disponibles.includes(id)));assert.ok(niebla.seleccion.includes('marseta')||niebla.seleccion.includes('nenufar'));assert.deepEqual(niebla.confirmacion,{ok:true,gano:true,aplicado:true,guardado:true});assert.deepEqual(niebla.repetida,{ok:true,gano:true,aplicado:false,guardado:true});assert.equal(niebla.escrituras,1);assert.equal(niebla.siguiente,'4-2');assert.deepEqual(niebla.progreso.completados,[...legadoNiebla.historico.completados,'4-1']);assert.deepEqual(niebla.progreso.plantasDesbloqueadas,[...legadoNiebla.historico.plantasDesbloqueadas,'planterna']);assert.equal(niebla.amigoIntacto,true);
+ for(const k of ['objetos','notas','monedas','compras','ranuras','ajustes','minijuegos','rompecabezas','supervivencia','fusion'])assert.deepEqual(niebla.progreso[k],legadoNiebla.historico[k],k);
+ registrar('victoria legal de niebla 4-1 guarda una vez con seis ranuras y recursos del nivel',{tiempo:niebla.tiempo,semillas:niebla.seleccion});
+ await recargar();
+ const nieblaRecarga=await pagina.evaluate(()=>{const g=new globalThis.__pvz.GuardadoPvZ(localStorage);return {siguiente:g.siguienteNivel,progreso:g.progreso,texto:localStorage.getItem('pvz-v1'),clasica:localStorage.getItem('jardin-v1'),clasicaAmigos:localStorage.getItem('amigo-jardin-v1')};});
+ assert.equal(nieblaRecarga.siguiente,'4-2');
+ assert.deepEqual({...nieblaRecarga.progreso,plantasDesbloqueadas:[...nieblaRecarga.progreso.plantasDesbloqueadas].sort()},{...niebla.progreso,plantasDesbloqueadas:[...niebla.progreso.plantasDesbloqueadas].sort()});assert.equal(nieblaRecarga.texto,niebla.texto);assert.equal(nieblaRecarga.clasica,'clásica pareja intacta');assert.equal(nieblaRecarga.clasicaAmigos,'clásica amigos intacta');
+ registrar('recargar tras niebla conserva 4-2 desbloqueado y partidas clásicas');
  assert.deepEqual(errores,[]);assert.deepEqual(peticionesExternas,[]);
  registrar('sin errores de página ni peticiones externas');
  completado=true;
@@ -192,5 +230,5 @@ try{
 finally{
  await context?.close().catch(()=>{});await browser?.close().catch(()=>{});
  if(servidor)await new Promise(ok=>servidor.close(ok));
- await writeFile(join(salida,'resultado.json'),JSON.stringify({ok:completado&&errores.length===0,alcance:'Contrato de MotorPvZ y GuardadoPvZ con localStorage real. Piloto legal en 1-1, 1-2, 2-1 y 3-1; fronteras históricas de diez y veinte niveles, recargas y fallo de cuota inyectado en el adaptador. No carga ni acredita la aventura visual ni dispositivos físicos.',origen:origen??null,pruebas:resultados,errores,peticionesExternas},null,2));
+ await writeFile(join(salida,'resultado.json'),JSON.stringify({ok:completado&&errores.length===0,alcance:'Contrato de MotorPvZ y GuardadoPvZ con localStorage real. Piloto legal en 1-1, 1-2, 2-1, 3-1 y 4-1; fronteras históricas de diez, veinte y treinta niveles, recargas y fallo de cuota inyectado en el adaptador. No carga ni acredita la aventura visual ni dispositivos físicos.',origen:origen??null,pruebas:resultados,errores,peticionesExternas},null,2));
 }

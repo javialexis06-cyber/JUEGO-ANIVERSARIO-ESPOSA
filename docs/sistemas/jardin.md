@@ -4,6 +4,11 @@ Defensa por carriles con plantas y zombis originales de peluche. Página `juego/
 `src/jardin/`. Está en el patio de la mascota y en la Sala de Juegos de amigos. Se inspira en el género de defensa
 con plantas; no distribuye personajes, mapas, sonidos ni recursos de Plants vs. Zombies.
 
+La nueva aventura «Plantas contra Zombis: La Semilla Madre» tiene un motor separado en `src/jardin/pvz/`,
+con cuarenta niveles de día, noche, piscina y niebla. Su presentación sigue a cargo de Claude. Esta página
+describe los doce patios clásicos y el duelo que permanecen publicados; los contratos y límites de la nueva
+aventura están en la [arquitectura](../en-obra/pvz-arquitectura.md) y la [entrega de Niebla](../en-obra/pvz-niebla-2026-10-22.md).
+
 ## Cómo se juega
 
 Escoge una planta y toca una casilla libre. Recoge las luces del cielo y de las margaritas para pagar otras

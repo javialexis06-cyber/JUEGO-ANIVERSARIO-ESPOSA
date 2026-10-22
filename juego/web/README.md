@@ -66,10 +66,10 @@ El Jardín incluye `jardin-duelo.html`: dos en una pantalla o sala para dos disp
 con zombis; pausa compartida y revancha con bandos invertidos. Se abre desde el botón del Jardín y desde las
 opciones de sala de amigos. [Reglas y comprobaciones](../../docs/sistemas/jardin.md).
 
-La nueva aventura de PvZ tiene su motor independiente en `src/jardin/pvz/`: veinte niveles de día y noche,
+La nueva aventura de PvZ tiene su motor independiente en `src/jardin/pvz/`: cuarenta niveles de día, noche, piscina y niebla,
 con guardado propio y pruebas mediante `npm run probar:pvz`. Su interfaz y gráficos siguen en integración;
 el estado del motor no implica que la nueva aventura esté disponible todavía en `jardin.html`.
-Ver [contratos y límites](../../docs/en-obra/pvz-noche-2026-10-20.md).
+Ver [contratos y límites](../../docs/en-obra/pvz-niebla-2026-10-22.md).
 
 Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistemas/patio-mental.md) y
 [Jardín de los Desvelados](../../docs/sistemas/jardin.md). La clasificación compartida necesita la migración

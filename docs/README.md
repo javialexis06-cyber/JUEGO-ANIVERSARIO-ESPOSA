@@ -49,6 +49,11 @@ solo conectar Supabase para habilitar su clasificación real. Voces nuevas desca
 | [`pvz-abono-guardado-2026-10-19.md`](en-obra/pvz-abono-guardado-2026-10-19.md) | Abono del día, progreso, persistencia y recuperación; contrato para la interfaz. |
 | [`pvz-noche-2026-10-20.md`](en-obra/pvz-noche-2026-10-20.md) | Mundo nocturno, terrenos, Aplastazombis y transición del guardado antiguo. |
 | [`pvz-noche-fuentes-2026-10-19.md`](en-obra/pvz-noche-fuentes-2026-10-19.md) | Parámetros de plantas, zombis y niveles de noche; discrepancias entre fuentes. |
+| [`pvz-piscina-2026-10-20.md`](en-obra/pvz-piscina-2026-10-20.md) | Motor acuático, diez niveles, capas, vehículos, minizombis y comprobaciones. |
+| [`pvz-piscina-fuentes-2026-10-20.md`](en-obra/pvz-piscina-fuentes-2026-10-20.md) | Parámetros de plantas, zombis y niveles de piscina. |
+| [`pvz-piscina-terreno-fuentes-2026-10-20.md`](en-obra/pvz-piscina-terreno-fuentes-2026-10-20.md) | Referencias técnicas de hielo, soportes y emboscadas acuáticas. |
+| [`pvz-niebla-2026-10-22.md`](en-obra/pvz-niebla-2026-10-22.md) | Motor de niebla, Rompejarrones, tormenta y continuidad del guardado. |
+| [`pvz-niebla-fuentes-2026-10-22.md`](en-obra/pvz-niebla-fuentes-2026-10-22.md) | Parámetros de las ocho plantas, cuatro enemigos y diez niveles de niebla. |
 | [`jardin-dos-jugadores-2026-10-16.md`](en-obra/jardin-dos-jugadores-2026-10-16.md) | Duelo de plantas contra zombis en una pantalla o por sala; reglas y comprobaciones. |
 | [`ampliacion-patio-2026-10-16.md`](en-obra/ampliacion-patio-2026-10-16.md) | Seis mapas, cuatro casos, dieciséis juegos mentales y Jardín; pruebas y estado de la clasificación real. |
 | [`mejoras-y-limpieza-2026-10-16.md`](en-obra/mejoras-y-limpieza-2026-10-16.md) | Cierre de mejoras de Torneo/Carreras y limpieza del repositorio, con verificaciones; voces nuevas descartadas. |

@@ -144,6 +144,13 @@ minizombis, diez niveles y continuación de los guardados nocturnos. La parte vi
 [Entrega, pruebas y límites de piscina](pvz-piscina-2026-10-20.md).
 
 
+## Avance del 22 de octubre
+
+Mundo 4 incorporado al motor: niebla, iluminación, proyectiles en dos dimensiones, ocho plantas, cuatro
+zombis especiales, tres etapas de Rompejarrones y final con tormenta. El guardado publicado de piscina
+continúa a 4-1 sin perder compras ni progreso. La parte visual sigue a cargo de Claude.
+[Entrega, pruebas y límites de niebla](pvz-niebla-2026-10-22.md).
+
 ## Orden de construcción
 
 1. **Base:**

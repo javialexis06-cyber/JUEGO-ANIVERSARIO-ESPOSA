@@ -28,10 +28,10 @@ try{
   for(const k of ['completados','plantasDesbloqueadas','objetos','notas','monedas','compras','ranuras','ajustes','minijuegos','rompecabezas','supervivencia','fusion'])assert.deepEqual(actual[k],historico[k],k);
   assert.equal(actual.nivelAlcanzado,'3-1');
  };
- prueba('catálogo de treinta niveles abre Nenúfar y reserva Marseta como premio futuro',()=>{
-  assert.deepEqual(NIVELES_PVZ.map(n=>n.id),[1,2,3].flatMap(m=>Array.from({length:10},(_,i)=>m+'-'+(i+1))));
+ prueba('catálogo conserva el prefijo de treinta niveles y registra sus premios',()=>{
+  assert.deepEqual(NIVELES_PVZ.slice(0,30).map(n=>n.id),[1,2,3].flatMap(m=>Array.from({length:10},(_,i)=>m+'-'+(i+1))));
   assert.equal(NIVELES_PVZ.find(n=>n.id==='2-10').premio.planta,'nenufar');assert.equal(Object.hasOwn(PLANTAS_PVZ,'nenufar'),true);
-  assert.equal(NIVELES_PVZ.find(n=>n.id==='3-10').premio.planta,'marseta');assert.equal(Object.hasOwn(PLANTAS_PVZ,'marseta'),false);
+  assert.equal(NIVELES_PVZ.find(n=>n.id==='3-10').premio.planta,'marseta');assert.equal(Object.hasOwn(PLANTAS_PVZ,'marseta'),true);
   const inicial=progresoInicialPvZ();assert.deepEqual(inicial.plantasDesbloqueadas,['lanzaguisantes']);assert.equal(inicial.nivelAlcanzado,'1-1');assert.deepEqual(inicial.completados,[]);
  });
  prueba('frontera nocturna literal avanza a 3-1 sin victorias ni premios acuáticos nuevos',()=>{

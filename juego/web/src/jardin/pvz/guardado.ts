@@ -73,9 +73,9 @@ export function normalizarProgresoPvZ(v:unknown):ProgresoPvZ|null {
  if(completados.length!==p.completados.length)return null;
  Object.assign(p,premios(p.completados));
  p.nivelAlcanzado=niveles[Math.min(p.completados.length,niveles.length-1)];
- // Solo las dos fronteras efectivamente publicadas admiten su antiguo nivel final.
+ // Solo las tres fronteras efectivamente publicadas admiten su antiguo nivel final.
  // Añadir un mundo abre el siguiente nivel; nunca acredita una victoria por migrar.
- const fronteraAnterior=([['1-10',10],['2-10',20]] as const).some(([id,cantidad])=>
+ const fronteraAnterior=([['1-10',10],['2-10',20],['3-10',30]] as const).some(([id,cantidad])=>
   p.completados.length===cantidad&&niveles[cantidad-1]===id&&propia(v,'nivelAlcanzado')===id);
  if(Object.hasOwn(v,'nivelAlcanzado')&&propia(v,'nivelAlcanzado')!==p.nivelAlcanzado&&!fronteraAnterior)return null;
  const monedas=propia(v,'monedas'),ranuras=propia(v,'ranuras'),compras=propia(v,'compras');

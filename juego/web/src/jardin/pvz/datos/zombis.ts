@@ -1,5 +1,6 @@
+import {ZOMBIS_NIEBLA} from './niebla';
 import {ZOMBIS_PISCINA} from './piscina';
 import {ZOMBIS_DIA} from './dia';
 import {ZOMBIS_NOCHE} from './noche';
 import type {DefZombi} from '../tipos';
-export const ZOMBIS_PVZ:Readonly<Record<string,DefZombi>>=Object.fromEntries([...ZOMBIS_DIA,...ZOMBIS_NOCHE,...ZOMBIS_PISCINA].map(z=>[z.id,z]));
+export const ZOMBIS_PVZ:Readonly<Record<string,DefZombi>>=Object.fromEntries([...ZOMBIS_DIA,...ZOMBIS_NOCHE,...ZOMBIS_PISCINA,...ZOMBIS_NIEBLA].map(z=>[z.id,z]));

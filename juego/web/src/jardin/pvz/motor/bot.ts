@@ -1,11 +1,13 @@
+import {crearPilotoNieblaPvZ,seleccionNieblaPvZ} from './bot-niebla';
 import type {MotorPvZ} from './motor';
 import {crearPilotoNochePvZ} from './bot-noche';
 import {seleccionPilotoPvZ as seleccionBasePvZ} from './bot-noche';
 import {crearPilotoPiscinaPvZ,seleccionPiscinaPvZ} from './bot-piscina';
 import type {DefNivel} from '../tipos';
-export function seleccionPilotoPvZ(disponibles:readonly string[],nivel:DefNivel){return nivel.area==='piscina'?seleccionPiscinaPvZ(disponibles,nivel):seleccionBasePvZ([...disponibles],nivel);}
+export function seleccionPilotoPvZ(disponibles:readonly string[],nivel:DefNivel){return nivel.area==='niebla'||nivel.minijuego==='rompejarrones'?seleccionNieblaPvZ(disponibles,nivel):nivel.area==='piscina'?seleccionPiscinaPvZ(disponibles,nivel):seleccionBasePvZ([...disponibles],nivel);}
 /** Piloto: usa órdenes legales y los recursos recibidos; no concede ventajas al motor. */
-export function crearPilotoPvZ(){let actuarEn=0;const noche=crearPilotoNochePvZ(),piscina=crearPilotoPiscinaPvZ();return(m:MotorPvZ)=>{
+export function crearPilotoPvZ(){let actuarEn=0;const noche=crearPilotoNochePvZ(),piscina=crearPilotoPiscinaPvZ(),niebla=crearPilotoNieblaPvZ();return(m:MotorPvZ)=>{
+ if(m.nivel.area==='niebla'||m.nivel.minijuego==='rompejarrones'){niebla(m);return;}
  if(m.nivel.area==='piscina'){piscina(m);return;}
  if(m.esNoche||m.nivel.minijuego==='aplastazombis'){noche(m);return;}
  for(const s of [...m.soles])m.recoger(s.id);if(m.terminado||m.t<actuarEn)return;actuarEn=m.t+.1;

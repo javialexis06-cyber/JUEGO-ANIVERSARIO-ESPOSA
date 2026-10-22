@@ -9,7 +9,7 @@ const enemigo=(z:ZombiPvZ)=>z.vida>0&&!z.hipnotizado&&!z.sinCabeza&&!z.datos.zam
 /** Se conservan las distancias del tablero funcional; no depende de cajas del dibujo. */
 function blancoAplastaflor(m:MotorPvZ,p:PlantaPvZ){
  const alcance=datos(m,p).alcance;
- return m.zombis.filter(z=>enemigo(z)&&z.fila===p.fila&&Math.abs(z.x-p.x)<=alcance&&
+ return m.zombis.filter(z=>!m.esVolador(z)&&!z.datos.bajoTierra&&enemigo(z)&&z.fila===p.fila&&Math.abs(z.x-p.x)<=alcance&&
   !(z.datos.saltando>m.t)&&!z.datos.montado&&!z.datos.enTrineo)
   .sort((a,b)=>Math.abs(a.x-p.x)-Math.abs(b.x-p.x)||a.id-b.id)[0];
 }
@@ -39,7 +39,7 @@ export const COMPORTAMIENTO_PISCINA_PLANTAS:Record<string,ComportamientoPlantaPv
     m.eventos.push({t:'estado',id:p.id,tipo:'aplastaflor-salta',fila:p.fila,x:p.datos.destinoX,duracion:d.impacto-d.despegue});
    }
    if(transcurrido+1e-9<d.impacto)return;
-   for(const z of m.zombis)if(enemigo(z)&&z.fila===p.fila&&Math.abs(z.x-p.datos.destinoX)<=d.radio)m.danarZombi(z,d.dano,'aplastar');
+   for(const z of m.zombis)if(enemigo(z)&&!m.esVolador(z)&&!z.datos.bajoTierra&&z.fila===p.fila&&Math.abs(z.x-p.datos.destinoX)<=d.radio)m.danarZombi(z,d.dano,'aplastar');
    m.eventos.push({t:'explosion',id:p.id,tipo:p.tipo,fila:p.fila,x:p.datos.destinoX});consumir(m,p);
   },
  },

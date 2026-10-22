@@ -6,7 +6,7 @@ import type {PlantaPvZ,ZombiPvZ} from '../tipos';
 const datos=(m:MotorPvZ,p:PlantaPvZ)=>m.plantasDef[p.tipo].datos!;
 const consumir=(m:MotorPvZ,p:PlantaPvZ)=>m.danarPlanta(p,p.vida);
 const delante=(m:MotorPvZ,p:PlantaPvZ,z:ZombiPvZ,alcance:number)=>
- z.vida>0&&!z.hipnotizado&&z.fila===p.fila&&z.x>=p.x-10&&z.x<800&&z.x-p.x<=alcance;
+ z.vida>0&&!m.esVolador(z)&&!z.datos.bajoTierra&&!z.hipnotizado&&z.fila===p.fila&&z.x>=p.x-10&&z.x<800&&z.x-p.x<=alcance;
 const iniciarDisparo=(m:MotorPvZ,p:PlantaPvZ)=>{p.datos.reloj=m.azar.entre(.15,.45);};
 
 function disparoEspora(m:MotorPvZ,p:PlantaPvZ,dt:number){
@@ -67,7 +67,7 @@ export const COMPORTAMIENTO_NOCHE_PLANTAS:Record<string,ComportamientoPlantaPvZ>
   paso(m,p){
    const d=datos(m,p);if(p.edad+1e-9<d.retardo)return;
    for(const z of m.zombis){
-    if(z.vida<=0||z.hipnotizado||z.x>=800)continue;
+    if(z.vida<=0||z.hipnotizado||z.x>=800||m.esVolador(z)||z.datos.bajoTierra||z.datos.pogo)continue;
     // En PC el hielo dura menos sobre un objetivo que ya estaba ralentizado.
     const congelado=z.lento>0?m.azar.entre(d.congeladoFrioMin,d.congeladoFrioMax):m.azar.entre(d.congeladoMin,d.congeladoMax);
     m.danarZombi(z,d.dano,'hielo');

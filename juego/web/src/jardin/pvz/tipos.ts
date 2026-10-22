@@ -16,7 +16,7 @@ export interface DefNivel {
  id:string;parte:1|2;area:Area;filas:number[];zombis:string[];banderas:number;
  tipo:'normal'|'cinta'|'minijuego'|'jefe';minijuego?:string;solInicial:number;
  premio?:{planta?:string;objeto?:string;nota?:string};lapidas?:number;materas?:[number,number][];
- niebla?:number;plantasFijas?:string[];dialogoAntes?:string;dialogoDespues?:string;
+ niebla?:number;tormenta?:boolean;plantasFijas?:string[];dialogoAntes?:string;dialogoDespues?:string;
  /** Excepciones del tutorial; el resto usa banderas × 10. */
  oleadas?:number;enormes?:number[];
  fijos?:Record<number,Record<string,number>>;composicionCompleta?:boolean;
@@ -40,28 +40,32 @@ export interface ZombiPvZ {
 }
 export interface ProyectilPvZ {
  id:number;tipo:string;origen:number;fila:number;x:number;velocidad:number;dano:number;
- danoTipo:TipoDano;y?:number;velocidadY?:number;lento?:number;perforante?:boolean;hasta?:number;antorchas?:number[];impactados:number[];
+ danoTipo:TipoDano;aereo?:boolean;y?:number;velocidadY?:number;lento?:number;perforante?:boolean;hasta?:number;antorchas?:number[];impactados:number[];
 }
 export interface LapidaPvZ {id:number;fila:number;col:number;x:number}
 export interface CraterPvZ {id:number;fila:number;col:number;x:number;vida:number}
 export interface ZonaPvZ {id:number;tipo:'hielo';origen:number;fila:number;desde:number;hasta:number;vida:number}
 export interface PistaHieloPvZ {id:number;fila:number;desde:number;hasta:number;vida:number}
+export interface JarronPvZ {id:number;fila:number;col:number;x:number;verde:boolean;contenido?:{planta?:string;zombi?:string;sol?:number}}
+export interface SobrePvZ {id:number;planta:string;fila:number;x:number;vida:number}
+export interface NieblaPvZ {desde:number;desplazamiento:number;retirada:number;claras:[number,number][]}
+export interface TormentaPvZ {variante:1|2|3;restante:number;claridad:number}
 export interface SolPvZ {id:number;fila:number;x:number;valor:number;edad:number;vida:number;origen:'cielo'|'planta'}
 export interface CortacespedPvZ {fila:number;x:number;estado:'listo'|'activo'|'gastado'}
 export interface EventoPvZ {
  t:'siembra'|'pala'|'sol'|'recogeSol'|'disparo'|'impacto'|'muerde'|'pierdeBrazo'|'pierdeCabeza'|
  'pierdeArmadura'|'explosion'|'muere'|'oleada'|'oleadaEnorme'|'ultimaOleada'|'cortacesped'|'fin'|
- 'estado'|'abono'|'cinta'|'objetivo'|'zona'|'terreno'|'martillo';
+ 'estado'|'abono'|'cinta'|'objetivo'|'zona'|'terreno'|'martillo'|'jarron'|'sobre';
  id?:number;tipo?:string;fila?:number;col?:number;x?:number;cantidad?:number;oleada?:number;gano?:boolean;origen?:number;duracion?:number;hasta?:number;proyectil?:string;
 }
 export interface EstadoPvZ {
  version:1;nivel:string;t:number;pasos:number;sol:number;abono:number;oleada:number;
  terminado:''|'gano'|'perdio';plantas:PlantaPvZ[];zombis:ZombiPvZ[];proyectiles:ProyectilPvZ[];
  soles:SolPvZ[];cortacespedes:CortacespedPvZ[];recargas:Record<string,number>;cinta:{id:number;planta:string}[];
- zonas?:ZonaPvZ[];lapidas?:LapidaPvZ[];crateres?:CraterPvZ[];pistasHielo?:PistaHieloPvZ[];objetivoVida?:number;eliminados:number;sembradas:number;
+ jarrones?:JarronPvZ[];sobres?:SobrePvZ[];etapaJarrones?:number;niebla?:NieblaPvZ;tormenta?:TormentaPvZ;zonas?:ZonaPvZ[];lapidas?:LapidaPvZ[];crateres?:CraterPvZ[];pistasHielo?:PistaHieloPvZ[];objetivoVida?:number;eliminados:number;sembradas:number;
 }
 export interface OrdenPvZ {
- tipo:'plantar'|'pala'|'recoger'|'abono'|'plantarCinta'|'golpear';planta?:string;fila?:number;col?:number;id?:number;
+ tipo:'plantar'|'pala'|'recoger'|'abono'|'plantarCinta'|'golpear'|'romperJarron'|'plantarSobre';planta?:string;fila?:number;col?:number;id?:number;
 }
 export interface OpcionesMotorPvZ {
  semilla?:number;semillas?:string[];abono?:number;

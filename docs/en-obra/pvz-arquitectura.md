@@ -2,7 +2,8 @@
 
 Avances del 19 de octubre: [base del motor](pvz-motor-2026-10-19.md) y
 [abono, progreso y recuperación de guardado](pvz-abono-guardado-2026-10-19.md) y
-[mundo nocturno](pvz-noche-2026-10-20.md).
+[mundo nocturno](pvz-noche-2026-10-20.md), [piscina](pvz-piscina-2026-10-20.md) y
+[niebla](pvz-niebla-2026-10-22.md).
 Claude tiene todos los gráficos; Codex desarrolla motor, mecánicas, datos de niveles y pruebas.
 
 Documento interno para construir la nueva aventura del Jardín ([plan](jardin-plan-2026-10-17.md)). Todo agente o
@@ -57,6 +58,9 @@ src/jardin/pvz/
   motor/bot.ts             piloto de pruebas y selección de seis sobres
   motor/bot-noche.ts       decisiones del piloto para noche y Aplastazombis
   motor/bot-piscina.ts     selección y decisiones acuáticas con seis ranuras
+  motor/bot-niebla.ts      selección y órdenes legales de niebla y Rompejarrones
+  motor/niebla.ts          iluminación, desplazamiento de niebla y reloj de tormenta
+  motor/rompejarrones.ts   director de tres etapas, contenidos privados y sobres temporales
   motor/bot-minizombis.ts  decisiones legales de cinta para 3-5
   motor/piscina.ts         emboscada de la última oleada acuática
   motor/terreno.ts         distribución inicial y alzamiento de lápidas
@@ -182,7 +186,7 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   ni recarga de sobre; 900 de daño al casco sin transferir excedente, o muerte si ya no hay casco.
   Usa ocho oleadas y su propio director, no el presupuesto común. La victoria espera su grupo final.
 - **Progresión al ampliar áreas:** las diez victorias de una partida guardada con el antiguo final `1-10`
-  pasan a `2-1` sin conceder una victoria nocturna ni escribir al leer. También se reconoce el final publicado de veinte victorias con `2-10`, que pasa a `3-1`. Solo se reconocen esas fronteras publicadas.
+  pasan a `2-1` sin conceder una victoria nocturna ni escribir al leer. También se reconocen los finales publicados de veinte victorias con `2-10`, que pasa a `3-1`, y de treinta con `3-10`, que pasa a `4-1`. Solo se reconocen esas fronteras publicadas.
   El resto de estructuras incoherentes sigue bloqueado sin reescritura. Los consumidores del motor obtienen
   semillas previas desde `datos/niveles.ts`; la función de `datos/dia.ts` se conserva por compatibilidad.
 
@@ -213,6 +217,36 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   mordida y velocidad y usa 7,5 s entre oleadas. `datos.vidaMaxima` conserva la vida reducida para sus
   umbrales; `datos.escala=0.5` permite a la vista representarlos. No escala las plantas ni sus costes.
 
+
+## Contratos aditivos de niebla
+
+- `DefNivel.tormenta` habilita el reloj de relámpagos y excluye la niebla. `EstadoPvZ.niebla` incluye
+  `{desde,desplazamiento,retirada,claras}`: columna cero-based, desplazamiento horizontal, segundos hasta
+  recuperar el terreno y pares `[fila,col]` iluminados. `tormenta` contiene `{variante,restante,claridad}`,
+  con claridad entre 0 y 1. Consultar el estado no consume azar ni cambia los relojes.
+- `explosion(fila,x,dano,radioFilas?,radioX?,aereo?)` alcanza objetivos subterráneos; el último parámetro
+  permite excluir vuelo en Patatapum. Apisonaflor excluye vuelo y túnel en selección y daño colateral.
+- `ProyectilPvZ.aereo` separa los pinchos altos de los terrestres. `dispararVector` recibe velocidades X/Y;
+  las colisiones recorren el segmento en dos dimensiones y admiten velocidad negativa. Las estrellas no
+  tienen un rayo frontal horizontal. `puedeRecibirProyectil(z,tipo?,aereo?)` omite el túnel y distingue vuelo.
+- Los callbacks opcionales de zombi `quitarMetal` y `pincharGlobo` permiten retirar equipo funcional sin
+  convertirlo en daño corporal. `destruirPlanta` retira físicamente una planta y sus dependientes; evita
+  que una protección de daño vuelva inmune una planta a la caja sorpresa.
+- Fases en `z.datos`: `volando`, `sinGlobo`, `soplado`; `caja`, `cajaAbriendo`, `temporizadorCaja`;
+  `bajoTierra`, `pico`, `sinPico`, `pausaPicoHasta`, `emergiendoHasta`, `mareoHasta`, `reversa`;
+  `pogo`, `reboteHasta`. `reversa` invierte el movimiento hostil; al hipnotizar se invierte su sentido actual.
+  Los eventos `estado` anuncian los cambios. `p.datos.alto` identifica Cactus; los relojes de ráfaga y carga
+  quedan en la planta y no se reconstruyen a partir del dibujo.
+- `JarronPvZ` publica `{id,fila,col,x,verde,contenido?}`. `contenido` solo existe para verdes o los revelados
+  por Planterna, no por Plantorcha ni por viento. `SobrePvZ` publica `{id,planta,fila,x,vida}`. Los getters
+  y snapshots devuelven copias. `etapaJarrones` vale 1–3 durante el minijuego, cero fuera de él.
+- Órdenes `{tipo:'romperJarron',id}` y `{tipo:'plantarSobre',id,fila,col}`: únicamente en Rompejarrones,
+  ID válido, casilla legal y uso único. La siembra del sobre no cobra sol ni activa la recarga del banco.
+  No puede plantarse sobre un jarrón cerrado. La primitiva de premio solo se autoriza dentro de esa orden.
+- Eventos `jarron` con tipo `etapa`, `roto` o `transicion` y eventos `sobre` con la planta, `sembrado` o
+  `expirado` informan a la vista. La transición limpia entidades y sobres pero conserva sol y cortacéspedes;
+  la victoria espera la tercera etapa y la ausencia de hostiles. La selección normal del jugador sigue
+  pasando por `abrirNivel`; los sobres del minijuego pertenecen a su director.
 
 ## Oleadas (PvZ 1)
 
