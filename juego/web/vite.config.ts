@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 
@@ -200,6 +200,7 @@ export default defineConfig(({ mode, command }) => {
           },
       },
     },
-    server: { host: true },
+    server: { host: true, hmr: process.env.PVZ_SIN_HMR==='1'?false:undefined,
+      fs:{allow:[raiz,...(existsSync(resolve(raiz,'node_modules'))?[realpathSync(resolve(raiz,'node_modules'))]:[])]} },
   };
 });

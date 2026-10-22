@@ -1,13 +1,20 @@
-# Jardín de los Desvelados
+# La Semilla Madre y los patios clásicos
 
-Defensa por carriles con plantas y zombis originales de peluche. Página `juego/web/jardin.html`, código
-`src/jardin/`. Está en el patio de la mascota y en la Sala de Juegos de amigos. Se inspira en el género de defensa
-con plantas; no distribuye personajes, mapas, sonidos ni recursos de Plants vs. Zombies.
+Defensa por carriles. Página `juego/web/jardin.html`, código `src/jardin/`. Está en el patio de la mascota
+y en la Sala de Juegos de amigos. El arte ilustrado actual es propio y generado para esta adaptación;
+no se distribuyen archivos gráficos ni sonidos extraídos del juego original.
 
-La nueva aventura «Plantas contra Zombis: La Semilla Madre» tiene un motor separado en `src/jardin/pvz/`,
-con cuarenta niveles de día, noche, piscina y niebla. Su presentación sigue a cargo de Claude. Esta página
-describe los doce patios clásicos y el duelo que permanecen publicados; los contratos y límites de la nueva
-aventura están en la [arquitectura](../en-obra/pvz-arquitectura.md) y la [entrega de Niebla](../en-obra/pvz-niebla-2026-10-22.md).
+El modo principal es [Conquista](../en-obra/pvz-conquista-base-2026-10-22.md), con historia de 12 áreas,
+versus de 36, equipos por zona y frentes simultáneos. La historia comienza en casa y exige el 100% para
+la huida espacial del Dr. Zomboid.
+
+La aventura «Plantas contra Zombis: La Semilla Madre» queda en `jardin.html?modo=aventura`. Usa Canvas
+2D y el motor separado de `src/jardin/pvz/`: cuarenta niveles de día, noche, piscina y niebla, selección de
+semillas, progreso propio y almanaque ilustrado. El pedido del 22 de octubre aprobó su arte y encargó la
+integración a Codex. [Arte, controles y comprobaciones](../en-obra/pvz-arte-2026-10-22.md).
+
+Los doce patios originales y el duelo se conservan desde el menú nuevo. `modo=clasicos` o un ID antiguo de
+patio abren el controlador clásico. El resto de esta página describe esa campaña y su duelo.
 
 ## Cómo se juega
 

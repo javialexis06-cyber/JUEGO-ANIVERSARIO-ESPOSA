@@ -4,7 +4,8 @@ Avances del 19 de octubre: [base del motor](pvz-motor-2026-10-19.md) y
 [abono, progreso y recuperación de guardado](pvz-abono-guardado-2026-10-19.md) y
 [mundo nocturno](pvz-noche-2026-10-20.md), [piscina](pvz-piscina-2026-10-20.md) y
 [niebla](pvz-niebla-2026-10-22.md).
-Claude tiene todos los gráficos; Codex desarrolla motor, mecánicas, datos de niveles y pruebas.
+El pedido del 22 de octubre encarga a Codex integrar también la dirección artística aprobada;
+[entrega visual y comprobaciones](pvz-arte-2026-10-22.md).
 
 Documento interno para construir la nueva aventura del Jardín ([plan](jardin-plan-2026-10-17.md)). Todo agente o
 sesión que trabaje en `src/jardin/pvz/` sigue estas reglas. Si una regla estorba, se cambia aquí primero.
@@ -19,84 +20,62 @@ sesión que trabaje en `src/jardin/pvz/` sigue estas reglas. Si una regla estorb
 - Libertad total de diseño. Los valores de PvZ (costos, recargas, vidas, daño, precios de la tienda) cuentan como
   aprobados porque Javier pidió la misma jugabilidad. Cualquier invento fuera de PvZ se anota en el plan.
 
-Todo el arte, el sonido y la música se hacen aquí, en código: dibujos SVG propios del estilo PvZ, efectos y música
-sintetizados con WebAudio. No se descargan ni se copian imágenes, sonidos, música ni textos largos del juego original.
+El arte actual son atlas raster propios, fondos ilustrados y efectos en Canvas; los sonidos y la música
+se sintetizan con WebAudio. No se incorporan imágenes, sonidos, música ni textos largos del juego original.
+
+**Dirección artística aprobada el 22 de octubre:** Javier aprobó el render ilustrado y la muestra de ocho
+plantas de este chat, y encargó a Codex plantas, escenarios y zombis con varias ropas. Este pedido sustituye
+el reparto gráfico anterior y autoriza los recursos generados a partir de esa referencia. Se mantienen IDs,
+reglas, costes y guardados. No requiere nuevas voces ni cambios de dificultad.
 
 ## Qué se conserva
 
 - `src/jardin/datos.ts`, `motor.ts`, `vista.ts`, `duelo*.ts` y `public/jardin/figuras.glb` quedan intactos:
   - los 12 patios pasan a «Patios clásicos», con la clave `jardin-v1` / `amigo-jardin-v1` y sus estrellas;
   - el duelo para dos (`jardin-duelo.html`) no cambia.
-- `jardin.html` sigue siendo la página. Su `main.ts` pasa a ser la pantalla de título de PvZ, con accesos a la
+- `jardin.html` abre ahora [Conquista](pvz-conquista-base-2026-10-22.md); `?modo=aventura` conserva la pantalla de PvZ, con accesos a la
   aventura, los modos, la fusión, los patios clásicos y el duelo.
 - Las pruebas existentes (`probar-jardin-motor.mjs`, `probar-jardin-duelo.mjs`, `probar-jardin-interfaz.mjs`,
   `probar-jardin-duelo-interfaz.mjs`) deben seguir pasando. Si cambia el menú, se ajusta la prueba de interfaz, no
   la campaña clásica.
 
-## Tecnología
+## Tecnología y archivos actuales
 
-- **Canvas 2D**, no three.js. PvZ es 2D y así corre fluido en celulares.
-  - Un `<canvas>` a pantalla completa en horizontal y una capa HTML encima para la interfaz.
-- **Personajes por piezas** (como el «reanim» de PvZ): cada planta y zombi es un conjunto de piezas SVG, como
-  cabeza, hojas, tallo, brazos, piernas, accesorios y armadura.
-  - Al cargar, cada pieza se rasteriza una vez a un lienzo fuera de pantalla con la escala y el `devicePixelRatio`.
-  - Cada cuadro se dibuja con `drawImage` y transformaciones: rotación alrededor de un pivote, traslación y escala.
-  - Las animaciones son procedurales (funciones de tiempo y estado), rebotonas y vivas como en PvZ.
-- **Motor determinista** de paso fijo, separado de la vista. Corre en Node para las pruebas (esbuild, como
-  `probar-jardin-motor.mjs`). Sin `Math.random` en el motor: usa el generador con semilla.
-- Sin `import.meta.glob`, porque las pruebas usan esbuild. Los registros se importan de forma explícita en
-  archivos índice.
-
-## Archivos y dueños
+- **Canvas 2D** para el campo y una capa HTML para menús, selección y controles. La aventura no carga three.js.
+- Atlas transparentes en `public/jardin/pvz/`, con cuatro columnas y dos filas salvo la Tripitidora individual.
+  `arte/atlas.ts` recorta una vez el componente principal de cada celda, elimina restos desconectados de
+  figuras vecinas y guarda texturas de hasta 384 px. No vuelve a procesar sus píxeles en cada cuadro.
+- Animación procedural: respiración, retroceso al disparar, oscilación de marcha y mordida, vuelo, rebote,
+  saltos, emergencia, sueño y tintes. Los sprites son bases ilustradas; todavía no hay articulación separada
+  de cada brazo, mandíbula o pierna. Conos, cubos, puertas y periódicos están integrados en sus figuras:
+  cuerpo y protección comparten el movimiento, y la ropa se conserva al perder la armadura.
+- Motor determinista a 60 Hz, separado del dibujo, sin DOM ni `Math.random`. Las ocho ropas usan un hash
+  estable de ID y nivel: no consumen azar ni cambian el combate. `estadoVisibilidad()` evita copiar todo el
+  combate para consultar niebla y tormenta, y devuelve valores nuevos sin mutar el motor.
 
 ```
+src/jardin/main.ts              entrada: aventura o patios clásicos por modo/ID anterior
+src/jardin/clasicos.ts          controlador clásico conservado, con su CSS y clave anteriores
 src/jardin/pvz/
-  tipos.ts                 contratos compartidos (no cambiar sin actualizar este documento)
-  motor/motor.ts           MotorPvZ: cuadrícula, entidades, paso, siembra, sol, cortacéspedes, fin
-  motor/oleadas.ts         director de oleadas al estilo PvZ 1
-  motor/azar.ts            generador con semilla
-  motor/bot.ts             piloto de pruebas y selección de seis sobres
-  motor/bot-noche.ts       decisiones del piloto para noche y Aplastazombis
-  motor/bot-piscina.ts     selección y decisiones acuáticas con seis ranuras
-  motor/bot-niebla.ts      selección y órdenes legales de niebla y Rompejarrones
-  motor/niebla.ts          iluminación, desplazamiento de niebla y reloj de tormenta
-  motor/rompejarrones.ts   director de tres etapas, contenidos privados y sobres temporales
-  motor/bot-minizombis.ts  decisiones legales de cinta para 3-5
-  motor/piscina.ts         emboscada de la última oleada acuática
-  motor/terreno.ts         distribución inicial y alzamiento de lápidas
-  motor/aplastazombis.ts   director de 2-5, grupos, lápidas y soles al derrotar
-  datos/plantas.ts         índice: junta las definiciones de cada área
-  datos/zombis.ts          índice
-  datos/niveles.ts         índice de niveles de aventura
-  datos/<area>.ts          definiciones de plantas, zombis y niveles de un área (dia, noche, piscina, niebla,
-                           tejado, tienda, rio, vias, desierto, paramo, invernadero)
-  comportamiento/index.ts  registro de comportamientos
-  comportamiento/<area>.ts comportamiento de las plantas y zombis de esa área
-  comportamiento/zombis-noche.ts periódico y formación del bailón
-  arte/piezas.ts           motor de arte: definiciones, rasterizado, caché, dibujo, tintes, retratos
-  arte/estilo.ts           paleta, contornos y ayudantes SVG comunes (ojos, hojas, degradados, zombi base)
-  arte/<area>.ts           arte de las plantas y zombis de esa área
-  arte/fondos/<area>.ts    escenario de cada área
-  arte/personajes.ts       Dave el Loco, Dr. Zomboss, Rosa (radio), el Zombi Cartero, la Chiva y las Zombots
-  vista/escena.ts          dibuja el mundo: fondo, sombras, entidades por fila, proyectiles, soles, efectos
-  vista/efectos.ts         partículas, textos flotantes, sacudidas
-  ui/hud.ts                banco de semillas, sol, pala, abono, menú, barra de progreso
-  ui/seleccion.ts          elegir semillas (con la cámara en la calle)
-  ui/dialogo.ts            globos de Dave, Rosa, el Cartero y Zomboss
-  ui/pantallas.ts          título, mapa, planta nueva, nota, derrota, victoria, almanaque, tienda, opciones
-  ui/pvz.css
-  historia/<parte>.ts      diálogos, notas y escenas
-  sonido.ts                efectos y música sintetizados
-  guardado.ts              progreso y persistencia (Codex; la interfaz llama a este contrato)
-  aventura.ts              une motor, vista, interfaz y guardado para jugar un nivel
-src/jardin/main.ts         pantalla de título y navegación (reemplaza el menú de patios)
-src/jardin/clasicos.ts     los 12 patios de antes, movidos tal cual desde main.ts
+  tipos.ts                     contratos de simulación
+  motor/                       combate, terreno, oleadas, minijuegos y pilotos
+  datos/                       índices y definiciones de los mundos 1–4
+  comportamiento/              plantas y zombis por mundo; abono del día
+  guardado.ts                  progreso, recibos, cuotas y conflictos
+  arte/catalogo.ts             atlas, figuras, tamaños y hash de vestuario
+  arte/atlas.ts                carga, normalización, caché y liberación de texturas
+  vista/escena.ts               fondos, terreno, entidades, efectos, visibilidad y toque
+  ui/retratos.ts                retratos derivados del mismo arte de partida
+  ui/pvz.css                   interfaz horizontal, selección, mapa y almanaque
+  sonido.ts                    efectos y ambiente sintetizados
+  aventura.ts                  navegación, órdenes, bucle y persistencia
+public/jardin/pvz/              once recursos propios; cuatro fondos en un atlas
 ```
 
-- Cada área se trabaja en sus propios archivos. Con el reparto del 19 de octubre, Codex mantiene los índices
-  de datos y comportamientos e incorpora cada área al construirla. Claude mantiene los registros gráficos;
-  ampliar una zona no requiere que ambos editen los índices del otro.
-- Lo que falte de arte se dibuja con un marcador simple, como un círculo con el nombre. Nunca debe romper el juego.
+Los doce patios conservan `datos.ts`, `motor.ts`, `vista.ts`, `jardin.css` y `jardin-v1`/`amigo-jardin-v1`.
+El controlador anterior está en `clasicos.ts`; el duelo no cambia. `modo=clasicos` y los IDs antiguos de patio
+abren esa campaña. El almanaque nuevo muestra las 32 plantas y 21 zombis registrados; no desbloquea sobres.
+Los personajes narrativos, arte de mundos aún no construidos, tienda y modos posteriores siguen en el plan.
 
 ## Coordenadas y tiempo
 
@@ -258,71 +237,25 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
 - La primera oleada sale a los ~18 s.
 - Los valores exactos salen de la investigación y se anotan en `motor/oleadas.ts`.
 
-## Arte
+## Arte e interfaz publicados
 
-- **Marco local por personaje.** Unidades de mundo, con el punto de apoyo (los pies o la base de la maceta) en
-  `ancla`. Las plantas miden unos 70–90 de alto y los zombis unos 110–130, como en PvZ 1.
-- **Pieza:**
-
-  ```ts
-  { id, svg /* fragmento SVG en el marco local */, pivote: [x,y], padre?: string, z: number,
-    estados?: Record<string,string> /* p. ej. cono intacto/abollado/roto */ }
-  ```
-
-  El motor de arte recorta cada pieza a su contenido después de rasterizarla.
-- **Animación:**
-
-  ```ts
-  anim(ctx: {t, estado, fase, semilla}) => Record<idPieza, {rot?, x?, y?, sx?, sy?, alfa?, oculto?}>
-  ```
-
-  - Estados de planta: `quieto`, `ataca`, `dormida` y `herida`.
-  - Estados de zombi: `camina`, `come`, `muere`, `ceniza`, `nada`, `vuela`, `cava` y `salta`.
-  - Los brazos y cabezas que caen se desprenden como partículas con física simple.
-- **Estilo PvZ:**
-  - contornos oscuros de 2.5–3 px (`#1d1408` aprox.), colores saturados y degradados suaves;
-  - brillos blancos en ojos y hojas;
-  - zombis con piel gris verdosa (`#9aa58a` aprox.), saco café, corbata roja y ojos desiguales;
-  - plantas con cara expresiva.
-  - El estilo se adapta, no se calca: las formas reconocibles de cada personaje, dibujadas por nosotros.
-- **Tintes:** congelado (azul), hipnotizado (morado), destello blanco al recibir golpe, ceniza negra y
-  mantequilla (pieza extra encima de la cabeza).
-- **Retratos:** cada sobre de semilla usa un retrato renderizado del propio arte en pose `quieto`.
-- Fondos dibujados por código en un lienzo que se guarda en caché:
-  - **día:** casa a la izquierda, porche, césped de 9 × 5 con franjas claras y oscuras, cerca y acera, calle a la
-    derecha, arbustos;
-  - **noche:** colores fríos, luna y lápidas;
-  - **piscina:** filas 3 y 4 de agua animada, bordes de baldosa;
-  - **niebla:** como la piscina de noche, con niebla que tapa las columnas de la derecha;
-  - **tejado:** tejas inclinadas y chimenea.
-
-## Interfaz (PvZ 1 con detalles de PvZ 2)
-
-- **Arriba a la izquierda,** el banco de semillas de madera:
-  - contador de sol con su ícono a la izquierda;
-  - sobres de 6 a 10 con el retrato y el costo debajo;
-  - recarga como sombra que sube, y el sobre gris si falta sol;
-  - pala a la derecha del banco y, junto a ella, el abono de PvZ 2 (hasta 3).
-- **Arriba a la derecha,** el botón «Menú» con pausa, ×2, sonido, reiniciar y salir.
-- **Abajo a la derecha,** la barra de progreso con banderas y la cabeza de zombi, y el nombre del nivel.
-- **Mensajes grandes:**
-  - «¡Preparados...», «¡Listos...», «¡A PLANTAR!»;
-  - «¡Se acerca una oleada enorme de zombis!» y «¡ÚLTIMA OLEADA!»;
-  - «¡LOS ZOMBIS SE COMIERON TUS SESOS!»;
-  - la pantalla de planta nueva.
-- **Sembrar:** tocar el sobre y luego la casilla, o arrastrarlo. Se muestra la planta fantasma y la sombra antes
-  de soltar.
-- **Soles:**
-  - el del cielo baja meciéndose;
-  - el de la planta salta;
-  - al tocarlo vuela al contador;
-  - desaparece a los ~8 s de quedar quieto.
-- **Selección de semillas:** la cámara se desliza a la calle para mostrar los zombis del nivel, y el selector
-  ofrece las plantas desbloqueadas. Botón «¡A jugar!».
-- **Pantallas:** título, mapa de la aventura con caminos al estilo PvZ 2, almanaque, tienda de Dave, minijuegos,
-  rompecabezas, supervivencia, fusión, patios clásicos y dos jugadores.
-- Todo en español colombiano neutro, en horizontal, con botones de al menos 44 px y textos legibles en un
-  celular de 844 × 390.
+- [Catálogo de recursos, procedencia y límites](pvz-arte-2026-10-22.md). La referencia aprobada es ilustración
+  2D con contornos oscuros, textura pintada, siluetas claras y caras expresivas.
+- Hay cuatro fondos: día, noche, piscina y piscina nocturna. La vista ajusta las franjas a los carriles reales;
+  la niebla, iluminación, relámpagos, hielo, lápidas y cráteres pertenecen al estado del motor.
+- Ocho cuerpos comunes varían prendas y calzado: saco, chaqueta vaquera, sudadera, camisa de cuadros,
+  overol, impermeable, pijama y chaqueta deportiva. Cono, cubo, puerta y periódico se retiran al perder su
+  protección. Los enemigos especiales tienen sus diseños y estados propios.
+- El banco muestra costes reales, recargas, selección y sobres temporales. Tocar un sol lo recoge antes de
+  intentar sembrar. Pala, pausa, ×1/×2 y Escape conservan las reglas. Ocultar la página pausa la partida.
+- Las plantas se colocan por toque tras elegir semilla. Los minijuegos de aventura tienen controles propios:
+  sobres de cinta, martillo por toque y órdenes de jarrón/sobre. La selección y la victoria pasan por GuardadoPvZ.
+- Pantallas actuales: título, mapa de cuatro mundos, selección con enemigos visibles, resultado y premio,
+  almanaque con detalle y vestuario, y opciones. Accesos separados a patios clásicos y duelo.
+- Efectos de sonido y música sintetizados, sin voces nuevas. Las cargas fallidas ofrecen reintento; se liberan
+  lienzo, observadores, escuchas, texturas, audio y bucle al salir.
+- Las pruebas se habilitan con `prueba=1`: piloto, avance fijo, escenarios preparados sin recibo y lecturas.
+  La navegación normal no expone ese objeto. Las muestras del test no acreditan niveles ni premios.
 
 ## Guardado
 
@@ -362,14 +295,15 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   - pierde sin defensa;
   - escenarios unitarios por planta y zombi especial;
   - costos, recargas, pala, sol recogido una vez, determinismo e inmutabilidad tras el fin.
-- `scripts/probar-pvz-interfaz.mjs` (Playwright, SwiftShader, 844 × 390, toque):
+- `scripts/probar-pvz-interfaz.mjs` (Playwright, Canvas 2D, 844 × 390 y 1280 × 720, toque):
   - título y aventura;
   - sembrar tocando y recoger sol;
   - nivel completo con el piloto;
   - planta nueva, guardado, recarga de página y fallo de guardado recuperado;
   - capturas en `test-results/pvz/`.
-- Galería de desarrollo `herramientas/pvz-galeria.html`, que Vite sirve y no entra al build: muestra todo el arte
-  en todos sus estados, para revisar capturas.
+- El almanaque publicado permite revisar las plantas, zombis, ocho ropas y cuatro escenarios.
+- `scripts/probar-pvz-arte.mjs`: cobertura de registros, recursos, hash visual y consultas puras.
+- `scripts/probar-pvz-protecciones.mjs`: ocho variantes equipadas en movimiento, capturas y pérdida de armadura.
 - `scripts/probar-pvz-abono.mjs` y `scripts/probar-pvz-guardado.mjs`: habilidades, progresión legal y fallos.
 - `scripts/probar-pvz-persistencia-navegador.mjs`: contrato de motor y `localStorage` real, recarga, cuota,
   aislamiento de claves y archivos incompatibles. No sustituye la prueba visual de la aventura.

@@ -3,12 +3,28 @@
 Actualizado el 22 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
+## Prioridad actual · base jugable de conquista del 22 de octubre
+
+Javier pidió desarrollar y entregar la conquista para decidir después de jugar. Empieza solo en casa y termina
+al purificar **el 100%**: el Dr. Zomboid huye con los zombis en su nave. Conservar el PvZ anterior como minijuego,
+equipos y formaciones por zona, frentes simultáneos, fusiones al final de historia y al inicio de versus.
+Menús ilustrados y espera con batallas animadas forman parte del pedido. El último ajuste exige mapas de
+mundo → país → ciudad para navegar, pantalla completa sin paneles de estadísticas y controles redondos
+pequeños. El inicio y el final deben tener el detalle del mapa, sin carteles narrativos.
+[Base y alcance real](en-obra/pvz-conquista-base-2026-10-22.md) ·
+[Diseño del mundo futuro](en-obra/pvz-conquista-propuesta-2026-10-22.md).
+
+La base tiene 12 áreas de historia en tres países/seis ciudades y 36 en versus en tres países/nueve ciudades, 32 plantas, 21 zombis y cinco fusiones de muestra.
+Las 240 áreas del mundo final y el catálogo completo todavía no están implementados. Los sprites pendientes
+continúan pausados hasta decidir después de jugar; los minijuegos existentes conservan motor y guardados.
+
 ## Apoyo activo al Jardín · 19 de octubre
 
-Javier confirmó que trabajan Claude y Codex. Claude se encarga de todo lo gráfico; Codex apoya motor,
+Javier confirmó inicialmente que trabajan Claude y Codex. Codex desarrolló motor,
 mecánicas, niveles y pruebas conforme al [plan de La Semilla Madre](en-obra/jardin-plan-2026-10-17.md).
 La base de los mundos de día, noche, piscina y niebla incluye cuarenta niveles, abono del día y contrato de progreso/guardado.
-Claude conecta motor y persistencia con su aventura visual; Codex verifica las reglas y campañas.
+El pedido gráfico del 22 de octubre encarga a Codex la integración visual con el estilo ilustrado aprobado,
+incluida variedad de ropa para zombis. La aventura conecta esos cuarenta niveles y su guardado.
 [Base del motor](en-obra/pvz-motor-2026-10-19.md) · [Abono y guardado](en-obra/pvz-abono-guardado-2026-10-19.md) ·
 [Mundo nocturno](en-obra/pvz-noche-2026-10-20.md) · [Piscina](en-obra/pvz-piscina-2026-10-20.md) ·
 [Niebla](en-obra/pvz-niebla-2026-10-22.md).
@@ -27,12 +43,13 @@ Por eso los valores de PvZ (costos, recargas, vidas, precios de la tienda) cuent
 
 [Plan vigente: «La Semilla Madre»](en-obra/jardin-plan-2026-10-17.md) · [arquitectura](en-obra/pvz-arquitectura.md).
 
-- La aventura tiene 88 niveles en 10 mundos, más el modo Fusión aparte, minijuegos, rompecabezas y supervivencia.
+- El plan contempla 88 niveles en 10 mundos, más el modo Fusión aparte, minijuegos, rompecabezas y supervivencia.
 - Se conservan los 12 patios (como «Patios clásicos») y el duelo para dos.
-- Todo el arte y el sonido se hacen en código.
+- El pedido gráfico del 22 de octubre aprobó ilustraciones generadas propias; la escena usa Canvas y sonido sintetizado.
 
 **Estado:** motor, datos de cuarenta niveles de los mundos 1–4, abono del día y guardado implementados.
-La integración visual está a cargo de Claude. Los mundos 5–10 y demás modos del plan siguen pendientes.
+La aventura Canvas, selección, almanaque, cuatro fondos, 32 plantas, 21 zombis y ocho vestuarios están
+integrados. [Entrega visual y límites](en-obra/pvz-arte-2026-10-22.md). Los mundos 5–10 y demás modos siguen pendientes.
 
 ## Encargo activo · ampliación de juegos y patio
 
@@ -78,8 +95,8 @@ El [historial](archivo/pedidos-hasta-2026-10-15.md) conserva la cola antigua sin
 
 ## Publicación vigente
 
-La APK e instaladores **apk-223** (17 de octubre) se compilaron desde `9f9630b8`, el último commit de la rama, al
-correr Javier el workflow a mano: incluyen todo lo descrito arriba. Actions sigue sin dispararse solo en cada push.
+La última compilación de instaladores registrada es **apk-223** (17 de octubre), desde `9f9630b8`, al
+correr Javier el workflow a mano. No incluye avances posteriores. Actions sigue sin dispararse solo en cada push.
 
 ## Pausado y descartado
 

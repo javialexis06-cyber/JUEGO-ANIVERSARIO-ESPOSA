@@ -1,5 +1,12 @@
 # Instrucciones del repositorio
 
+Prioridad del 22 de octubre: entregar la base jugable de Conquista que Javier pidió para decidir tras jugar.
+Historia desde la casa hasta purificar el 100% y huida del Dr. Zomboid en nave; fusiones al final de historia
+y desde el comienzo en versus. Navegar mediante mapas de mundo/país/ciudad, sin paneles superior, inferior
+ni lateral; controles redondos pequeños y portada/final con detalle ilustrado. Conservar PvZ y patios como minijuegos. Ver
+`docs/en-obra/pvz-conquista-base-2026-10-22.md` y el diseño territorial. Los perfiles nuevos son provisionales
+y propios del prototipo; no modificar el balance anterior. El catálogo pendiente sigue pausado.
+
 Leer [CLAUDE.md](CLAUDE.md). La cola vigente está en [docs/pedidos.md](docs/pedidos.md); las notas históricas no la sustituyen.
 
 Encargo del 16 de octubre completado: poses y predicción del invitado en Torneo, icono y salas para los cuatro
@@ -35,8 +42,9 @@ El nuevo pedido sí autoriza habilitar y comprobar la clasificación del patio e
 `supabase/patio-clasificacion.sql`; no aplicar el SQL antiguo de la casa. Javier pidió que lo haga el agente.
 Usar la conexión Supabase cuando esté autorizada, sin pedir al usuario escribir SQL ni pegar claves privadas.
 
-Reparto confirmado el 19 de octubre: Claude tiene toda la parte gráfica del Jardín; Codex apoya motor,
-mecánicas, niveles y pruebas en `src/jardin/pvz/`. Los mundos de día, noche, piscina y niebla, el abono del día y el contrato de
-guardado están implementados sin UI nueva; ver `docs/en-obra/pvz-motor-2026-10-19.md`,
-`docs/en-obra/pvz-abono-guardado-2026-10-19.md`, `docs/en-obra/pvz-noche-2026-10-20.md` y
-`docs/en-obra/pvz-piscina-2026-10-20.md` y `docs/en-obra/pvz-niebla-2026-10-22.md` antes de integrar. Los patios clásicos y el duelo se conservan intactos.
+El pedido gráfico del 22 de octubre sustituye el reparto anterior: Javier aprobó el estilo ilustrado y
+encargó a Codex implementar plantas, escenarios y zombis con variedad de ropa. La aventura Canvas conecta
+los cuarenta niveles construidos, selección, guardado, almanaque y controles; los patios clásicos y el duelo
+conservan sus motores y claves. Ver `docs/en-obra/pvz-arte-2026-10-22.md` y los contratos de
+`docs/en-obra/pvz-arquitectura.md`. Los mundos 5–10 y demás modos del plan siguen pendientes; no confundir
+las animaciones procedurales actuales con animación independiente de cada extremidad.

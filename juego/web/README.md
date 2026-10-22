@@ -20,7 +20,7 @@ Vite + TypeScript + three.js. El contenedor Android usa Capacitor; el de escrito
 | `celular.html` | `src/celular/` | Los doce teléfonos de Desaparecidos de Astra. |
 | `peleas.html` | `src/peleas/` | El Torneo del Despertar Dorado. |
 | `mente.html` | `src/mente/` | Dieciséis juegos mentales del patio, reto diario y clasificación. |
-| `jardin.html` | `src/jardin/` | Jardín de los Desvelados: doce patios con plantas y zombis originales. |
+| `jardin.html` | `src/jardin/` | Conquista: historia de 12 áreas y versus de 36; PvZ de 40 niveles, patios y duelo aparte. |
 | `granja-v3.html` | `src/granja-v3/` | Granja V5 integrada; desarrollo pausado. |
 
 Lavarse la cara se abre desde la casa y desde la sala de amigos mediante `src/casa/lavado.ts`.
@@ -67,9 +67,10 @@ con zombis; pausa compartida y revancha con bandos invertidos. Se abre desde el 
 opciones de sala de amigos. [Reglas y comprobaciones](../../docs/sistemas/jardin.md).
 
 La nueva aventura de PvZ tiene su motor independiente en `src/jardin/pvz/`: cuarenta niveles de día, noche, piscina y niebla,
-con guardado propio y pruebas mediante `npm run probar:pvz`. Su interfaz y gráficos siguen en integración;
-el estado del motor no implica que la nueva aventura esté disponible todavía en `jardin.html`.
-Ver [contratos y límites](../../docs/en-obra/pvz-niebla-2026-10-22.md).
+con guardado propio y pruebas mediante `npm run probar:pvz`. Su aventura Canvas, selección de semillas, almanaque y arte ilustrado están conectados;
+se abre en `jardin.html?modo=aventura`. Sin modo se abre Conquista, documentado en
+[su entrega](../../docs/en-obra/pvz-conquista-base-2026-10-22.md).
+Ver [contratos y límites](../../docs/en-obra/pvz-arte-2026-10-22.md).
 
 Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistemas/patio-mental.md) y
 [Jardín de los Desvelados](../../docs/sistemas/jardin.md). La clasificación compartida necesita la migración

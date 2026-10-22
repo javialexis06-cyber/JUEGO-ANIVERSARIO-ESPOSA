@@ -24,7 +24,7 @@ const avanzar=(p,s)=>p.evaluate(s=>window.__duelo.avanzar(Math.ceil(s*30)),s);
 const ok=t=>{checks.push(t);console.log('OK',t);};
 try{
  if(!process.env.SOLO_SALA){
-  const p=await pagina(2);await p.goto(new URL('jardin.html?rol=ella&local=1',base).href);await p.locator('[data-duelo]').tap();await p.waitForURL(/jardin-duelo/);assert.equal(new URL(p.url()).searchParams.get('rol'),'ella');
+  const p=await pagina(2);await p.goto(new URL('jardin.html?modo=clasicos&rol=ella&local=1',base).href);await p.locator('[data-duelo]').tap();await p.waitForURL(/jardin-duelo/);assert.equal(new URL(p.url()).searchParams.get('rol'),'ella');
   await p.locator('[data-d="local"]').tap();await listo(p);await avanzar(p,21);await sembrar(p,'margarita',0,0);assert.equal(await p.evaluate(()=>window.__duelo.motor().jardin.plantas[0]?.tipo),'margarita');await p.locator('[data-ld]').first().tap();
   await p.locator('[data-zd="remiendo"]').tap();await p.locator('[data-fila="4"]').tap();assert.equal(await p.evaluate(()=>window.__duelo.motor().jardin.zombis.length),1);
   await p.locator('header [data-d="pausa"]').tap();const t=await p.evaluate(()=>window.__duelo.estado().t);await p.waitForTimeout(300);assert.equal(await p.evaluate(()=>window.__duelo.estado().t),t);await p.locator('.resultado [data-d="pausa"]').tap();await foto(p,'dos-en-pantalla');

@@ -52,6 +52,9 @@ solo conectar Supabase para habilitar su clasificación real. Voces nuevas desca
 | [`pvz-piscina-2026-10-20.md`](en-obra/pvz-piscina-2026-10-20.md) | Motor acuático, diez niveles, capas, vehículos, minizombis y comprobaciones. |
 | [`pvz-piscina-fuentes-2026-10-20.md`](en-obra/pvz-piscina-fuentes-2026-10-20.md) | Parámetros de plantas, zombis y niveles de piscina. |
 | [`pvz-piscina-terreno-fuentes-2026-10-20.md`](en-obra/pvz-piscina-terreno-fuentes-2026-10-20.md) | Referencias técnicas de hielo, soportes y emboscadas acuáticas. |
+| [`pvz-arte-2026-10-22.md`](en-obra/pvz-arte-2026-10-22.md) | Arte ilustrado aprobado, ocho ropas, aventura Canvas y pruebas de interfaz/guardado. |
+| [`pvz-conquista-base-2026-10-22.md`](en-obra/pvz-conquista-base-2026-10-22.md) | Base jugable: 12 áreas de historia, 36 en versus, formaciones, frentes, salas y final espacial. |
+| [`pvz-conquista-propuesta-2026-10-22.md`](en-obra/pvz-conquista-propuesta-2026-10-22.md) | Dirección territorial: historia al 100%, mundo futuro de 240 áreas, guarniciones y PvP de bases. |
 | [`pvz-niebla-2026-10-22.md`](en-obra/pvz-niebla-2026-10-22.md) | Motor de niebla, Rompejarrones, tormenta y continuidad del guardado. |
 | [`pvz-niebla-fuentes-2026-10-22.md`](en-obra/pvz-niebla-fuentes-2026-10-22.md) | Parámetros de las ocho plantas, cuatro enemigos y diez niveles de niebla. |
 | [`jardin-dos-jugadores-2026-10-16.md`](en-obra/jardin-dos-jugadores-2026-10-16.md) | Duelo de plantas contra zombis en una pantalla o por sala; reglas y comprobaciones. |

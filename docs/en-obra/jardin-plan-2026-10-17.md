@@ -1,5 +1,10 @@
 # Plantas contra Zombis: La Semilla Madre · plan vigente (17 de octubre de 2026)
 
+**Prioridad del 22 de octubre:** base jugable de Conquista solicitada para decidir después de jugar.
+Historia desde casa hasta el 100% y huida del Dr. Zomboid; versus territorial con fusiones desde el comienzo.
+[Entrega y límites actuales](pvz-conquista-base-2026-10-22.md). El catálogo pendiente sigue pausado y los
+cuarenta niveles PvZ permanecen como minijuego. Las cifras de este plan anterior no son contenido implementado.
+
 **Estado:** en construcción, con libertad de diseño dada por Javier. La versión anterior del plan, con nombres
 propios y la historia de los Desvelados, quedó descartada; está en el historial de git.
 
@@ -150,6 +155,13 @@ Mundo 4 incorporado al motor: niebla, iluminación, proyectiles en dos dimension
 zombis especiales, tres etapas de Rompejarrones y final con tormenta. El guardado publicado de piscina
 continúa a 4-1 sin perder compras ni progreso. La parte visual sigue a cargo de Claude.
 [Entrega, pruebas y límites de niebla](pvz-niebla-2026-10-22.md).
+
+## Integración gráfica del 22 de octubre
+
+Javier aprobó la dirección ilustrada mostrada y encargó a Codex plantas, escenarios y zombis con más ropa.
+La aventura Canvas conecta los cuarenta niveles construidos con selección, guardado, almanaque y opciones;
+usa recursos raster propios y animaciones procedurales. Se conservan patios y duelo. Esta decisión sustituye
+el reparto gráfico y la restricción anterior a SVG en esta entrega. [Estado y límites](pvz-arte-2026-10-22.md).
 
 ## Orden de construcción
 

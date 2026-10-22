@@ -1,51 +1,5 @@
-import './jardin.css';
-import { PLANTAS,NIVELES_JARDIN,type IdPlanta } from './datos';
-import { MotorJardin,crearBotJardin } from './motor';
-import { VistaJardin } from './vista';
-import { esModoAmigo } from '../salas/perfil';
-const params=new URLSearchParams(location.search),amigo=esModoAmigo(),clave=amigo?'amigo-jardin-v1':'jardin-v1';
-const root=document.createElement('main');root.innerHTML='<div class="cargando">Preparando las macetas…</div>';document.body.append(root);
-interface Progreso{v:1;estrellas:Record<string,number>;sonido:boolean}
-let progreso:Progreso={v:1,estrellas:{},sonido:true};try{const p=JSON.parse(localStorage.getItem(clave)??'null');if(p?.v===1&&p.estrellas&&typeof p.estrellas==='object'){for(const n of NIVELES_JARDIN){const e=p.estrellas[n.id];if(Number.isInteger(e)&&e>=1&&e<=3)progreso.estrellas[n.id]=e;}progreso.sonido=p.sonido!==false;}}catch{/* progreso nuevo */}
-let pendiente=false;const guardar=()=>{try{localStorage.setItem(clave,JSON.stringify(progreso));pendiente=false;return true;}catch{pendiente=true;return false;}};
-let cargaN=0;
-let vista:VistaJardin|null=null,motor:MotorJardin|null=null,bot:ReturnType<typeof crearBotJardin>|null=null,seleccion:IdPlanta|'pala'='frijol',pausa=false,velocidad=1,acumulado=0,finalMostrado=false,anterior='',etapa='menu';
-let audio:AudioContext|null=null;function tono(f=330){if(!progreso.sonido)return;try{audio??=new AudioContext();void audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.035,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.12);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.15);}catch{/* sonido opcional */}}
-function aviso(texto:string){const p=document.getElementById('aviso-jardin');if(p){p.textContent=texto;setTimeout(()=>{if(p.textContent===texto)p.textContent='';},3500);}}
-function bloqueoGuardar(){return pendiente?'<div class="guardar-error" role="alert">No se pudo guardar. Mantén el juego abierto.<button data-reintentar>Reintentar guardado</button></div>':'';}
-function menu(){if(pendiente&&!guardar())return;cargaN++;etapa='menu';motor=null;bot=null;vista?.destruir();vista=null;
- root.innerHTML=`<header><button data-salir>‹ Volver</button><div><h1>Jardín de los Desvelados</h1><small>Plantas de peluche, visitas con sueño y un patio por cuidar</small></div><b>★ ${Object.values(progreso.estrellas).reduce((a,b)=>a+b,0)}/${NIVELES_JARDIN.length*3}</b></header><section class="jardin-menu"><article class="bienvenida"><span>🌼 🧟 🌿</span><h2>Que no se duerman en las flores</h2><p>Siembra margaritas para recoger luz, coloca plantas que defiendan cada carril y cuida el camino a casa. Cada farol de la izquierda te protege una vez.</p><p>Las macetas se desbloquean durante la campaña. Cada partida empieza con sus propios recursos.</p><button data-duelo>🌻 Plantas contra zombis · jugar dos</button></article><div class="niveles">${NIVELES_JARDIN.map((n,i)=>{const libre=i===0||progreso.estrellas[NIVELES_JARDIN[i-1].id]>0;return `<button data-nivel="${n.id}" ${libre?'':'disabled'} style="--tono:${n.cielo}"><small>Patio ${i+1} · ${n.filas} carriles</small><b>${n.nombre}</b><span>${'★'.repeat(progreso.estrellas[n.id]??0)}${'☆'.repeat(3-(progreso.estrellas[n.id]??0))}</span><p>${libre?n.sub:'Gana el patio anterior'}</p></button>`;}).join('')}</div>${bloqueoGuardar()}</section>`;
-}
-async function jugar(id:string){if(pendiente&&!guardar())return;const nivel=NIVELES_JARDIN.find(n=>n.id===id);if(!nivel)return;const carga=++cargaN;vista?.destruir();vista=null;etapa='cargando';motor=new MotorJardin(nivel);bot=params.has('bot')?crearBotJardin():null;seleccion='frijol';pausa=false;velocidad=1;finalMostrado=false;acumulado=0;anterior='';
- root.innerHTML=`<header><button data-pausa>Pausa</button><div><h1>${nivel.nombre}</h1><small><span id="oleada-jardin">Preparación</span> · <span id="luz-jardin">☀ 225</span></small></div><button data-velocidad>×1</button><button data-sonido aria-label="Sonido">${progreso.sonido?'♪':'♩'}</button></header><div class="semillero">${nivel.plantas.map(p=>`<button data-planta="${p}" title="${PLANTAS[p].desc}" aria-label="${PLANTAS[p].nombre}, ${PLANTAS[p].costo} luces"><span>${({margarita:'🌼',frijol:'🫛',calabaza:'🎃',menta:'🌿',hongo:'🍄',chile:'🌶',gemela:'🌱',campanilla:'🌸'} as const)[p]}</span><b>${PLANTAS[p].nombre}</b><small>${PLANTAS[p].costo} ☀ <i data-recarga="${p}"></i></small></button>`).join('')}<button data-pala title="Retira una planta sin recuperar la luz">🪏<b>Pala</b></button></div><div id="campo-jardin"></div><div id="luces-jardin"></div><footer><span id="descripcion-jardin">Toca las luces para recogerlas. Elige una planta y toca una casilla.</span><span id="aviso-jardin" role="status"></span></footer><div id="capa-jardin"></div>`;
- try{const v=new VistaJardin(document.getElementById('campo-jardin')!);vista=v;await v.cargar();if(carga!==cargaN||vista!==v){v.destruir();return;}vista.montar(motor!);etapa='juego';
-  vista.renderer.domElement.onpointerup=e=>{if(pausa||motor?.terminado||!motor||!vista)return;const q=vista.tocar(e.clientX,e.clientY);if(!q)return;
-   const ok=seleccion==='pala'?motor.quitar(q.fila,q.col):motor.plantar(seleccion,q.fila,q.col);if(ok)tono(seleccion==='pala'?230:440);else aviso('Revisa la luz, la recarga y que la casilla esté libre.');actualizarHud();};actualizarHud();
- }catch{if(carga!==cargaN)return;etapa='error';root.innerHTML='<section class="fallo"><h2>No se pudieron cargar las figuras</h2><p>Comprueba la conexión y vuelve a intentarlo.</p><button data-menu>Volver a los patios</button></section>';vista?.destruir();vista=null;}
-}
-function actualizarHud(){if(!motor||etapa!=='juego')return;const m=motor;document.getElementById('luz-jardin')!.textContent=`☀ ${m.luces}`;
- document.getElementById('oleada-jardin')!.textContent=m.oleada?`Oleada ${m.oleada}/${m.nivel.oleadas}`:`Preparación · ${Math.max(0,Math.ceil(22-m.t))} s`;
- for(const b of root.querySelectorAll<HTMLButtonElement>('[data-planta]')){const id=b.dataset.planta as IdPlanta,rec=m.recargas[id]??0;b.classList.toggle('seleccionada',seleccion===id);b.classList.toggle('sin-luz',m.luces<PLANTAS[id].costo||rec>0);b.querySelector('[data-recarga]')!.textContent=rec>.1?`${Math.ceil(rec)} s`:'';}
- root.querySelector('[data-pala]')?.classList.toggle('seleccionada',seleccion==='pala');
- const firma=m.soles.map(l=>l.id).join(',');if(firma!==anterior){anterior=firma;document.getElementById('luces-jardin')!.innerHTML=m.soles.map(l=>`<button data-luz="${l.id}" aria-label="Recoger 25 luces">☀<small>25</small></button>`).join('');}
- if(vista)for(const l of m.soles){const q=vista.punto(l.x,l.fila,.85);const b=document.querySelector<HTMLElement>(`[data-luz="${l.id}"]`);if(b){b.style.left=q.x+'px';b.style.top=q.y+'px';}}
-}
-function resultado(){if(!motor||finalMostrado)return;finalMostrado=true;const m=motor;if(m.terminado==='gano'){progreso.estrellas[m.nivel.id]=Math.max(progreso.estrellas[m.nivel.id]??0,m.estrellas());guardar();tono(660);}const i=NIVELES_JARDIN.findIndex(n=>n.id===m.nivel.id),sig=NIVELES_JARDIN[i+1];
- document.getElementById('capa-jardin')!.innerHTML=`<section class="resultado"><span>${m.terminado==='gano'?'🌻':'🌧'}</span><h2>${m.terminado==='gano'?'¡El patio está a salvo!':'Los desvelados llegaron a casa'}</h2><b>${'★'.repeat(m.estrellas())}${'☆'.repeat(3-m.estrellas())}</b><p>${m.eliminados} visitas despedidas · ${m.sembradas} plantas sembradas</p>${bloqueoGuardar()}${m.terminado==='gano'&&sig?`<button data-nivel="${sig.id}">Siguiente patio</button>`:''}<button data-nivel="${m.nivel.id}">Jugar otra vez</button><button data-menu>Ver los patios</button></section>`;
-}
-function pausaVista(){if(!motor||motor.terminado)return;pausa=!pausa;document.getElementById('capa-jardin')!.innerHTML=pausa?'<section class="resultado"><h2>Un respiro en el jardín</h2><p>El tiempo y las visitas están en pausa.</p><button data-pausa>Seguir jugando</button><button data-menu>Salir de esta partida</button></section>':'';}
-root.addEventListener('click',e=>{const b=(e.target as Element).closest<HTMLButtonElement>('button');if(!b)return;
- if(b.dataset.nivel)void jugar(b.dataset.nivel);else if(b.hasAttribute('data-menu'))menu();else if(b.hasAttribute('data-duelo')){if(pendiente&&!guardar())return;const u=new URL('./jardin-duelo.html',location.href);for(const k of ['rol','local','salas'])if(params.has(k))u.searchParams.set(k,params.get(k)!);location.href=u.href;}else if(b.hasAttribute('data-salir')){if(!pendiente||guardar()){const u=new URL(amigo?'./amigos.html':'./index.html',location.href);if(!amigo){u.searchParams.set('desdePatio','1');for(const k of ['rol','local'])if(params.has(k))u.searchParams.set(k,params.get(k)!);}location.href=u.href;}}
- else if(b.dataset.planta){seleccion=b.dataset.planta as IdPlanta;document.getElementById('descripcion-jardin')!.textContent=PLANTAS[seleccion].desc;actualizarHud();}
- else if(b.dataset.luz){if(!pausa&&motor?.recoger(Number(b.dataset.luz))){tono(530);actualizarHud();}}
- else if(b.hasAttribute('data-pala')){seleccion='pala';document.getElementById('descripcion-jardin')!.textContent='Retira una planta. No devuelve la luz invertida.';actualizarHud();}
- else if(b.hasAttribute('data-pausa'))pausaVista();else if(b.hasAttribute('data-velocidad')){velocidad=velocidad===1?2:1;b.textContent='×'+velocidad;}
- else if(b.hasAttribute('data-sonido')){progreso.sonido=!progreso.sonido;guardar();b.textContent=progreso.sonido?'♪':'♩';}
- else if(b.hasAttribute('data-reintentar')){if(guardar()){b.closest('.guardar-error')?.remove();}else aviso('Todavía no se puede guardar. Conserva esta página abierta.');}
-});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&!pausa&&motor&&!motor.terminado)pausaVista();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&motor&&!motor.terminado)pausaVista();});
-let t0=performance.now(),hudT=0;function cuadro(t:number){const dt=Math.min(.1,(t-t0)/1000);t0=t;if(etapa==='juego'&&motor&&vista){if(!pausa&&!motor.terminado){acumulado+=dt*velocidad;while(acumulado>=motor.pasoFijo){bot?.(motor);motor.paso();acumulado-=motor.pasoFijo;if(motor.terminado)break;}}
- if(t-hudT>120){actualizarHud();hudT=t;}vista.dibujar(motor);if(motor.terminado)resultado();}requestAnimationFrame(cuadro);}requestAnimationFrame(cuadro);
-(window as any).__jardin={motor:()=>motor,vista:()=>vista,listo:()=>etapa==='juego',progreso:()=>progreso,niveles:NIVELES_JARDIN,avanzar:(n:number)=>{if(!motor||pausa)return;for(let i=0;i<n&&!motor.terminado;i++){bot?.(motor);motor.paso();}actualizarHud();if(motor.terminado)resultado();}};
-menu();if(params.get('nivel'))void jugar(params.get('nivel')!);
+/** Motores y claves independientes para la aventura y los patios clásicos. */
+const params=new URLSearchParams(location.search),nivel=params.get('nivel');
+if(params.get('modo')==='clasicos'||nivel&&!/^\d+-\d+$/.test(nivel))void import('./clasicos');
+else if(params.get('modo')==='aventura'||nivel)void import('./pvz/aventura').then(m=>m.montarAventuraPvZ());
+else void import('./conquista/interfaz').then(m=>m.montarConquista());
