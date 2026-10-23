@@ -64,6 +64,7 @@ export class DirectorOleadasPvZ {
   return !!d.agua;
  }
  get terminado(){return this.actual>=this.total;}
+ rearmar(t:number){if(!Number.isFinite(t)||t<0)throw Error('Inicio de incursión inválido');this.actual=0;this.siguiente=t+18;this.lanzada=-Infinity;this.aviso=false;}
  exportar():InstantaneaDirectorPvZ{return{actual:this.actual,siguiente:this.siguiente,lanzada:this.lanzada===-Infinity?null:this.lanzada,aviso:this.aviso};}
  restaurar(e:InstantaneaDirectorPvZ){
   exigirPvZ(e&&enteroPvZ(e.actual,0,this.total)&&numeroPvZ(e.siguiente)&&e.siguiente>=0&&typeof e.aviso==='boolean'&&(e.actual===0?e.lanzada===null:numeroPvZ(e.lanzada)&&e.lanzada>=0),'Director de oleadas inválido');

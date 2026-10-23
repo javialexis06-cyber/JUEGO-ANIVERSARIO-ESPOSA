@@ -60,29 +60,36 @@ export class DefensasConquistaPvZ {
  }
  /** La revisión hace indivisible cada cambio respecto a los demás comandos del anfitrión. */
  asignar(zona:string,semillas:readonly string[],revision=this._revision):ResultadoAsignacionPvZ{
+  return this.asignarVarios([{zona,semillas}],revision);
+ }
+ asignarVarios(cambios:readonly {zona:string;semillas:readonly string[]}[],revision=this._revision):ResultadoAsignacionPvZ{
   if(revision!==this._revision)return{ok:false,motivo:'revision'};
-  const z=this.zonas.get(zona);if(!z)return{ok:false,motivo:'zona'};
-  if(z.motor)return{ok:false,motivo:'activa',zona};
-  const error=this.validarSemillas(semillas);if(error)return error;
-  for(const tipo of semillas){const propietaria=this.propietaria(tipo);if(propietaria&&propietaria!==zona)return{ok:false,motivo:'ocupada',tipo,zona:propietaria};}
-  z.semillas=[...semillas];return{ok:true,revision:++this._revision};
+  if(!Array.isArray(cambios)||!cambios.length||new Set(cambios.map(c=>c.zona)).size!==cambios.length)return{ok:false,motivo:'zona'};
+  const equipos=new Map([...this.zonas].map(([id,z])=>[id,z.semillas]));
+  for(const c of cambios){const z=this.zonas.get(c.zona);if(!z)return{ok:false,motivo:'zona'};if(z.motor&&z.motor.terminado!=='gano')return{ok:false,motivo:'activa',zona:c.zona};const error=this.validarSemillas(c.semillas);if(error)return error;equipos.set(c.zona,[...c.semillas]);}
+  const reservas=new Map<string,string>();
+  for(const[id,semillas]of equipos)for(const tipo of semillas){const canonico=this.identidades[tipo],propietaria=reservas.get(canonico);if(propietaria!==undefined)return{ok:false,motivo:'ocupada',tipo,zona:propietaria};reservas.set(canonico,id);}
+  const preparadas=cambios.map(c=>{const viejo=this.zonas.get(c.zona)!.motor,motor=viejo?MotorPvZ.restaurar(viejo.exportar(),this.registros):null;if(motor&&!motor.cambiarSemillasEnDescanso(c.semillas))throw Error('No se pudo preparar el traslado');return{zona:c.zona,semillas:[...c.semillas],motor};});
+  for(const c of preparadas)this.zonas.set(c.zona,{semillas:c.semillas,motor:c.motor});return{ok:true,revision:++this._revision};
  }
  trasladar(tipo:string,origen:string,destino:string,revision=this._revision):ResultadoAsignacionPvZ{
   if(revision!==this._revision)return{ok:false,motivo:'revision'};
   const a=this.zonas.get(origen),b=this.zonas.get(destino);
   if(!a||!b||origen===destino)return{ok:false,motivo:'zona'};
-  if(a.motor||b.motor)return{ok:false,motivo:'activa',zona:a.motor?origen:destino};
+  if(a.motor&&a.motor.terminado!=='gano'||b.motor&&b.motor.terminado!=='gano')return{ok:false,motivo:'activa',zona:a.motor&&a.motor.terminado!=='gano'?origen:destino};
   if(!Object.hasOwn(this.identidades,tipo))return{ok:false,motivo:'semillas'};
   const real=a.semillas.find(id=>this.identidades[id]===this.identidades[tipo]);if(!real)return{ok:false,motivo:'semillas'};
   const semillas=[...b.semillas,real],error=this.validarSemillas(semillas);if(error)return error;
-  a.semillas=a.semillas.filter(id=>id!==real);b.semillas=semillas;return{ok:true,revision:++this._revision};
+  return this.asignarVarios([{zona:origen,semillas:a.semillas.filter(id=>id!==real)},{zona:destino,semillas}],revision);
  }
  iniciar(zona:string,nivel:DefNivel,opciones:Omit<OpcionesMotorPvZ,'semillas'|'sinOleadas'>={}){
-  const z=this.zonas.get(zona);if(!z||z.motor||!z.semillas.length||nivel.tipo!=='normal'||nivel.minijuego||nivel.cinta)return false;
+  const z=this.zonas.get(zona);if(!z||nivel.tipo!=='normal'||nivel.minijuego||nivel.cinta)return false;
+  if(z.motor)return canonicoPvZ(z.motor.nivel)===canonicoPvZ(nivel)&&z.motor.reanudarIncursion();
   // Crear antes de modificar la zona: una configuración rechazada deja sus reservas intactas.
   const motor=new MotorPvZ(nivel,{...opciones,semillas:z.semillas,sinOleadas:false},this.registros);
   z.motor=motor;return true;
  }
+ perder(zona:string){const z=this.zonas.get(zona);if(!z||z.motor?.terminado!=='perdio')return false;this.zonas.set(zona,{semillas:[],motor:null});this._revision++;return true;}
  ordenar(zona:string,orden:OrdenPvZ){if(this._pausada)return false;return this.zonas.get(zona)?.motor?.ordenar(orden)??false;}
  /** Un paso común; ni mirar un mapa ni cambiar de frente detiene los otros tableros. */
  paso():EventoDefensaPvZ[]{

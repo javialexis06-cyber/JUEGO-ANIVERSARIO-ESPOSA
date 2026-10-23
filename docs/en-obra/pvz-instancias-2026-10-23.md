@@ -1,8 +1,9 @@
 # PvZ · carriles, reanudación exacta y coordinador de defensas
 
-Avance del **23 de octubre de 2026** sobre el [seguimiento vigente](pvz-pendientes-2026-10-22.md).
-El nuevo núcleo funciona sin DOM y tiene pruebas de combate y Canvas. **Todavía no sustituye el combate
-del mapa de Conquista V1 ni sus salas.** La migración, el selector y la conexión territorial siguen pendientes.
+Registro del núcleo del **22 de octubre de 2026, Bogotá** sobre el [seguimiento vigente](pvz-pendientes-2026-10-22.md).
+El núcleo se probó sin DOM y en Canvas. En este primer avance aún no sustituía el mapa ni las salas V1.
+La [integración posterior de historia](pvz-historia-integrada.md) conecta mapa y guardado V2; las salas y
+la conversión explícita de V1 siguen pendientes. El resto de este registro describe ese primer avance.
 
 ## Contrato construido
 

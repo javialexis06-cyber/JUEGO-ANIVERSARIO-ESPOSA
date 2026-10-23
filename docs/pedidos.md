@@ -1,6 +1,6 @@
 # Pedidos de Javier · estado vigente
 
-Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
+Actualizado el 22 de octubre de 2026 (Bogotá). Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
 ## Prioridad actual · motor completo y catálogo tras probar Conquista
@@ -17,14 +17,14 @@ funcionales y dibujados. Las fusiones siguen siendo tardías en historia y acces
 **Seguimiento:** [180 tareas en 14 grupos, con casillas de avance](en-obra/pvz-pendientes-2026-10-22.md) ·
 [Issue #1 en GitHub](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). No marcar completado por crear fichas o reciclar arte.
 
-Estado de partida: [base publicada](en-obra/pvz-conquista-base-2026-10-22.md), doce áreas de historia y 36 en
-versus, 32 plantas normales, 21 definiciones de zombis y cinco fusiones de muestra. Su combate de tres carriles
-es simplificado y todavía no cumple el nuevo requisito; tampoco existe exclusividad global de tipos ni
-progresión territorial completa del catálogo. [Dirección del mundo](en-obra/pvz-conquista-propuesta-2026-10-22.md).
+[Historia integrada](en-obra/pvz-historia-integrada.md): la entrada principal ya usa partidas PvZ normales
+por zona, carriles de tres a siete, reservas exclusivas, desbloqueos de las 32 plantas construidas y guardado
+V2 completo con respaldo y protección de pestañas. Los doce escenarios se recorrieron con piloto legal
+**sin incursiones estratégicas como fixture**; el balance normal con varios frentes sigue por validar.
 
-[Núcleo del 23 de octubre](en-obra/pvz-instancias-2026-10-23.md): carriles configurables en el motor PvZ,
-reanudación exacta comprobada en los cuarenta niveles y coordinador de defensas/reservas exclusivas.
-El mapa y las salas V1 todavía usan el prototipo: conectar estos contratos y migrar sus partidas sigue pendiente.
+La historia/versus del prototipo se conserva en `modo=prototipo` con sus claves. Faltan adaptar las salas al
+motor nuevo y diseñar la conversión explícita de V1; no se han recortado sus equipos repetidos. El catálogo,
+recetas reales, arte futuro y campaña definitiva continúan pendientes. [Dirección del mundo](en-obra/pvz-conquista-propuesta-2026-10-22.md).
 
 Se conservan historia desde casa hasta el 100% con huida del Dr. Zomboid, mapas mundo → país → ciudad → zona,
 interfaz despejada, controles redondos y minijuegos existentes con sus partidas. La cifra de 240 áreas sigue

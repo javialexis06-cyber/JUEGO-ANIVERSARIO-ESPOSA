@@ -1,5 +1,8 @@
 # Conquista · base jugable del 22 de octubre
 
+Registro del prototipo V1, conservado en `jardin.html?modo=prototipo`. La entrada principal ahora abre
+la [historia con defensas PvZ](pvz-historia-integrada.md), con guardado independiente.
+
 **Registro del primer prototipo.** Después de jugarlo, el pedido cambió a defensas PvZ completas con carriles
 por escenario, tipos exclusivos por zona y catálogo progresivo completo. Esas funciones siguen pendientes
 y se siguen en [el listado vigente](pvz-pendientes-2026-10-22.md); este documento acredita únicamente la base

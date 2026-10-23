@@ -1,0 +1,21 @@
+.cq-historia .pvz-campo{display:block;width:100%;height:100%;touch-action:none;outline:none}
+.cq-historia .cq-estado-frente{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);font:900 11px Nunito,sans-serif;color:#fff3be;text-shadow:0 2px 3px #16351e;pointer-events:none;background:#29422bd9;border-radius:20px;padding:5px 12px}
+.cq-historia .cq-estado-frente:empty{display:none}
+.cq-equipo-mini{display:flex;justify-content:center;flex-wrap:wrap;gap:2px;margin-top:5px}.cq-equipo-mini img{height:30px;width:30px;object-fit:contain}
+.cq-semillas-editor>header{display:flex;justify-content:space-between;align-items:center;gap:20px}.cq-semillas-editor>header small{letter-spacing:3px;font-size:9px;color:#747345}.cq-semillas-editor>header h2{margin:4px 0!important}
+.cq-historia .cq-semillas-editor .cq-catalogo{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));max-height:47vh;overflow:auto;flex:1;min-height:0;align-content:start}
+.cq-historia .cq-semillas-editor{max-height:92vh;display:flex;flex-direction:column}
+.cq-enemigos-previstos{height:62px;display:flex;gap:8px;align-items:center;padding:3px 12px;background:#afbd8a55;border-radius:8px;flex-shrink:0}.cq-enemigos-previstos img{height:60px;width:45px;object-fit:contain;filter:drop-shadow(0 2px 2px #42522833)}
+.cq-origen-semilla{font:700 9px/1.2 Nunito,sans-serif;color:#5c6940;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.cq-historia .cq-ficha{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cq-historia .cq-semillas-editor .cq-catalogo{row-gap:26px;padding-bottom:24px}
+.cq-historia .cq-semillas-editor .cq-ficha{height:142px;position:relative;padding:9px 7px 30px}
+.cq-historia .cq-semillas-editor .cq-ficha img{height:75px;width:78px}
+.cq-historia .cq-semillas-editor .cq-ficha b{font-size:10px;line-height:12px;max-height:24px}
+.cq-historia .cq-semillas-editor .cq-ficha b{position:absolute;bottom:30px;left:8px;right:8px;background:#f3e3bce8;padding:2px 1px;border-radius:4px;color:#354b25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
+.cq-historia .cq-semillas-editor .cq-ficha small{position:absolute;bottom:11px;left:30px;right:7px;font-size:12px!important;text-align:center}
+.cq-historia .cq-semillas-editor .cq-origen-semilla{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font-size:10px;line-height:16px;background:#e3dab6;border-radius:8px;padding:0 3px}
+.cq-historia .cq-carta{overflow:hidden}.cq-historia .cq-carta i{pointer-events:none;position:absolute;inset:0 0 auto;height:var(--recarga,0);background:#25321d77}.cq-historia .cq-carta img{position:relative;z-index:1}.cq-historia .cq-carta span{position:relative;z-index:1}
+.cq-traslados{font-size:11px!important;line-height:1.35;color:#605d3c}.cq-semillas-editor .cq-error:empty{display:none}
+@media(max-height:560px){.cq-historia .cq-semillas-editor{gap:5px;padding:6px 10px}.cq-historia .cq-semillas-editor .cq-catalogo{grid-template-columns:repeat(auto-fill,minmax(85px,1fr));max-height:45vh;gap:4px}.cq-enemigos-previstos{height:42px;padding:0 8px}.cq-enemigos-previstos img{height:43px;width:34px}.cq-historia .cq-semillas-editor .cq-ficha{min-height:91px}.cq-origen-semilla{font-size:8px}.cq-traslados{font-size:9px!important}.cq-semillas-editor>header h2{font-size:18px}.cq-equipo-mini img{height:22px;width:22px}.cq-historia .cq-estado-frente{bottom:8px;font-size:9px}.cq-historia .cq-menu-dock{gap:22px}}
+@media(max-height:560px){.cq-historia .cq-semillas-editor .cq-catalogo{row-gap:21px;padding-bottom:21px}.cq-historia .cq-semillas-editor .cq-ficha{height:102px;min-height:102px;padding-bottom:25px}.cq-historia .cq-semillas-editor .cq-ficha img{height:46px;width:56px}.cq-historia .cq-semillas-editor .cq-ficha b{font-size:8px;line-height:10px}.cq-historia .cq-semillas-editor .cq-ficha small{font-size:10px!important;bottom:8px;left:22px}.cq-historia .cq-semillas-editor .cq-origen-semilla{font-size:8px;line-height:14px;bottom:-17px}}
+@media(max-height:560px){.cq-historia .cq-semillas-editor .cq-ficha b{bottom:25px;left:6px;right:6px;font-size:8px}}

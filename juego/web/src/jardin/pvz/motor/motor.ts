@@ -18,7 +18,7 @@ const entero=(x:unknown):x is number=>Number.isSafeInteger(x);
 export class MotorPvZ {
  readonly pasoFijo=1/60;readonly columnas=9;readonly anchoCasilla=80;readonly nivel:DefNivel;readonly filas:number;
  readonly plantasDef:Readonly<Record<string,DefPlanta>>;readonly zombisDef:Readonly<Record<string,DefZombi>>;
- readonly semillas:readonly string[];readonly azar:AzarPvZ;readonly director:DirectorOleadasPvZ|null;
+ private _semillas:readonly string[];readonly azar:AzarPvZ;readonly director:DirectorOleadasPvZ|null;
  private comportamientosP:Readonly<Record<string,ComportamientoPlantaPvZ>>;private comportamientosZ:Readonly<Record<string,ComportamientoZombiPvZ>>;
  t=0;pasos=0;sol:number;abono:number;oleada=0;terminado:''|'gano'|'perdio'='';eliminados=0;sembradas=0;
  plantas:PlantaPvZ[]=[];zombis:ZombiPvZ[]=[];proyectiles:ProyectilPvZ[]=[];soles:SolPvZ[]=[];
@@ -38,7 +38,7 @@ export class MotorPvZ {
   if(!nivel.filas.length||new Set(nivel.filas).size!==nivel.filas.length||nivel.filas.some(f=>!entero(f)||f<0||f>=this.filas)||!finito(nivel.solInicial)||nivel.solInicial<0)throw new Error('Nivel inválido');
   if(nivel.filasAgua&&(new Set(nivel.filasAgua).size!==nivel.filasAgua.length||nivel.filasAgua.some(f=>!nivel.filas.includes(f))))throw new Error('Filas de agua inválidas');
   if(nivel.zombis.some(id=>!Object.hasOwn(this.zombisDef,id)))throw new Error('Zombi de nivel desconocido');
-  const semillas=opciones.semillas??nivel.semillas??semillasAntesDelNivel(nivel.id).slice(0,10);if(semillas.length>10||new Set(semillas).size!==semillas.length||semillas.some(id=>!Object.hasOwn(this.plantasDef,id)))throw new Error('Selección de semillas inválida');this.semillas=[...semillas];
+  const semillas=opciones.semillas??nivel.semillas??semillasAntesDelNivel(nivel.id).slice(0,10);if(semillas.length>10||new Set(semillas).size!==semillas.length||semillas.some(id=>!Object.hasOwn(this.plantasDef,id)))throw new Error('Selección de semillas inválida');this._semillas=[...semillas];
   if(nivel.cinta&&nivel.cinta.length===0||nivel.tipo==='cinta'&&!nivel.cinta)throw new Error('Cinta vacía');
   if(nivel.cinta?.some(id=>!Object.hasOwn(this.plantasDef,id)))throw new Error('Semilla de cinta desconocida');
   for(const d of Object.values(this.plantasDef))if(![d.sol,d.vida,d.recarga].every(finito)||d.sol<0||d.vida<=0||d.recarga<0)throw new Error('Definición de planta inválida');
@@ -60,6 +60,21 @@ export class MotorPvZ {
   if(nivel.objetivo){if(!this.casilla(nivel.objetivo.fila,nivel.objetivo.col)||!finito(nivel.objetivo.vida)||nivel.objetivo.vida<=0)throw new Error('Objetivo inválido');this.objetivoVida=nivel.objetivo.vida;}
  }
  nuevoId(){return this.proximo++;}
+ get semillas(){return this._semillas;}
+ /** Tras una victoria territorial, una nueva incursión conserva toda la guarnición y sus recursos.
+  * Solo rearma las oleadas: no cura plantas ni repone soles, abono o cortacéspedes. */
+ reanudarIncursion(){
+  if(this.terminado!=='gano'||!this.director||this.nivel.tipo!=='normal'||this.nivel.minijuego||this.nivel.cinta)return false;
+  this.director.rearmar(this.t);this.terminado='';this.oleada=0;this.vidaOleada=0;this.alzamientoEn=this.emboscadaEn=null;this.eventos=[];return true;
+ }
+ /** Trasladar tipos en descanso retira sus ejemplares y las capas que dependan de ellos, sin reembolso. */
+ cambiarSemillasEnDescanso(semillas:readonly string[]){
+  if(this.terminado!=='gano'||!Array.isArray(semillas)||semillas.length>10||new Set(semillas).size!==semillas.length||semillas.some(id=>!Object.hasOwn(this.plantasDef,id)))return false;
+  const anteriores=[...this.plantas];
+  for(const p of [...this.plantas])if(!semillas.includes(p.tipo))this.retirarPorTerreno(p);
+  const retiradas=new Set(anteriores.filter(p=>p.vida<=0).map(p=>p.id));this.plantas=this.plantas.filter(p=>p.vida>0);
+  this.proyectiles=this.proyectiles.filter(p=>!retiradas.has(p.origen));this.zonas=this.zonas.filter(z=>!retiradas.has(z.origen));this._semillas=[...semillas];this.eventos=[];return true;
+ }
  get altoFila(){return this.filas===6?85:100;}
  centroFila(fila:number){return fila*this.altoFila+this.altoFila/2;}
  casilla(fila:unknown,col:unknown):boolean{return entero(fila)&&this.nivel.filas.includes(fila)&&entero(col)&&col>=0&&col<this.columnas;}

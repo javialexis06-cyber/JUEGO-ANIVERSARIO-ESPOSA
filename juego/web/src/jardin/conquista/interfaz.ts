@@ -20,7 +20,7 @@ const esc=(v:string)=>v.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;
 const tiempo=(t:number)=>Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
 type Editor={tipo:'ataque'|'defensa';zona:number;equipo:string[];puestos:PuestoConquista[];elegida:string};
 export async function montarConquista(){
- document.body.dataset.conquista='1';document.title='La Semilla Madre · Conquista';const root=document.createElement('main');root.id='cq-app';document.body.append(root);
+ document.body.dataset.conquista='1';document.title='La Semilla Madre · Conquista anterior';const root=document.createElement('main');root.id='cq-app';document.body.append(root);
  const params=new URLSearchParams(location.search),prueba=params.has('prueba');
  let rutas:Partial<Record<HojaPvZ,string>>={};try{rutas=JSON.parse(document.getElementById('cq-arte-inline')?.textContent??'{}');}catch{/* recursos servidos */}
  const atlas=new AtlasPvZ(rutas),retratos=new RetratosPvZ(atlas),eventos=new AbortController();

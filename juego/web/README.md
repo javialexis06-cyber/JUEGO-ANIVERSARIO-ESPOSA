@@ -20,7 +20,7 @@ Vite + TypeScript + three.js. El contenedor Android usa Capacitor; el de escrito
 | `celular.html` | `src/celular/` | Los doce teléfonos de Desaparecidos de Astra. |
 | `peleas.html` | `src/peleas/` | El Torneo del Despertar Dorado. |
 | `mente.html` | `src/mente/` | Dieciséis juegos mentales del patio, reto diario y clasificación. |
-| `jardin.html` | `src/jardin/` | Conquista: historia de 12 áreas y versus de 36; PvZ de 40 niveles, patios y duelo aparte. |
+| `jardin.html` | `src/jardin/` | Historia con defensas PvZ completas en 12 áreas; conquista/versus anterior, PvZ de 40 niveles y patios aparte. |
 | `granja-v3.html` | `src/granja-v3/` | Granja V5 integrada; desarrollo pausado. |
 
 Lavarse la cara se abre desde la casa y desde la sala de amigos mediante `src/casa/lavado.ts`.
@@ -68,8 +68,8 @@ opciones de sala de amigos. [Reglas y comprobaciones](../../docs/sistemas/jardin
 
 La nueva aventura de PvZ tiene su motor independiente en `src/jardin/pvz/`: cuarenta niveles de día, noche, piscina y niebla,
 con guardado propio y pruebas mediante `npm run probar:pvz`. Su aventura Canvas, selección de semillas, almanaque y arte ilustrado están conectados;
-se abre en `jardin.html?modo=aventura`. Sin modo se abre Conquista, documentado en
-[su entrega](../../docs/en-obra/pvz-conquista-base-2026-10-22.md).
+se abre en `jardin.html?modo=aventura`. Sin modo se abre la [historia con defensas PvZ](../../docs/en-obra/pvz-historia-integrada.md).
+`modo=prototipo` conserva la historia y el versus anteriores con sus archivos independientes.
 Ver [contratos y límites](../../docs/en-obra/pvz-arte-2026-10-22.md).
 
 Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistemas/patio-mental.md) y
@@ -77,5 +77,5 @@ Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistema
 específica de Supabase documentada allí; la marca local funciona sin red.
 
 El pedido posterior a probar Conquista se sigue en [la lista de pendientes](../../docs/en-obra/pvz-pendientes-2026-10-22.md)
-y en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). Defensas PvZ completas con carriles según escenario, tipos exclusivos por zona y catálogo
-progresivo completo están pendientes; no confundir ese encargo con las funciones de la base publicada.
+y en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). La historia ya conecta defensas completas, carriles por escenario, tipos exclusivos y desbloqueos de las 32 plantas construidas.
+Catálogo completo, PvP nuevo, conversión de V1 y validación del balance normal siguen pendientes.

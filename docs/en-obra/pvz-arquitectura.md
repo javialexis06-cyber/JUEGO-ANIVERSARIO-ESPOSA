@@ -2,8 +2,8 @@
 
 La ampliación vigente es [motor completo, carriles por escenario y tipos exclusivos por zona](pvz-pendientes-2026-10-22.md).
 El constructor acepta `DefNivel.tablero.filas`; omitirlo conserva los cinco/seis carriles de los niveles originales.
-El [núcleo de instancias y reservas](pvz-instancias-2026-10-23.md) ya reutiliza partidas normales, pero el mapa
-y las salas de Conquista V1 aún usan su combate simplificado y requieren integración. Este contrato describe lo ya construido,
+La [historia integrada](pvz-historia-integrada.md) conecta el núcleo de instancias/reservas con mapa y guardado V2.
+Las salas y la historia anterior de Conquista V1 se conservan aparte; PvP nuevo y conversión V1 siguen pendientes. Este contrato describe lo ya construido,
 no declara terminada la ampliación ni fija cinco/seis carriles como límite para los escenarios futuros.
 
 Avances del 19 de octubre: [base del motor](pvz-motor-2026-10-19.md) y
@@ -39,7 +39,7 @@ reglas, costes y guardados. No requiere nuevas voces ni cambios de dificultad.
 - `src/jardin/datos.ts`, `motor.ts`, `vista.ts`, `duelo*.ts` y `public/jardin/figuras.glb` quedan intactos:
   - los 12 patios pasan a «Patios clásicos», con la clave `jardin-v1` / `amigo-jardin-v1` y sus estrellas;
   - el duelo para dos (`jardin-duelo.html`) no cambia.
-- `jardin.html` abre ahora [Conquista](pvz-conquista-base-2026-10-22.md); `?modo=aventura` conserva la pantalla de PvZ, con accesos a la
+- `jardin.html` abre la [historia con defensas PvZ](pvz-historia-integrada.md); `?modo=prototipo` conserva Conquista V1 y `?modo=aventura` la pantalla de PvZ, con accesos a la
   aventura, los modos, la fusión, los patios clásicos y el duelo.
 - Las pruebas existentes (`probar-jardin-motor.mjs`, `probar-jardin-duelo.mjs`, `probar-jardin-interfaz.mjs`,
   `probar-jardin-duelo-interfaz.mjs`) deben seguir pasando. Si cambia el menú, se ajusta la prueba de interfaz, no
@@ -264,6 +264,9 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
   La navegación normal no expone ese objeto. Las muestras del test no acreditan niveles ni premios.
 
 ## Guardado
+
+Este apartado describe la aventura de cuarenta niveles. El [guardado territorial V2](pvz-historia-integrada.md)
+conserva además sus combates activos, mundo, desbloqueos y reservas.
 
 - La clave es `pvz-v1`, o `amigo-pvz-v1` en la versión de amigos (como `esModoAmigo()` en el código actual).
 - Guarda:

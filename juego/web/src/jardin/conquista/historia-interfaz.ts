@@ -1,0 +1,154 @@
+import './conquista.css';
+import './historia.css';
+import '@fontsource/nunito/700.css';
+import '@fontsource/nunito/900.css';
+import {CinematicaConquista} from './cinematica';
+import {botonRedondo,icono} from './iconos';
+import {PAISES_CONQUISTA,ciudadesConquista,ubicacionConquista,zonasCiudad,zonasPais,POSICIONES_ZONA,type EscalaMapa} from './mapa';
+import {HistoriaConquistaPvZ,type PartidaHistoriaPvZ} from './historia-motor';
+import {GuardadoHistoriaPvZ} from './historia-guardado';
+import {escenarioHistoriaPvZ} from './historia-datos';
+import {AtlasPvZ} from '../pvz/arte/atlas';
+import {urlArtePvZ,type HojaPvZ} from '../pvz/arte/catalogo';
+import {RetratosPvZ} from '../pvz/ui/retratos';
+import {EscenaPvZ} from '../pvz/vista/escena';
+import {SonidoPvZ} from '../pvz/sonido';
+import {PLANTAS_PVZ} from '../pvz/datos/plantas';
+import {ZOMBIS_PVZ} from '../pvz/datos/zombis';
+import type {OrdenPvZ} from '../pvz/tipos';
+import {esModoAmigo} from '../../salas/perfil';
+
+const esc=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
+type Editor={zona:number;semillas:string[];revision:number};
+export async function montarHistoriaConquista(){
+ const params=new URLSearchParams(location.search),prueba=params.has('prueba'),amigo=esModoAmigo(),portatil=!!document.body.dataset.portatil;
+ document.body.dataset.conquista='1';document.title='La Semilla Madre · Historia';
+ const root=document.createElement('main');root.id='cq-app';root.className='cq-historia';document.body.append(root);
+ let rutas:Partial<Record<HojaPvZ,string>>={};try{rutas=JSON.parse(document.getElementById('cq-arte-inline')?.textContent??'{}');}catch{/* recursos servidos */}
+ const atlas=new AtlasPvZ(rutas),retratos=new RetratosPvZ(atlas),audio=new SonidoPvZ(),eventos=new AbortController();
+ root.style.setProperty('--cq-fondo',`url("${rutas.fondos??urlArtePvZ('fondos-mundos.png')}")`);
+ const guardado=new GuardadoHistoriaPvZ({getItem:k=>localStorage.getItem(k),setItem:(k,v)=>localStorage.setItem(k,v)},amigo?'amigo-conquista-historia-v2':'conquista-historia-v2');
+ const $=<T extends HTMLElement=HTMLElement>(q:string)=>root.querySelector<T>(q);
+ let mundo:HistoriaConquistaPvZ|null=null,almacenado:PartidaHistoriaPvZ|null=null,vista:EscenaPvZ|null=null,cine:CinematicaConquista|null=null,escuchasCampo:AbortController|null=null;
+ let muerto=false,pantalla='carga',zona=8,escala:EscalaMapa='ciudad',pais=2,ciudad=6,vistaActual:'mapa'|'batalla'='mapa',seleccion=false;
+ let editor:Editor|null=null,modal='',carta:string|null='lanzaguisantes',pala=false,sonido=false,errorGuardar=false,ocupado=false;
+ let liberar:()=>void=()=>{},tieneLock=false,anterior=performance.now(),acumulado=0,frame=0,hudEn=0,guardarEn=8,noticiaHasta=0,ultimoAviso=0,firmaBanco='',firmaDetalle='';
+ let piloto:((m:HistoriaConquistaPvZ)=>void)|null=null,importada:PartidaHistoriaPvZ|null=null;
+ const imagen=(tipo:string)=>`<img src="${retratos.planta(tipo)}" alt="${esc(PLANTAS_PVZ[tipo].nombre)}" draggable="false">`;
+ const rutaArte=(hoja:HojaPvZ,archivo:string)=>rutas[hoja]??urlArtePvZ(archivo);
+ function navegar(modo:string){const u=new URL('jardin.html',location.href);u.searchParams.set('modo',modo);for(const k of['rol','local','salas'])if(params.has(k))u.searchParams.set(k,params.get(k)!);location.href=u.href;}
+ function noticia(texto:string){const n=$('#cq-noticia');if(n){n.textContent=texto;n.classList.remove('cq-oculto');noticiaHasta=performance.now()+4500;}}
+ function cerrarCampo(){escuchasCampo?.abort();escuchasCampo=null;vista?.destruir();vista=null;}
+ function pararCine(){cine?.destruir();cine=null;}
+ function pelicula(final=false,portada=false){pararCine();const nodo=$('.cq-cine');if(nodo){cine=new CinematicaConquista(atlas,nodo,!final&&!portada,final,portada);cine.activarSonido(sonido&&!final);}}
+ function archivo(nombre:string,contenido:string){const url=URL.createObjectURL(new Blob([contenido],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=nombre;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+ function exportar(){if(mundo)archivo('semilla-madre-historia.json',JSON.stringify(mundo.exportar(),null,2));}
+ function guardar(){if(!mundo)return true;const ok=guardado.guardar(mundo.exportar());if(!ok){errorGuardar=true;mundo.pausar(true);modal='guardado';pintarModal();}else{errorGuardar=false;almacenado=mundo.exportar();guardarEn=mundo.t+8;}return ok;}
+ async function adquirir(){
+  if(muerto)return false;if(tieneLock)return true;if(!navigator.locks){tieneLock=true;return true;}
+  return new Promise<boolean>(resolve=>{void navigator.locks.request(guardado.clave,{ifAvailable:true},async lock=>{if(!lock||muerto){resolve(false);return;}tieneLock=true;const espera=new Promise<void>(r=>{liberar=()=>{tieneLock=false;r();};});resolve(true);await espera;}).catch(()=>resolve(false));});
+ }
+ function soltar(){cerrarCampo();pararCine();audio.pausa();mundo=null;piloto=null;importada=null;editor=null;modal='';liberar();tieneLock=false;liberar=()=>{};}
+ function menu(){soltar();pantalla='menu';almacenado=guardado.leer();let anteriorGuardado=false;try{anteriorGuardado=!!localStorage.getItem(amigo?'amigo-conquista-prototipo-v1':'conquista-prototipo-v1');}catch{/* error visible en el archivo nuevo */}
+  const acciones=[...(almacenado?[['continuar','Continuar','continuar']]:[]),['historia','Historia','historia'],...(!portatil?[['biblioteca','Minijuegos','minijuegos'],['versus','Versus clásico','versus']]:[]),...(anteriorGuardado&&!portatil?[['anterior','Historia anterior','exportar']]:[]),['importar','Abrir respaldo','exportar']];
+  root.innerHTML=`<section class="cq-menu cq-menu-inmersivo"><div class="cq-cine"></div><div class="cq-marca-mini"><small>PLANTAS CONTRA ZOMBIS</small><h1>La Semilla Madre</h1></div><nav class="cq-herramientas">${botonRedondo('pantalla','Pantalla completa','pantalla')}${botonRedondo('sonido','Sonido','sonido')}${botonRedondo('ayuda','Cómo jugar','ayuda')}</nav><nav class="cq-menu-dock">${acciones.map(([a,t,i])=>'<div>'+botonRedondo(a,t,i)+'<span>'+t+'</span></div>').join('')}</nav><input type="file" id="cq-respaldo" accept="application/json,.json" hidden><p class="cq-error cq-error-menu" role="alert">${esc(guardado.error)}</p></section><div class="cq-noticia cq-oculto" id="cq-noticia" role="status"></div><div id="cq-capa"></div>`;pelicula(false,true);
+ }
+ async function comenzar(continuar:boolean){
+  if(ocupado)return;ocupado=true;
+  try{if(!await adquirir()){noticia('Esta historia está abierta en otra pestaña. Ciérrala para continuar aquí.');return;}almacenado=guardado.leer();
+   if(guardado.error){noticia(guardado.error);liberar();tieneLock=false;return;}
+   if(continuar){if(almacenado)iniciar(HistoriaConquistaPvZ.restaurar(almacenado));else{noticia('Todavía no hay una historia guardada.');liberar();tieneLock=false;}}
+   else if(almacenado){modal='nueva';pintarModal();}else iniciar(new HistoriaConquistaPvZ());
+  }finally{ocupado=false;}
+ }
+ function iniciar(nuevo:HistoriaConquistaPvZ){pararCine();mundo=nuevo;piloto=null;errorGuardar=false;pantalla='juego';zona=8;vistaActual='mapa';escala='ciudad';({pais,ciudad}=ubicacionConquista(nuevo.estado,zona));seleccion=false;editor=null;modal='';ultimoAviso=nuevo.estado.avisos.at(-1)?.id??0;acumulado=0;anterior=performance.now();guardarEn=nuevo.t+8;dibujarJuego();guardar();actualizar();}
+ function dibujarJuego(){cerrarCampo();root.innerHTML=`<section class="cq-juego cq-inmersivo"><div class="cq-principal" id="cq-principal"></div><nav class="cq-herramientas cq-herramientas-juego">${botonRedondo('mapa','Mapa de la ciudad','ciudad')}${botonRedondo('subir-mapa','Mapa del país o del mundo','mapa')}${botonRedondo('pausa','Pausa global','pausa')}${botonRedondo('pantalla','Pantalla completa','pantalla')}${botonRedondo('salir','Volver al inicio','salir')}</nav></section><div class="cq-noticia cq-oculto" id="cq-noticia" role="status"></div><div id="cq-capa"></div>`;pintarCuerpo();}
+ function pintarCuerpo(){cerrarCampo();firmaBanco=firmaDetalle='';const cont=$('#cq-principal');if(!cont||!mundo)return;const s=mundo.estado;
+  if(vistaActual==='mapa'){
+   mundo.seleccionar(null);let puntos='';
+   if(escala==='mundo')puntos=PAISES_CONQUISTA.map(p=>`<button class="cq-pin cq-pin-region" data-pais="${p.id}" style="--x:${p.x}%;--y:${p.y}%" aria-label="${p.nombre}"><span class="cq-emblema">${icono('pais')}</span><b>${p.nombre}</b><small></small></button>`).join('');
+   else if(escala==='pais')puntos=ciudadesConquista(s,pais).map(c=>`<button class="cq-pin cq-pin-region" data-ciudad="${c.id}" style="--x:${c.x}%;--y:${c.y}%" aria-label="${c.nombre}"><span class="cq-emblema">${icono('ciudad')}</span><b>${c.nombre}</b><small></small></button>`).join('');
+   else puntos=zonasCiudad(s,ciudad).map(z=>{const p=z.base==='zombis'?{x:87,y:25}:POSICIONES_ZONA[[0,1,2,3,1,0,2,3,0,3,2,1][z.id]];return`<button class="cq-pin" data-zona="${z.id}" style="--x:${p.x}%;--y:${p.y}%" aria-label="${esc(z.nombre)}"><span class="cq-emblema">${icono(z.base?'historia':'atacar')}</span><b>${esc(z.nombre)}</b><small></small></button>`;}).join('');
+   const nombre=escala==='mundo'?'El mundo':escala==='pais'?PAISES_CONQUISTA[pais].nombre:ciudadesConquista(s,pais).find(c=>c.id===ciudad)?.nombre??'Ciudad';
+   cont.innerHTML=`<div class="cq-cartografia cq-cartografia-${escala}" style="background-image:url('${rutaArte(escala,`mapa-${escala}.png`)}')">${puntos}</div><div class="cq-nombre-mapa"><small>${escala==='mundo'?'MUNDO':escala==='pais'?'PAÍS':'CIUDAD'}</small><b>${esc(nombre)}</b></div><div class="cq-ordenes cq-oculto" id="cq-detalle"></div>`;
+  }else{mundo.seleccionar(zona);cont.innerHTML='<div class="cq-combate"><div class="cq-arena" id="cq-arena"></div><div class="cq-banco" id="cq-banco"></div></div><nav class="cq-intervencion">'+botonRedondo('pala','Pala: retirar una planta','equipo')+'</nav><div class="cq-estado-frente" id="cq-estado-frente" role="status"></div>';vista=new EscenaPvZ(atlas,$('#cq-arena')!);escuchasCampo=new AbortController();vista.canvas.addEventListener('pointerdown',tocar,{signal:escuchasCampo.signal});const m=mundo.defensas.observar(String(zona));if(m)vista.dibujar(m);}
+ }
+ function irMapa(subir=false){if(!mundo)return;vistaActual='mapa';seleccion=false;if(subir)escala=escala==='ciudad'?'pais':'mundo';else{escala='ciudad';({pais,ciudad}=ubicacionConquista(mundo.estado,zona));}pintarCuerpo();actualizar();}
+ function verDefensa(id:number){if(!mundo?.defensas.observar(String(id)))return;zona=id;vistaActual='batalla';seleccion=false;carta=mundo.defensas.semillas(String(id))[0]??null;pala=false;pintarCuerpo();actualizar();}
+ function ordenar(orden:OrdenPvZ){if(!mundo)return false;const ok=mundo.ordenar(zona,orden),m=mundo.defensas.observar(String(zona));if(m){const e=m.consumirEventos();vista?.eventos(e,m.t,m);if(sonido)audio.eventos(e);}if(ok)actualizar();return ok;}
+ function tocar(e:PointerEvent){e.preventDefault();const m=mundo?.defensas.observar(String(zona));if(!m||!vista)return;const q=vista.tocar(e.clientX,e.clientY,m);if(!q)return;if(q.sol!==undefined)ordenar({tipo:'recoger',id:q.sol});else if(pala)ordenar({tipo:'pala',fila:q.fila,col:q.col});else if(carta)ordenar({tipo:'plantar',planta:carta,fila:q.fila,col:q.col});}
+ function abrirEditor(){if(!mundo||mundo.estado.zonas[zona].incursion)return;editor={zona,semillas:[...mundo.defensas.semillas(String(zona))],revision:mundo.defensas.revision};modal='editor';pintarModal();}
+ function pintarEditor(){if(!mundo||!editor)return'';const e=editor,z=mundo.estado.zonas[e.zona],d=escenarioHistoriaPvZ(e.zona);
+  return`<section class="cq-modal cq-editor cq-semillas-editor" role="dialog" aria-modal="true" aria-label="Semillas de ${esc(z.nombre)}"><header><div><small>${d.nivel.tablero!.filas} CARRILES</small><h2>${esc(z.nombre)}</h2></div>${botonRedondo('cerrar-modal','Cerrar selección','cerrar')}</header><div class="cq-enemigos-previstos" aria-label="Enemigos de esta zona">${d.nivel.zombis.map(id=>`<img src="${retratos.zombi(id)}" alt="${esc(ZOMBIS_PVZ[id].nombre)}" title="${esc(ZOMBIS_PVZ[id].nombre)}">`).join('')}</div><div class="cq-catalogo">${mundo.estado.desbloqueadas.map(id=>{const origen=mundo!.defensas.propietaria(id),ocupada=origen!==null&&origen!==String(e.zona),activa=ocupada&&!!mundo!.estado.zonas[Number(origen)].incursion;return`<button class="cq-ficha ${e.semillas.includes(id)?'cq-elegida':''}" data-semilla-equipo="${id}" aria-pressed="${e.semillas.includes(id)}" ${activa?'disabled':''} title="${esc(PLANTAS_PVZ[id].descripcion)}">${imagen(id)}<b>${esc(PLANTAS_PVZ[id].nombre)}</b><small>☀ ${PLANTAS_PVZ[id].sol}</small><span class="cq-origen-semilla">${ocupada?esc(mundo!.estado.zonas[Number(origen)].nombre):origen===String(e.zona)?'En esta zona':'Disponible'}</span></button>`;}).join('')}</div><p class="cq-traslados">${e.semillas.length}/10 tipos · Cada tipo queda reservado para esta zona. Los tipos trasladados se retiran de su defensa anterior sin devolver soles. Las oleadas continúan.</p><p class="cq-error" id="cq-error-editor" role="alert"></p><div class="cq-linea"><button data-cq="cerrar-modal">Cancelar</button><button class="cq-verde" data-cq="confirmar-equipo">Guardar equipo</button></div></section>`;
+ }
+ function pintarModal(){const capa=$('#cq-capa');if(!capa)return;if(!modal){capa.innerHTML='';return;}let contenido='';
+  if(modal==='editor')contenido=pintarEditor();
+  else if(modal==='pausa')contenido=`<section class="cq-modal cq-pausa-breve" role="dialog" aria-modal="true" aria-label="Pausa global"><h2>Un respiro en el jardín</h2><nav>${botonRedondo('pausa','Continuar','reanudar')}${botonRedondo('exportar','Exportar historia','exportar')}${botonRedondo('salir','Volver al inicio','salir')}</nav></section>`;
+  else if(modal==='guardado')contenido=`<section class="cq-modal" role="dialog" aria-modal="true"><h2>La historia está en pausa</h2><p>${esc(guardado.error)}</p><button data-cq="reintentar">Reintentar guardado</button><button data-cq="exportar">Exportar esta historia</button></section>`;
+  else if(modal==='nueva')contenido=`<section class="cq-modal" role="dialog" aria-modal="true"><h2>¿Comenzar otra historia?</h2><p>La historia guardada tiene ${almacenado?.mundo.zonas.filter(z=>z.dueno==='plantas').length??0} zonas recuperadas. Puedes exportarla antes de reemplazarla. Las partidas anteriores y los minijuegos se conservan.</p><button data-cq="exportar-almacenada">Exportar la historia guardada</button><button data-cq="confirmar-nueva">Comenzar otra historia</button><button data-cq="cancelar-nueva">Conservar y volver</button></section>`;
+  else if(modal==='importar'&&importada)contenido=`<section class="cq-modal" role="dialog" aria-modal="true"><h2>Abrir este respaldo</h2><p>${importada.mundo.zonas.filter(z=>z.dueno==='plantas').length} zonas recuperadas · ${importada.mundo.zonas.filter(z=>z.incursion).length} combates en curso.</p><p>${almacenado?'Reemplazará la historia actual de esta versión. Puedes exportarla antes de continuar.':'Se guardará como tu historia de esta versión.'} Los archivos del prototipo y los minijuegos se conservan.</p>${almacenado?'<button data-cq="exportar-almacenada">Exportar historia actual</button>':''}<button data-cq="confirmar-importacion">Abrir respaldo</button><button data-cq="cancelar-nueva">Conservar y volver</button></section>`;
+  else if(modal==='biblioteca')contenido=`<section class="cq-modal" role="dialog" aria-modal="true"><h2>El jardín de siempre</h2><button data-cq="aventura">Aventura PvZ · 40 niveles</button><button data-cq="clasicos">Patios clásicos</button><button data-cq="anterior">Conquista anterior y versus</button><button data-cq="cerrar-modal">Volver</button></section>`;
+  else if(modal==='ayuda')contenido='<section class="cq-modal" role="dialog" aria-modal="true"><h2>Recupera el mundo, cuida cada jardín</h2><p>Explora un territorio conectado con la casa para descubrir semillas. Prepara un equipo exclusivo y completa su defensa normal de PvZ para purificarlo.</p><p>Los zombis atacan las fronteras. Vuelve al mapa de la ciudad, del país o del mundo para intervenir en otra zona. Todos los combates continúan mientras eliges; la pausa global los detiene.</p><p>Tras una victoria se conservan plantas, salud, soles, recargas y cortacéspedes. Los tipos pueden trasladarse al terminar el combate, retirando sus ejemplares anteriores sin reembolso.</p><p>Protege la casa y recupera las doce zonas. La fortaleza zombi espera a que estén purificadas las otras once. Al recuperar todo el mapa, el Dr. Zomboid huye en su nave.</p><p>1–0: semillas. M o Tab: mapa. Espacio: pausa. No transcurre tiempo mientras el juego está cerrado.</p><button data-cq="cerrar-modal">Volver al jardín</button></section>';
+  else if(modal==='final')contenido=mundo?.estado.ganador==='plantas'?`<div class="cq-cine cq-cine-final"></div><div class="cq-final-rotulo"><small>100% PURIFICADO</small><h2>Un mundo vuelve a florecer</h2></div><nav class="cq-final-controles">${botonRedondo('salir','Volver al jardín','historia')}${botonRedondo('exportar','Exportar historia','exportar')}</nav>`:`<div class="cq-cine"></div><div class="cq-final-rotulo"><h2>La casa necesita otra oportunidad</h2></div><nav class="cq-final-controles">${botonRedondo('salir','Volver al jardín','historia')}${botonRedondo('exportar','Exportar historia','exportar')}</nav>`;
+  capa.innerHTML=`<div class="cq-modal-fondo ${modal==='final'?'cq-fin-inmersivo':''}">${contenido}</div>`;if(modal==='final')pelicula(mundo?.estado.ganador==='plantas',mundo?.estado.ganador!=='plantas');
+ }
+ function actualizar(){if(!mundo||pantalla!=='juego')return;const s=mundo.estado,m=mundo.defensas.observar(String(zona));
+  for(const pin of root.querySelectorAll<HTMLButtonElement>('.cq-pin')){const ids=pin.dataset.zona!==undefined?[Number(pin.dataset.zona)]:pin.dataset.ciudad!==undefined?zonasCiudad(s,Number(pin.dataset.ciudad)).map(z=>z.id):zonasPais(s,Number(pin.dataset.pais)).map(z=>z.id);const zs=ids.map(id=>s.zonas[id]),n=zs.filter(z=>z.dueno==='plantas').length,activos=zs.filter(z=>z.incursion).length;pin.classList.toggle('plantas',n===zs.length);pin.classList.toggle('zombis',n===0);pin.classList.toggle('en-guerra',activos>0);pin.querySelector('small')!.textContent=activos?'⚔ '+activos:ids.length>1?n+'/'+ids.length:'';}
+  if(vistaActual==='mapa'){
+   const z=s.zonas[zona],d=$('#cq-detalle'),firma=[zona,seleccion,z.dueno,!!z.incursion,mundo.puedeLlegar(zona),mundo.defensas.revision,!!m,mundo.defensas.pausada,Math.ceil(Math.max(0,z.descanso-mundo.t))].join(':');
+   if(d&&firma!==firmaDetalle){firmaDetalle=firma;d.classList.toggle('cq-oculto',!seleccion);if(seleccion)d.innerHTML=`<div class="cq-orden-titulo"><b>${esc(z.nombre)}</b>${botonRedondo('cerrar-zona','Cerrar selección','cerrar')}</div><div class="cq-opciones-zona">${z.incursion?botonRedondo('intervenir','Intervenir en esta defensa','atacar'):mundo.puedeLlegar(zona)?`${botonRedondo('equipo','Preparar semillas de esta zona','equipo')}${z.dueno==='zombis'?botonRedondo('expedicion','Iniciar expedición','atacar'):m?botonRedondo('intervenir','Ver la defensa conservada','formacion'):''}`:''}</div><small class="cq-dato-util">${esc(z.incursion?'Batalla en curso':zona===3&&!mundo.puedeLlegar(zona)?'Recupera primero las otras once zonas':!mundo.puedeLlegar(zona)?'Necesitas una ruta conectada':z.dueno==='plantas'?'Zona recuperada':mundo.defensas.semillas(String(zona)).length?'Equipo listo':'Prepara un equipo antes de salir')}</small><div class="cq-equipo-mini">${mundo.defensas.semillas(String(zona)).map(imagen).join('')}</div>`;}
+   const expedicion=$<HTMLButtonElement>('[data-cq="expedicion"]');if(expedicion)expedicion.disabled=!mundo.puedeExpedicion(zona)||!mundo.defensas.semillas(String(zona)).length;
+  }else if(m){const firma=m.semillas.join(',');if(firma!==firmaBanco){firmaBanco=firma;$('#cq-banco')!.innerHTML='<span class="cq-reserva-sol" title="Sol de esta zona">☀<b id="cq-sol-local"></b></span>'+m.semillas.map((id,i)=>`<button class="cq-carta" data-carta="${id}" title="${esc(PLANTAS_PVZ[id].nombre)}" aria-label="${esc(PLANTAS_PVZ[id].nombre)}, ${PLANTAS_PVZ[id].sol} de sol">${imagen(id)}<span>${PLANTAS_PVZ[id].sol}</span><small>${(i+1)%10}</small><i></i></button>`).join('');}
+   $('#cq-sol-local')!.textContent=String(m.sol);for(const b of root.querySelectorAll<HTMLButtonElement>('[data-carta]')){const id=b.dataset.carta!,rec=m.recargas[id]??0;b.classList.toggle('cq-elegida',!pala&&carta===id);b.disabled=!!m.terminado||mundo.defensas.pausada||m.sol<PLANTAS_PVZ[id].sol||rec>0;b.style.setProperty('--recarga',Math.min(1,rec/Math.max(.01,PLANTAS_PVZ[id].recarga))*100+'%');}
+   const estado=$('#cq-estado-frente');if(estado)estado.textContent=m.terminado==='gano'?'Defensa conservada':m.terminado==='perdio'?'Los zombis tomaron esta zona':m.oleada?'Oleada '+m.oleada+' / '+(m.director?.total??0):'';
+  }else{const banco=$('#cq-banco'),estado=$('#cq-estado-frente');if(banco)banco.innerHTML='';if(estado)estado.textContent='Los zombis tomaron esta zona';}
+  const aviso=s.avisos.at(-1);if(aviso&&aviso.id!==ultimoAviso){ultimoAviso=aviso.id;noticia(aviso.texto);}
+  if(s.ganador&&modal!=='final'&&!errorGuardar){modal='final';editor=null;guardar();pintarModal();}
+  else if(mundo.defensas.pausada&&!modal){modal='pausa';pintarModal();}
+ }
+ function pausa(){if(!mundo||errorGuardar||mundo.estado.ganador)return;mundo.pausar(!mundo.defensas.pausada);editor=null;modal=mundo.defensas.pausada?'pausa':'';acumulado=0;anterior=performance.now();pintarModal();actualizar();guardar();}
+ root.addEventListener('click',e=>{const b=(e.target as Element).closest<HTMLButtonElement>('button');if(!b||b.disabled)return;if(sonido)audio.activar();
+  if(b.dataset.pais!==undefined){pais=Number(b.dataset.pais);escala='pais';seleccion=false;pintarCuerpo();actualizar();return;}
+  if(b.dataset.ciudad!==undefined){ciudad=Number(b.dataset.ciudad);escala='ciudad';seleccion=false;pintarCuerpo();actualizar();return;}
+  if(b.dataset.zona!==undefined&&mundo){zona=Number(b.dataset.zona);mundo.explorar(zona);seleccion=true;actualizar();guardar();return;}
+  if(b.dataset.carta){carta=b.dataset.carta;pala=false;actualizar();return;}
+  if(b.dataset.semillaEquipo&&editor){const id=b.dataset.semillaEquipo;editor.semillas=editor.semillas.includes(id)?editor.semillas.filter(t=>t!==id):editor.semillas.length<10?[...editor.semillas,id]:editor.semillas;pintarModal();return;}
+  switch(b.dataset.cq){
+   case'historia':void comenzar(false);break;case'continuar':void comenzar(true);break;
+   case'importar':$('#cq-respaldo')?.click();break;case'confirmar-importacion':if(importada){const m=HistoriaConquistaPvZ.restaurar(importada);importada=null;iniciar(m);}break;
+   case'confirmar-nueva':iniciar(new HistoriaConquistaPvZ());break;case'cancelar-nueva':menu();break;
+   case'exportar-almacenada':if(almacenado)archivo('semilla-madre-anterior.json',JSON.stringify(almacenado,null,2));break;
+   case'biblioteca':modal='biblioteca';pintarModal();break;case'aventura':navegar('aventura');break;case'clasicos':navegar('clasicos');break;case'anterior':case'versus':navegar('prototipo');break;
+   case'mapa':irMapa();break;case'subir-mapa':irMapa(true);break;case'cerrar-zona':seleccion=false;firmaDetalle='';actualizar();break;
+   case'equipo':abrirEditor();break;
+   case'confirmar-equipo':if(editor&&mundo){const error=mundo.preparar(editor.zona,editor.semillas,editor.revision);if(error){$('#cq-error-editor')!.textContent=error;editor.revision=mundo.defensas.revision;}else{editor=null;modal='';pintarModal();actualizar();guardar();}}break;
+   case'expedicion':if(mundo?.expedicion(zona)){guardar();verDefensa(zona);}else noticia('Revisa las semillas, la ruta y los combates abiertos.');break;
+   case'intervenir':verDefensa(zona);break;case'pala':pala=!pala;carta=null;actualizar();break;
+   case'pausa':pausa();break;case'reintentar':if(guardar()&&mundo){mundo.pausar(false);modal='';pintarModal();acumulado=0;anterior=performance.now();actualizar();}break;
+   case'salir':if(guardar())menu();break;case'exportar':exportar();break;
+   case'ayuda':modal='ayuda';pintarModal();break;case'cerrar-modal':editor=null;modal='';pintarModal();break;
+   case'sonido':sonido=!sonido;audio.habilitado=sonido;cine?.activarSonido(sonido);b.setAttribute('aria-pressed',String(sonido));break;
+   case'pantalla':if(document.fullscreenElement)void document.exitFullscreen();else void document.documentElement.requestFullscreen().catch(()=>noticia('El navegador no permite pantalla completa.'));break;
+  }
+ },{signal:eventos.signal});
+ root.addEventListener('change',async e=>{if((e.target as HTMLInputElement).id!=='cq-respaldo'||ocupado)return;const input=e.target as HTMLInputElement,file=input.files?.[0];input.value='';if(!file)return;ocupado=true;
+  try{if(file.size>16*1024*1024)throw Error('El respaldo es demasiado grande.');const preparada=HistoriaConquistaPvZ.restaurar(JSON.parse(await file.text())).exportar();if(muerto)return;
+   if(!await adquirir()){noticia('Esta historia está abierta en otra pestaña.');return;}almacenado=guardado.leer();if(guardado.error){noticia(guardado.error);liberar();tieneLock=false;return;}
+   importada=preparada;modal='importar';pintarModal();
+  }catch{noticia('No se pudo abrir ese respaldo. No se ha cambiado ningún archivo.');}finally{ocupado=false;}
+ },{signal:eventos.signal});
+ document.addEventListener('keydown',e=>{if((e.target as HTMLElement).matches('input,textarea')||!mundo)return;if(e.key===' '){e.preventDefault();pausa();}else if(e.key==='Escape'&&editor){editor=null;modal='';pintarModal();}else if(e.key.toLowerCase()==='m'||e.key==='Tab'&&!modal){e.preventDefault();irMapa();}else if(/^\d$/.test(e.key)){const id=mundo.defensas.semillas(String(zona))[(Number(e.key)+9)%10];if(id){carta=id;pala=false;actualizar();}}},{signal:eventos.signal});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&mundo&&!mundo.estado.ganador){mundo.pausar(true);if(!modal){modal='pausa';pintarModal();}guardar();}},{signal:eventos.signal});
+ window.addEventListener('storage',e=>{if(e.key===guardado.clave&&mundo)guardar();},{signal:eventos.signal});
+ function paso(){if(!mundo)return;piloto?.(mundo);const anterior=mundo.defensas.observar(String(zona)),es=mundo.paso();for(const e of es)if(e.zona===String(zona)&&vista){const m=mundo.defensas.observar(e.zona)??anterior;if(m){vista.eventos(e.eventos,m.t,m);if(!mundo.defensas.observar(e.zona))vista.dibujar(m);if(sonido)audio.eventos(e.eventos);}}}
+ function cuadro(t:number){if(muerto)return;cine?.dibujar(t);const dt=Math.min(.2,Math.max(0,(t-anterior)/1000));anterior=t;if(mundo&&pantalla==='juego'){if(!mundo.defensas.pausada&&!mundo.estado.ganador){acumulado=Math.min(.2,acumulado+dt);while(acumulado>=1/60){paso();acumulado-=1/60;}}const m=mundo.defensas.observar(String(zona));if(vista&&m)vista.dibujar(m);if(t-hudEn>150){actualizar();hudEn=t;}if(mundo.t>=guardarEn&&!errorGuardar)guardar();if(t>noticiaHasta)$('#cq-noticia')?.classList.add('cq-oculto');}frame=requestAnimationFrame(cuadro);}
+ function destruir(){if(muerto)return;guardar();muerto=true;cancelAnimationFrame(frame);eventos.abort();soltar();retratos.destruir();atlas.destruir();audio.destruir();root.remove();delete document.body.dataset.conquista;delete(window as any).__historiaPvZ;}
+ const volver=(e:PageTransitionEvent)=>{if(e.persisted&&muerto)location.reload();};window.addEventListener('pageshow',volver);window.addEventListener('pagehide',e=>{destruir();if(!e.persisted)window.removeEventListener('pageshow',volver);},{once:true});
+ root.innerHTML='<section class="cq-carga"><div class="cq-cine"></div><div class="cq-carga-panel"><small>LA SEMILLA MADRE</small><h1>Despertando los jardines</h1><progress max="18" value="0"></progress></div></section>';pelicula();frame=requestAnimationFrame(cuadro);
+ try{await atlas.cargar(()=>{const p=$<HTMLProgressElement>('progress');if(p)p.value=atlas.cargadas;});if(muerto)return;for(const[i,nombre]of['marco','sobre','tablilla','boton-verde','boton-zombi','papel','laurel','boton-crema'].entries())root.style.setProperty('--cq-'+nombre,`url("${atlas.miniatura({hoja:'interfaz',celda:i})}")`);menu();
+  if(prueba)(window as any).__historiaPvZ={mundo:()=>mundo,vista:()=>vista,guardado:()=>guardado,atlas:()=>atlas,editor:()=>editor,pantalla:()=>pantalla,zona:()=>zona,ordenar,destruir,
+   avanzar:(n:number)=>{if(!Number.isSafeInteger(n)||n<0||n>90000)throw Error('Pasos inválidos');for(let i=0;i<n&&!mundo?.estado.ganador;i++)paso();actualizar();const m=mundo?.defensas.observar(String(zona));if(m&&vista)vista.dibujar(m);guardar();return mundo?.exportar();},
+   activarPiloto:async()=>{const lib=await import('./historia-piloto');piloto=lib.crearPilotoHistoriaPvZ();},
+  };
+ }catch(e){pararCine();root.innerHTML='<section class="cq-carga"><h1>No se pudo abrir el jardín</h1><p>Vuelve a cargar para reintentar.</p></section>';console.error('Historia PvZ:',e);}
+}
