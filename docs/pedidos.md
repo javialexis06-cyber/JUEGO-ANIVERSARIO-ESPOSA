@@ -7,7 +7,9 @@ Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contr
 
 [Guía ejecutable de ElevenLabs para Claude](en-obra/pvz-elevenlabs-guia-claude.md): 107 familias y 253
 archivos previstos, prompts, guion de Dave, rutas, producción con control de saldo y validación. Javier
-confirmó que Claude dispone de la clave y pidió dejarle esta parte preparada. **Aún no hay grabaciones nuevas.**
+confirmó que Claude dispone de la clave y pidió dejarle esta parte preparada. **Hecho por Claude el 23 de octubre:
+los 253 audios están producidos y publicados con su índice** ([entrega](en-obra/pvz-audio-entrega-2026-10-23.md));
+falta que Codex los reproduzca en el juego.
 Efectos, música original y balbuceos no verbales están autorizados con el saldo existente; las voces
 clonadas y los diálogos hablados del encargo antiguo siguen descartados. La anterior restricción de
 usar solo síntesis en el Jardín queda sustituida por este pedido.

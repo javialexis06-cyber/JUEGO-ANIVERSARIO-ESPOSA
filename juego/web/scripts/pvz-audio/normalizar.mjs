@@ -18,7 +18,7 @@ for(const nombre of (await readdir(origen)).filter(n=>n.endsWith('.mp3')).sort()
  try{await access(a2);informe.push({nombre,omitido:'ya listo'});continue;}catch{/* falta: se prepara */}
  const objetivo=a.bucle?-23:-18;
  // Recortar silencio solo en efectos sueltos (los bucles tienen que empalmar enteros)
- const recorte=a.bucle?'':'silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse,apad=pad_dur=0.04,';
+ const recorte=a.bucle?'':'silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse,apad=pad_dur=0.04,apad=whole_dur=0.25,';
  execFileSync('ffmpeg',['-v','error','-y','-i',de,'-af',`${recorte}loudnorm=I=${objetivo}:TP=-1.5:LRA=11,aresample=44100,alimiter=limit=0.63:level=false:attack=1:release=40`,'-ar','44100','-ac',a.tipo==='musica'||a.bucle?'2':'1','-c:a','libmp3lame','-b:a','128k',a2]);
  informe.push({nombre,objetivo});
 }

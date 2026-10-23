@@ -2,9 +2,247 @@
  "fecha": "2026-10-23",
  "archivos": [
   {
+   "nombre": "ajo-01.mp3",
+   "segundos": 0.89,
+   "lufs": -18.5,
+   "picoVerdadero": -4.8,
+   "maximoDb": -4.9
+  },
+  {
+   "nombre": "ajo-02.mp3",
+   "segundos": 0.86,
+   "lufs": -19.1,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4.3
+  },
+  {
    "nombre": "alarma-frontera-01.mp3",
    "segundos": 1.57,
    "lufs": -18.8,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "alarma-frontera-02.mp3",
+   "segundos": 0.76,
+   "lufs": -19.1,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "ambiente-agua-01.mp3",
+   "segundos": 20.04,
+   "lufs": -24.6,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "ambiente-agua-02.mp3",
+   "segundos": 20.04,
+   "lufs": -23.7,
+   "picoVerdadero": -3.8,
+   "maximoDb": -3.8
+  },
+  {
+   "nombre": "ambiente-almacen-01.mp3",
+   "segundos": 20.04,
+   "lufs": -24.6,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "ambiente-almacen-02.mp3",
+   "segundos": 20.04,
+   "lufs": -21.3,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "ambiente-carretera-01.mp3",
+   "segundos": 20.04,
+   "lufs": -25.1,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "ambiente-carretera-02.mp3",
+   "segundos": 20.04,
+   "lufs": -22.9,
+   "picoVerdadero": -3.9,
+   "maximoDb": -3.9
+  },
+  {
+   "nombre": "ambiente-dia-01.mp3",
+   "segundos": 20.04,
+   "lufs": -23.2,
+   "picoVerdadero": -11.9,
+   "maximoDb": -13
+  },
+  {
+   "nombre": "ambiente-dia-02.mp3",
+   "segundos": 20.04,
+   "lufs": -22.7,
+   "picoVerdadero": -8,
+   "maximoDb": -8.5
+  },
+  {
+   "nombre": "ambiente-noche-01.mp3",
+   "segundos": 20.04,
+   "lufs": -23.2,
+   "picoVerdadero": -10.2,
+   "maximoDb": -10.3
+  },
+  {
+   "nombre": "ambiente-noche-02.mp3",
+   "segundos": 20.04,
+   "lufs": -24.6,
+   "picoVerdadero": -15.1,
+   "maximoDb": -15.3
+  },
+  {
+   "nombre": "animal-01.mp3",
+   "segundos": 1.15,
+   "lufs": -21.7,
+   "picoVerdadero": -8.1,
+   "maximoDb": -8.5
+  },
+  {
+   "nombre": "animal-02.mp3",
+   "segundos": 1.33,
+   "lufs": -21.2,
+   "picoVerdadero": -5.1,
+   "maximoDb": -5.1
+  },
+  {
+   "nombre": "antorcha-01.mp3",
+   "segundos": 0.89,
+   "lufs": -20,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "antorcha-02.mp3",
+   "segundos": 1.12,
+   "lufs": -19.8,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "antorcha-03.mp3",
+   "segundos": 0.76,
+   "lufs": -23.3,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "aplastar-01.mp3",
+   "segundos": 1.57,
+   "lufs": -26.6,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "aplastar-02.mp3",
+   "segundos": 1.18,
+   "lufs": -27.1,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "aplastar-03.mp3",
+   "segundos": 1.2,
+   "lufs": -22.6,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "baile-01.mp3",
+   "segundos": 0.34,
+   "lufs": -70,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "baile-02.mp3",
+   "segundos": 0.68,
+   "lufs": -23.6,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "baile-03.mp3",
+   "segundos": 0.44,
+   "lufs": -70,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "boomerang-01.mp3",
+   "segundos": 0.97,
+   "lufs": -18.4,
+   "picoVerdadero": -6.3,
+   "maximoDb": -6.8
+  },
+  {
+   "nombre": "boomerang-02.mp3",
+   "segundos": 1.07,
+   "lufs": -18.4,
+   "picoVerdadero": -4.3,
+   "maximoDb": -5
+  },
+  {
+   "nombre": "cafe-01.mp3",
+   "segundos": 0.5,
+   "lufs": -28.1,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "cafe-02.mp3",
+   "segundos": 1.1,
+   "lufs": -26.3,
+   "picoVerdadero": -4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "caja-01.mp3",
+   "segundos": 3.08,
+   "lufs": -18.5,
+   "picoVerdadero": -4,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "caja-02.mp3",
+   "segundos": 2.93,
+   "lufs": -19.8,
+   "picoVerdadero": -3.7,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "caja-03.mp3",
+   "segundos": 2.9,
+   "lufs": -18.5,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "calabaza-01.mp3",
+   "segundos": 0.73,
+   "lufs": -23.5,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "calabaza-02.mp3",
+   "segundos": 0.63,
+   "lufs": -21.4,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "calabaza-03.mp3",
+   "segundos": 0.57,
+   "lufs": -23.3,
    "picoVerdadero": -4.4,
    "maximoDb": -4.4
   },
@@ -16,11 +254,221 @@
    "maximoDb": -8.1
   },
   {
+   "nombre": "captura-02.mp3",
+   "segundos": 2.09,
+   "lufs": -21.1,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "catapulta-01.mp3",
+   "segundos": 1.8,
+   "lufs": -21.6,
+   "picoVerdadero": -3,
+   "maximoDb": -3.5
+  },
+  {
+   "nombre": "catapulta-02.mp3",
+   "segundos": 2.09,
+   "lufs": -21,
+   "picoVerdadero": -3.3,
+   "maximoDb": -3.9
+  },
+  {
    "nombre": "cereza-01.mp3",
    "segundos": 2.09,
    "lufs": -22.6,
    "picoVerdadero": -4.2,
    "maximoDb": -4.2
+  },
+  {
+   "nombre": "cereza-02.mp3",
+   "segundos": 0.63,
+   "lufs": -18.4,
+   "picoVerdadero": -7.4,
+   "maximoDb": -7.4
+  },
+  {
+   "nombre": "cereza-03.mp3",
+   "segundos": 0.91,
+   "lufs": -19.6,
+   "picoVerdadero": -4,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "col-01.mp3",
+   "segundos": 0.65,
+   "lufs": -19.1,
+   "picoVerdadero": -5.4,
+   "maximoDb": -5.4
+  },
+  {
+   "nombre": "col-02.mp3",
+   "segundos": 0.78,
+   "lufs": -25.2,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "congelacion-01.mp3",
+   "segundos": 1.67,
+   "lufs": -21.3,
+   "picoVerdadero": -7.8,
+   "maximoDb": -7.9
+  },
+  {
+   "nombre": "congelacion-02.mp3",
+   "segundos": 2.09,
+   "lufs": -21.6,
+   "picoVerdadero": -5.8,
+   "maximoDb": -6.5
+  },
+  {
+   "nombre": "congelacion-03.mp3",
+   "segundos": 1.75,
+   "lufs": -21.3,
+   "picoVerdadero": -3.2,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "cono-caida-01.mp3",
+   "segundos": 0.5,
+   "lufs": -25.3,
+   "picoVerdadero": -3.1,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "cono-caida-02.mp3",
+   "segundos": 0.94,
+   "lufs": -25.1,
+   "picoVerdadero": -2.8,
+   "maximoDb": -3.8
+  },
+  {
+   "nombre": "cono-caida-03.mp3",
+   "segundos": 0.5,
+   "lufs": -31.9,
+   "picoVerdadero": -4.7,
+   "maximoDb": -4.7
+  },
+  {
+   "nombre": "cono-dano-01.mp3",
+   "segundos": 0.57,
+   "lufs": -22.9,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "cono-dano-02.mp3",
+   "segundos": 0.39,
+   "lufs": -70,
+   "picoVerdadero": -3.7,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "cono-dano-03.mp3",
+   "segundos": 0.52,
+   "lufs": -21.4,
+   "picoVerdadero": -4,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "cubo-caida-01.mp3",
+   "segundos": 1.57,
+   "lufs": -20,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "cubo-caida-02.mp3",
+   "segundos": 1.57,
+   "lufs": -19.1,
+   "picoVerdadero": -4.9,
+   "maximoDb": -4.9
+  },
+  {
+   "nombre": "cubo-caida-03.mp3",
+   "segundos": 1.57,
+   "lufs": -19.3,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "cubo-dano-01.mp3",
+   "segundos": 0.89,
+   "lufs": -24.3,
+   "picoVerdadero": -3.6,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "cubo-dano-02.mp3",
+   "segundos": 0.89,
+   "lufs": -20.5,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "cubo-dano-03.mp3",
+   "segundos": 0.89,
+   "lufs": -26.4,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "cuerda-01.mp3",
+   "segundos": 1.41,
+   "lufs": -18.7,
+   "picoVerdadero": -4,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "cuerda-02.mp3",
+   "segundos": 1.44,
+   "lufs": -20.6,
+   "picoVerdadero": -3.8,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "curacion-01.mp3",
+   "segundos": 2.09,
+   "lufs": -18.7,
+   "picoVerdadero": -7.6,
+   "maximoDb": -7.7
+  },
+  {
+   "nombre": "curacion-02.mp3",
+   "segundos": 2.09,
+   "lufs": -21.3,
+   "picoVerdadero": -5.1,
+   "maximoDb": -5.2
+  },
+  {
+   "nombre": "dave-aviso-01.mp3",
+   "segundos": 1.78,
+   "lufs": -18.4,
+   "picoVerdadero": -11.5,
+   "maximoDb": -11.5
+  },
+  {
+   "nombre": "dave-aviso-02.mp3",
+   "segundos": 1.7,
+   "lufs": -18.5,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "dave-bien-01.mp3",
+   "segundos": 1.57,
+   "lufs": -18.5,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "dave-bien-02.mp3",
+   "segundos": 1.57,
+   "lufs": -19,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.4
   },
   {
    "nombre": "dave-explica-01.mp3",
@@ -30,11 +478,158 @@
    "maximoDb": -8.1
   },
   {
+   "nombre": "dave-explica-02.mp3",
+   "segundos": 3.08,
+   "lufs": -19.1,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "dave-idea-01.mp3",
+   "segundos": 1.46,
+   "lufs": -18.4,
+   "picoVerdadero": -5.1,
+   "maximoDb": -5.1
+  },
+  {
+   "nombre": "dave-idea-02.mp3",
+   "segundos": 1.54,
+   "lufs": -18.4,
+   "picoVerdadero": -5.2,
+   "maximoDb": -5.2
+  },
+  {
+   "nombre": "dave-saludo-01.mp3",
+   "segundos": 2.09,
+   "lufs": -18.9,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "dave-saludo-02.mp3",
+   "segundos": 2.09,
+   "lufs": -18.5,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "delfin-01.mp3",
+   "segundos": 1.57,
+   "lufs": -18.7,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "delfin-02.mp3",
+   "segundos": 1.57,
+   "lufs": -18.6,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "delfin-03.mp3",
+   "segundos": 1.57,
+   "lufs": -19.6,
+   "picoVerdadero": -4,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "deporte-01.mp3",
+   "segundos": 0.78,
+   "lufs": -24.8,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "deporte-02.mp3",
+   "segundos": 1.07,
+   "lufs": -26.6,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "deporte-03.mp3",
+   "segundos": 0.63,
+   "lufs": -26.5,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
    "nombre": "derrota-01.mp3",
    "segundos": 3.08,
    "lufs": -19,
    "picoVerdadero": -4.3,
    "maximoDb": -4.3
+  },
+  {
+   "nombre": "derrota-02.mp3",
+   "segundos": 1.65,
+   "lufs": -22.1,
+   "picoVerdadero": -6.7,
+   "maximoDb": -6.8
+  },
+  {
+   "nombre": "devorar-01.mp3",
+   "segundos": 1.12,
+   "lufs": -20.9,
+   "picoVerdadero": -3.7,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "devorar-02.mp3",
+   "segundos": 1.04,
+   "lufs": -22,
+   "picoVerdadero": -2.7,
+   "maximoDb": -3.9
+  },
+  {
+   "nombre": "devorar-03.mp3",
+   "segundos": 1.1,
+   "lufs": -20.2,
+   "picoVerdadero": -3,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "dinosaurio-01.mp3",
+   "segundos": 1.96,
+   "lufs": -18.4,
+   "picoVerdadero": -6.5,
+   "maximoDb": -6.5
+  },
+  {
+   "nombre": "dinosaurio-02.mp3",
+   "segundos": 1.88,
+   "lufs": -20.2,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "electricidad-01.mp3",
+   "segundos": 1.2,
+   "lufs": -19,
+   "picoVerdadero": -6.3,
+   "maximoDb": -6.7
+  },
+  {
+   "nombre": "electricidad-02.mp3",
+   "segundos": 1.57,
+   "lufs": -19.6,
+   "picoVerdadero": -4.6,
+   "maximoDb": -4.6
+  },
+  {
+   "nombre": "escalera-01.mp3",
+   "segundos": 0.99,
+   "lufs": -23.9,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "escalera-02.mp3",
+   "segundos": 0.86,
+   "lufs": -26.3,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.5
   },
   {
    "nombre": "espora-01.mp3",
@@ -44,6 +639,20 @@
    "maximoDb": -5.4
   },
   {
+   "nombre": "espora-02.mp3",
+   "segundos": 0.78,
+   "lufs": -19.3,
+   "picoVerdadero": -5.7,
+   "maximoDb": -6
+  },
+  {
+   "nombre": "espora-03.mp3",
+   "segundos": 0.81,
+   "lufs": -18.6,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.6
+  },
+  {
    "nombre": "estrella-01.mp3",
    "segundos": 0.78,
    "lufs": -18.3,
@@ -51,9 +660,128 @@
    "maximoDb": -5.4
   },
   {
+   "nombre": "estrella-02.mp3",
+   "segundos": 0.89,
+   "lufs": -18.4,
+   "picoVerdadero": -5.3,
+   "maximoDb": -5.4
+  },
+  {
+   "nombre": "estrella-03.mp3",
+   "segundos": 0.68,
+   "lufs": -18.6,
+   "picoVerdadero": -7.4,
+   "maximoDb": -7.4
+  },
+  {
+   "nombre": "fusion-01.mp3",
+   "segundos": 2.14,
+   "lufs": -20,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "fusion-02.mp3",
+   "segundos": 3.08,
+   "lufs": -16.9,
+   "picoVerdadero": -3.8,
+   "maximoDb": -3.9
+  },
+  {
+   "nombre": "fusion-electrica-01.mp3",
+   "segundos": 2.09,
+   "lufs": -21.3,
+   "picoVerdadero": -8.2,
+   "maximoDb": -8.2
+  },
+  {
+   "nombre": "fusion-electrica-02.mp3",
+   "segundos": 2.09,
+   "lufs": -19.7,
+   "picoVerdadero": -6.3,
+   "maximoDb": -6.7
+  },
+  {
+   "nombre": "fusion-fuego-01.mp3",
+   "segundos": 1.72,
+   "lufs": -23.5,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "fusion-fuego-02.mp3",
+   "segundos": 1.96,
+   "lufs": -23.1,
+   "picoVerdadero": -3.6,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "fusion-hielo-01.mp3",
+   "segundos": 1.78,
+   "lufs": -22.6,
+   "picoVerdadero": -3.5,
+   "maximoDb": -4.6
+  },
+  {
+   "nombre": "fusion-hielo-02.mp3",
+   "segundos": 2.09,
+   "lufs": -18.4,
+   "picoVerdadero": -5.8,
+   "maximoDb": -6.2
+  },
+  {
+   "nombre": "gigante-01.mp3",
+   "segundos": 1.38,
+   "lufs": -18.4,
+   "picoVerdadero": -5.6,
+   "maximoDb": -5.6
+  },
+  {
+   "nombre": "gigante-02.mp3",
+   "segundos": 2.09,
+   "lufs": -18.5,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "globo-01.mp3",
+   "segundos": 1.07,
+   "lufs": -18.4,
+   "picoVerdadero": -8.4,
+   "maximoDb": -8.5
+  },
+  {
+   "nombre": "globo-02.mp3",
+   "segundos": 1.07,
+   "lufs": -18.4,
+   "picoVerdadero": -7.2,
+   "maximoDb": -7.9
+  },
+  {
+   "nombre": "globo-03.mp3",
+   "segundos": 1.07,
+   "lufs": -18.4,
+   "picoVerdadero": -8.3,
+   "maximoDb": -8.3
+  },
+  {
    "nombre": "guisante-01.mp3",
    "segundos": 0.68,
    "lufs": -22.3,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "guisante-02.mp3",
+   "segundos": 0.37,
+   "lufs": -70,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "guisante-03.mp3",
+   "segundos": 0.31,
+   "lufs": -70,
    "picoVerdadero": -4.4,
    "maximoDb": -4.4
   },
@@ -65,10 +793,185 @@
    "maximoDb": -3.5
   },
   {
+   "nombre": "hielo-02.mp3",
+   "segundos": 0.89,
+   "lufs": -18.5,
+   "picoVerdadero": -4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "hielo-03.mp3",
+   "segundos": 0.89,
+   "lufs": -18.9,
+   "picoVerdadero": -3.2,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "hipnosis-01.mp3",
+   "segundos": 1.7,
+   "lufs": -18.4,
+   "picoVerdadero": -5.6,
+   "maximoDb": -6
+  },
+  {
+   "nombre": "hipnosis-02.mp3",
+   "segundos": 1.57,
+   "lufs": -18.9,
+   "picoVerdadero": -5,
+   "maximoDb": -5.5
+  },
+  {
+   "nombre": "hipnosis-03.mp3",
+   "segundos": 1.52,
+   "lufs": -18.9,
+   "picoVerdadero": -6.7,
+   "maximoDb": -7.2
+  },
+  {
    "nombre": "humo-01.mp3",
    "segundos": 1.07,
    "lufs": -18.5,
    "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "humo-02.mp3",
+   "segundos": 1.07,
+   "lufs": -22.2,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "humo-03.mp3",
+   "segundos": 0.97,
+   "lufs": -20,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "iman-01.mp3",
+   "segundos": 1.57,
+   "lufs": -18.4,
+   "picoVerdadero": -5.4,
+   "maximoDb": -5.5
+  },
+  {
+   "nombre": "iman-02.mp3",
+   "segundos": 1.57,
+   "lufs": -18.4,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "iman-03.mp3",
+   "segundos": 1.57,
+   "lufs": -19.8,
+   "picoVerdadero": -4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "imitadora-01.mp3",
+   "segundos": 1.41,
+   "lufs": -19.4,
+   "picoVerdadero": -3.7,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "imitadora-02.mp3",
+   "segundos": 1.52,
+   "lufs": -21.2,
+   "picoVerdadero": -5.9,
+   "maximoDb": -6.4
+  },
+  {
+   "nombre": "imp-01.mp3",
+   "segundos": 1.57,
+   "lufs": -18.4,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "imp-02.mp3",
+   "segundos": 1.44,
+   "lufs": -18.5,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "jefe-01.mp3",
+   "segundos": 2.3,
+   "lufs": -18.8,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "jefe-02.mp3",
+   "segundos": 2.72,
+   "lufs": -20.1,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "laser-01.mp3",
+   "segundos": 0.89,
+   "lufs": -18.4,
+   "picoVerdadero": -5.1,
+   "maximoDb": -5.1
+  },
+  {
+   "nombre": "laser-02.mp3",
+   "segundos": 1.07,
+   "lufs": -18.5,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "laser-carga-01.mp3",
+   "segundos": 1.62,
+   "lufs": -18.4,
+   "picoVerdadero": -4.8,
+   "maximoDb": -4.9
+  },
+  {
+   "nombre": "laser-carga-02.mp3",
+   "segundos": 1.54,
+   "lufs": -21.2,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "lianas-01.mp3",
+   "segundos": 1.41,
+   "lufs": -24.9,
+   "picoVerdadero": -4,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "lianas-02.mp3",
+   "segundos": 1.38,
+   "lufs": -28.7,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "linterna-01.mp3",
+   "segundos": 1.57,
+   "lufs": -22.5,
+   "picoVerdadero": -2.8,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "linterna-02.mp3",
+   "segundos": 1.57,
+   "lufs": -18.4,
+   "picoVerdadero": -4.6,
+   "maximoDb": -5.5
+  },
+  {
+   "nombre": "linterna-03.mp3",
+   "segundos": 1.57,
+   "lufs": -21.3,
+   "picoVerdadero": -3.5,
    "maximoDb": -4.5
   },
   {
@@ -79,11 +982,277 @@
    "maximoDb": -4.2
   },
   {
+   "nombre": "llama-02.mp3",
+   "segundos": 1.57,
+   "lufs": -19.4,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "llama-03.mp3",
+   "segundos": 1.57,
+   "lufs": -18.6,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "maceta-01.mp3",
+   "segundos": 0.39,
+   "lufs": -70,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "maceta-02.mp3",
+   "segundos": 0.89,
+   "lufs": -23.2,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "maiz-01.mp3",
+   "segundos": 0.73,
+   "lufs": -22.3,
+   "picoVerdadero": -4,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "maiz-02.mp3",
+   "segundos": 0.68,
+   "lufs": -23.2,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "mantequilla-01.mp3",
+   "segundos": 1.07,
+   "lufs": -19.3,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "mantequilla-02.mp3",
+   "segundos": 1.07,
+   "lufs": -20.7,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "mazorca-01.mp3",
+   "segundos": 1.85,
+   "lufs": -18.4,
+   "picoVerdadero": -7.2,
+   "maximoDb": -7.4
+  },
+  {
+   "nombre": "mazorca-02.mp3",
+   "segundos": 1.96,
+   "lufs": -18.8,
+   "picoVerdadero": -7.5,
+   "maximoDb": -7.5
+  },
+  {
+   "nombre": "melon-01.mp3",
+   "segundos": 1.57,
+   "lufs": -20.5,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "melon-02.mp3",
+   "segundos": 0.97,
+   "lufs": -20,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "mina-01.mp3",
+   "segundos": 1.23,
+   "lufs": -26.1,
+   "picoVerdadero": -4,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "mina-02.mp3",
+   "segundos": 1.33,
+   "lufs": -33.3,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "mina-03.mp3",
+   "segundos": 1.44,
+   "lufs": -27.9,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "mina-armar-01.mp3",
+   "segundos": 1.07,
+   "lufs": -21,
+   "picoVerdadero": -3.6,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "mina-armar-02.mp3",
+   "segundos": 0.89,
+   "lufs": -20.4,
+   "picoVerdadero": -3.1,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "mina-armar-03.mp3",
+   "segundos": 1.07,
+   "lufs": -20.3,
+   "picoVerdadero": -3.6,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "moneda-01.mp3",
+   "segundos": 1.07,
+   "lufs": -18.4,
+   "picoVerdadero": -5.1,
+   "maximoDb": -5.3
+  },
+  {
+   "nombre": "moneda-02.mp3",
+   "segundos": 0.81,
+   "lufs": -19.4,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "motor-hielo-01.mp3",
+   "segundos": 2.66,
+   "lufs": -21.8,
+   "picoVerdadero": -4,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "motor-hielo-02.mp3",
+   "segundos": 2.51,
+   "lufs": -23.8,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "motor-hielo-03.mp3",
+   "segundos": 2.53,
+   "lufs": -19.9,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "musica-dia-01.mp3",
+   "segundos": 60.11,
+   "lufs": -22.8,
+   "picoVerdadero": -6.2,
+   "maximoDb": -6.3
+  },
+  {
+   "nombre": "musica-final-01.mp3",
+   "segundos": 60.11,
+   "lufs": -22.1,
+   "picoVerdadero": -10,
+   "maximoDb": -10
+  },
+  {
+   "nombre": "musica-frontera-01.mp3",
+   "segundos": 60.11,
+   "lufs": -23.3,
+   "picoVerdadero": -8,
+   "maximoDb": -8
+  },
+  {
+   "nombre": "musica-fusion-01.mp3",
+   "segundos": 60.11,
+   "lufs": -22.9,
+   "picoVerdadero": -9.4,
+   "maximoDb": -9.4
+  },
+  {
+   "nombre": "musica-inicio-01.mp3",
+   "segundos": 60.11,
+   "lufs": -22.6,
+   "picoVerdadero": -9.6,
+   "maximoDb": -9.6
+  },
+  {
+   "nombre": "musica-mapa-01.mp3",
+   "segundos": 60.11,
+   "lufs": -21.4,
+   "picoVerdadero": -9.6,
+   "maximoDb": -9.6
+  },
+  {
+   "nombre": "musica-noche-01.mp3",
+   "segundos": 60.11,
+   "lufs": -23.6,
+   "picoVerdadero": -11,
+   "maximoDb": -11.1
+  },
+  {
+   "nombre": "musica-piscina-01.mp3",
+   "segundos": 60.11,
+   "lufs": -23.7,
+   "picoVerdadero": -10.3,
+   "maximoDb": -10.3
+  },
+  {
+   "nombre": "nenufar-01.mp3",
+   "segundos": 0.78,
+   "lufs": -23.4,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "nenufar-02.mp3",
+   "segundos": 0.76,
+   "lufs": -28.2,
+   "picoVerdadero": -4.6,
+   "maximoDb": -4.6
+  },
+  {
+   "nombre": "nenufar-03.mp3",
+   "segundos": 0.65,
+   "lufs": -21.2,
+   "picoVerdadero": -3.8,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "nuez-01.mp3",
+   "segundos": 0.65,
+   "lufs": -26.6,
+   "picoVerdadero": -3.3,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "nuez-02.mp3",
+   "segundos": 0.65,
+   "lufs": -27.2,
+   "picoVerdadero": -2.7,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "nuez-03.mp3",
+   "segundos": 0.57,
+   "lufs": -24.4,
+   "picoVerdadero": -3.6,
+   "maximoDb": -4.4
+  },
+  {
    "nombre": "oleada-01.mp3",
    "segundos": 1.91,
    "lufs": -19.4,
    "picoVerdadero": -5.7,
    "maximoDb": -5.7
+  },
+  {
+   "nombre": "oleada-02.mp3",
+   "segundos": 1.8,
+   "lufs": -20.3,
+   "picoVerdadero": -7.2,
+   "maximoDb": -7.2
   },
   {
    "nombre": "pala-01.mp3",
@@ -93,11 +1262,214 @@
    "maximoDb": -4.4
   },
   {
+   "nombre": "pala-02.mp3",
+   "segundos": 0.76,
+   "lufs": -20.7,
+   "picoVerdadero": -7.1,
+   "maximoDb": -7.7
+  },
+  {
+   "nombre": "palo-salto-01.mp3",
+   "segundos": 0.94,
+   "lufs": -18.6,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "palo-salto-02.mp3",
+   "segundos": 0.94,
+   "lufs": -18.4,
+   "picoVerdadero": -6.8,
+   "maximoDb": -7.2
+  },
+  {
+   "nombre": "palo-salto-03.mp3",
+   "segundos": 1.02,
+   "lufs": -20.5,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "papel-romper-01.mp3",
+   "segundos": 1.07,
+   "lufs": -18.4,
+   "picoVerdadero": -4.4,
+   "maximoDb": -5
+  },
+  {
+   "nombre": "papel-romper-02.mp3",
+   "segundos": 0.84,
+   "lufs": -18.4,
+   "picoVerdadero": -5.9,
+   "maximoDb": -6.4
+  },
+  {
+   "nombre": "papel-romper-03.mp3",
+   "segundos": 1.07,
+   "lufs": -18.4,
+   "picoVerdadero": -5.9,
+   "maximoDb": -5.9
+  },
+  {
+   "nombre": "paraguas-01.mp3",
+   "segundos": 0.47,
+   "lufs": -24.2,
+   "picoVerdadero": -2.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "paraguas-02.mp3",
+   "segundos": 0.65,
+   "lufs": -28.1,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.7
+  },
+  {
+   "nombre": "petaseta-01.mp3",
+   "segundos": 3.08,
+   "lufs": -18.3,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "petaseta-02.mp3",
+   "segundos": 3.08,
+   "lufs": -15.6,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "petaseta-03.mp3",
+   "segundos": 1.93,
+   "lufs": -18.8,
+   "picoVerdadero": -5.5,
+   "maximoDb": -5.5
+  },
+  {
+   "nombre": "pico-01.mp3",
+   "segundos": 0.57,
+   "lufs": -18.8,
+   "picoVerdadero": -4,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "pico-02.mp3",
+   "segundos": 0.29,
+   "lufs": -70,
+   "picoVerdadero": -4.6,
+   "maximoDb": -4.9
+  },
+  {
+   "nombre": "pico-03.mp3",
+   "segundos": 0.42,
+   "lufs": -70,
+   "picoVerdadero": -3.8,
+   "maximoDb": -3.9
+  },
+  {
+   "nombre": "piedra-comer-01.mp3",
+   "segundos": 0.99,
+   "lufs": -22.9,
+   "picoVerdadero": -3.6,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "piedra-comer-02.mp3",
+   "segundos": 1.23,
+   "lufs": -24.4,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "piedra-comer-03.mp3",
+   "segundos": 1.57,
+   "lufs": -25.4,
+   "picoVerdadero": -3.6,
+   "maximoDb": -4.2
+  },
+  {
    "nombre": "pincho-01.mp3",
    "segundos": 0.68,
    "lufs": -18.4,
    "picoVerdadero": -10.5,
    "maximoDb": -10.6
+  },
+  {
+   "nombre": "pincho-02.mp3",
+   "segundos": 0.68,
+   "lufs": -18.4,
+   "picoVerdadero": -7.9,
+   "maximoDb": -7.9
+  },
+  {
+   "nombre": "pincho-03.mp3",
+   "segundos": 0.68,
+   "lufs": -18.4,
+   "picoVerdadero": -10.3,
+   "maximoDb": -10.3
+  },
+  {
+   "nombre": "pinchos-01.mp3",
+   "segundos": 0.78,
+   "lufs": -21.6,
+   "picoVerdadero": -3.9,
+   "maximoDb": -3.9
+  },
+  {
+   "nombre": "pinchos-02.mp3",
+   "segundos": 0.78,
+   "lufs": -25.2,
+   "picoVerdadero": -4,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "pinchos-03.mp3",
+   "segundos": 0.81,
+   "lufs": -24.9,
+   "picoVerdadero": -4.7,
+   "maximoDb": -4.6
+  },
+  {
+   "nombre": "pogo-01.mp3",
+   "segundos": 1.07,
+   "lufs": -23.8,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "pogo-02.mp3",
+   "segundos": 0.55,
+   "lufs": -21,
+   "picoVerdadero": -4,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "pogo-03.mp3",
+   "segundos": 0.6,
+   "lufs": -23.8,
+   "picoVerdadero": -3.6,
+   "maximoDb": -3.7
+  },
+  {
+   "nombre": "puerta-dano-01.mp3",
+   "segundos": 0.68,
+   "lufs": -20.4,
+   "picoVerdadero": -3.7,
+   "maximoDb": -4
+  },
+  {
+   "nombre": "puerta-dano-02.mp3",
+   "segundos": 1.07,
+   "lufs": -20.1,
+   "picoVerdadero": -3.7,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "puerta-dano-03.mp3",
+   "segundos": 0.65,
+   "lufs": -21.4,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
   },
   {
    "nombre": "reserva-01.mp3",
@@ -107,11 +1479,39 @@
    "maximoDb": -3.9
   },
   {
+   "nombre": "reserva-02.mp3",
+   "segundos": 0.55,
+   "lufs": -21.8,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "robot-01.mp3",
+   "segundos": 1.46,
+   "lufs": -25.9,
+   "picoVerdadero": -3.4,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "robot-02.mp3",
+   "segundos": 1.36,
+   "lufs": -21.5,
+   "picoVerdadero": -3.1,
+   "maximoDb": -4.1
+  },
+  {
    "nombre": "semilla-lista-01.mp3",
    "segundos": 0.42,
    "lufs": -70,
    "picoVerdadero": -4.3,
    "maximoDb": -4.3
+  },
+  {
+   "nombre": "semilla-lista-02.mp3",
+   "segundos": 0.42,
+   "lufs": -70,
+   "picoVerdadero": -3.4,
+   "maximoDb": -4.1
   },
   {
    "nombre": "siembra-01.mp3",
@@ -121,11 +1521,53 @@
    "maximoDb": -4.3
   },
   {
+   "nombre": "siembra-02.mp3",
+   "segundos": 0.89,
+   "lufs": -20.5,
+   "picoVerdadero": -4,
+   "maximoDb": -4
+  },
+  {
    "nombre": "sol-01.mp3",
    "segundos": 1.07,
    "lufs": -20.1,
    "picoVerdadero": -4.2,
    "maximoDb": -4.4
+  },
+  {
+   "nombre": "sol-02.mp3",
+   "segundos": 1.07,
+   "lufs": -18.5,
+   "picoVerdadero": -5.6,
+   "maximoDb": -5.6
+  },
+  {
+   "nombre": "teletransporte-01.mp3",
+   "segundos": 1.15,
+   "lufs": -22.2,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "teletransporte-02.mp3",
+   "segundos": 1.41,
+   "lufs": -21,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "veneno-01.mp3",
+   "segundos": 1.57,
+   "lufs": -18.4,
+   "picoVerdadero": -4.7,
+   "maximoDb": -4.8
+  },
+  {
+   "nombre": "veneno-02.mp3",
+   "segundos": 0.94,
+   "lufs": -19.5,
+   "picoVerdadero": -3.9,
+   "maximoDb": -4.5
   },
   {
    "nombre": "victoria-01.mp3",
@@ -135,11 +1577,200 @@
    "maximoDb": -4.5
   },
   {
+   "nombre": "victoria-02.mp3",
+   "segundos": 2.22,
+   "lufs": -19,
+   "picoVerdadero": -5.4,
+   "maximoDb": -5.4
+  },
+  {
+   "nombre": "viento-01.mp3",
+   "segundos": 1.83,
+   "lufs": -20.7,
+   "picoVerdadero": -5,
+   "maximoDb": -5.3
+  },
+  {
+   "nombre": "viento-02.mp3",
+   "segundos": 1.83,
+   "lufs": -20.6,
+   "picoVerdadero": -5,
+   "maximoDb": -5.1
+  },
+  {
+   "nombre": "viento-03.mp3",
+   "segundos": 1.33,
+   "lufs": -20.9,
+   "picoVerdadero": -4.6,
+   "maximoDb": -4.7
+  },
+  {
+   "nombre": "zampalga-01.mp3",
+   "segundos": 1.57,
+   "lufs": -19.3,
+   "picoVerdadero": -4,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "zampalga-02.mp3",
+   "segundos": 0.97,
+   "lufs": -19.5,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zampalga-03.mp3",
+   "segundos": 1.57,
+   "lufs": -20.4,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "zombi-agua-01.mp3",
+   "segundos": 1.57,
+   "lufs": -19,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "zombi-agua-02.mp3",
+   "segundos": 1.23,
+   "lufs": -21.1,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zombi-agua-03.mp3",
+   "segundos": 1.33,
+   "lufs": -18.6,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zombi-brazo-01.mp3",
+   "segundos": 0.78,
+   "lufs": -19.5,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "zombi-brazo-02.mp3",
+   "segundos": 0.68,
+   "lufs": -18.5,
+   "picoVerdadero": -5.8,
+   "maximoDb": -6.1
+  },
+  {
+   "nombre": "zombi-brazo-03.mp3",
+   "segundos": 1.07,
+   "lufs": -21.2,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zombi-cabeza-01.mp3",
+   "segundos": 1.12,
+   "lufs": -18.4,
+   "picoVerdadero": -5.3,
+   "maximoDb": -5.4
+  },
+  {
+   "nombre": "zombi-cabeza-02.mp3",
+   "segundos": 1.28,
+   "lufs": -18.9,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zombi-cabeza-03.mp3",
+   "segundos": 1.28,
+   "lufs": -22.2,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zombi-caida-01.mp3",
+   "segundos": 1.1,
+   "lufs": -23.7,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zombi-caida-02.mp3",
+   "segundos": 1.28,
+   "lufs": -20.3,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zombi-caida-03.mp3",
+   "segundos": 1.28,
+   "lufs": -18.4,
+   "picoVerdadero": -4.9,
+   "maximoDb": -5
+  },
+  {
+   "nombre": "zombi-grunido-01.mp3",
+   "segundos": 1.96,
+   "lufs": -18.4,
+   "picoVerdadero": -7.2,
+   "maximoDb": -7.2
+  },
+  {
+   "nombre": "zombi-grunido-02.mp3",
+   "segundos": 1.91,
+   "lufs": -18.4,
+   "picoVerdadero": -5.5,
+   "maximoDb": -5.6
+  },
+  {
+   "nombre": "zombi-grunido-03.mp3",
+   "segundos": 1.85,
+   "lufs": -18.4,
+   "picoVerdadero": -4.6,
+   "maximoDb": -4.6
+  },
+  {
    "nombre": "zombi-mordida-01.mp3",
    "segundos": 0.97,
    "lufs": -18.8,
    "picoVerdadero": -4.1,
    "maximoDb": -4.5
+  },
+  {
+   "nombre": "zombi-mordida-02.mp3",
+   "segundos": 1.07,
+   "lufs": -20.2,
+   "picoVerdadero": -4,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "zombi-mordida-03.mp3",
+   "segundos": 0.94,
+   "lufs": -19.7,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.1
+  },
+  {
+   "nombre": "zombi-paso-01.mp3",
+   "segundos": 0.73,
+   "lufs": -18.4,
+   "picoVerdadero": -3.4,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "zombi-paso-02.mp3",
+   "segundos": 0.73,
+   "lufs": -20.4,
+   "picoVerdadero": -7.2,
+   "maximoDb": -7.2
+  },
+  {
+   "nombre": "zombi-paso-03.mp3",
+   "segundos": 0.89,
+   "lufs": -18.4,
+   "picoVerdadero": -4.5,
+   "maximoDb": -5
   }
  ]
 }
