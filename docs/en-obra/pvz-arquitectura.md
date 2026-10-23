@@ -1,5 +1,11 @@
 # Plantas contra Zombis · arquitectura y contrato de trabajo
 
+> **Pedido del 23 de octubre:** [guía de audio para Claude](pvz-elevenlabs-guia-claude.md).
+> Javier autoriza efectos y música de ElevenLabs y balbuceos no verbales de Dave. Codex integra el juego.
+> Los pasajes siguientes sobre síntesis describen la base existente; ya no restringen la nueva producción.
+> Continúan descartadas las voces clonadas y los diálogos hablados. No hay audios nuevos producidos aún.
+
+
 La ampliación vigente es [motor completo, carriles por escenario y tipos exclusivos por zona](pvz-pendientes-2026-10-22.md).
 El constructor acepta `DefNivel.tablero.filas`; omitirlo conserva los cinco/seis carriles de los niveles originales.
 La [historia integrada](pvz-historia-integrada.md) conecta el núcleo de instancias/reservas con mapa y guardado V2.

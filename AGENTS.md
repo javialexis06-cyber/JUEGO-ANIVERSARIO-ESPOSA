@@ -1,5 +1,18 @@
 # Instrucciones del repositorio
 
+## Pedido nuevo · audio y presentación del 23 de octubre
+
+**Guía para Claude:** [docs/en-obra/pvz-elevenlabs-guia-claude.md](docs/en-obra/pvz-elevenlabs-guia-claude.md).
+Javier encargó a Claude producir efectos, música y balbuceos no verbales de Dave con el saldo existente de
+ElevenLabs; Codex integra reproducción, mapas, tutorial y animaciones. El manifiesto tiene 107 familias y
+253 archivos previstos. No son audios ya generados. Este pedido sustituye la restricción de usar solo
+WebAudio en el Jardín; las voces clonadas y los diálogos hablados del encargo anterior siguen descartados.
+No comprar créditos ni habilitar sobrecostes. Conservar claves privadas fuera del código y de Git.
+Zonas propias verdes y enemigas moradas con bordes legibles; animación de pasos, extremidades, daño y
+protecciones; plantas con balanceo, proyectiles coherentes, terreno alineado y ambiente vivo. Ver el guion
+`juego/web/src/jardin/conquista/tutorial-dave.ts`. La granja continúa pausada.
+
+
 Prioridad del 22 de octubre tras probar el jugable: defensas con mecánicas completas de PvZ y carriles
 configurables por escenario (carreteras de tres/cuatro, casas con cinco, almacenes de seis/siete o lo que
 requiera el mapa). Cada tipo completo de planta se reserva a una sola zona. Desbloquear plantas e introducir

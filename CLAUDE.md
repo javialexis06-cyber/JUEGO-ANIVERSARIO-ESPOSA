@@ -1,5 +1,18 @@
 # Guía de trabajo · Nuestro Hogar
 
+## Pedido nuevo · audio y presentación del 23 de octubre
+
+**Guía para Claude:** [docs/en-obra/pvz-elevenlabs-guia-claude.md](docs/en-obra/pvz-elevenlabs-guia-claude.md).
+Javier encargó a Claude producir efectos, música y balbuceos no verbales de Dave con el saldo existente de
+ElevenLabs; Codex integra reproducción, mapas, tutorial y animaciones. El manifiesto tiene 107 familias y
+253 archivos previstos. No son audios ya generados. Este pedido sustituye la restricción de usar solo
+WebAudio en el Jardín; las voces clonadas y los diálogos hablados del encargo anterior siguen descartados.
+No comprar créditos ni habilitar sobrecostes. Conservar claves privadas fuera del código y de Git.
+Zonas propias verdes y enemigas moradas con bordes legibles; animación de pasos, extremidades, daño y
+protecciones; plantas con balanceo, proyectiles coherentes, terreno alineado y ambiente vivo. Ver el guion
+`juego/web/src/jardin/conquista/tutorial-dave.ts`. La granja continúa pausada.
+
+
 ## Alcance vigente
 
 Prioridad del 22 de octubre tras probar el jugable: defensas con mecánicas completas de PvZ y carriles
@@ -21,7 +34,7 @@ completado: poses y predicción de Torneo, icono y salas de desafíos de Carrera
 Ampliación implementada y comprobada: El Escudo y Desaparecidos con doce mapas/casos, los 16 juegos mentales
 del patio con reto diario y Jardín de los Desvelados con doce patios. Solo falta conectar Supabase y aplicar
 la clasificación real; la prueba temporal no acredita ese despliegue. Ver `docs/pedidos.md`.
-Las voces nuevas fueron descartadas expresamente. La granja quedó congelada (17 de octubre): no modificar sus sistemas, historia,
+Las voces clonadas y los diálogos hablados del encargo anterior fueron descartados expresamente. La granja quedó congelada (17 de octubre): no modificar sus sistemas, historia,
 arte ni balance. Se permiten sus regresiones e integración existentes.
 Pedido completado: gráficos reales del Jardín y dos jugadores, uno con plantas y otro con zombis, mediante salas
 por código y en una pantalla. Probado en Realtime real y con pérdida/cortes simulados. Campaña conservada.

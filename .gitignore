@@ -11,3 +11,6 @@ Thumbs.db
 .env.*
 !.env.example
 !.env.*.example
+
+# Producción de audio sin revisar: originales, metadatos y peticiones inciertas
+juego/web/produccion/pvz-audio/generados/

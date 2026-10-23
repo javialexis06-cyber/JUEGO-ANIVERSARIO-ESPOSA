@@ -54,6 +54,7 @@ solo conectar Supabase para habilitar su clasificación real. Voces nuevas desca
 | [`pvz-piscina-terreno-fuentes-2026-10-20.md`](en-obra/pvz-piscina-terreno-fuentes-2026-10-20.md) | Referencias técnicas de hielo, soportes y emboscadas acuáticas. |
 | [`pvz-arte-2026-10-22.md`](en-obra/pvz-arte-2026-10-22.md) | Arte ilustrado aprobado, ocho ropas, aventura Canvas y pruebas de interfaz/guardado. |
 | [`pvz-pendientes-2026-10-22.md`](en-obra/pvz-pendientes-2026-10-22.md) | Seguimiento vigente: 180 tareas de motor completo, carriles por escenario, exclusividad, catálogo, arte, progresión y pruebas; issue #1. |
+| [`pvz-elevenlabs-guia-claude.md`](en-obra/pvz-elevenlabs-guia-claude.md) | Encargo vigente a Claude: 107 familias/253 audios previstos, prompts, guion, saldo, rutas y publicación. |
 | [`pvz-historia-integrada.md`](en-obra/pvz-historia-integrada.md) | Historia con PvZ real por zona, reservas, desbloqueos y guardado V2; versus/migración pendientes. |
 | [`pvz-instancias-2026-10-23.md`](en-obra/pvz-instancias-2026-10-23.md) | Primer núcleo de carriles, guardado y coordinador; registro histórico previo a la historia integrada. |
 | [`pvz-conquista-base-2026-10-22.md`](en-obra/pvz-conquista-base-2026-10-22.md) | Registro del prototipo V1 conservado: 12 áreas de historia, 36 en versus, formaciones, frentes y salas. |

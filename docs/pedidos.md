@@ -3,6 +3,20 @@
 Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
+## Prioridad nueva · producción de audio por Claude y presentación por Codex
+
+[Guía ejecutable de ElevenLabs para Claude](en-obra/pvz-elevenlabs-guia-claude.md): 107 familias y 253
+archivos previstos, prompts, guion de Dave, rutas, producción con control de saldo y validación. Javier
+confirmó que Claude dispone de la clave y pidió dejarle esta parte preparada. **Aún no hay grabaciones nuevas.**
+Efectos, música original y balbuceos no verbales están autorizados con el saldo existente; las voces
+clonadas y los diálogos hablados del encargo antiguo siguen descartados. La anterior restricción de
+usar solo síntesis en el Jardín queda sustituida por este pedido.
+
+Codex continúa con regiones verdes/moradas y sus fronteras, animación de pies/manos y pérdida de partes,
+protecciones que muestran daño, balanceo de plantas, proyectiles y estelas, cuadrícula natural alineada
+con fondos de calidad y detalles ambientales vivos. El tutorial explica invasión, siembra, soles, reservas,
+mapas, frentes simultáneos y objetivo. No cambiar dificultad ni tocar la granja congelada.
+
 ## Prioridad actual · motor completo y catálogo tras probar Conquista
 
 Javier pidió defensas con mecánicas completas de PvZ y carriles configurados por escenario: carretera angosta
