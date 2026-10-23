@@ -1,0 +1,145 @@
+{
+ "fecha": "2026-10-23",
+ "archivos": [
+  {
+   "nombre": "alarma-frontera-01.mp3",
+   "segundos": 1.57,
+   "lufs": -18.8,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "captura-01.mp3",
+   "segundos": 2.09,
+   "lufs": -20.3,
+   "picoVerdadero": -8.1,
+   "maximoDb": -8.1
+  },
+  {
+   "nombre": "cereza-01.mp3",
+   "segundos": 2.09,
+   "lufs": -22.6,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "dave-explica-01.mp3",
+   "segundos": 3.08,
+   "lufs": -17.7,
+   "picoVerdadero": -8.1,
+   "maximoDb": -8.1
+  },
+  {
+   "nombre": "derrota-01.mp3",
+   "segundos": 3.08,
+   "lufs": -19,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "espora-01.mp3",
+   "segundos": 0.78,
+   "lufs": -18.3,
+   "picoVerdadero": -5.2,
+   "maximoDb": -5.4
+  },
+  {
+   "nombre": "estrella-01.mp3",
+   "segundos": 0.78,
+   "lufs": -18.3,
+   "picoVerdadero": -5.3,
+   "maximoDb": -5.4
+  },
+  {
+   "nombre": "guisante-01.mp3",
+   "segundos": 0.68,
+   "lufs": -22.3,
+   "picoVerdadero": -4.4,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "hielo-01.mp3",
+   "segundos": 0.89,
+   "lufs": -19.5,
+   "picoVerdadero": -2.8,
+   "maximoDb": -3.5
+  },
+  {
+   "nombre": "humo-01.mp3",
+   "segundos": 1.07,
+   "lufs": -18.5,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "llama-01.mp3",
+   "segundos": 1.15,
+   "lufs": -18.9,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.2
+  },
+  {
+   "nombre": "oleada-01.mp3",
+   "segundos": 1.91,
+   "lufs": -19.4,
+   "picoVerdadero": -5.7,
+   "maximoDb": -5.7
+  },
+  {
+   "nombre": "pala-01.mp3",
+   "segundos": 1.07,
+   "lufs": -18.7,
+   "picoVerdadero": -3.7,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "pincho-01.mp3",
+   "segundos": 0.68,
+   "lufs": -18.4,
+   "picoVerdadero": -10.5,
+   "maximoDb": -10.6
+  },
+  {
+   "nombre": "reserva-01.mp3",
+   "segundos": 0.39,
+   "lufs": -70,
+   "picoVerdadero": -3.7,
+   "maximoDb": -3.9
+  },
+  {
+   "nombre": "semilla-lista-01.mp3",
+   "segundos": 0.42,
+   "lufs": -70,
+   "picoVerdadero": -4.3,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "siembra-01.mp3",
+   "segundos": 0.78,
+   "lufs": -18.5,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.3
+  },
+  {
+   "nombre": "sol-01.mp3",
+   "segundos": 1.07,
+   "lufs": -20.1,
+   "picoVerdadero": -4.2,
+   "maximoDb": -4.4
+  },
+  {
+   "nombre": "victoria-01.mp3",
+   "segundos": 4.08,
+   "lufs": -17,
+   "picoVerdadero": -4.5,
+   "maximoDb": -4.5
+  },
+  {
+   "nombre": "zombi-mordida-01.mp3",
+   "segundos": 0.97,
+   "lufs": -18.8,
+   "picoVerdadero": -4.1,
+   "maximoDb": -4.5
+  }
+ ]
+}

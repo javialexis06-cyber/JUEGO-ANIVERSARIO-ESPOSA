@@ -14,3 +14,4 @@ Thumbs.db
 
 # Producción de audio sin revisar: originales, metadatos y peticiones inciertas
 juego/web/produccion/pvz-audio/generados/
+juego/web/produccion/pvz-audio/listos/
