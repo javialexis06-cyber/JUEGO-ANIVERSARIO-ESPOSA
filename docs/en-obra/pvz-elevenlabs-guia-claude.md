@@ -1,5 +1,9 @@
 # CLAUDE · entrega de audio para La Semilla Madre
 
+> **Trabajo ejecutado el 23 de octubre de 2026:** Claude produjo los 253 archivos
+> ([entrega](pvz-audio-entrega-2026-10-23.md)) y Codex conectó su reproducción
+> ([integración](pvz-presentacion-audio-2026-10-23.md)). No volver a generar el lote por seguir esta guía.
+
 **Encargo vigente del 23 de octubre de 2026.** Javier pidió expresamente que Claude haga la producción
 de ElevenLabs y Codex integre el juego. Esta es la guía que hay que ejecutar; no buscar otra guía histórica.
 
@@ -26,7 +30,7 @@ vigente está en `juego/web/src/jardin/`; la historia nueva es `conquista/histor
 | [tutorial-dave.ts](../../juego/web/src/jardin/conquista/tutorial-dave.ts) | Guion exacto del tutorial; se muestra por escrito. Sus estados indican qué balbuceo reproducir. |
 | [generar-elevenlabs.mjs](../../juego/web/scripts/pvz-audio/generar-elevenlabs.mjs) | Productor secuencial con consulta de saldo, reanudación y marcadores de peticiones inciertas. Sin `--generar` no usa red. |
 | [validar.mjs](../../juego/web/scripts/pvz-audio/validar.mjs) | Valida contratos y MP3 con ffprobe/ffmpeg; publica solo archivos declarados como escuchados. |
-| [indice.json](../../juego/web/public/jardin/pvz/audio/indice.json) | Contrato de carga del juego. Comienza vacío: eso significa **pendiente**, no audio completado. |
+| [indice.json](../../juego/web/public/jardin/pvz/audio/indice.json) | Contrato de carga del juego. Inicialmente vacío; ahora contiene los 253 archivos publicados. |
 
 El plan cubre las 49 plantas normales de PvZ 1, las 26 categorías principales de zombis y sus variantes
 acuáticas registradas. Incluye firmas de mecanismos futuros de PvZ 2 y Fusión: láser, electricidad,

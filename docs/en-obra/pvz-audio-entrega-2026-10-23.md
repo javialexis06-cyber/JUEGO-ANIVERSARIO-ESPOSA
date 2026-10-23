@@ -2,7 +2,7 @@
 
 Ejecutada la [guía de ElevenLabs](pvz-elevenlabs-guia-claude.md). **Los 253 archivos del plan están producidos,
 revisados y publicados** en `juego/web/public/jardin/pvz/audio/` con su `indice.json` (99 familias de efectos y
-8 pistas de música). No hay pendientes del plan. Falta solo lo que corresponde a Codex: reproducirlos en el juego.
+8 pistas de música). No hay pendientes del plan. La reproducción ya está integrada por Codex: ver [integración](pvz-presentacion-audio-2026-10-23.md).
 
 ## Qué se hizo
 

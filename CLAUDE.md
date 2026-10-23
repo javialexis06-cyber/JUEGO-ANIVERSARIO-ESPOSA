@@ -5,7 +5,8 @@
 **Guía para Claude:** [docs/en-obra/pvz-elevenlabs-guia-claude.md](docs/en-obra/pvz-elevenlabs-guia-claude.md).
 Javier encargó a Claude producir efectos, música y balbuceos no verbales de Dave con el saldo existente de
 ElevenLabs; Codex integra reproducción, mapas, tutorial y animaciones. El manifiesto tiene 107 familias y
-253 archivos previstos. No son audios ya generados. Este pedido sustituye la restricción de usar solo
+253 archivos, ya producidos por Claude e integrados por Codex. Ver
+[reproducción y presentación](docs/en-obra/pvz-presentacion-audio-2026-10-23.md). Este pedido sustituye la restricción de usar solo
 WebAudio en el Jardín; las voces clonadas y los diálogos hablados del encargo anterior siguen descartados.
 No comprar créditos ni habilitar sobrecostes. Conservar claves privadas fuera del código y de Git.
 Zonas propias verdes y enemigas moradas con bordes legibles; animación de pasos, extremidades, daño y

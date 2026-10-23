@@ -9,15 +9,16 @@ Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contr
 archivos previstos, prompts, guion de Dave, rutas, producción con control de saldo y validación. Javier
 confirmó que Claude dispone de la clave y pidió dejarle esta parte preparada. **Hecho por Claude el 23 de octubre:
 los 253 audios están producidos y publicados con su índice** ([entrega](en-obra/pvz-audio-entrega-2026-10-23.md));
-falta que Codex los reproduzca en el juego.
+**Reproducción integrada por Codex** en historia y aventura; ver
+[detalle de integración y presentación](en-obra/pvz-presentacion-audio-2026-10-23.md).
 Efectos, música original y balbuceos no verbales están autorizados con el saldo existente; las voces
 clonadas y los diálogos hablados del encargo antiguo siguen descartados. La anterior restricción de
 usar solo síntesis en el Jardín queda sustituida por este pedido.
 
-Codex continúa con regiones verdes/moradas y sus fronteras, animación de pies/manos y pérdida de partes,
+Implementados para los recursos actuales: regiones verdes/moradas y sus fronteras, animación de piernas/mano en ropa base y pérdida de partes,
 protecciones que muestran daño, balanceo de plantas, proyectiles y estelas, cuadrícula natural alineada
-con fondos de calidad y detalles ambientales vivos. El tutorial explica invasión, siembra, soles, reservas,
-mapas, frentes simultáneos y objetivo. No cambiar dificultad ni tocar la granja congelada.
+con fondos de calidad y detalles ambientales vivos. El tutorial ilustrado de once pasos explica invasión, siembra, soles, reservas,
+mapas, frentes simultáneos y objetivo. Las poses completas de unidades especiales, terrenos propios de cada región y el catálogo futuro siguen pendientes. No cambiar dificultad ni tocar la granja congelada.
 
 ## Prioridad actual · motor completo y catálogo tras probar Conquista
 
@@ -76,7 +77,7 @@ Por eso los valores de PvZ (costos, recargas, vidas, precios de la tienda) cuent
 
 - El plan contempla 88 niveles en 10 mundos, más el modo Fusión aparte, minijuegos, rompecabezas y supervivencia.
 - Se conservan los 12 patios (como «Patios clásicos») y el duelo para dos.
-- El pedido gráfico del 22 de octubre aprobó ilustraciones generadas propias; la escena usa Canvas y sonido sintetizado.
+- El pedido gráfico del 22 de octubre aprobó ilustraciones generadas propias; la escena usa Canvas y audio original de ElevenLabs, con síntesis de respaldo.
 
 **Estado:** motor, datos de cuarenta niveles de los mundos 1–4, abono del día y guardado implementados.
 La aventura Canvas, selección, almanaque, cuatro fondos, 32 plantas, 21 zombis y ocho vestuarios están

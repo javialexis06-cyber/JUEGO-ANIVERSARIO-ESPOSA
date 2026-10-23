@@ -4,6 +4,9 @@ Actualizado el **23 de octubre de 2026**, después de que el jugador probara la 
 Auditoría inicial del código publicado en `568aa9a0`; las casillas cerradas tienen evidencia en el avance enlazado.
 Seguimiento con casillas en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1).
 
+Audio y presentación del 23 de octubre: [avance integrado](pvz-presentacion-audio-2026-10-23.md).
+Los 253 MP3 están producidos y el reproductor está conectado; esto no completa L07/L11 para las unidades futuras.
+
 ## Decisiones confirmadas y alcance
 
 - Las zonas defendidas deben ser **partidas normales de PvZ tower defense**, con sus tableros, soles,

@@ -3,7 +3,8 @@
 > **Pedido del 23 de octubre:** [guía de audio para Claude](pvz-elevenlabs-guia-claude.md).
 > Javier autoriza efectos y música de ElevenLabs y balbuceos no verbales de Dave. Codex integra el juego.
 > Los pasajes siguientes sobre síntesis describen la base existente; ya no restringen la nueva producción.
-> Continúan descartadas las voces clonadas y los diálogos hablados. No hay audios nuevos producidos aún.
+> Continúan descartadas las voces clonadas y los diálogos hablados. Los 253 audios fueron producidos por Claude e integrados por Codex; ver
+> [reproducción y presentación](pvz-presentacion-audio-2026-10-23.md).
 
 
 La ampliación vigente es [motor completo, carriles por escenario y tipos exclusivos por zona](pvz-pendientes-2026-10-22.md).
@@ -33,7 +34,7 @@ sesión que trabaje en `src/jardin/pvz/` sigue estas reglas. Si una regla estorb
   aprobados porque Javier pidió la misma jugabilidad. Cualquier invento fuera de PvZ se anota en el plan.
 
 El arte actual son atlas raster propios, fondos ilustrados y efectos en Canvas; los sonidos y la música
-se sintetizan con WebAudio. No se incorporan imágenes, sonidos, música ni textos largos del juego original.
+usan los MP3 originales publicados con WebAudio y streaming HTMLAudio; la síntesis queda como respaldo. No se incorporan imágenes, sonidos, música ni textos largos del juego original.
 
 **Dirección artística aprobada el 22 de octubre:** Javier aprobó el render ilustrado y la muestra de ocho
 plantas de este chat, y encargó a Codex plantas, escenarios y zombis con varias ropas. Este pedido sustituye
@@ -79,7 +80,7 @@ src/jardin/pvz/
   vista/escena.ts               fondos, terreno, entidades, efectos, visibilidad y toque
   ui/retratos.ts                retratos derivados del mismo arte de partida
   ui/pvz.css                   interfaz horizontal, selección, mapa y almanaque
-  sonido.ts                    efectos y ambiente sintetizados
+  sonido.ts                    eventos sonoros, MP3 y respaldo sintetizado
   aventura.ts                  navegación, órdenes, bucle y persistencia
 public/jardin/pvz/              once recursos propios; cuatro fondos en un atlas
 ```

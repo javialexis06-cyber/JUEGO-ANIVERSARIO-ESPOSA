@@ -85,3 +85,5 @@ para estudiarlas sin salir a internet. Índice y cómo buscar en [`referencias/R
 [Índice del archivo](archivo/README.md). Decisiones ya tomadas y estudios de arranque: el estudio de Supermarket Mania (`diseno-juego.md`), la viabilidad del
 juego en línea entre Sopetrán y Bucaramanga y la auditoría completa con sus pruebas de estrés. Los renders aprobados
 de referencia (personajes, súper y casa) están en [`archivo/renders/`](../archivo/renders/).
+
+- [PvZ: reproducción de ElevenLabs, tutorial y presentación](en-obra/pvz-presentacion-audio-2026-10-23.md).
