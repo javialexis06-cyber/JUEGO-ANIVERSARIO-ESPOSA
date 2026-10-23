@@ -7,7 +7,8 @@ Este pedido sustituye el uso de esos proyectos únicamente como referencia. Los 
 
 **Aclaración posterior del usuario:** Javier no tiene `main.pak` ni `properties/`. No esperar esos archivos
 ni volver a pedírselos para avanzar la historia. Gardendless pasa a candidato principal por disponer de sus
-recursos; la adaptación territorial sigue pendiente. Portable conserva su entrada opcional e importador.
+recursos; la adaptación territorial sigue pendiente. El minijuego PvZ 1 sigue encargado y conserva su entrada
+e importador, pero todavía necesita una solución de recursos compatible para ser jugable sin aportes del usuario.
 
 ## Integración realizada
 
@@ -58,7 +59,7 @@ Cambios sobre los distribuibles:
 La primera preferencia fue Portable por su fuente de combate y guardados a mitad de partida. Esa elección
 dependía de recursos que no están en el repositorio. Con la confirmación de Javier, **Gardendless pasa a
 candidato principal para adaptar la historia**, pues su motor y recursos ya permiten ejecutar y comprobar
-combates completos. Portable queda como minijuego opcional pendiente de un paquete compatible.
+combates completos. El minijuego PvZ 1 permanece pendiente de un paquete compatible; no se descarta.
 
 Se comprobó también el inventario del Haxe Engine aportado: 423 archivos en `assets/`, una definición de
 planta y seis de zombis, sin PAK, `properties/` ni `resources.xml` de Portable. Sus gráficos y sonidos sueltos

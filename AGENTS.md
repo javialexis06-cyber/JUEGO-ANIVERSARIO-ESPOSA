@@ -7,8 +7,9 @@ que más convenga a la historia. Ver [integración y límites reales](docs/en-ob
 Esto sustituye su uso solo como referencia. Los dos distribuibles se incorporan con versiones/licencias fijadas;
 Portable necesita datos compatibles y Javier confirmó que no tiene los archivos GOTY. No volver a pedírselos
 ni bloquear la historia por ellos. Gardendless, que dispone de recursos por demanda, pasa a candidato principal
-para adaptar la historia; el puente de frentes/guardado/carriles aún no sustituye el motor V2. Portable queda
-opcional y pendiente de recursos. No afirmar migración ni catálogo completo por montar un minijuego.
+para adaptar la historia; el puente de frentes/guardado/carriles aún no sustituye el motor V2. El minijuego PvZ 1
+sigue encargado y pendiente de una solución de recursos compatible; no descartarlo ni exigir datos al usuario.
+No afirmar migración ni catálogo completo por montar un minijuego.
 Conservar guardados/perfiles, la aventura anterior y la pausa de nuevos mundos.
 
 ## Prioridad vigente · primer escenario antes de ampliar mundos
