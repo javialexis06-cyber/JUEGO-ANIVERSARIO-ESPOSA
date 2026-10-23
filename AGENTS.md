@@ -1,5 +1,14 @@
 # Instrucciones del repositorio
 
+## Pedido vigente · motores PvZ 1 y PvZ 2
+
+Javier pidió incorporar PvZ-Portable y Gardendless completos como minijuegos separados, y adaptar el motor
+que más convenga a la historia. Ver [integración y límites reales](docs/en-obra/pvz-motores-originales-2026-10-23.md).
+Esto sustituye su uso solo como referencia. Los dos distribuibles se incorporan con versiones/licencias fijadas;
+Portable necesita importar datos GOTY y Gardendless descarga recursos por demanda. Portable es la base preferida
+para el futuro puente territorial, que aún no sustituye el motor V2. No afirmar migración ni catálogo completo
+por haber montado un minijuego. Conservar guardados/perfiles, la aventura anterior y la pausa de nuevos mundos.
+
 ## Prioridad vigente · primer escenario antes de ampliar mundos
 
 Javier pausó la ampliación de mundos para cerrar el inicio, la interacción y la animación.

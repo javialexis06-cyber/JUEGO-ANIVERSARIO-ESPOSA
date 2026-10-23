@@ -3,6 +3,14 @@
 Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
+## Motores completos como minijuegos
+
+Pedido posterior: incorporar PvZ-Portable como minijuego PvZ 1 y Gardendless como PvZ 2, con sus propios
+combates, habilidades y animaciones. Adaptar el motor más adecuado a la historia territorial.
+Ver [integración, versión y pendientes concretos](en-obra/pvz-motores-originales-2026-10-23.md).
+Portable se prefiere como base de adaptación por su guardado completo; el puente de frentes/carriles no está
+terminado. Se conservan historia V2, aventura de 40 niveles, patios y partidas previas; mundos nuevos pausados.
+
 ## Prioridad vigente · primer escenario antes de ampliar mundos
 
 Javier pausó la ampliación de mundos para cerrar el inicio, la interacción y la animación.

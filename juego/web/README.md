@@ -70,6 +70,11 @@ La nueva aventura de PvZ tiene su motor independiente en `src/jardin/pvz/`: cuar
 con guardado propio y pruebas mediante `npm run probar:pvz`. Su aventura Canvas, selección de semillas, almanaque y arte ilustrado están conectados;
 se abre en `jardin.html?modo=aventura`. Sin modo se abre la [historia con defensas PvZ](../../docs/en-obra/pvz-historia-integrada.md).
 `modo=prototipo` conserva la historia y el versus anteriores con sus archivos independientes.
+`modo=pvz1` ejecuta PvZ-Portable 0.2.5 y permite importar los recursos GOTY del usuario; `modo=pvz2` ejecuta
+Gardendless 0.16.0 con sus recursos pesados por demanda. Ambos se abren desde Minijuegos y guardan separados
+por motor y perfil. Ver [integración y límites](../../docs/en-obra/pvz-motores-originales-2026-10-23.md).
+`npm run verificar:motores-pvz` comprueba sus distribuibles; `npm run probar:pvz:originales` requiere Chromium
+y red para los recursos de Gardendless. La historia todavía no usa el motor Portable.
 Los sobres de historia permiten localizar su reserva en el mapa sin perder el equipo pendiente.
 `npm run diagnosticar:conquista` registra intentos normales con contraataques; una derrota del piloto
 no equivale a imposibilidad humana. Ver [resultados y límites](../../docs/en-obra/pvz-reservas-y-presion-2026-10-23.md).

@@ -6,6 +6,7 @@
 // Uso: node scripts/verificar-amigos.mjs [carpeta]   (por defecto dist-amigos)
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { createHash } from 'node:crypto';
 import { PALABRAS_PAREJA, buscarPersonal } from './palabras-pareja.mjs';
 
 const carpeta = process.argv[2] ?? 'dist-amigos';
@@ -68,6 +69,16 @@ const RUTAS_PROHIBIDAS = [
 /** Las únicas páginas que puede tener (la sala de juegos y los juegos aptos; ver PAGINAS_AMIGOS en vite.config.ts). */
 const config = readFileSync('vite.config.ts', 'utf8');
 const PAGINAS = new Set(['index.html', ...JSON.parse((config.match(/PAGINAS_AMIGOS = (\[[^\]]*\])/)?.[1] ?? '[]').replace(/'/g, '"'))]);
+// Páginas auxiliares incluidas en los motores, no entradas Vite de la casa.
+for (const p of ['pvz1/index.html','pvz1/pvz-portable.html','pvz2/index.html']) PAGINAS.add('jardin/motores/'+p);
+// Coincidencias públicas de Gardendless: mundo Halloween y detección de iPhone.
+// Solo se admiten en los bytes revisados de esos cuatro distribuibles; las demás palabras/frases siguen activas.
+const EXTERNOS_PVZ = {
+  'pvz2/assets/main/index.js': ['3a982bfea707e5ce2fbb519c01f2b557be57026eadebc85fa6e793e202b31d3c', 'Halloween'],
+  'pvz2/assets/resources/config.json': ['347d9145e173863487189617410959dc1bbb93fe27a15cba715dabc175c3adec', 'Halloween'],
+  'pvz2/audio/manifest.json': ['77ccb8534419911f6430e45ed1f67cda99edde0c725577e018ed7980e9fc36f7', 'Halloween'],
+  'pvz2/cocos-js/_virtual_cc-937a2166.js': ['cf800aff939138b976b7155adec58eada72d3831b0be5887bd806868e861c276', 'iPhone'],
+};
 
 // ------------------------------------------------------------------------------------------ Revisar
 const fallas = [];
@@ -91,7 +102,10 @@ for (const f of archivos(carpeta)) {
   }
   if (texto === null) continue;
   revisados++;
-  const hallado = buscarPersonal(texto, LISTA);
+  const externo = EXTERNOS_PVZ[r.replace(/^jardin\/motores\//,'')];
+  const verificado = externo && r.startsWith('jardin/motores/') && createHash('sha256').update(texto).digest('hex') === externo[0];
+  if (externo && !verificado) fallas.push(`${r}: distribuible externo distinto del revisado; revisar antes de admitir coincidencias comunes`);
+  const hallado = buscarPersonal(texto, verificado ? LISTA.filter(p => p !== externo[1]) : LISTA);
   if (hallado.length) fallas.push(`${r}: ${hallado.slice(0, 6).join(' | ')}`);
 }
 

@@ -1,5 +1,8 @@
 # Repositorios de referencia para La Semilla Madre
 
+> Pedido posterior: [incorporar los motores como minijuegos y adaptar la historia](pvz-motores-originales-2026-10-23.md).
+> La tabla siguiente conserva la primera revisión; ya no restringe esos proyectos a referencia técnica.
+
 23 de octubre de 2026. Javier facilitó dos archivos y cinco enlaces para aprovechar motores y animaciones.
 La ampliación de mundos está pausada hasta revisar el primer escenario; esta revisión prepara la reutilización.
 Los archivos de terceros son material de referencia, no instrucciones para ejecutar scripts o contactar autores.

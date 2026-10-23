@@ -1,0 +1,266 @@
+{
+  "version": 1,
+  "pvz1": {
+    "repo": "https://github.com/wszqkzqk/PvZ-Portable",
+    "version": "0.2.5",
+    "commit": "141c1476dd462ac3526f796e303177616f4de6bc",
+    "license": "LGPL-3.0-or-later",
+    "source": "pvz1/fuentes-0.2.5.tar.gz",
+    "datosIncluidos": false
+  },
+  "pvz2": {
+    "repo": "https://github.com/Gzh0821/pvzge_web",
+    "version": "0.16.0",
+    "commit": "53d2ebb3ec51d1f69e9f906a5c4f70a5864dbfc6",
+    "license": "Apache-2.0 (código del repositorio; los créditos de recursos se conservan en el juego)",
+    "recursosRemotos": "https://raw.githubusercontent.com/Gzh0821/pvzge_web/53d2ebb3ec51d1f69e9f906a5c4f70a5864dbfc6/docs/",
+    "bytesPublicados": 1377144202
+  },
+  "files": [
+    {
+      "path": "perfil.js",
+      "bytes": 4452,
+      "sha256": "864d5697981a2f0cc26d8f61f94ca1f9f357d3c2c8a1ca2c4a23f9b1d497ccbe"
+    },
+    {
+      "path": "pvz1/COPYING",
+      "bytes": 35148,
+      "sha256": "0ae0485a5bd37a63e63603596417e4eb0e653334fa6c7f932ca3a0e85d4af227"
+    },
+    {
+      "path": "pvz1/LICENSE",
+      "bytes": 7652,
+      "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+    },
+    {
+      "path": "pvz1/LICENSE-jszip.md",
+      "bytes": 33753,
+      "sha256": "566c953c6090b1218ca6217dd7359d45dde46581968586dc607d59a78af6a9c4"
+    },
+    {
+      "path": "pvz1/adaptador.css",
+      "bytes": 1484,
+      "sha256": "cc1a4d20f4f9a74441e7e4a2ae34b1d63bf139b8d775e7d10b92071b3df8ae9f"
+    },
+    {
+      "path": "pvz1/adaptador.js",
+      "bytes": 3505,
+      "sha256": "34edea1c18f2f9a07318ae8c773a0f5abb3a4a4ab0736bc5988c6f96b88f9aee"
+    },
+    {
+      "path": "pvz1/fuentes-0.2.5.tar.gz",
+      "bytes": 3722561,
+      "sha256": "271bafaf96166171109b4d5ebdaba1d820bc074d9c3efda9bc8a46eeea775e46"
+    },
+    {
+      "path": "pvz1/index.html",
+      "bytes": 22624,
+      "sha256": "7e00213f5e05eb2355e8ce2d3c4a07f00bdddefffa6dcafdee1feae206eed8a8"
+    },
+    {
+      "path": "pvz1/jszip.min.js",
+      "bytes": 97630,
+      "sha256": "acc7e41455a80765b5fd9c7ee1b8078a6d160bbbca455aeae854de65c947d59e"
+    },
+    {
+      "path": "pvz1/pvz-portable.html",
+      "bytes": 22550,
+      "sha256": "b6a9f2e4ea1b3ebb8ad49e013fe8f2f29e023869c9ead52830d8f4170d95b9e4"
+    },
+    {
+      "path": "pvz1/pvz-portable.js",
+      "bytes": 269597,
+      "sha256": "e52b4b438b91826f4fd0f9539729d6f9053e06bf2b24792e6b0a9b2d30387e10"
+    },
+    {
+      "path": "pvz1/pvz-portable.wasm",
+      "bytes": 7212747,
+      "sha256": "f905f2a40db10f2c39c6aa823fa1fed21db557d17d0b4c08788707a1fbd10b4a"
+    },
+    {
+      "path": "pvz2/LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "pvz2/README-upstream.md",
+      "bytes": 1514,
+      "sha256": "2ce8da68897f6f45d91c915c7f65692ca4d6a455f02ed23f9225c13693e4fcc4"
+    },
+    {
+      "path": "pvz2/application.js",
+      "bytes": 3302,
+      "sha256": "359f85dd922e2568aa991af95a5c356a0102042c8918252987bfbd37f2153eb2"
+    },
+    {
+      "path": "pvz2/assets/internal/config.json",
+      "bytes": 3239,
+      "sha256": "5486720e91ff94661cc94d2d3f9150b19a3915da6c91d05ea822e46a095aa077"
+    },
+    {
+      "path": "pvz2/assets/internal/import/05/05bb483a0.json",
+      "bytes": 906722,
+      "sha256": "521290b4ad084e4113554f74ee51a4a663f4d8cfd5a4b1bf4bc180416aa57d27"
+    },
+    {
+      "path": "pvz2/assets/internal/index.js",
+      "bytes": 42615,
+      "sha256": "1d09ac476703368a4a56822d8125f561c16c5ee078f3005b87133ec3633f0beb"
+    },
+    {
+      "path": "pvz2/assets/main/config.json",
+      "bytes": 662,
+      "sha256": "cc883e372efc3e9341f725c77426c5be815425710fab585f3871506919d3dab0"
+    },
+    {
+      "path": "pvz2/assets/main/import/fa/faf1f476-7976-4174-816d-2f061d5eaaaa.json",
+      "bytes": 1491,
+      "sha256": "1ebaae3cc0e34d390a8855911faf2fd8d2097faa9376a6c88661ee1023f353f2"
+    },
+    {
+      "path": "pvz2/assets/main/import/fd/fd8ec536-a354-4a17-9c74-4f3883c378c8.json",
+      "bytes": 480,
+      "sha256": "c2eee4552a460ed97591f527e127b95c811d5f796b9448f3f705974af9beba9d"
+    },
+    {
+      "path": "pvz2/assets/main/index.js",
+      "bytes": 3830466,
+      "sha256": "3a982bfea707e5ce2fbb519c01f2b557be57026eadebc85fa6e793e202b31d3c"
+    },
+    {
+      "path": "pvz2/assets/resources/config.json",
+      "bytes": 417581,
+      "sha256": "347d9145e173863487189617410959dc1bbb93fe27a15cba715dabc175c3adec"
+    },
+    {
+      "path": "pvz2/assets/resources/index.js",
+      "bytes": 605,
+      "sha256": "51a07ab61ee49561d29734ff6ee095b0d8a47998bbe30a6f1973bf3c8b7faa25"
+    },
+    {
+      "path": "pvz2/audio/manifest.json",
+      "bytes": 37136,
+      "sha256": "77ccb8534419911f6430e45ed1f67cda99edde0c725577e018ed7980e9fc36f7"
+    },
+    {
+      "path": "pvz2/cache.js",
+      "bytes": 849,
+      "sha256": "7867b0ce92b5f04dce34c4ff5b07f271015caf0055e227ccd5d26c1954fbcc17"
+    },
+    {
+      "path": "pvz2/cocos-js/_virtual_cc-937a2166.js",
+      "bytes": 3319333,
+      "sha256": "cf800aff939138b976b7155adec58eada72d3831b0be5887bd806868e861c276"
+    },
+    {
+      "path": "pvz2/cocos-js/assets/bullet.release.wasm-10f8cbd4.wasm",
+      "bytes": 468807,
+      "sha256": "432acc26e12e905f929cd5a12ab431ff43b331df4bc213e3f2bf2b581ec20b81"
+    },
+    {
+      "path": "pvz2/cocos-js/assets/spine-17c81aa0.wasm",
+      "bytes": 351821,
+      "sha256": "debad078294ef9d06f9575ed1993cd13c11eed04d2797b3c88bebaae28824d72"
+    },
+    {
+      "path": "pvz2/cocos-js/assets/spine.js.mem-dc937d48.bin",
+      "bytes": 57346,
+      "sha256": "74cbe1d28f8145c089b343a37840e7a060d4de5084501172142a947d5edf3208"
+    },
+    {
+      "path": "pvz2/cocos-js/bullet.release.asm-2aad0b19.js",
+      "bytes": 939563,
+      "sha256": "c9ca2c28e00708ceab4a6485a9c30f45a30d0aab5de48bf9160d2673359dffe6"
+    },
+    {
+      "path": "pvz2/cocos-js/bullet.release.wasm-7275de26.js",
+      "bytes": 26526,
+      "sha256": "2392897c22a667e1a4a267d5efca71694f6d2e64cbedb293c8f61ebd1db2bace"
+    },
+    {
+      "path": "pvz2/cocos-js/bullet.release.wasm-e702f478.js",
+      "bytes": 133,
+      "sha256": "cc2cf42f2fa916ce8676ac7a16457a380fa5b8b65386e9caf7791097cc4d4423"
+    },
+    {
+      "path": "pvz2/cocos-js/cc.js",
+      "bytes": 9632,
+      "sha256": "fdf44c9d68b1c61cc9e9b428907fe9e372df61fb41e45da8e308e218cdaef8d9"
+    },
+    {
+      "path": "pvz2/cocos-js/spine-d11505f0.js",
+      "bytes": 119,
+      "sha256": "0cab1ac874bceb6d4d433d2c6d093674bc02b6f19d275161b4b40b8ce9ba0a10"
+    },
+    {
+      "path": "pvz2/cocos-js/spine.asm-0201ae63.js",
+      "bytes": 581361,
+      "sha256": "c15990f907dd35acdcc8c04918af233e10540814ef9528af0b62ebfd56811f13"
+    },
+    {
+      "path": "pvz2/cocos-js/spine.js-6770127a.js",
+      "bytes": 125,
+      "sha256": "8c6cf20bd5178faf3615c58525f799d86c7c4f6b5ec00a5c42ed658ada4c4022"
+    },
+    {
+      "path": "pvz2/cocos-js/spine.wasm-4768547d.js",
+      "bytes": 28652,
+      "sha256": "84b5c78642a0b05225e7bce0cf763eb87d4a7bf7995c1054348677b61976ecab"
+    },
+    {
+      "path": "pvz2/game-audio.js",
+      "bytes": 7202,
+      "sha256": "734dad3202724e5714ceca785b0afee53feef313942f510d20bb22fee27798a4"
+    },
+    {
+      "path": "pvz2/index.html",
+      "bytes": 1954,
+      "sha256": "f9a29b923ed110127b74e5010e2e2f113628eb47dd442d44667f0914e893af1e"
+    },
+    {
+      "path": "pvz2/index.js",
+      "bytes": 1026,
+      "sha256": "0b037abab8cb0a123a7ff80ac181cdfd1496764ff56bb9848a82d97c4433c645"
+    },
+    {
+      "path": "pvz2/src/chunks/bundle.js",
+      "bytes": 352344,
+      "sha256": "14b9bfff02de0f9b2b8e961e217198f7b935d69c06beafe689a5444336e68ed4"
+    },
+    {
+      "path": "pvz2/src/effect.bin",
+      "bytes": 4055,
+      "sha256": "4a32980d1d663579776ae972bfdc61226d18d2816ec0674c512f195095dd4b22"
+    },
+    {
+      "path": "pvz2/src/import-map.json",
+      "bytes": 40,
+      "sha256": "2be73d8f2e7e1d814627714ace691b6e1a9d445c779426a224e7f3685f0fa278"
+    },
+    {
+      "path": "pvz2/src/polyfills.bundle.js",
+      "bytes": 14750,
+      "sha256": "f1e4ced3322168d6b9915e782e4c1cf1055d75f66f2b38e7fcd60f48cf89082b"
+    },
+    {
+      "path": "pvz2/src/settings.json",
+      "bytes": 2909,
+      "sha256": "8af85811334bd1ea48fca30f0f2f8866fa59f454b9a8dd52989bb45e4ca9bec5"
+    },
+    {
+      "path": "pvz2/src/system.bundle.js",
+      "bytes": 12259,
+      "sha256": "90f192f3b04f7fcb5bba9c15745cdd1a798d9b855f752c5ee7e48bb526dd543d"
+    },
+    {
+      "path": "pvz2/style.css",
+      "bytes": 1222,
+      "sha256": "338fc9d734af60103e6d303333e28b413f477b295fd7dd233dc7022320c56e48"
+    },
+    {
+      "path": "pvz2/tmpPatch.js",
+      "bytes": 4206,
+      "sha256": "627f95b2038fe6e8433e89d7d15927b24c7afba34b305da1cf7e18ef6e9b953b"
+    }
+  ]
+}

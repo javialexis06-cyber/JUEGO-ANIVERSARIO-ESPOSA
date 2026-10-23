@@ -1,0 +1,6 @@
+# Mantener los bytes de los motores fijados por SHA-256 también en clones de Windows.
+juego/web/public/jardin/motores/** -text
+# Espacios originales de los distribuibles; no reescribirlos ni cambiar sus hashes.
+juego/web/public/jardin/motores/pvz1/COPYING whitespace=-blank-at-eof
+juego/web/public/jardin/motores/pvz2/README-upstream.md whitespace=-blank-at-eof
+juego/web/public/jardin/motores/pvz2/assets/*/index.js whitespace=-blank-at-eol
