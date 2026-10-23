@@ -1,7 +1,8 @@
 # Plantas contra Zombis · arquitectura y contrato de trabajo
 
 > **Pedido posterior:** [PvZ-Portable y Gardendless como minijuegos](pvz-motores-originales-2026-10-23.md).
-> La historia mantiene su motor V2 mientras se adapta Portable para varios frentes y carriles configurables.
+> Javier no tiene datos GOTY: Gardendless es el candidato principal de adaptación. La historia mantiene su motor V2
+> mientras se resuelven varios frentes, guardado completo y carriles configurables; no esperar esos archivos del usuario.
 
 > **Inicio aprobado tras la revisión del 23 de octubre:** [primer escenario y controles](pvz-principios-2026-10-23.md).
 > Las partidas nuevas comienzan defendiendo La casa; V2 anteriores mantienen su fase. Ampliación de mundos pausada.

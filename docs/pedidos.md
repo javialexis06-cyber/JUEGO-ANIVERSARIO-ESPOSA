@@ -8,8 +8,10 @@ Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contr
 Pedido posterior: incorporar PvZ-Portable como minijuego PvZ 1 y Gardendless como PvZ 2, con sus propios
 combates, habilidades y animaciones. Adaptar el motor más adecuado a la historia territorial.
 Ver [integración, versión y pendientes concretos](en-obra/pvz-motores-originales-2026-10-23.md).
-Portable se prefiere como base de adaptación por su guardado completo; el puente de frentes/carriles no está
-terminado. Se conservan historia V2, aventura de 40 niveles, patios y partidas previas; mundos nuevos pausados.
+Javier confirmó después que no tiene los archivos GOTY. La historia no debe depender de que los aporte:
+Gardendless pasa a candidato principal por disponer de recursos, con el puente de frentes/carriles/guardado
+pendiente. Portable queda opcional y pendiente de recursos compatibles. Se conservan historia V2, aventura de
+40 niveles, patios y partidas previas; mundos nuevos pausados.
 
 ## Prioridad vigente · primer escenario antes de ampliar mundos
 

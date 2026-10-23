@@ -5,6 +5,10 @@ oleadas, habilidades y modos; cada uno debe ser un minijuego independiente. La h
 adaptar el motor que mejor permita frentes simultáneos, reservas exclusivas y carriles por escenario.
 Este pedido sustituye el uso de esos proyectos únicamente como referencia. Los mundos nuevos siguen pausados.
 
+**Aclaración posterior del usuario:** Javier no tiene `main.pak` ni `properties/`. No esperar esos archivos
+ni volver a pedírselos para avanzar la historia. Gardendless pasa a candidato principal por disponer de sus
+recursos; la adaptación territorial sigue pendiente. Portable conserva su entrada opcional e importador.
+
 ## Integración realizada
 
 - `jardin.html?modo=pvz1`: PvZ-Portable **0.2.5**, revisión `141c1476dd462ac3526f796e303177616f4de6bc`.
@@ -49,11 +53,17 @@ Cambios sobre los distribuibles:
 4. El HTML de arranque propio omite los cargadores de publicidad/telemetría. El service worker tiene alcance
    solo dentro de `pvz2/` y solo almacena peticiones GET de recursos públicos de la revisión fijada.
 
-## Motor elegido para adaptar a historia
+## Motor para adaptar a historia · decisión revisada
 
-**PvZ-Portable es la base técnica preferida**, por su fuente completa de combate y guardados portátiles a
-mitad de partida. Gardendless queda como minijuego íntegro y fuente adicional para las unidades de PvZ 2.
-Esta elección no implica que Portable contenga ya las habilidades de PvZ 2 o Fusión.
+La primera preferencia fue Portable por su fuente de combate y guardados a mitad de partida. Esa elección
+dependía de recursos que no están en el repositorio. Con la confirmación de Javier, **Gardendless pasa a
+candidato principal para adaptar la historia**, pues su motor y recursos ya permiten ejecutar y comprobar
+combates completos. Portable queda como minijuego opcional pendiente de un paquete compatible.
+
+Se comprobó también el inventario del Haxe Engine aportado: 423 archivos en `assets/`, una definición de
+planta y seis de zombis, sin PAK, `properties/` ni `resources.xml` de Portable. Sus gráficos y sonidos sueltos
+no constituyen un paquete completo que pueda importarse sin conversión. No resuelven por sí solos el arranque
+de PvZ-Portable. Los recursos propios del Jardín tampoco se presentan como un paquete GOTY terminado.
 
 La inspección detectó límites concretos: Portable define `MAX_GRID_SIZE_Y = 6`, tiene una aplicación/tablero
 principal y bucle global; Gardendless usa bucles fijos de cinco carriles en varios sistemas y no expone una
@@ -62,19 +72,20 @@ los ataques de varios frentes. No se presenta ninguno como sustituto territorial
 
 Trabajo necesario antes de conectar el motor nuevo a la historia:
 
-- Exponer crear/tablero, órdenes legales, paso fijo, pausa, resultado, exportación y restauración desde C++ a WASM.
-- Separar estado del tablero, RNG, perfil, interfaces y eventos globales; comprobar varios frentes activos con
+- Exponer crear/tablero, órdenes legales, paso fijo, pausa, resultado, exportación y restauración desde Cocos.
+- Separar estado del tablero, RNG, perfil, interfaces, animaciones y eventos programados; comprobar varios frentes con
   una sola autoridad y sin avanzar el tablero según cuál se vea.
 - Parametrizar de tres a siete o más carriles, geometría, selección de fila, agua y serialización. Mantener el
   comportamiento original de los minijuegos con cinco/seis carriles.
 - Aplicar reservas de tipos y equipos a las órdenes de siembra, conservar las defensas entre incursiones y
   versionar la migración V2 sin borrar el original ni conceder recursos.
-- Importar las habilidades necesarias de PvZ 2/Fusión con sus dependencias y pruebas por unidad; sustituir
+- Conservar las habilidades del motor e integrar las unidades faltantes de PvZ 1/Fusión con pruebas por unidad; sustituir
   los recursos por el arte propio al adaptar pistas, pivotes y animaciones.
 
 La historia publicada sigue usando su motor territorial anterior mientras se construye y comprueba ese puente.
-Para comprobar Portable de inicio a fin y validar la adaptación hace falta el paquete GOTY del usuario; el
-repositorio y el ZIP de Portable aportados no lo incluyen. No se descargaron archivos GOTY de otro sitio.
+El catálogo de ambos minijuegos y la migración territorial son trabajos distintos. La ausencia de recursos
+compatibles sigue impidiendo certificar una partida real de Portable; no bloquea el trabajo sobre Gardendless
+ni convierte su motor actual en una migración ya realizada. La historia no requiere que Javier consiga GOTY.
 
 ## Evidencia y límites
 

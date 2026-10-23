@@ -10,8 +10,9 @@ Los 253 MP3 están producidos y el reproductor está conectado; esto no completa
 La ampliación de mundos está pausada para revisar [inicio, controles y animación base](pvz-principios-2026-10-23.md).
 Las [fuentes nuevas aportadas](pvz-referencias-motores-2026-10-23.md) quedan registradas para reutilización posterior.
 El pedido posterior incorpora [PvZ 1 y PvZ 2 como minijuegos con sus motores](pvz-motores-originales-2026-10-23.md).
-El puente de Portable a la historia, los carriles ampliados y las unidades futuras siguen pendientes;
-montar esos distribuibles no cierra los grupos completos del catálogo territorial.
+Javier no tiene datos GOTY: Gardendless pasa a candidato principal para la historia. Su puente de frentes,
+guardado completo y carriles ampliados sigue pendiente; montar los distribuibles no cierra los grupos del
+catálogo territorial ni exige que el usuario aporte recursos para continuar.
 
 ## Decisiones confirmadas y alcance
 
