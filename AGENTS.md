@@ -8,7 +8,10 @@ verificada de Fusión. El catálogo y su arte se reanudan; la pausa gráfica ant
 Ver `docs/en-obra/pvz-pendientes-2026-10-22.md` y el issue #1 de GitHub: el seguimiento contiene 180 tareas
 con casillas de avance y evidencia. Ya existe el núcleo de carriles/instantáneas y coordinador de defensas;
 ver `docs/en-obra/pvz-instancias-2026-10-23.md`. La historia ya conecta mapa y guardado V2;
-ver `docs/en-obra/pvz-historia-integrada.md`. Salas nuevas y migración V1 siguen pendientes. Conservar historia desde casa hasta el 100%, mapas mundo/país/ciudad, controles redondos,
+ver `docs/en-obra/pvz-historia-integrada.md`. El localizador de reservas y las comprobaciones normales parciales
+están en `docs/en-obra/pvz-reservas-y-presion-2026-10-23.md`; no certifican el balance de la campaña completa.
+Salas nuevas y migración V1 siguen pendientes. Conservar historia desde casa hasta el 100%,
+mapas mundo/país/ciudad, controles redondos,
 PvZ y patios como minijuegos y sus partidas. El prototipo/versus anterior conserva su combate y claves en `modo=prototipo`; la historia nueva usa PvZ real.
 
 Leer [CLAUDE.md](CLAUDE.md). La cola vigente está en [docs/pedidos.md](docs/pedidos.md); las notas históricas no la sustituyen.

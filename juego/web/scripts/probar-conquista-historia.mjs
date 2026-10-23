@@ -49,6 +49,22 @@ try{
   const mal=m.exportar();mal.defensas.zonas[9].semillas=['girasol'];assert.throws(()=>HistoriaConquistaPvZ.restaurar(mal));
  });
  prueba('sin intervención la casa cae y su equipo no queda duplicado en una zona perdida',()=>{const m=new HistoriaConquistaPvZ();for(let i=0;i<60*600&&!m.estado.ganador;i++)m.paso();assert.equal(m.estado.ganador,'zombis');assert.equal(m.estado.zonas[8].dueno,'zombis');assert.deepEqual(m.defensas.semillas('8'),[]);assert.equal(m.defensas.propietaria('girasol'),null);assert.deepEqual(HistoriaConquistaPvZ.restaurar(json(m.exportar())).exportar(),m.exportar());});
+ prueba('incursiones normales repetidas conservan la defensa, los relojes y los recursos sin reposiciones',()=>{
+  const m=new HistoriaConquistaPvZ(),piloto=crearPilotoPvZ();let victorias=0,comienzos=0,conservada=null;
+  const recursos=local=>json({sol:local.sol,abono:local.abono,plantas:local.plantas,cortacespedes:local.cortacespedes,recargas:local.recargas,pasos:local.pasos});
+  for(let i=0;i<60*1600&&!m.estado.ganador;i++){
+   const z=m.estado.zonas[8],id=z.incursion?.id,local=m.defensas.observar('8');if(id)piloto(local);m.seleccionar(i%2?8:null);m.paso();
+   if(!id&&z.incursion){comienzos++;if(conservada)assert.deepEqual(recursos(m.defensas.observar('8')),conservada,'Rearmar no debe regalar salud, recargas, soles ni cortacéspedes');}
+   if(id&&!z.incursion){assert.equal(z.dueno,'plantas');victorias++;conservada=recursos(local);assert.deepEqual(HistoriaConquistaPvZ.restaurar(json(m.exportar())).exportar(),m.exportar());}
+  }
+  assert.equal(m.estado.ganador,'');assert.ok(victorias>=10,JSON.stringify({victorias,comienzos}));assert.equal(m.defensas.propietaria('girasol'),'8');campanas.push({tipo:'asedio-a-la-casa',incursiones:true,t:m.t,victorias,comienzos});
+ });
+ prueba('el piloto conserva tipos fronterizos y usa equipos distintos en expediciones simultáneas a las defensas',()=>{
+  for(const semilla of[23,41]){const m=new HistoriaConquistaPvZ(semilla),piloto=crearPilotoHistoriaPvZ(),vistas=new Set();let maxFrentes=0;
+   for(let i=0;i<60*600&&!m.estado.ganador;i++){const reservas=m.estado.zonas.filter(z=>z.dueno==='plantas'&&m.vecinos(z.id).some(v=>m.estado.zonas[v].dueno==='zombis')).flatMap(z=>m.defensas.semillas(String(z.id)).map(tipo=>[tipo,String(z.id)]));piloto(m);for(const[tipo,zona]of reservas)assert.equal(m.defensas.propietaria(tipo),zona,'El piloto no debe vaciar una frontera para expandirse');m.paso();maxFrentes=Math.max(maxFrentes,m.activos.length);for(const z of m.estado.zonas)if(z.dueno==='plantas')vistas.add(z.id);}
+   assert.equal(m.estado.ganador,'');assert.ok(vistas.has(9)&&m.estado.conocidas.includes(4),JSON.stringify({semilla,vistas:[...vistas],avisos:m.estado.avisos}));assert.ok(maxFrentes>=2);assert.deepEqual(HistoriaConquistaPvZ.restaurar(json(m.exportar())).exportar(),m.exportar());campanas.push({tipo:'salidas-iniciales',semilla,incursiones:true,t:m.t,recuperadasAlgunaVez:[...vistas],maxFrentes});
+  }
+ });
  // Configuración de prueba explícita: sin incursiones estratégicas. Recorre todos los combates
  // y traslada equipos por controles legales; no certifica la presión de la campaña normal.
  const m=new HistoriaConquistaPvZ(23,false),piloto=crearPilotoHistoriaPvZ();let copias=0;

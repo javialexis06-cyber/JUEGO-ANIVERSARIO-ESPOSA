@@ -21,7 +21,8 @@
     "probar:pvz:amigos": "node scripts/probar-pvz-amigos.mjs",
     "probar:conquista": "node scripts/probar-conquista-motor.mjs && node scripts/probar-conquista-historia.mjs",
     "probar:conquista:interfaz": "node scripts/probar-conquista-interfaz.mjs",
-    "build:conquista:portatil": "node scripts/compilar-conquista-portatil.mjs"
+    "build:conquista:portatil": "node scripts/compilar-conquista-portatil.mjs",
+    "diagnosticar:conquista": "node scripts/diagnosticar-conquista-historia.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",

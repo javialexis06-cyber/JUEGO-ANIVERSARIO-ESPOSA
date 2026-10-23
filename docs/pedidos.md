@@ -1,6 +1,6 @@
 # Pedidos de Javier · estado vigente
 
-Actualizado el 22 de octubre de 2026 (Bogotá). Esta lista sustituye las prioridades contradictorias del
+Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
 ## Prioridad actual · motor completo y catálogo tras probar Conquista
@@ -21,6 +21,9 @@ funcionales y dibujados. Las fusiones siguen siendo tardías en historia y acces
 por zona, carriles de tres a siete, reservas exclusivas, desbloqueos de las 32 plantas construidas y guardado
 V2 completo con respaldo y protección de pestañas. Los doce escenarios se recorrieron con piloto legal
 **sin incursiones estratégicas como fixture**; el balance normal con varios frentes sigue por validar.
+[Reservas y presión](en-obra/pvz-reservas-y-presion-2026-10-23.md): localizar cada tipo en ciudad/país/mundo
+conserva el equipo pendiente y los combates activos. Trece defensas normales repetidas conservaron la casa;
+dos intentos prolongados de expansión con piloto terminaron en derrota, sin cambiar dificultad ni economía.
 
 La historia/versus del prototipo se conserva en `modo=prototipo` con sus claves. Faltan adaptar las salas al
 motor nuevo y diseñar la conversión explícita de V1; no se han recortado sus equipos repetidos. El catálogo,

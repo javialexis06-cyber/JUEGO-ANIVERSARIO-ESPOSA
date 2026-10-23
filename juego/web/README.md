@@ -70,6 +70,9 @@ La nueva aventura de PvZ tiene su motor independiente en `src/jardin/pvz/`: cuar
 con guardado propio y pruebas mediante `npm run probar:pvz`. Su aventura Canvas, selección de semillas, almanaque y arte ilustrado están conectados;
 se abre en `jardin.html?modo=aventura`. Sin modo se abre la [historia con defensas PvZ](../../docs/en-obra/pvz-historia-integrada.md).
 `modo=prototipo` conserva la historia y el versus anteriores con sus archivos independientes.
+Los sobres de historia permiten localizar su reserva en el mapa sin perder el equipo pendiente.
+`npm run diagnosticar:conquista` registra intentos normales con contraataques; una derrota del piloto
+no equivale a imposibilidad humana. Ver [resultados y límites](../../docs/en-obra/pvz-reservas-y-presion-2026-10-23.md).
 Ver [contratos y límites](../../docs/en-obra/pvz-arte-2026-10-22.md).
 
 Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistemas/patio-mental.md) y

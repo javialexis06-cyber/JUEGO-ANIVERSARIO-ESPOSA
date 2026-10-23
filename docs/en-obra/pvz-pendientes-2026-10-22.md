@@ -1,6 +1,6 @@
 # La Semilla Madre · pendientes de motor, catálogo y producción
 
-Actualizado el **22 de octubre de 2026 (Bogotá)**, después de que el jugador probara la base.
+Actualizado el **23 de octubre de 2026**, después de que el jugador probara la base.
 Auditoría inicial del código publicado en `568aa9a0`; las casillas cerradas tienen evidencia en el avance enlazado.
 Seguimiento con casillas en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1).
 
@@ -46,7 +46,10 @@ cuando se integre código. No reabrir ampliaciones por aparecer en documentos an
 [Núcleo de instancias](pvz-instancias-2026-10-23.md) e [historia integrada](pvz-historia-integrada.md):
 la nueva entrada ya conecta mapa, reservas, desbloqueos y guardado V2 con partidas PvZ normales.
 Las casillas cerradas se refieren a esta base de doce escenarios y 32 plantas; no completan la campaña
-final, PvP nuevo, migración V1 ni los catálogos de PvZ 1/2/Fusión. Los recorridos completos de esta base
+final, PvP nuevo, migración V1 ni los catálogos de PvZ 1/2/Fusión.
+[Reservas y presión](pvz-reservas-y-presion-2026-10-23.md): el selector permite localizar la reserva en
+ciudad/país/mundo y volver al borrador; las pruebas normales incluyen trece defensas repetidas de la casa.
+Dos intentos prolongados del piloto terminaron en derrota; el balance humano sigue sin certificar. Los recorridos completos de esta base
 separan explícitamente el fixture sin incursiones del balance normal, que sigue por validar.
 
 Fuentes de esta auditoría: `juego/web/src/jardin/pvz/{datos,comportamiento,motor,arte}/` y
@@ -111,7 +114,7 @@ con independencia del mapa abierto, la cámara y la velocidad del render.
 - [x] C01 Añadir un registro global de reserva por tipo canónico de planta, con zona propietaria o estado libre.
 - [ ] C02 Hacer atómica la asignación: dos zonas, pestañas u órdenes de red no pueden adquirir el mismo tipo.
 - [ ] C03 Consultar el registro al preparar un grupo, plantar, atacar, defender, fusionar y cargar una partida.
-- [ ] C04 Mostrar dónde está asignado cada tipo desde el selector y permitir localizar esa zona en el mapa.
+- [x] C04 Mostrar dónde está asignado cada tipo desde el selector y permitir localizar esa zona en el mapa.
 - [x] C05 Definir traslado y liberación de tipos sin teletransportar plantas activas ni dejar copias en el tablero de origen.
 - [x] C06 Definir la reasignación durante combates y los límites que impiden retirar una defensa para duplicarla en otra.
 - [x] C07 Conservar la reserva aunque muera una planta individual; la reserva corresponde al tipo asignado.

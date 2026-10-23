@@ -1,6 +1,6 @@
 # La Semilla Madre · historia con defensas PvZ
 
-Actualizado el **22 de octubre de 2026, hora de Bogotá**. Continúa el
+Actualizado el **23 de octubre de 2026**. Continúa el
 [núcleo de instancias](pvz-instancias-2026-10-23.md) y el [seguimiento en GitHub](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1).
 
 ## Entrada y alcance
@@ -87,7 +87,9 @@ actual antes de confirmar. Un conflicto entre pestañas no se resuelve sobrescri
 ## Interfaz y comprobaciones
 
 Mapa a pantalla completa con mundo → país → ciudad → zona y controles redondos. El selector usa sobres
-ilustrados, costes reales, procedencia y enemigos previstos. Los mapas marcan propiedad e incursiones;
+ilustrados, costes reales, procedencia y enemigos previstos. La procedencia abre un localizador en
+ciudad/país/mundo, incluso si el tipo está ocupado. Volver conserva la selección; no explora territorios
+ni detiene las oleadas. El editor actualiza las reservas si comienza un ataque mientras está abierto. Los mapas marcan propiedad e incursiones;
 el campo muestra solo semillas, sol local, pala y los controles pequeños. Conserva portada animada y nave.
 
 Desde `juego/web/`:
@@ -102,6 +104,11 @@ carga exacta multizona y rechazo de archivos contradictorios. Sin intervención,
 no queda duplicada. Un recorrido con piloto legal completa los doce escenarios en unos 3.593 s virtuales,
 **con incursiones estratégicas desactivadas como fixture**. Eso comprueba los combates y la integración;
 no acredita que la campaña normal con contraataques esté balanceada ni todas las combinaciones.
+
+[Avance de reservas y presión](pvz-reservas-y-presion-2026-10-23.md): trece defensas consecutivas de la casa
+con incursiones habilitadas conservaron el tablero sin reposiciones. Los pilotos normales de las semillas
+23 y 41 terminaron en derrota; sus logs se reproducen con `npm run diagnosticar:conquista`. Eso no acredita
+imposibilidad humana ni autoriza cambiar el balance. El editor/localizador pasó trece comprobaciones.
 
 El navegador comprueba toques en cuatro y tres carriles, mapas, tres frentes ocultos, pausa, recarga,
 cuota, importación, dos pestañas, perfiles de amigos, archivos antiguos intactos y el final preparado sin
