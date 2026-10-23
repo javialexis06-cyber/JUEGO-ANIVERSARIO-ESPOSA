@@ -24,7 +24,9 @@
     "build:conquista:portatil": "node scripts/compilar-conquista-portatil.mjs",
     "diagnosticar:conquista": "node scripts/diagnosticar-conquista-historia.mjs",
     "verificar:motores-pvz": "node scripts/verificar-motores-originales.mjs",
-    "probar:pvz:originales": "node scripts/probar-motores-originales.mjs"
+    "probar:pvz:originales": "node scripts/probar-motores-originales.mjs",
+    "probar:pvz:frente-original": "node scripts/probar-frente-gardendless.mjs",
+    "probar:pvz:puente-original": "node scripts/probar-puente-gardendless.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",

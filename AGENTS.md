@@ -11,6 +11,9 @@ para adaptar la historia; el puente de frentes/guardado/carriles aún no sustitu
 sigue encargado y pendiente de una solución de recursos compatible; no descartarlo ni exigir datos al usuario.
 No afirmar migración ni catálogo completo por montar un minijuego.
 Conservar guardados/perfiles, la aventura anterior y la pausa de nuevos mundos.
+Existe un primer puente aislado de Gardendless (inicio, observación, pausa, resultado y cierre), revisable en
+`jardin.html?modo=prueba-frente`. Usa un perfil temporal; no restaura tableros ni migra V2. No conectar sus
+resultados a territorios hasta completar persistencia, reservas y simulación de frentes.
 
 ## Prioridad vigente · primer escenario antes de ampliar mundos
 

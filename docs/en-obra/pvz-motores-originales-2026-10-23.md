@@ -71,9 +71,47 @@ principal y bucle global; Gardendless usa bucles fijos de cinco carriles en vari
 instantánea completa de combate equivalente. Cambiar solamente un número o crear varios lienzos no resuelve
 los ataques de varios frentes. No se presenta ninguno como sustituto territorial ya terminado.
 
-Trabajo necesario antes de conectar el motor nuevo a la historia:
+### Puente inicial de Gardendless
 
-- Exponer crear/tablero, órdenes legales, paso fijo, pausa, resultado, exportación y restauración desde Cocos.
+`src/jardin/motores/frente-gardendless.ts` y `public/jardin/motores/pvz2/frente.js` abren un combate mediante
+`KeyListener.goToLevel`, sin simular pulsaciones en el menú ni modificar el paquete de habilidades del motor.
+La entrada de revisión está en **Minijuegos → Prueba de integración · Gardendless**
+(`jardin.html?modo=prueba-frente`): muestra el fondo ilustrado y controles redondos,
+y carga el tutorial original después de pulsar «Jugar la prueba». No sustituye el inicio de cinco carriles de
+la historia: `tutorial1` conserva su único carril activo y su progresión nativa.
+
+El puente admite iniciar una vez, observar reloj/oleada/soles/recuento de unidades, pausar, reanudar, recibir
+un resultado único y cerrar. Cada petición comprueba origen, ventana, zona, sesión y correlación; una segunda
+carga se rechaza para evitar reinicios que borren daño. Los errores y la cancelación rechazan las esperas y
+liberan la instancia. Solo admite este nivel comprobado; no carga niveles arbitrarios ni concede recompensas.
+
+El perfil de un frente vive **en memoria** y sus bases auxiliares tienen un prefijo de sesión independiente
+de los minijuegos y de V2. Cerrar la prueba descarta ese combate: no produce un supuesto guardado a partir de
+los contadores observados. Las capacidades declaran expresamente `instantaneas: false`,
+`carrilesVariables: false` y `pasoExterno: false`. No hay migración ni persistencia territorial nueva.
+
+`npm run probar:pvz:frente-original` ejecuta una partida completa con selección, siembra, soles y oleadas
+nativas, comprueba que la pausa congela reloj/oleada y valida el aislamiento de perfiles y la cancelación.
+Las capturas y el resultado se escriben en `test-results/frente-gardendless/`. Es una prueba sobre Vite
+porque importa el cliente TypeScript para verificar su contrato; la entrada de revisión también se compila
+en pareja y amigos. No acredita todos los niveles, frentes simultáneos ni rendimiento físico.
+
+El recorrido del puente pasó diez comprobaciones: victoria a los **101,6894 s** del reloj nativo, tercera
+oleada, dos plantas y ningún zombi restante. No se concedieron soles ni se aceleró el reloj. También verificó
+el cierre de una base auxiliar preparada, el perfil temporal de amigos y salir durante la carga. El contrato
+preparado de `npm run probar:pvz:puente-original` cubre mensajes ajenos, reinicio, órdenes no admitidas y un
+único resultado aunque la interfaz nativa cambie de nivel; no se presenta esa prueba preparada como combate.
+El recorrido de los minijuegos originales conservó sus siete comprobaciones sin errores de página o recursos.
+Pasaron los motores existentes, las 48 suites de granja y ambos builds; el filtro de amigos revisó 653
+archivos. La entrada desde Minijuegos, el perfil temporal y la salida durante la carga se comprobaron en
+ambos builds a 844 × 390. Los 50 archivos locales del distribuible y sus adaptadores coinciden con el lock.
+El recorrido integrado final pasó seis controles sin errores de página ni recursos, en contexto aislado y
+con dibujo por captura; no mide rendimiento de un teléfono.
+
+Trabajo restante antes de conectar el motor nuevo a la historia:
+
+- Ampliar el puente de inicio/observación/pausa/resultado a órdenes legales, paso fijo, exportación y restauración
+  completas desde Cocos. La instancia aislada de tutorial no sustituye ese contrato.
 - Separar estado del tablero, RNG, perfil, interfaces, animaciones y eventos programados; comprobar varios frentes con
   una sola autoridad y sin avanzar el tablero según cuál se vea.
 - Parametrizar de tres a siete o más carriles, geometría, selección de fila, agua y serialización. Mantener el
@@ -103,7 +141,7 @@ todo el catálogo, ejecución sin conexión ni rendimiento de la APK.
 
 ### Comprobaciones de cierre
 
-Pasaron las siete comprobaciones de navegador de los dos adaptadores, los 49 archivos fijados por SHA-256,
+En el cierre inicial de los minijuegos pasaron las siete comprobaciones de navegador de los dos adaptadores, los 49 archivos fijados por SHA-256,
 la prueba que impide ampliar las excepciones del filtro de amigos, los motores existentes y las 48 suites de
 granja. Las compilaciones de pareja y amigos terminaron correctamente; el filtro revisó 651 archivos sin
 contenido de la pareja. El recorrido integrado del último build pasó seis controles sin errores de página ni

@@ -10,7 +10,9 @@ combates, habilidades y animaciones. Adaptar el motor más adecuado a la histori
 Ver [integración, versión y pendientes concretos](en-obra/pvz-motores-originales-2026-10-23.md).
 Javier confirmó después que no tiene los archivos GOTY. La historia no debe depender de que los aporte:
 Gardendless pasa a candidato principal por disponer de recursos, con el puente de frentes/carriles/guardado
-pendiente. El minijuego PvZ 1 sigue encargado, pendiente de una solución de recursos compatible sin exigirlos
+pendiente de completar. Ya hay un puente aislado de Gardendless que abre el tutorial nativo, observa el combate,
+pausa/reanuda y comunica resultados; revisión en `jardin.html?modo=prueba-frente`. No guarda tableros ni sustituye V2.
+El minijuego PvZ 1 sigue encargado, pendiente de una solución de recursos compatible sin exigirlos
 al usuario. Se conservan historia V2, aventura de 40 niveles, patios y partidas previas; mundos nuevos pausados.
 
 ## Prioridad vigente · primer escenario antes de ampliar mundos

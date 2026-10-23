@@ -13,6 +13,9 @@ El pedido posterior incorpora [PvZ 1 y PvZ 2 como minijuegos con sus motores](pv
 Javier no tiene datos GOTY: Gardendless pasa a candidato principal para la historia. Su puente de frentes,
 guardado completo y carriles ampliados sigue pendiente; montar los distribuibles no cierra los grupos del
 catálogo territorial ni exige que el usuario aporte recursos para continuar.
+El puente inicial ya abre, observa, pausa y cierra un tutorial nativo aislado de Gardendless, con resultado
+comprobado. La entrada `jardin.html?modo=prueba-frente` descarta el combate al salir; no completa instantáneas,
+reservas, carriles ampliados o simulación simultánea y no cierra casillas del catálogo territorial.
 
 ## Decisiones confirmadas y alcance
 

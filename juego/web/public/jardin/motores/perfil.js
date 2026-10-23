@@ -1,11 +1,16 @@
 /* Adaptador propio: aislamiento de guardados y ciclo de vida. Se carga antes de cada motor. */
 (() => {
   'use strict';
-  const perfil = new URLSearchParams(location.search).get('perfil') === 'amigos' ? 'amigos' : 'pareja';
+  const parametros = new URLSearchParams(location.search);
+  const perfil = parametros.get('perfil') === 'amigos' ? 'amigos' : 'pareja';
   const motor = location.pathname.includes('/pvz1/') ? 'pvz1' : 'pvz2';
-  const prefijo = `semilla-${motor}-${perfil}:`;
-  const storage = window.localStorage;
-  const claves = () => Object.keys(storage).filter(k => k.startsWith(prefijo));
+  const zona = parametros.get('frente'), sesion = parametros.get('sesion');
+  const frente = motor === 'pvz2' && /^[a-z0-9_-]{1,64}$/.test(zona || '') && /^[a-z0-9-]{16,64}$/.test(sesion || '') ? {zona, sesion} : null;
+  const prefijo = frente ? `semilla-frente-pvz2-${perfil}:${zona}:${sesion}:` : `semilla-${motor}-${perfil}:`;
+  // Un frente todavía no dispone de instantáneas: su perfil nativo es temporal y nunca aparenta ser un guardado territorial.
+  const memoria = new Map();
+  const storage = frente ? {getItem: k => memoria.get(k) ?? null, setItem: (k, v) => memoria.set(k, String(v)), removeItem: k => memoria.delete(k)} : window.localStorage;
+  const claves = () => (frente ? [...memoria.keys()] : Object.keys(storage)).filter(k => k.startsWith(prefijo));
   const almacen = {
     getItem: k => storage.getItem(prefijo + k), setItem: (k, v) => storage.setItem(prefijo + k, String(v)),
     removeItem: k => storage.removeItem(prefijo + k), clear: () => claves().forEach(k => storage.removeItem(k)),
@@ -18,8 +23,12 @@
     ownKeys: () => claves().map(k => k.slice(prefijo.length)),
     getOwnPropertyDescriptor: (t, k) => storage.getItem(prefijo + k) === null ? undefined : { enumerable: true, configurable: true, writable: true, value: t.getItem(k) },
   }) });
-  const abrir = indexedDB.open.bind(indexedDB), borrar = indexedDB.deleteDatabase.bind(indexedDB);
-  indexedDB.open = (nombre, version) => version === undefined ? abrir(prefijo + nombre) : abrir(prefijo + nombre, version);
+  const abrir = indexedDB.open.bind(indexedDB), borrar = indexedDB.deleteDatabase.bind(indexedDB), basesTemporales = new Set(), conexionesTemporales = new Set();
+  indexedDB.open = (nombre, version) => {
+    const pedido = version === undefined ? abrir(prefijo + nombre) : abrir(prefijo + nombre, version);
+    if (frente) { basesTemporales.add(prefijo + nombre); pedido.addEventListener('success', () => conexionesTemporales.add(pedido.result)); }
+    return pedido;
+  };
   indexedDB.deleteDatabase = nombre => borrar(prefijo + nombre);
   const contextos = new Set(), medios = new Set();
   for (const nombre of ['AudioContext', 'webkitAudioContext']) if (window[nombre]) {
@@ -29,7 +38,7 @@
   let pausada = false, reproduciendo = [];
   const avisar = (estado, mensaje = '') => parent.postMessage({ canal: 'semilla-motor-v1', motor, estado, mensaje }, location.origin);
   window.semillaMotor = {
-    perfil, motor, prefijo, avisar,
+    perfil, motor, prefijo, frente, avisar,
     async pausa(si) {
       if (si === pausada) return;
       pausada = si;
@@ -56,6 +65,7 @@
       if (motor === 'pvz2') window.System?.get('chunks:///_virtual/PlayerProperties.ts')?.AllPlayerProperties?.savePP?.();
       medios.forEach(a => { a.pause(); a.removeAttribute('src'); a.load(); });
       await Promise.all([...contextos].filter(a => a.state !== 'closed').map(a => a.close()));
+      conexionesTemporales.forEach(db => db.close()); basesTemporales.forEach(nombre => borrar(nombre));
       avisar('cerrado');
     },
   };
