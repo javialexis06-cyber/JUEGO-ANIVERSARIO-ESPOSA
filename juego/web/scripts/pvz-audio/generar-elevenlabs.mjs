@@ -19,12 +19,15 @@ const clave=process.env.ELEVENLABS_API_KEY;
 if(!clave)throw Error('Configura ELEVENLABS_API_KEY en secretos del entorno; nunca en VITE ni en Git');
 const headers={'xi-api-key':clave,'Content-Type':'application/json'},destino=join(dir,'generados');await mkdir(destino,{recursive:true});
 const existe=async p=>{try{await access(p);return true;}catch{return false;}};
+// ElevenLabs responde 429 (demasiadas peticiones, sin cobro) si se le pregunta muy seguido: esperar y repetir.
+const espera=ms=>new Promise(r=>setTimeout(r,ms));
+async function pedir(url,opciones){for(let i=0;;i++){const r=await fetch(url,{...opciones,signal:AbortSignal.timeout(240000)});if(r.status!==429||i>=6)return r;await r.arrayBuffer().catch(()=>{});await espera(5000*2**i);}}
 let consumido=0;
 for(const {asset:a,variante}of tareas){
  const nombre=`${a.id}-${String(variante).padStart(2,'0')}`,archivo=join(destino,nombre+'.mp3'),pendiente=join(destino,nombre+'.pendiente.json');
  if(await existe(archivo)){console.log('EXISTENTE',nombre);continue;}
  if(await existe(pendiente))throw Error('Generación incierta: '+nombre+'. Revisar historial de ElevenLabs antes de repetir; conservar el marcador.');
- const consulta=await fetch('https://api.elevenlabs.io/v1/user/subscription',{headers,signal:AbortSignal.timeout(30000)});
+ const consulta=await pedir('https://api.elevenlabs.io/v1/user/subscription',{headers});
  if(!consulta.ok)throw Error('No se pudo consultar el saldo: HTTP '+consulta.status);
  const cuota=await consulta.json(),restante=cuota.character_limit-cuota.character_count;
  if(!Number.isSafeInteger(restante)||restante<0)throw Error('Saldo no verificable; se detiene la producción');
@@ -36,7 +39,7 @@ for(const {asset:a,variante}of tareas){
  const body=a.tipo==='musica'?{prompt,model_id:plan.modelos.musica,music_length_ms:a.duracion*1000,force_instrumental:true}:{text:prompt,model_id:plan.modelos.efecto,duration_seconds:a.duracion,loop:a.bucle,prompt_influence:.55};
  const registro={id:a.id,variante,modelo:body.model_id,fecha:new Date().toISOString(),promptSha256:createHash('sha256').update(prompt).digest('hex')};
  await writeFile(pendiente,JSON.stringify(registro,null,2),{flag:'wx'});
- const r=await fetch(`https://api.elevenlabs.io/v1/${ruta}?output_format=mp3_44100_128`,{method:'POST',headers,body:JSON.stringify(body),signal:AbortSignal.timeout(240000)});
+ const r=await pedir(`https://api.elevenlabs.io/v1/${ruta}?output_format=mp3_44100_128`,{method:'POST',headers,body:JSON.stringify(body)});
  if(!r.ok)throw Error('Generación detenida: HTTP '+r.status+' para '+nombre+'. Revisar saldo/historial antes de reintentar.');
  if(!(r.headers.get('content-type')??'').startsWith('audio/'))throw Error('Respuesta sin audio para '+nombre+'; conservar marcador y revisar historial.');
  const bytes=new Uint8Array(await r.arrayBuffer());if(bytes.length<1000)throw Error('Audio vacío o incompleto para '+nombre);
