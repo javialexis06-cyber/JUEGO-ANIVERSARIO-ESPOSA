@@ -87,3 +87,6 @@ juego en línea entre Sopetrán y Bucaramanga y la auditoría completa con sus p
 de referencia (personajes, súper y casa) están en [`archivo/renders/`](../archivo/renders/).
 
 - [PvZ: reproducción de ElevenLabs, tutorial y presentación](en-obra/pvz-presentacion-audio-2026-10-23.md).
+
+- [PvZ: primer escenario, croquis, baraja y pala](en-obra/pvz-principios-2026-10-23.md).
+- [PvZ: motores y fuentes facilitadas para reutilización](en-obra/pvz-referencias-motores-2026-10-23.md).

@@ -1,6 +1,6 @@
 /** Guion en pantalla. Dave emite balbuceos de efecto; nunca se envía este texto a TTS. */
 export const PASOS_DAVE=[
- {titulo:'¡El jardín nos necesita!',texto:'Los zombis han invadido el mapa. Empezamos con nuestra casa: las plantas nos ayudarán a protegerla y a recuperar cada zona.',icono:'historia',audio:'dave-saludo',planta:'lanzaguisantes'},
+ {titulo:'¡El jardín nos necesita!',texto:'Los zombis han invadido el mapa. Primero ganamos la defensa de nuestra casa. Sus plantas se conservan; después se habilitan las expediciones y los contraataques para recuperar el mapa.',icono:'historia',audio:'dave-saludo',planta:'lanzaguisantes'},
  {titulo:'Verde es nuestro, morado es suyo',texto:'Los bordes verdes marcan terreno recuperado y los morados, territorio zombi. Una región con ambos colores contiene zonas de los dos bandos.',icono:'mapa',audio:'dave-explica',planta:'girasol'},
  {titulo:'Del mundo a tu calle',texto:'Elige un país en el mapa del mundo, una ciudad en el país y una zona en la ciudad. Los botones redondos de mapa te permiten volver y cambiar de frente.',icono:'ciudad',audio:'dave-explica',planta:'planterna'},
  {titulo:'Primero, explora y prepara',texto:'Toca una zona conectada con la casa para descubrir sus semillas. Prepara su equipo y comienza la expedición. Completar esa partida de PvZ purifica el territorio.',icono:'atacar',audio:'dave-idea',planta:'repetidora'},

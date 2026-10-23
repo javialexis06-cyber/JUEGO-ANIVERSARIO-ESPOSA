@@ -1,5 +1,17 @@
 # Instrucciones del repositorio
 
+## Prioridad vigente · primer escenario antes de ampliar mundos
+
+Javier pausó la ampliación de mundos para cerrar el inicio, la interacción y la animación.
+Ver [primer escenario y controles](docs/en-obra/pvz-principios-2026-10-23.md) y
+[fuentes de motores aportadas](docs/en-obra/pvz-referencias-motores-2026-10-23.md).
+Aprobó que las partidas nuevas defiendan primero La casa, conserven sus plantas y habiliten después
+expediciones y contraataques. Conservar los V2 anteriores sin imponer ese prólogo. Los costes y estadísticas
+siguen iguales. Croquis sobre lugares dibujados, pala/semilla en mano y selección hacia una baraja.
+El zombi base tiene un esqueleto de piezas propias para revisar; el resto del catálogo gráfico sigue pendiente.
+No avanzar a otros mundos hasta que se revisen estos principios y la animación.
+
+
 ## Pedido nuevo · audio y presentación del 23 de octubre
 
 **Guía para Claude:** [docs/en-obra/pvz-elevenlabs-guia-claude.md](docs/en-obra/pvz-elevenlabs-guia-claude.md).

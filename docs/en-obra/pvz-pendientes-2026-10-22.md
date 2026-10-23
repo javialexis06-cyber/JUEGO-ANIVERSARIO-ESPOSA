@@ -7,6 +7,9 @@ Seguimiento con casillas en [GitHub, issue #1](https://github.com/javialexis06-c
 Audio y presentación del 23 de octubre: [avance integrado](pvz-presentacion-audio-2026-10-23.md).
 Los 253 MP3 están producidos y el reproductor está conectado; esto no completa L07/L11 para las unidades futuras.
 
+La ampliación de mundos está pausada para revisar [inicio, controles y animación base](pvz-principios-2026-10-23.md).
+Las [fuentes nuevas aportadas](pvz-referencias-motores-2026-10-23.md) quedan registradas para reutilización posterior.
+
 ## Decisiones confirmadas y alcance
 
 - Las zonas defendidas deben ser **partidas normales de PvZ tower defense**, con sus tableros, soles,

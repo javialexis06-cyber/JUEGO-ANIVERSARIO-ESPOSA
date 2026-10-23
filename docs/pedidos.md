@@ -3,6 +3,17 @@
 Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 
+## Prioridad vigente · primer escenario antes de ampliar mundos
+
+Javier pausó la ampliación de mundos para cerrar el inicio, la interacción y la animación.
+Ver [primer escenario y controles](en-obra/pvz-principios-2026-10-23.md) y
+[fuentes de motores aportadas](en-obra/pvz-referencias-motores-2026-10-23.md).
+Aprobó que las partidas nuevas defiendan primero La casa, conserven sus plantas y habiliten después
+expediciones y contraataques. Conservar los V2 anteriores sin imponer ese prólogo. Los costes y estadísticas
+siguen iguales. Croquis sobre lugares dibujados, pala/semilla en mano y selección hacia una baraja.
+El zombi base tiene un esqueleto de piezas propias para revisar; el resto del catálogo gráfico sigue pendiente.
+No avanzar a otros mundos hasta que se revisen estos principios y la animación.
+
 ## Prioridad nueva · producción de audio por Claude y presentación por Codex
 
 [Guía ejecutable de ElevenLabs para Claude](en-obra/pvz-elevenlabs-guia-claude.md): 107 familias y 253

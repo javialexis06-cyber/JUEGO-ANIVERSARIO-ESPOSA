@@ -1,3 +1,4 @@
+import {dibujarEsqueletoZombiPvZ,dibujarRestoEsqueletoPvZ,usaEsqueletoZombiPvZ} from './esqueleto-zombi';
 import type {MotorPvZ} from '../motor/motor';
 import type {EventoPvZ,PlantaPvZ,ZombiPvZ,SolPvZ,NieblaPvZ} from '../tipos';
 import {AtlasPvZ} from '../arte/atlas';
@@ -6,7 +7,7 @@ import {dibujarZombiArticuladoPvZ,dibujarParteZombiPvZ,type ParteZombiPvZ} from 
 import {ZOMBIS_PVZ} from '../datos/zombis';
 import {TABLERO_PVZ,geometriaPvZ,escalaVerticalPvZ} from './geometria';
 export {TABLERO_PVZ} from './geometria';
-type Resto={figura:FiguraPvZ;parte:ParteZombiPvZ;x:number;y:number;alto:number;inicio:number;espejo:boolean};
+type Resto={rig?:boolean;casco?:'cono'|'cubo';figura:FiguraPvZ;parte:ParteZombiPvZ;x:number;y:number;alto:number;inicio:number;espejo:boolean};
 type Efecto={tipo:string;x:number;y:number;inicio:number;vida:number};
 export interface ToquePvZ {fila:number;col:number;sol?:number;jarron?:number;zombi?:number}
 /** La vista observa el motor. Nunca avanza relojes, sortea contenido ni cambia entidades. */
@@ -47,7 +48,7 @@ export class EscenaPvZ {
    if(m&&['pierdeBrazo','pierdeCabeza','pierdeArmadura'].includes(e.t)&&e.tipo&&Object.hasOwn(ZOMBIS_PVZ,e.tipo)){
     const ropa=ropaZombiPvZ(e.id??0,m.nivel.id),equipo=proteccionZombiPvZ(e.tipo,ropa),parte:ParteZombiPvZ=e.t==='pierdeBrazo'?'brazo':e.t==='pierdeCabeza'?'cabeza':'casco';
     const figura=parte==='casco'?equipo?.figura:ARTE_ZOMBIS_PVZ[e.tipo]??{hoja:'ropa' as const,celda:equipo?.ropa??ropa,alto:126};
-    if(figura&&(parte!=='casco'||e.tipo.includes('cono')||e.tipo.includes('cubo')))this.restos.push({figura,parte,x:TABLERO_PVZ.x+e.x,y:TABLERO_PVZ.y+(e.fila+.5)*this.ultimoAltoFila+33,alto:figura.alto,inicio:tiempo,espejo:m.zombis.find(z=>z.id===e.id)?.sentido===1});
+    if(figura&&(parte!=='casco'||e.tipo.includes('cono')||e.tipo.includes('cubo')))this.restos.push({rig:usaEsqueletoZombiPvZ(e.tipo),casco:e.tipo.includes('cubo')?'cubo':'cono',figura,parte,x:TABLERO_PVZ.x+e.x,y:TABLERO_PVZ.y+(e.fila+.5)*this.ultimoAltoFila+33,alto:figura.alto,inicio:tiempo,espejo:m.zombis.find(z=>z.id===e.id)?.sentido===1});
    }
    if(['explosion','muere','siembra','impacto','pierdeArmadura','jarron'].includes(e.t))this.efectos.push({tipo:e.t,x:TABLERO_PVZ.x+e.x,y:TABLERO_PVZ.y+(e.fila+.5)*this.ultimoAltoFila,inicio:tiempo,vida:e.t==='explosion'?.65:e.t==='siembra'?.3:.22});
   }if(this.restos.length>40)this.restos.splice(0,this.restos.length-40);if(this.efectos.length>100)this.efectos.splice(0,this.efectos.length-100);
@@ -156,7 +157,8 @@ export class EscenaPvZ {
   const congelado=z.congelado>0||z.mantequilla>0||z.datos.mareoHasta>m.t,paso=congelado?0:Math.sin(z.edad*(z.lento?3:6)+z.id),giro=congelado?0:z.comiendo!==null?Math.sin(z.edad*11)*.035:paso*.025;
   const filtro=z.ceniza?'brightness(.13)':z.hipnotizado?'sepia(.5) hue-rotate(235deg) saturate(1.7)':z.lento||z.congelado?'sepia(.45) hue-rotate(145deg) saturate(1.4)':undefined;
   // Los diseños equipados oscilan enteros: no cortar una puerta ni desplazar su casco por separado.
-  if(f.hoja==='ropa'||f.hoja==='protegidos')dibujarZombiArticuladoPvZ(ctx,this.atlas,f,x,y,{alto:h,escala:this.escalaFiguras,aspecto:this.escalaY/this.escalaX,giro,espejo:z.sentido===1,paso:z.comiendo===null?paso:0,manos:congelado?0:z.comiendo!==null?Math.sin(z.edad*11):0,sinBrazo:z.sinBrazo,sinCabeza:z.sinCabeza,filtro,alfa:z.datos.arrastrado?.45:1});
+  if(usaEsqueletoZombiPvZ(z.tipo))dibujarEsqueletoZombiPvZ(ctx,this.atlas,x,y,{alto:h,escala:this.escalaFiguras,aspecto:this.escalaY/this.escalaX,espejo:z.sentido===1,fase:z.edad*(z.lento?3:6)+z.id,quieto:congelado,muerde:z.comiendo!==null,sinBrazo:z.sinBrazo,sinCabeza:z.sinCabeza,casco:z.armadura>0?z.tipo.includes('cono')?'cono':z.tipo.includes('cubo')?'cubo':'':'',ropa:proteccion?.ropa??ropa,filtro,alfa:z.datos.arrastrado?.45:1});
+  else if(f.hoja==='ropa'||f.hoja==='protegidos')dibujarZombiArticuladoPvZ(ctx,this.atlas,f,x,y,{alto:h,escala:this.escalaFiguras,aspecto:this.escalaY/this.escalaX,giro,espejo:z.sentido===1,paso:z.comiendo===null?paso:0,manos:congelado?0:z.comiendo!==null?Math.sin(z.edad*11):0,sinBrazo:z.sinBrazo,sinCabeza:z.sinCabeza,filtro,alfa:z.datos.arrastrado?.45:1});
   else this.figura(f,x,y,{alto:h,giro,espejo:z.sentido===1,cabeza:!z.sinCabeza,filtro,alfa:z.datos.arrastrado?.45:1});
   if(proteccion&&z.armadura>0&&z.armadura<z.armaduraInicial*.72){
    const dano=1-z.armadura/z.armaduraInicial,casco=z.tipo.includes('cono')||z.tipo.includes('cubo'),s=this.escalaFiguras;
@@ -205,7 +207,7 @@ export class EscenaPvZ {
    c.fillStyle=hielo?'#8ae1f8':fuego?'#ffb548':q.tipo==='pincho'?'#e4d39d':q.tipo==='espora'?'#c5b2f0':'#a8dc36';c.strokeStyle=hielo?'#3d8cac':fuego?'#bd652e':'#447d31';c.lineWidth=1.5;c.beginPath();c.ellipse(0,0,q.tipo==='pincho'?r*1.5:r,q.tipo==='pincho'?2:r,0,0,Math.PI*2);c.fill();c.stroke();c.fillStyle='rgba(255,255,255,.72)';c.beginPath();c.ellipse(-r*.25,-r*.35,r*.3,r*.22,-.6,0,Math.PI*2);c.fill();c.restore();
   }
   for(const v of m.cortacespedes){if(v.estado==='gastado')continue;this.figura({hoja:'objetos',celda:0,alto:64},TABLERO_PVZ.x+v.x-5,TABLERO_PVZ.y+(m.centroFila(v.fila)*escalaVerticalPvZ(m))+29,{ancho:68});}
-  this.restos=this.restos.filter(r=>m.t-r.inicio<1.4);for(const r of this.restos)dibujarParteZombiPvZ(c,this.atlas,r.figura,r.parte,r.x,r.y,r.alto,this.escalaFiguras,this.escalaY/this.escalaX,Math.max(0,m.t-r.inicio),r.espejo);
+  this.restos=this.restos.filter(r=>m.t-r.inicio<1.4);for(const r of this.restos){if(r.rig)dibujarRestoEsqueletoPvZ(c,this.atlas,r.parte,r.x,r.y,r.parte==='casco'?126:r.alto,this.escalaFiguras,this.escalaY/this.escalaX,Math.max(0,m.t-r.inicio),r.espejo,r.casco);else dibujarParteZombiPvZ(c,this.atlas,r.figura,r.parte,r.x,r.y,r.alto,this.escalaFiguras,this.escalaY/this.escalaX,Math.max(0,m.t-r.inicio),r.espejo);}
   this.efectos=this.efectos.filter(e=>m.t-e.inicio<e.vida);for(const e of this.efectos){const t=Math.max(0,(m.t-e.inicio)/e.vida);c.save();c.globalAlpha=1-t;if(e.tipo==='explosion'){c.fillStyle='#ffe082';c.strokeStyle='#de823e';c.lineWidth=7;this.estrella(e.x,e.y,20+t*100,'#ffe082');}else if(e.tipo==='siembra'){c.strokeStyle='#f0dc9e';c.lineWidth=3;c.beginPath();c.ellipse(e.x,e.y+18,15+t*22,5+t*8,0,0,Math.PI*2);c.stroke();}else if(e.tipo==='impacto'){c.strokeStyle='#fff2c5';c.lineWidth=2;c.beginPath();c.moveTo(e.x-6,e.y-12);c.lineTo(e.x+6,e.y+2);c.moveTo(e.x+6,e.y-12);c.lineTo(e.x-6,e.y+2);c.stroke();}c.restore();}
   const visibilidad=m.estadoVisibilidad();this.niebla(m,visibilidad.niebla);const tormenta=visibilidad.tormenta;if(tormenta){c.fillStyle=`rgba(9,19,34,${.9*(1-tormenta.claridad)})`;c.fillRect(0,85,1100,565);if(tormenta.claridad>.8){c.fillStyle=`rgba(227,246,255,${(tormenta.claridad-.8)*.8})`;c.fillRect(0,85,1100,565);}}
   for(const s of m.soles)this.sol(s,m);

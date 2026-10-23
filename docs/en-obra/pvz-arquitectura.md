@@ -1,5 +1,8 @@
 # Plantas contra Zombis · arquitectura y contrato de trabajo
 
+> **Inicio aprobado tras la revisión del 23 de octubre:** [primer escenario y controles](pvz-principios-2026-10-23.md).
+> Las partidas nuevas comienzan defendiendo La casa; V2 anteriores mantienen su fase. Ampliación de mundos pausada.
+
 > **Pedido del 23 de octubre:** [guía de audio para Claude](pvz-elevenlabs-guia-claude.md).
 > Javier autoriza efectos y música de ElevenLabs y balbuceos no verbales de Dave. Codex integra el juego.
 > Los pasajes siguientes sobre síntesis describen la base existente; ya no restringen la nueva producción.

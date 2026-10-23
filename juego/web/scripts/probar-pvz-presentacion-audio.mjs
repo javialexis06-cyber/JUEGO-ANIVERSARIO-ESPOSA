@@ -1,3 +1,4 @@
+import {completarCasaInicial} from './ayudas-pvz-navegador.mjs';
 /** Audio publicado real, tutorial y animación en un contexto nuevo; sin progreso del usuario. */
 import assert from 'node:assert/strict';
 import {chromium} from '@playwright/test';
@@ -11,7 +12,7 @@ try{
  const c=await b.newContext({viewport:{width:844,height:390},hasTouch:true}),p=await c.newPage();p.setDefaultTimeout(45000);
  p.on('pageerror',e=>errores.push(e.message));p.on('response',r=>{if(r.status()>=400)bad.push(r.status()+' '+r.url());});
  p.on('request',r=>{if(r.url().startsWith('http')&&new URL(r.url()).origin!==new URL(base).origin)externas.push(r.url());});
- const click=k=>p.locator(`[data-cq="${k}"]`).last().click(),foto=n=>p.screenshot({path:join(out,n+'.png')});
+ const click=async k=>{await p.locator(`[data-cq="${k}"]`).last().click();if(k==='historia')await completarCasaInicial(p);},foto=n=>p.screenshot({path:join(out,n+'.png')});
  await p.goto(new URL('jardin.html?prueba=1',base).href);await p.waitForFunction(()=>window.__historiaPvZ);await click('ayuda');await p.locator('.cq-dave').waitFor();await p.waitForFunction(()=>document.querySelector('.cq-dave').naturalWidth>0);
  await click('sonido');await p.waitForFunction(()=>[...window.__historiaPvZ.audio().banco.voces.values()].includes('dave-saludo'));await foto('dave-844');
  for(let i=0;i<11;i++){assert.match(await p.locator('.cq-tutorial small').textContent(),new RegExp(`DAVE · ${i+1} / 11`));assert.ok(await p.locator('.cq-tutorial-globo').evaluate(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1;}));if(i<10)await click('dave-siguiente');}
@@ -21,7 +22,7 @@ try{
  await click('ayuda');const pausa=await p.evaluate(()=>window.__historiaPvZ.mundo().exportar());await p.waitForTimeout(300);assert.deepEqual(await p.evaluate(()=>window.__historiaPvZ.mundo().exportar()),pausa);assert.ok(pausa.defensas.pausada);await click('cerrar-tutorial');assert.equal(await p.evaluate(()=>window.__historiaPvZ.mundo().defensas.pausada),false);
  done('La guía pausa todos los frentes y al cerrarse reanuda la partida');
  const audio=await p.evaluate(async()=>{const a=window.__historiaPvZ.audio(),ctx=a.audio,bank=a.banco;await bank.anticipar(['guisante','hielo','mina','devorar','zombi-mordida','zombi-brazo','zombi-cabeza','victoria']);
-  const familias=['guisante','hielo','mina','devorar','zombi-mordida','zombi-brazo','zombi-cabeza','victoria'];const reproducidos=[];for(const f of familias){bank.detenerFamilia('');if(bank.tocar(f)&&[...bank.voces.values()].includes(f))reproducidos.push(f);}
+  const familias=['guisante','hielo','mina','devorar','zombi-mordida','zombi-brazo','zombi-cabeza','victoria'];const reproducidos=[];for(const f of familias){while(ctx.currentTime-(bank.ultimas.get(f)??-1)<.1)await new Promise(r=>setTimeout(r,25));bank.detenerFamilia('');if(bank.tocar(f)&&[...bank.voces.values()].includes(f))reproducidos.push(f);}
   bank.detenerFamilia('');a.eventos([{t:'disparo',tipo:'hielaguisantes'}]);while(ctx.currentTime-(bank.ultimas.get('zombi-mordida')??-1)<.1)await new Promise(r=>setTimeout(r,25));a.eventos([{t:'muerde'}]);const eventos=[...bank.voces.values()];
   const temas=[];for(const id of Object.keys(bank.indice.musica)){await bank.tema(id,'ambiente-dia');await new Promise(r=>setTimeout(r,80));temas.push({id,listo:bank.musica.readyState>=2,play:!bank.musica.paused,loop:bank.musica.loop});}
   await bank.tema('musica-dia','ambiente-agua');const misma=bank.musica;await new Promise(r=>setTimeout(r,100));const t=misma.currentTime;await bank.tema('musica-dia','ambiente-agua');const noReinicio=misma===bank.musica&&bank.musica.currentTime>=t;bank.pausar();const silenciado=bank.musica.paused&&bank.ambiente.paused&&bank.voces.size===0;await bank.tema('musica-dia','ambiente-agua');const reanudado=misma===bank.musica&&!bank.musica.paused;
