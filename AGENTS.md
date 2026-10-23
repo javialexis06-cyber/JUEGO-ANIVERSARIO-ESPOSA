@@ -5,8 +5,10 @@ configurables por escenario (carreteras de tres/cuatro, casas con cinco, almacen
 requiera el mapa). Cada tipo completo de planta se reserva a una sola zona. Desbloquear plantas e introducir
 zombis al llegar a zonas nuevas; completar comportamientos, arte y pruebas de PvZ 1, PvZ 2 y la última versión
 verificada de Fusión. El catálogo y su arte se reanudan; la pausa gráfica anterior queda sustituida.
-Ver `docs/en-obra/pvz-pendientes-2026-10-22.md` y el issue #1 de GitHub: son 180 tareas pendientes, no trabajo
-ya implementado. Conservar historia desde casa hasta el 100%, mapas mundo/país/ciudad, controles redondos,
+Ver `docs/en-obra/pvz-pendientes-2026-10-22.md` y el issue #1 de GitHub: el seguimiento contiene 180 tareas
+con casillas de avance y evidencia. Ya existe el núcleo de carriles/instantáneas y coordinador de defensas;
+ver `docs/en-obra/pvz-instancias-2026-10-23.md`. Su conexión con mapa, guardado territorial y salas sigue
+pendiente. Conservar historia desde casa hasta el 100%, mapas mundo/país/ciudad, controles redondos,
 PvZ y patios como minijuegos y sus partidas. El prototipo publicado aún usa su combate simplificado.
 
 Leer [CLAUDE.md](CLAUDE.md). La cola vigente está en [docs/pedidos.md](docs/pedidos.md); las notas históricas no la sustituyen.

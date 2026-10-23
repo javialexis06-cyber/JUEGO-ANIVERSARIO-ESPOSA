@@ -1,8 +1,9 @@
 # Plantas contra Zombis · arquitectura y contrato de trabajo
 
 La ampliación vigente es [motor completo, carriles por escenario y tipos exclusivos por zona](pvz-pendientes-2026-10-22.md).
-El constructor actual aún infiere cinco/seis filas por área y Conquista tiene otro combate simplificado:
-ambos requieren el diseño e integración señalados en ese seguimiento. Este contrato describe lo ya construido,
+El constructor acepta `DefNivel.tablero.filas`; omitirlo conserva los cinco/seis carriles de los niveles originales.
+El [núcleo de instancias y reservas](pvz-instancias-2026-10-23.md) ya reutiliza partidas normales, pero el mapa
+y las salas de Conquista V1 aún usan su combate simplificado y requieren integración. Este contrato describe lo ya construido,
 no declara terminada la ampliación ni fija cinco/seis carriles como límite para los escenarios futuros.
 
 Avances del 19 de octubre: [base del motor](pvz-motor-2026-10-19.md) y
@@ -295,6 +296,10 @@ interface DefNivel { id: string /* '1-1' */; parte: 1|2; area: Area; filas: numb
 
 ## Pruebas obligatorias
 
+- `scripts/probar-pvz-instancias.mjs`: carriles variables, 40 partidas con reconstrucción desde JSON,
+  seis defensas reales simultáneas y reservas exclusivas. Incluido en `npm run probar:pvz`.
+- `scripts/probar-pvz-carriles-interfaz.mjs`: toques y proyección Canvas en 3/4/5/6/7/9 carriles,
+  pantallas horizontal grande/móvil, reanudación y agua discontinua. Necesita Vite sirviendo las fuentes.
 - `scripts/probar-pvz-motor.mjs` (Node + esbuild):
   - el piloto gana cada nivel construido con 3 semillas;
   - pierde sin defensa;

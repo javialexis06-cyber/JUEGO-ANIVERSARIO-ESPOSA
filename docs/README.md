@@ -54,6 +54,7 @@ solo conectar Supabase para habilitar su clasificación real. Voces nuevas desca
 | [`pvz-piscina-terreno-fuentes-2026-10-20.md`](en-obra/pvz-piscina-terreno-fuentes-2026-10-20.md) | Referencias técnicas de hielo, soportes y emboscadas acuáticas. |
 | [`pvz-arte-2026-10-22.md`](en-obra/pvz-arte-2026-10-22.md) | Arte ilustrado aprobado, ocho ropas, aventura Canvas y pruebas de interfaz/guardado. |
 | [`pvz-pendientes-2026-10-22.md`](en-obra/pvz-pendientes-2026-10-22.md) | Seguimiento vigente: 180 tareas de motor completo, carriles por escenario, exclusividad, catálogo, arte, progresión y pruebas; issue #1. |
+| [`pvz-instancias-2026-10-23.md`](en-obra/pvz-instancias-2026-10-23.md) | Carriles configurables, guardado exacto del motor y coordinador de defensas/reservas; integración territorial pendiente. |
 | [`pvz-conquista-base-2026-10-22.md`](en-obra/pvz-conquista-base-2026-10-22.md) | Base jugable: 12 áreas de historia, 36 en versus, formaciones, frentes, salas y final espacial. |
 | [`pvz-conquista-propuesta-2026-10-22.md`](en-obra/pvz-conquista-propuesta-2026-10-22.md) | Dirección territorial: historia al 100%, mundo futuro de 240 áreas, guarniciones y PvP de bases. |
 | [`pvz-niebla-2026-10-22.md`](en-obra/pvz-niebla-2026-10-22.md) | Motor de niebla, Rompejarrones, tormenta y continuidad del guardado. |

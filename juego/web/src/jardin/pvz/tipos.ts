@@ -14,6 +14,9 @@ export interface DefZombi {
 }
 export interface DefNivel {
  id:string;parte:1|2;area:Area;filas:number[];zombis:string[];banderas:number;
+ /** Carriles físicos del escenario. `filas` indica cuáles están abiertos al combate.
+  * Ausente en los niveles originales para conservar su geometría de cinco/seis carriles. */
+ tablero?:{filas:number};
  tipo:'normal'|'cinta'|'minijuego'|'jefe';minijuego?:string;solInicial:number;
  premio?:{planta?:string;objeto?:string;nota?:string};lapidas?:number;materas?:[number,number][];
  niebla?:number;tormenta?:boolean;plantasFijas?:string[];dialogoAntes?:string;dialogoDespues?:string;

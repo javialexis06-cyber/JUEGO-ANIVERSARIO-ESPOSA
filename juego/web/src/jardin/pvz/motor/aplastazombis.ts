@@ -1,9 +1,16 @@
 import type {MotorPvZ} from './motor';
 import type {ZombiPvZ} from '../tipos';
+import {exigirPvZ,enteroPvZ,numeroPvZ} from './validacion';
+export interface InstantaneaAplastazombisPvZ {actual:number;terminado:boolean;siguiente:number;grupoEn:number;crecida:boolean;finalEn:number|null}
 /** Aplasta-zombis de aventura (2-5), separado del minijuego posterior de doce oleadas. */
 export class AplastazombisPvZ {
  readonly total=8;actual=0;terminado=false;
  private siguiente=2;private grupoEn=2;private crecida=false;private finalEn:number|null=null;
+ exportar():InstantaneaAplastazombisPvZ{return{actual:this.actual,terminado:this.terminado,siguiente:this.siguiente,grupoEn:this.grupoEn,crecida:this.crecida,finalEn:this.finalEn};}
+ restaurar(e:InstantaneaAplastazombisPvZ){
+  exigirPvZ(e&&enteroPvZ(e.actual,0,this.total)&&typeof e.terminado==='boolean'&&typeof e.crecida==='boolean'&&numeroPvZ(e.siguiente)&&e.siguiente>=0&&numeroPvZ(e.grupoEn)&&e.grupoEn>=0&&(e.finalEn===null||numeroPvZ(e.finalEn)&&e.finalEn>=0),'Aplasta-zombis inválido');
+  this.actual=e.actual;this.terminado=e.terminado;this.siguiente=e.siguiente;this.grupoEn=e.grupoEn;this.crecida=e.crecida;this.finalEn=e.finalEn;
+ }
  paso(m:MotorPvZ){
   if(this.terminado)return;
   if(this.actual>0&&this.actual<8&&!this.crecida&&m.t+1e-9>=this.siguiente-1){this.crecer(m);this.crecida=true;}

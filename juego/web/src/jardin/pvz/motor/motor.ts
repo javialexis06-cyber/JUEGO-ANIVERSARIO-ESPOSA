@@ -10,6 +10,7 @@ import {ZOMBIS_PVZ} from '../datos/zombis';
 import {COMPORTAMIENTOS_PLANTAS,COMPORTAMIENTOS_ZOMBIS,type ComportamientoPlantaPvZ,type ComportamientoZombiPvZ} from '../comportamiento';
 import {AzarPvZ} from './azar';
 import {DirectorOleadasPvZ} from './oleadas';
+import {cabeceraInstantaneaPvZ,catalogoInstantaneaPvZ,validarInstantaneaPvZ,type InstantaneaMotorPvZ} from './instantanea';
 export interface RegistrosPvZ {plantas?:Readonly<Record<string,DefPlanta>>;zombis?:Readonly<Record<string,DefZombi>>;comportamientoPlantas?:Readonly<Record<string,ComportamientoPlantaPvZ>>;comportamientoZombis?:Readonly<Record<string,ComportamientoZombiPvZ>>}
 const finito=(x:unknown):x is number=>typeof x==='number'&&Number.isFinite(x);
 const entero=(x:unknown):x is number=>Number.isSafeInteger(x);
@@ -31,7 +32,9 @@ export class MotorPvZ {
   this.comportamientosP=registros.comportamientoPlantas??COMPORTAMIENTOS_PLANTAS;this.comportamientosZ=registros.comportamientoZombis??COMPORTAMIENTOS_ZOMBIS;
   this.visibilidad=new VisibilidadPvZ(this.nivel);
   if(nivel.niebla!==undefined&&(!finito(nivel.niebla)||nivel.niebla<0||nivel.niebla>9))throw new Error('Niebla inválida');
-  this.filas=nivel.area==='piscina'||nivel.area==='niebla'?6:5;
+  if(nivel.tablero!==undefined&&(!nivel.tablero||typeof nivel.tablero!=='object'||Array.isArray(nivel.tablero)||!entero(nivel.tablero.filas)))throw new Error('Tablero inválido');
+  this.filas=nivel.tablero?.filas??(nivel.area==='piscina'||nivel.area==='niebla'?6:5);
+  if(!entero(this.filas)||this.filas<1||this.filas>32)throw new Error('Cantidad de carriles inválida');
   if(!nivel.filas.length||new Set(nivel.filas).size!==nivel.filas.length||nivel.filas.some(f=>!entero(f)||f<0||f>=this.filas)||!finito(nivel.solInicial)||nivel.solInicial<0)throw new Error('Nivel inválido');
   if(nivel.filasAgua&&(new Set(nivel.filasAgua).size!==nivel.filasAgua.length||nivel.filasAgua.some(f=>!nivel.filas.includes(f))))throw new Error('Filas de agua inválidas');
   if(nivel.zombis.some(id=>!Object.hasOwn(this.zombisDef,id)))throw new Error('Zombi de nivel desconocido');
@@ -222,7 +225,7 @@ export class MotorPvZ {
     else if(p.tipo==='bolo-nuez'){
      if(z.armadura>0){const cantidad=Math.min(z.armadura,z.escudo?400:900);z.armadura-=cantidad;if(z.armadura===0)this.eventos.push({t:'pierdeArmadura',id:z.id,tipo:z.tipo,fila:z.fila,x:z.x,cantidad});}
      else this.danarZombi(z,1800,'aplastar');
-     const prob=z.fila===0?1:z.fila===1?.75:z.fila===2?.5:z.fila===3?.25:0;p.impactados.push(z.id);p.velocidadY=this.azar.siguiente()<prob?240:-240;p.y??=yAntes;break;
+     const primera=Math.min(...this.nivel.filas),ultima=Math.max(...this.nivel.filas),prob=(ultima-z.fila)/(ultima-primera||1);p.impactados.push(z.id);p.velocidadY=this.azar.siguiente()<prob?240:-240;p.y??=yAntes;break;
     }else {
      this.danarZombi(z,p.dano,p.danoTipo);if(p.aereo&&p.tipo==='pincho'&&z.vida>0)this.pincharGlobo(z);
      if(p.tipo==='guisante-fuego'){const secundarios=this.zombis.filter(q=>q!==z&&this.puedeRecibirProyectil(q)&&!q.hipnotizado&&q.fila===z.fila&&q.x>=z.x&&q.x<=z.x+100);const dano=Math.max(1,Math.min(13,Math.floor(40/Math.max(1,secundarios.length))));for(const q of secundarios)this.danarZombi(q,dano,'fuego');}
@@ -255,5 +258,26 @@ export class MotorPvZ {
  avanzar(cantidad=1){if(!entero(cantidad)||cantidad<0||cantidad>600)throw new Error('Cantidad de pasos inválida');const eventos=this.consumirEventos();for(let i=0;i<cantidad;i++){this.paso();eventos.push(...this.consumirEventos());if(this.terminado)break;}return eventos;}
  /** Datos nuevos de visibilidad, sin copiar el combate completo en cada cuadro de dibujo. */
  estadoVisibilidad(){return{niebla:this.visibilidad.estadoNiebla(this),tormenta:this.visibilidad.estadoTormenta()};}
+ /** Estado completo entre órdenes/pasos. No incluye efectos gráficos ni los eventos ya emitidos. */
+ exportar():InstantaneaMotorPvZ {
+  if(this.dentroPaso||this.origenAbono!==null)throw new Error('Guardar únicamente al terminar el paso u orden');
+  const{jarrones,sobres,etapaJarrones,niebla,tormenta,...estado}=this.estado();
+  return structuredClone({version:1,reglas:1,nivel:this.nivel,semillas:[...this.semillas],sinOleadas:this.sinOleadas,catalogo:catalogoInstantaneaPvZ(this),estado,azar:this.azar.estado,
+   relojes:{proximo:this.proximo,cieloEn:this.cieloEn,cielosCaidos:this.cielosCaidos,cintaEn:this.cintaEn,cintaEmitida:this.cintaEmitida,vidaOleada:this.vidaOleada,alzamientoEn:this.alzamientoEn,emboscadaEn:this.emboscadaEn},
+   director:this.director?.exportar()??null,visibilidad:this.visibilidad.exportar(),aplastazombis:this.aplastazombis?.exportar()??null,rompejarrones:this.rompejarrones?.exportar()??null});
+ }
+ /** Construye otra instancia; un fallo nunca modifica la partida que estaba abierta. */
+ static restaurar(dato:unknown,registros:RegistrosPvZ={}):MotorPvZ {
+  cabeceraInstantaneaPvZ(dato);const s=structuredClone(dato);
+  const m=new MotorPvZ(s.nivel,{semillas:s.semillas,sinOleadas:s.sinOleadas},registros);
+  validarInstantaneaPvZ(s,m);
+  m.director?.restaurar(s.director!);m.visibilidad.restaurar(s.visibilidad);m.aplastazombis?.restaurar(s.aplastazombis!);m.rompejarrones?.restaurar(s.rompejarrones!,m);m.azar.restaurar(s.azar);
+  const e=s.estado,r=s.relojes;
+  m.t=e.t;m.pasos=e.pasos;m.sol=e.sol;m.abono=e.abono;m.oleada=e.oleada;m.terminado=e.terminado;m.eliminados=e.eliminados;m.sembradas=e.sembradas;
+  m.plantas=e.plantas;m.zombis=e.zombis;m.proyectiles=e.proyectiles;m.soles=e.soles;m.cortacespedes=e.cortacespedes;m.recargas=e.recargas;m.cinta=e.cinta;m.objetivoVida=e.objetivoVida;
+  m.pistasHielo=e.pistasHielo!;m.lapidas=e.lapidas!;m.crateres=e.crateres!;m.zonas=e.zonas!;
+  m.proximo=r.proximo;m.cieloEn=r.cieloEn;m.cielosCaidos=r.cielosCaidos;m.cintaEn=r.cintaEn;m.cintaEmitida=r.cintaEmitida;m.vidaOleada=r.vidaOleada;m.alzamientoEn=r.alzamientoEn;m.emboscadaEn=r.emboscadaEn;
+  m.eventos=[];return m;
+ }
  estado():EstadoPvZ {return structuredClone({...this.rompejarrones?.estado(),...this.estadoVisibilidad(),version:1,nivel:this.nivel.id,t:this.t,pasos:this.pasos,sol:this.sol,abono:this.abono,oleada:this.oleada,terminado:this.terminado,plantas:this.plantas,zombis:this.zombis,proyectiles:this.proyectiles,soles:this.soles,cortacespedes:this.cortacespedes,recargas:this.recargas,cinta:this.cinta,zonas:this.zonas,lapidas:this.lapidas,crateres:this.crateres,pistasHielo:this.pistasHielo,objetivoVida:this.objetivoVida,eliminados:this.eliminados,sembradas:this.sembradas});}
 }

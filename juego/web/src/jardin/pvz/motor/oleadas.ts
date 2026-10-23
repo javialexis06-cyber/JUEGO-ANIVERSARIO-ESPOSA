@@ -1,5 +1,7 @@
 import type {DefNivel,DefZombi} from '../tipos';
 import {AzarPvZ} from './azar';
+import {exigirPvZ,numeroPvZ,enteroPvZ} from './validacion';
+export interface InstantaneaDirectorPvZ {actual:number;siguiente:number;lanzada:number|null;aviso:boolean}
 export interface AparicionPvZ {tipo:string;fila:number;x:number;oleada:number}
 export interface SituacionOleada {vida:number;inicial:number;pendientes:number;plantas:number;filasHielo?:number[]}
 /** Director parametrizado. No decide por el nombre del nivel ni depende de la vista. */
@@ -62,4 +64,9 @@ export class DirectorOleadasPvZ {
   return !!d.agua;
  }
  get terminado(){return this.actual>=this.total;}
+ exportar():InstantaneaDirectorPvZ{return{actual:this.actual,siguiente:this.siguiente,lanzada:this.lanzada===-Infinity?null:this.lanzada,aviso:this.aviso};}
+ restaurar(e:InstantaneaDirectorPvZ){
+  exigirPvZ(e&&enteroPvZ(e.actual,0,this.total)&&numeroPvZ(e.siguiente)&&e.siguiente>=0&&typeof e.aviso==='boolean'&&(e.actual===0?e.lanzada===null:numeroPvZ(e.lanzada)&&e.lanzada>=0),'Director de oleadas inválido');
+  this.actual=e.actual;this.siguiente=e.siguiente;this.lanzada=e.lanzada??-Infinity;this.aviso=e.aviso;
+ }
 }

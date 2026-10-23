@@ -6,4 +6,5 @@ export class AzarPvZ {
  entero(max:number){if(!Number.isSafeInteger(max)||max<1)throw new Error('Límite de azar inválido');return Math.floor(this.siguiente()*max);}
  entre(min:number,max:number){return min+(max-min)*this.siguiente();}
  get estado(){return this.s;}
+ restaurar(estado:number){if(!Number.isSafeInteger(estado)||estado<1||estado>4294967295)throw new Error('Estado de azar inválido');this.s=estado;}
 }

@@ -1,7 +1,7 @@
 # La Semilla Madre · pendientes de motor, catálogo y producción
 
-Actualizado el **22 de octubre de 2026**, después de que el jugador probara la base.
-Auditoría del código publicado en `568aa9a0`. Esta lista registra trabajo pendiente; no acredita su implementación.
+Actualizado el **23 de octubre de 2026**, después de que el jugador probara la base.
+Auditoría inicial del código publicado en `568aa9a0`; las casillas cerradas tienen evidencia en el avance enlazado.
 Seguimiento con casillas en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1).
 
 ## Decisiones confirmadas y alcance
@@ -33,7 +33,7 @@ cuando se integre código. No reabrir ampliaciones por aparecer en documentos an
 |---|---|
 | PvZ base | Motor de 60 Hz, cuarenta niveles de día/noche/piscina/niebla; 32 plantas normales y Nuez explosiva de bolos. |
 | Zombis registrados | 21 definiciones, incluidas variantes acuáticas con cono/cubo. No equivale a tener todo PvZ 1. |
-| Carriles del motor PvZ | Actualmente infiere cinco o seis por área; falta configuración real por escenario, incluidos siete o más. |
+| Carriles del motor PvZ | `tablero.filas` configura carriles físicos; comprobados 3/4/5/6/7/9, con activos y agua por datos. Anchos/accesos de B03 siguen pendientes. |
 | Conquista | Prototipo distinto, de 30 Hz y tres carriles, con perfiles adaptados; no reutiliza todavía las partidas normales de PvZ. |
 | Territorios | Historia de 12 áreas y versus de 36; mapas de tres países, ciudades y zonas. |
 | Asignaciones | Hay grupos y formaciones por zona, pero el mismo tipo puede repetirse entre zonas. Falta el registro exclusivo global. |
@@ -42,6 +42,12 @@ cuando se integre código. No reabrir ampliaciones por aparecer en documentos an
 | Presentación | Dieciocho recursos gráficos, portada, mapas, ropa y protecciones completas. No es el arte de todas las unidades futuras. |
 | Guardado/red | El prototipo guarda historia y tiene salas con anfitrión autoritativo, pausas y recuperación de cortes. Falta adaptar contratos al motor nuevo. |
 | Mundo final | Las 240 áreas del boceto no están construidas. La escala definitiva no debe confundirse con el prototipo de 12 áreas. |
+
+[Avance del núcleo, 23 de octubre](pvz-instancias-2026-10-23.md): instantáneas restaurables del motor,
+coordinador con seis partidas PvZ simultáneas y reservas canónicas, y controles Canvas para carriles variables.
+El nuevo coordinador aún no sustituye el mapa ni la red V1. B03, C, E y la integración territorial siguen
+abiertos; sus contratos básicos ya tienen implementación y pruebas. Se cierran J01, J02 y J10 con el alcance
+del motor/coordinador descrito en ese avance: no equivalen a tener la migración o el guardado territorial de J04–J09.
 
 Fuentes de esta auditoría: `juego/web/src/jardin/pvz/{datos,comportamiento,motor,arte}/` y
 `juego/web/src/jardin/conquista/`. Las pruebas previas del prototipo son una referencia de regresión;
@@ -237,8 +243,8 @@ o estado de prueba sin señalar; los casos de terreno y las habilidades se compr
 
 ## J · Guardado, compatibilidad y recuperación
 
-- [ ] J01 Crear una instantánea restaurable del motor PvZ, distinta del estado reducido usado solo para dibujar.
-- [ ] J02 Guardar generador aleatorio, director, siguiente ID, relojes internos, apariciones pendientes y comportamiento de cada entidad.
+- [x] J01 Crear una instantánea restaurable del motor PvZ, distinta del estado reducido usado solo para dibujar.
+- [x] J02 Guardar generador aleatorio, director, siguiente ID, relojes internos, apariciones pendientes y comportamiento de cada entidad.
 - [ ] J03 Incluir terrenos, capas, cortacéspedes, soles, recargas y estados especiales de todos los tableros.
 - [ ] J04 Guardar mundo, asignaciones exclusivas, desbloqueos, incursiones, recetas y objetivos de forma coherente.
 - [ ] J05 Diseñar una migración de Conquista V1 que preserve el archivo original y resuelva explícitamente sus grupos repetidos.
@@ -246,7 +252,7 @@ o estado de prueba sin señalar; los casos de terreno y las habilidades se compr
 - [ ] J07 Conservar las claves y progresos de PvZ base, patios clásicos, duelo y edición de amigos.
 - [ ] J08 Versionar y validar archivos, rechazar datos desconocidos sin sobrescribirlos y mantener protección de escrituras entre pestañas.
 - [ ] J09 Mantener recuperación tras cuota fallida, exportación y reintento; añadir importación validada si se habilita el respaldo restaurable.
-- [ ] J10 Comprobar carga en mitad de varias defensas y equivalencia exacta de los siguientes resultados.
+- [x] J10 Comprobar carga en mitad de varias defensas y equivalencia exacta de los siguientes resultados.
 
 ## K · Campaña, territorios y economía
 

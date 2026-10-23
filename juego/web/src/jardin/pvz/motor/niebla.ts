@@ -1,9 +1,13 @@
 import type {MotorPvZ} from './motor';
 import type {DefNivel,NieblaPvZ,TormentaPvZ} from '../tipos';
+import {exigirPvZ,numeroPvZ} from './validacion';
+export interface InstantaneaVisibilidadPvZ {vientoHasta:number;contador:number;variante:1|2|3}
 /** Estado funcional de visibilidad. La vista decide transparencias, destellos y dibujo. */
 export class VisibilidadPvZ {
  private vientoHasta=0;private contador=1;private variante:1|2|3=2;
  constructor(private nivel:DefNivel){}
+ exportar():InstantaneaVisibilidadPvZ{return{vientoHasta:this.vientoHasta,contador:this.contador,variante:this.variante};}
+ restaurar(e:InstantaneaVisibilidadPvZ){exigirPvZ(e&&numeroPvZ(e.vientoHasta)&&e.vientoHasta>=0&&numeroPvZ(e.contador)&&e.contador>0&&[1,2,3].includes(e.variante),'Visibilidad inválida');this.vientoHasta=e.vientoHasta;this.contador=e.contador;this.variante=e.variante;}
  soplar(m:MotorPvZ){this.vientoHasta=m.t+40;}
  iluminada(m:MotorPvZ,fila:number,col:number,soloPlanterna=false){
   return m.plantas.some(p=>p.vida>0&&!p.dormida&&(p.tipo==='planterna'&&Math.abs(p.fila-fila)<=2&&Math.abs(p.col-col)<=3&&Math.abs(p.fila-fila)+Math.abs(p.col-col)<5||!soloPlanterna&&p.tipo==='plantorcha'&&Math.abs(p.fila-fila)+Math.abs(p.col-col)<=1));

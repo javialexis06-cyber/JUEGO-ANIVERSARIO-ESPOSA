@@ -1,8 +1,10 @@
 import type {MotorPvZ} from './motor';
 import type {JarronPvZ,SobrePvZ} from '../tipos';
+import {exigirPvZ,enteroPvZ,numeroPvZ,objetoPvZ} from './validacion';
 
 type Contenido={planta?:string;zombi?:string;sol?:number};
 type JarronInterno=Omit<JarronPvZ,'contenido'>&{contenido:Contenido};
+export interface InstantaneaRompejarronesPvZ {recipientes:JarronInterno[];tarjetas:SobrePvZ[];indice:number;iniciada:boolean;finalizada:boolean;siguienteEn:number|null}
 interface EtapaJarrones {columna:number;verdes:number;plantas:Record<string,number>;zombis:Record<string,number>}
 /** Las tres tandas de la primera aventura de PC, distintas del puzle independiente. */
 export const ETAPAS_ROMPEJARRONES:readonly EtapaJarrones[]=[
@@ -21,6 +23,19 @@ export class RompejarronesPvZ {
  get jarrones():JarronPvZ[]{return this.recipientes.map(({contenido,...j})=>({...j,...((j.verde||this.motor?.estaIluminado(j.fila,j.col))?{contenido:{...contenido}}:{})}));}
  get sobres():SobrePvZ[]{return this.tarjetas.map(s=>({...s}));}
  estado(){return {jarrones:this.jarrones,sobres:this.sobres,etapaJarrones:this.etapaJarrones};}
+ /** Privado de la simulación: contiene los premios ocultos; nunca enviarlo como vista al rival. */
+ exportar():InstantaneaRompejarronesPvZ{return structuredClone({recipientes:this.recipientes,tarjetas:this.tarjetas,indice:this.indice,iniciada:this.iniciada,finalizada:this.finalizada,siguienteEn:this.siguienteEn});}
+ restaurar(e:InstantaneaRompejarronesPvZ,m:MotorPvZ){
+  exigirPvZ(e&&enteroPvZ(e.indice,0,ETAPAS_ROMPEJARRONES.length-1)&&e.iniciada===true&&typeof e.finalizada==='boolean'&&(e.siguienteEn===null||numeroPvZ(e.siguienteEn)&&e.siguienteEn>=0)&&Array.isArray(e.recipientes)&&e.recipientes.length<=35&&Array.isArray(e.tarjetas)&&e.tarjetas.length<=35,'Rompejarrones inválido');
+  const ids=new Set<number>(),casillas=new Set<string>();
+  for(const j of e.recipientes){
+   exigirPvZ(j&&enteroPvZ(j.id,1)&&!ids.has(j.id)&&m.casilla(j.fila,j.col)&&j.x===j.col*80+40&&typeof j.verde==='boolean'&&objetoPvZ(j.contenido));ids.add(j.id);
+   const clave=j.fila+':'+j.col;exigirPvZ(!casillas.has(clave));casillas.add(clave);
+   const c=j.contenido;exigirPvZ(Object.keys(c).length===1&&(typeof c.planta==='string'&&Object.hasOwn(m.plantasDef,c.planta)||typeof c.zombi==='string'&&Object.hasOwn(m.zombisDef,c.zombi)||enteroPvZ(c.sol,1,20)));
+  }
+  for(const s of e.tarjetas){exigirPvZ(s&&enteroPvZ(s.id,1)&&!ids.has(s.id)&&m.nivel.filas.includes(s.fila)&&Object.hasOwn(m.plantasDef,s.planta)&&numeroPvZ(s.x)&&s.x>=0&&s.x<=720&&numeroPvZ(s.vida)&&s.vida>0&&s.vida<=15);ids.add(s.id);}
+  this.recipientes=structuredClone(e.recipientes);this.tarjetas=structuredClone(e.tarjetas);this.indice=e.indice;this.iniciada=e.iniciada;this.finalizada=e.finalizada;this.siguienteEn=e.siguienteEn;this.siembraActiva=null;this.motor=m;
+ }
  iniciar(m:MotorPvZ){if(this.iniciada||m.terminado)return;this.iniciada=true;this.motor=m;this.preparar(m);}
  siembraAutorizada(tipo:string){return this.siembraActiva===tipo;}
  plantarSobre(m:MotorPvZ,id:number,fila:number,col:number){

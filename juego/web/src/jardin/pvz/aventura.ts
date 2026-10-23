@@ -55,7 +55,7 @@ export async function montarAventuraPvZ(){
   aviso(motor.nivel.minijuego==='aplastazombis'?'Toca los zombis que salen de las lápidas.':motor.nivel.minijuego==='rompejarrones'?'Toca un jarrón para abrirlo.':motor.nivel.cinta?'Elige un sobre de la cinta y toca una casilla.':'Elige una semilla y toca una casilla. Recoge los soles.',5);
  }
  function aviso(texto:string,segundos=2.5){const e=root.querySelector('#pvz-aviso');if(e)e.textContent=texto;mensajeHasta=performance.now()+segundos*1000;}
- function drenar(){if(!motor)return;const e=motor.consumirEventos();vista?.eventos(e,motor.t);sonido.eventos(e);}
+ function drenar(){if(!motor)return;const e=motor.consumirEventos();vista?.eventos(e,motor.t,motor);sonido.eventos(e);}
  function ordenar(o:OrdenPvZ){if(!motor||pausa||motor.terminado)return false;const ok=motor.ordenar(o);drenar();if(ok)actualizarHud();return ok;}
  function tocar(e:PointerEvent){e.preventDefault();if(!motor||!vista||pausa||motor.terminado)return;const q=vista.tocar(e.clientX,e.clientY,motor);if(!q)return;sonido.activar();
   if(q.sol!==undefined){ordenar({tipo:'recoger',id:q.sol});return;}if(q.jarron!==undefined){ordenar({tipo:'romperJarron',id:q.jarron});return;}if(motor.nivel.minijuego==='aplastazombis'&&q.zombi!==undefined){ordenar({tipo:'golpear',id:q.zombi});return;}
