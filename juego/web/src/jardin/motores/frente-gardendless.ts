@@ -6,7 +6,7 @@ export interface ObservacionGardendless {
  segundos:number; oleada:number; soles:number; plantas:number; zombis:number; pausada:boolean;
 }
 export interface CapacidadesGardendless {
- nivel:'tutorial1'|'historia'; instantaneas:false; carrilesVariables:false; pasoExterno:boolean; perfilTemporal:true;puntosDescanso?:boolean;
+ nivel:'tutorial1'|'historia'; instantaneas:false; carrilesVariables:boolean; pasoExterno:boolean; perfilTemporal:true;puntosDescanso?:boolean;
 }
 type Pendiente={ok:(v:any)=>void;mal:(e:Error)=>void;reloj:ReturnType<typeof setTimeout>};
 

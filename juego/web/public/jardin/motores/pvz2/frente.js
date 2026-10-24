@@ -6,7 +6,7 @@
   if (!frente || parent === window) return;
   const canal = 'semilla-frente-v1', modulo = nombre => window.System?.get(`chunks:///_virtual/${nombre}.ts`);
   const capacidades = Object.freeze(window.semillaHistoriaMotor
-    ? {nivel:'historia',instantaneas:false,carrilesVariables:false,pasoExterno:true,perfilTemporal:true,puntosDescanso:true}
+    ? {nivel:'historia',instantaneas:false,carrilesVariables:true,pasoExterno:true,perfilTemporal:true,puntosDescanso:true}
     : {nivel: 'tutorial1', instantaneas: false, carrilesVariables: false, pasoExterno: false, perfilTemporal: true});
   let cc, iniciada = false, cargando = false, cerrada = false, resultado = '', secuencia = 0, ultimoPedido = 0;
   const enviar = datos => parent.postMessage({canal, zona: frente.zona, sesion: frente.sesion, ...datos}, location.origin);
@@ -42,7 +42,7 @@
         const objetos=modulo('JSONs')?.PvZ2ObjectContainer;
         const jardin=modulo('FrontYard')?.FrontYard,plantas=modulo('Plants')?.plants;
         return cc.director.getScene()?.name === 'mainScene' && !modulo('KeyListener').KeyListener.screenColorTweening
-          && ['LevelModules','LawnProps','PlantProps','PlantTypes','ZombieProps','ZombieTypes'].every(k=>objetos?.[k]?.length>0)
+          && ['LevelModules','LawnProps','PlantProps','PlantTypes','ZombieProps','ZombieTypes','GridItemTypes','TombstoneProps'].every(k=>objetos?.[k]?.length>0)
           && jardin?.getLawnFeature(jardin.getLawnEnumByTypeName('TutorialStage'))?.RESNAME==='Tutorial'
           && plantas?.getPlantFeatureByType('cherry_bomb')?.CODENAME==='cherry_bomb';
       });

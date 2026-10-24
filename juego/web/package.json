@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "optimizar": "node scripts/optimizar-modelos.mjs",
     "probar:granja": "node scripts/granja-v3/probar-todo.mjs",
-    "probar:motores": "node scripts/probar-mesa-motor.mjs && node scripts/probar-show-motor.mjs && node scripts/probar-super-guardado.mjs && node scripts/probar-puertas-guardado.mjs && node scripts/probar-cocina-guardado.mjs && node scripts/probar-escudo-motor.mjs && node scripts/probar-celular-guardado.mjs && node scripts/probar-celular-historial.mjs && node scripts/probar-carreras-motor.mjs && node scripts/probar-carreras-guardado.mjs && node scripts/probar-carreras-variedad.mjs && node scripts/probar-carreras-red.mjs && node scripts/probar-peleas-motor.mjs && node scripts/probar-peleas-red.mjs && node scripts/probar-retrete-guardado.mjs && node scripts/probar-sangre-combate.mjs && node scripts/probar-lavado-enemigos.mjs && node scripts/probar-lavado-movimiento.mjs && node scripts/probar-mente-motor.mjs && node scripts/probar-jardin-motor.mjs && node scripts/probar-jardin-duelo.mjs && npm run probar:pvz && npm run probar:conquista && npm run verificar:motores-pvz && npm run probar:pvz:historia-nativa && npm run probar:pvz:cache-nativa && npm run probar:pvz:cola-nativa",
+    "probar:motores": "node scripts/probar-mesa-motor.mjs && node scripts/probar-show-motor.mjs && node scripts/probar-super-guardado.mjs && node scripts/probar-puertas-guardado.mjs && node scripts/probar-cocina-guardado.mjs && node scripts/probar-escudo-motor.mjs && node scripts/probar-celular-guardado.mjs && node scripts/probar-celular-historial.mjs && node scripts/probar-carreras-motor.mjs && node scripts/probar-carreras-guardado.mjs && node scripts/probar-carreras-variedad.mjs && node scripts/probar-carreras-red.mjs && node scripts/probar-peleas-motor.mjs && node scripts/probar-peleas-red.mjs && node scripts/probar-retrete-guardado.mjs && node scripts/probar-sangre-combate.mjs && node scripts/probar-lavado-enemigos.mjs && node scripts/probar-lavado-movimiento.mjs && node scripts/probar-mente-motor.mjs && node scripts/probar-jardin-motor.mjs && node scripts/probar-jardin-duelo.mjs && npm run probar:pvz && npm run probar:conquista && npm run verificar:motores-pvz && npm run probar:pvz:historia-nativa && npm run probar:pvz:cache-nativa && npm run probar:pvz:cola-nativa && npm run probar:pvz:mapa-nativo",
     "verificar:repo": "node scripts/verificar-repositorio.mjs",
     "probar:pvz": "node scripts/probar-pvz-instancias.mjs && node scripts/probar-pvz-motor.mjs && node scripts/probar-pvz-abono.mjs && node scripts/probar-pvz-noche.mjs && node scripts/probar-pvz-plantas-piscina.mjs && node scripts/probar-pvz-zombis-piscina.mjs && node scripts/probar-pvz-terreno-piscina.mjs && node scripts/probar-pvz-piscina.mjs && node scripts/probar-pvz-plantas-niebla.mjs && node scripts/probar-pvz-terreno-niebla.mjs && node scripts/probar-pvz-niebla.mjs && node scripts/probar-pvz-guardado.mjs && node scripts/probar-pvz-transicion-noche.mjs && node scripts/probar-pvz-transicion-piscina.mjs && node scripts/probar-pvz-transicion-niebla.mjs && npm run probar:pvz:arte",
     "probar:pvz:guardado-navegador": "node scripts/probar-pvz-persistencia-navegador.mjs",
@@ -34,7 +34,10 @@
     "probar:pvz:cache-nativa": "node scripts/probar-cache-gardendless.mjs",
     "probar:pvz:reutilizacion": "node scripts/probar-gardendless-reutilizacion.mjs",
     "probar:pvz:cola-nativa": "node scripts/probar-cola-gardendless.mjs",
-    "probar:pvz:coordinacion-precarga": "node scripts/probar-coordinacion-precarga.mjs"
+    "probar:pvz:coordinacion-precarga": "node scripts/probar-coordinacion-precarga.mjs",
+    "probar:pvz:mapa-nativo": "node scripts/probar-historia-nativa-mapa.mjs",
+    "probar:pvz:mapa-nativo-cocos": "node scripts/probar-mapa-nativo-cocos.mjs",
+    "probar:pvz:mapa-nativo-interfaz": "node scripts/probar-mapa-nativo-interfaz.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",

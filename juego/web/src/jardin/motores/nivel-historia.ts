@@ -2,7 +2,10 @@ import { escenarioHistoriaPvZ } from '../conquista/historia-datos';
 import { DirectorOleadasPvZ } from '../pvz/motor/oleadas';
 import { AzarPvZ } from '../pvz/motor/azar';
 import { ZOMBIS_PVZ } from '../pvz/datos/zombis';
-export const TIPOS_NATIVOS = { lanzaguisantes: 'peashooter', girasol: 'sunflower', nuez: 'wallnut', petacereza: 'cherry_bomb', repetidora: 'repeater', patatapum: 'potatomine' } as const;
+import catalogo from '../../../public/jardin/motores/pvz2/catalogo-historia.json';
+export const TIPOS_NATIVOS = catalogo.tipos;
+export const VIDAS_NATIVAS: Readonly<Record<string,number>> = catalogo.vidas;
+export const nombreSemillaNativa = (id: string, nombre: string) => id === 'seta-congelada' ? 'Flor de hielo' : nombre;
 export type SemillaNativa = keyof typeof TIPOS_NATIVOS;
 export interface PuntoDescansoNativo {
     version: 1;
@@ -12,14 +15,22 @@ export interface PuntoDescansoNativo {
         fila: number;
         col: number;
         vida: number;
-        temporales?: Record<string, number | boolean>;
+        temporales?: Record<string, number | boolean | number[]>;
+        armadura?: number;
     }[];
     cortacespedes: boolean[];
     recargas: Record<string, number>;
+    lapidas?: {fila:number;col:number;vida:number}[];
+    crateres?: {fila:number;col:number;segundos:number}[];
 }
 export interface ConfigDefensaNativa {
-    zona: 8 | 9;
-    filas: 4 | 5;
+    zona: number;
+    nombre: string;
+    filas: number;
+    agua: number[];
+    noche: boolean;
+    solInicial: number;
+    lapidas: {fila:number;col:number;vida?:number}[];
     semillas: string[];
     oleadas: {
         tipo: string;
@@ -29,9 +40,14 @@ export interface ConfigDefensaNativa {
     reposo: boolean;
 }
 /** Composición/carriles del sector existente; habilidades y estadísticas son del motor nativo aprobado. */
-export function nivelHistoriaNativa(zona: 8 | 9, equipo: readonly SemillaNativa[], semilla: number, punto: PuntoDescansoNativo | null = null, reposo = false): ConfigDefensaNativa {
-    const nivel = escenarioHistoriaPvZ(zona).nivel, director = new DirectorOleadasPvZ(nivel, new AzarPvZ(semilla), ZOMBIS_PVZ), oleadas: ConfigDefensaNativa['oleadas'] = [];
-    const ids: Record<string, string> = { zombi: 'tutorial', 'zombi-bandera': 'tutorial_flag', caracono: 'tutorial_armor1' };
+export function nivelHistoriaNativa(zona: number, equipo: readonly SemillaNativa[], semilla: number, punto: PuntoDescansoNativo | null = null, reposo = false): ConfigDefensaNativa {
+    const nivel=escenarioHistoriaPvZ(zona).nivel,azar=new AzarPvZ(semilla),lapidas:ConfigDefensaNativa['lapidas']=[];
+    for(const [col,cantidad] of Object.entries(nivel.distribucionLapidas??{})) {
+        const filas=[...nivel.filas];
+        for(let i=0;i<cantidad;i++){const [fila]=filas.splice(azar.entero(filas.length),1);lapidas.push({fila,col:Number(col)});}
+    }
+    const director=new DirectorOleadasPvZ(nivel,azar,ZOMBIS_PVZ),oleadas:ConfigDefensaNativa['oleadas']=[];
+    const ids: Record<string, string> = catalogo.zombis;
     for (let i = 0; i < director.total; i++) {
         let salida = director.paso((i + 1) * 1000, { vida: 100, inicial: 100, pendientes: 0, plantas: 45 });
         if (salida?.aviso)
@@ -39,7 +55,7 @@ export function nivelHistoriaNativa(zona: 8 | 9, equipo: readonly SemillaNativa[
         if (!salida || salida.aviso)
             throw Error('No se pudo adaptar la composición de la zona.');
         oleadas.push(salida.apariciones.map(z => { if (!ids[z.tipo])
-            throw Error('Zombi fuera del primer sector.'); return { tipo: ids[z.tipo], fila: z.fila }; }));
+            throw Error('No existe adaptación nativa para '+z.tipo); return { tipo: ids[z.tipo], fila: z.fila }; }));
     }
-    return { zona, filas: zona === 8 ? 5 : 4, semillas: equipo.map(t => TIPOS_NATIVOS[t]), oleadas, punto: structuredClone(punto), reposo };
+    return { zona, nombre: escenarioHistoriaPvZ(zona).nombre, filas: nivel.tablero!.filas, agua: [...(nivel.filasAgua??[])], noche: !!nivel.sinSolCielo, solInicial: zona===8||zona===9?150:nivel.solInicial, lapidas:punto?(punto.lapidas??[]):lapidas, semillas: equipo.map(t => TIPOS_NATIVOS[t]), oleadas, punto: structuredClone(punto), reposo };
 }

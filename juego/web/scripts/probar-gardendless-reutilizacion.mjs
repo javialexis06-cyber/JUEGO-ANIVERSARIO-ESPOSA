@@ -5,7 +5,7 @@ const b=await chromium.launch({executablePath:process.env.CHROME_PATH??'/usr/bin
 p.on('pageerror',e=>{errors.push(String(e.stack));console.log('PAGEERROR '+e.stack);});
 await ctx.addInitScript(d=>{if(window===window.top&&!localStorage.getItem('conquista-historia-nativa-v3'))localStorage.setItem('conquista-historia-nativa-v3',JSON.stringify(d));},punto);
 try{
- await p.goto(new URL('jardin.html?modo=historia&prueba=1&rol=ella&local=1',base).href);await p.waitForFunction(()=>window.__historiaNativa&&[...__historiaNativa.instancias().values()].length===2&&[...__historiaNativa.instancias().values()].every(i=>i.lista)&&!__historiaNativa.control().cargando);
+ await p.goto(new URL('jardin.html?modo=historia&prueba=1&rol=ella&local=1',base).href);await p.waitForFunction(()=>window.__historiaNativa&&[...__historiaNativa.instancias().values()].length>=2&&[...__historiaNativa.instancias().values()].every(i=>i.lista)&&!__historiaNativa.control().cargando);
  await p.locator('[data-hn-zona="8"]').click();await p.locator('[data-cq="ver"]').click();await p.waitForFunction(()=>__historiaNativa.control().visible===8);
  await p.locator('[data-cq="pausa"]').click();await p.locator('.hn-capa h2').filter({hasText:'Un respiro'}).waitFor();
  const sesion=await p.evaluate(()=>__historiaNativa.instancias().get(8).motor.sesion),f=p.frames().find(f=>new URL(f.url()).searchParams.get('sesion')===sesion);

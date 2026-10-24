@@ -1,5 +1,14 @@
 # Instrucciones del repositorio
 
+## Pedido vigente · ampliar la historia al mapa existente
+
+El 24 de octubre Javier autorizó extender Gardendless a las doce zonas del mapa. Esto sustituye la pausa
+anterior para ese recorrido; la campaña futura de 240 áreas sigue pendiente. Conservar la presentación y
+balance nativos, reservas exclusivas por tipo, defensas persistentes, mapas y guardados existentes.
+Aprobó Pirata espadachín, Cabezaladrillo, Breakdancer y Flor de hielo como sustituciones nativas concretas.
+Ver [ampliación y límites](docs/en-obra/pvz-mapa-nativo-2026-10-24.md). No anunciar una campaña ganada por pasar casos
+preparados ni una instantánea a mitad de combate. No cambiar balance adicional sin aprobación.
+
 ## Pedido vigente · precarga y controles de Gardendless
 
 Javier pidió conservar por ahora el arte, las animaciones, sonidos y reglas nativos de Gardendless.
@@ -8,7 +17,7 @@ Preparar en paralelo los campos del sector mientras se muestran Dave y el mapa, 
 ataques y al cambiar de zona, y evitar pantallas de carga al entrar a un campo preparado. La descarga inicial
 sigue dependiendo de red/caché; no prometer que un dispositivo sin recursos pueda cargarlos instantáneamente.
 Permitir arrastrar/soltar y seleccionar/colocar con dos clics o toques, usando costes, recargas y casillas nativos.
-No ampliar mundos ni cambiar balance para resolver este pedido.
+La ampliación posterior de las doce zonas se rige por el pedido vigente de arriba. No cambiar balance adicional.
 
 ## Pedido vigente · motores PvZ 1 y PvZ 2
 
@@ -16,28 +25,28 @@ Javier pidió incorporar PvZ-Portable y Gardendless completos como minijuegos se
 que más convenga a la historia. Ver [integración y límites reales](docs/en-obra/pvz-motores-originales-2026-10-23.md).
 Esto sustituye su uso solo como referencia. Los dos distribuibles se incorporan con versiones/licencias fijadas;
 Portable necesita datos compatibles y Javier confirmó que no tiene los archivos GOTY. No volver a pedírselos
-ni bloquear la historia por ellos. Gardendless ya conecta el primer sector nativo de historia (casa → estación), con reservas exclusivas,
-frentes simultáneos y puntos de descanso entre combates. Ver [conexión y límites](docs/en-obra/pvz-historia-nativa.md).
+ni bloquear la historia por ellos. Gardendless conecta las doce zonas existentes, con reservas exclusivas, hasta seis combates simultáneos
+y puntos de descanso entre combates. Ver [conexión y límites](docs/en-obra/pvz-mapa-nativo-2026-10-24.md).
 Javier aprobó expresamente el balance original de Gardendless; V2 mantiene sus reglas y claves anteriores. El minijuego PvZ 1
 sigue encargado y pendiente de una solución de recursos compatible; no descartarlo ni exigir datos al usuario.
 No afirmar migración ni catálogo completo por montar un minijuego.
-Conservar guardados/perfiles, la aventura anterior y la pausa de nuevos mundos.
+Conservar guardados/perfiles y la aventura anterior. La ampliación del 24 de octubre sustituye la pausa para las doce zonas.
 Existe un primer puente aislado de Gardendless (inicio, observación, pausa, resultado y cierre), revisable en
 `jardin.html?modo=prueba-frente`. Usa un perfil temporal y se conserva aparte. La entrada Historia abre
-`modo=historia` con el primer sector nativo; `modo=historia-v2` conserva la historia anterior. No se migra V2.
+`modo=historia` con las doce zonas nativas; `modo=historia-v2` conserva la historia anterior. No se migra V2.
 El cierre a mitad de combate nativo exige repetir los ataques pendientes desde su inicio, con aviso explícito;
-no anunciar una instantánea completa. No ampliar mundos sin revisar este primer sector con Javier.
+no anunciar una instantánea completa. La ampliación autorizada del 24 de octubre continúa ese sector en las doce zonas existentes.
 
-## Prioridad vigente · primer escenario antes de ampliar mundos
+## Base conservada · primer escenario y controles
 
-Javier pausó la ampliación de mundos para cerrar el inicio, la interacción y la animación.
+Antes de la ampliación del 24 de octubre, Javier pausó nuevos mundos para cerrar el inicio, la interacción y la animación.
 Ver [primer escenario y controles](docs/en-obra/pvz-principios-2026-10-23.md) y
 [fuentes de motores aportadas](docs/en-obra/pvz-referencias-motores-2026-10-23.md).
 Aprobó que las partidas nuevas defiendan primero La casa, conserven sus plantas y habiliten después
 expediciones y contraataques. Conservar los V2 anteriores sin imponer ese prólogo ni cambiar sus reglas.
 En el primer sector nativo se usa el balance original de Gardendless con aprobación expresa de Javier. Croquis sobre lugares dibujados, pala/semilla en mano y selección hacia una baraja.
 El zombi base tiene un esqueleto de piezas propias para revisar; el resto del catálogo gráfico sigue pendiente.
-No avanzar a otros mundos hasta que se revisen estos principios y la animación.
+El pedido del 24 de octubre autoriza ampliar el mapa existente con la presentación nativa.
 
 
 ## Pedido nuevo · audio y presentación del 23 de octubre

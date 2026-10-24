@@ -1,5 +1,7 @@
 # La Semilla Madre · pendientes de motor, catálogo y producción
 
+> Ampliación autorizada el 24 de octubre: [doce zonas con Gardendless](pvz-mapa-nativo-2026-10-24.md), tableros de tres a siete carriles, reservas y puntos V3 compatibles. Sustituye la pausa para el mapa existente. No cierra el catálogo completo, la campaña definitiva ni el guardado a mitad de combate. Las casillas conservan sus exigencias de verificación integral.
+
 Actualizado el **23 de octubre de 2026**, después de que el jugador probara la base.
 Auditoría inicial del código publicado en `568aa9a0`; las casillas cerradas tienen evidencia en el avance enlazado.
 Seguimiento con casillas en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1).
@@ -7,13 +9,13 @@ Seguimiento con casillas en [GitHub, issue #1](https://github.com/javialexis06-c
 Audio y presentación del 23 de octubre: [avance integrado](pvz-presentacion-audio-2026-10-23.md).
 Los 253 MP3 están producidos y el reproductor está conectado en V2/aventura; su conexión nativa sigue pendiente; esto no completa L07/L11 para las unidades futuras.
 
-La ampliación de mundos está pausada para revisar [inicio, controles y animación base](pvz-principios-2026-10-23.md).
-Las [fuentes nuevas aportadas](pvz-referencias-motores-2026-10-23.md) quedan registradas para reutilización posterior.
-El pedido posterior incorpora [PvZ 1 y PvZ 2 como minijuegos con sus motores](pvz-motores-originales-2026-10-23.md).
-Javier no tiene datos GOTY: Gardendless conecta el [primer sector nativo de historia](pvz-historia-nativa.md),
-casa y estación, con su balance original aprobado, reservas exclusivas y dos frentes. El guardado completo a
-mitad de combate y los carriles ampliados siguen pendientes. Este tramo no cierra los grupos del catálogo
-territorial ni exige que el usuario aporte recursos para continuar.
+La campaña futura conserva sus pendientes. El pedido del 24 de octubre autoriza ampliar el mapa existente:
+Gardendless conecta las [doce zonas nativas](pvz-mapa-nativo-2026-10-24.md), con tres a siete carriles, reservas
+exclusivas, hasta seis combates y puntos entre defensas. Las sustituciones nativas concretas están aprobadas.
+El [inicio y controles](pvz-principios-2026-10-23.md), las [fuentes aportadas](pvz-referencias-motores-2026-10-23.md)
+y los [minijuegos originales](pvz-motores-originales-2026-10-23.md) conservan sus registros. Javier no tiene datos
+GOTY; no exigirlos para continuar. El guardado a mitad de combate y la verificación integral de los catálogos
+siguen pendientes. La conexión de doce escenarios no certifica ganar la campaña completa con recursos normales.
 El puente inicial ya abre, observa, pausa y cierra un tutorial nativo aislado de Gardendless, con resultado
 comprobado. La entrada `jardin.html?modo=prueba-frente` descarta el combate al salir; no completa instantáneas,
 reservas, carriles ampliados o simulación simultánea y no cierra casillas del catálogo territorial.

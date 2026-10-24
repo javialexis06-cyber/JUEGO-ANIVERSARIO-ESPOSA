@@ -148,6 +148,11 @@
       "sha256": "eca60ee238c56b2c714cee9c529cc95c35b4deead97644dca8f377f60647dcf8"
     },
     {
+      "path": "pvz2/catalogo-historia.json",
+      "bytes": 2239,
+      "sha256": "f6d41b52556618d5598c264863a18f5041ab8bd244b4a58c446829aaa6d92914"
+    },
+    {
       "path": "pvz2/cocos-js/_virtual_cc-937a2166.js",
       "bytes": 3319333,
       "sha256": "cf800aff939138b976b7155adec58eada72d3831b0be5887bd806868e861c276"
@@ -209,8 +214,8 @@
     },
     {
       "path": "pvz2/frente.js",
-      "bytes": 6948,
-      "sha256": "454ca7392962b554eaa15e91d14fe69b34da75ec00248c2f1fa32b6e3492b496"
+      "bytes": 6980,
+      "sha256": "6536ba19282bf943470f3fb3b918850214f2a92747643f037235da63bbabd4dc"
     },
     {
       "path": "pvz2/game-audio.js",
@@ -219,13 +224,13 @@
     },
     {
       "path": "pvz2/historia.js",
-      "bytes": 13882,
-      "sha256": "082061de9bbec92eb398aa03ce1e9cad5f352425934d96168534fc395b309326"
+      "bytes": 14149,
+      "sha256": "906baf8c9b422aea370c5d872875b351f9853cc354225a0bb3a50838e7e9308e"
     },
     {
       "path": "pvz2/index.html",
-      "bytes": 2477,
-      "sha256": "5443978e7551228e8b9416667bbec7baa4f15e20bf3718d5931cf7081c0689da"
+      "bytes": 2741,
+      "sha256": "9b5bafc0602612c36aae88954d690ade0683aedbd79af586b16461946831ab73"
     },
     {
       "path": "pvz2/index.js",
@@ -271,6 +276,11 @@
       "path": "pvz2/style.css",
       "bytes": 1244,
       "sha256": "ab4916fdc5b6541d1afb2b48c7763143015cc7609ec918a990f85bb6ab3e16d9"
+    },
+    {
+      "path": "pvz2/terreno-historia.js",
+      "bytes": 6061,
+      "sha256": "62cef26ac82439f7e2575e73df5eaec72a0a3aa94a99d450a5be394e70730bac"
     },
     {
       "path": "pvz2/tmpPatch.js",

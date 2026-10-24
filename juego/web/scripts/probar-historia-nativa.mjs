@@ -88,7 +88,7 @@ try {
     });
     probar('Futuros formatos, tipos duplicados y puntos falsos no sustituyen una historia válida', () => {
         const m = abierta();
-        for (const cambiar of [s => s.version = 4, s => s.zonas[1].capturada = true, s => s.zonas[0].punto = null, s => s.zonas[1].equipo = ['girasol'], s => s.zonas[0].punto.plantas[0].vida = 9999, s => s.zonas[0].punto.plantas.push({ ...s.zonas[0].punto.plantas[0] }), s => s.zonas[0].punto.recargas.inventada = 1]) {
+        for (const cambiar of [s => s.version = 5, s => s.zonas[1].capturada = true, s => s.zonas[0].punto = null, s => s.zonas[1].equipo = ['girasol'], s => s.zonas[0].punto.plantas[0].vida = 9999, s => s.zonas[0].punto.plantas.push({ ...s.zonas[0].punto.plantas[0] }), s => s.zonas[0].punto.recargas.inventada = 1]) {
             const s = m.exportar();
             cambiar(s);
             assert.throws(() => HistoriaNativa.restaurar(s));

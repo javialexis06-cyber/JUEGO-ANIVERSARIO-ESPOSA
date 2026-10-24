@@ -132,7 +132,7 @@ try {
     }
     await p.goto(new URL('jardin.html?modo=historia&prueba=1&rol=ella&local=1', base).href);
     await p.waitForFunction(() => window.__historiaNativa);
-    await p.waitForFunction(() => __historiaNativa.instancias().size === 2);
+    await p.waitForFunction(() => __historiaNativa.instancias().size >= 2);
     sesiones=await p.evaluate(()=>[...__historiaNativa.instancias()].map(([id,i])=>[id,i.motor.sesion]));
     await p.evaluate(() => { localStorage.setItem('conquista-historia-v2', 'centinela-v2'); localStorage.setItem('semilla-pvz2-pareja:centinela', 'minijuego'); });
     let f, d, informe = 0;

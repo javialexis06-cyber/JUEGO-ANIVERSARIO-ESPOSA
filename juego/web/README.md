@@ -20,7 +20,7 @@ Vite + TypeScript + three.js. El contenedor Android usa Capacitor; el de escrito
 | `celular.html` | `src/celular/` | Los doce teléfonos de Desaparecidos de Astra. |
 | `peleas.html` | `src/peleas/` | El Torneo del Despertar Dorado. |
 | `mente.html` | `src/mente/` | Dieciséis juegos mentales del patio, reto diario y clasificación. |
-| `jardin.html` | `src/jardin/` | Historia nativa de Gardendless en casa/estación; historia V2 de 12 áreas, versus anterior, aventura y patios aparte. |
+| `jardin.html` | `src/jardin/` | Historia nativa de Gardendless en las doce zonas; historia V2 de 12 áreas, versus anterior, aventura y patios aparte. |
 | `granja-v3.html` | `src/granja-v3/` | Granja V5 integrada; desarrollo pausado. |
 
 Lavarse la cara se abre desde la casa y desde la sala de amigos mediante `src/casa/lavado.ts`.
@@ -68,10 +68,10 @@ opciones de sala de amigos. [Reglas y comprobaciones](../../docs/sistemas/jardin
 
 La nueva aventura de PvZ tiene su motor independiente en `src/jardin/pvz/`: cuarenta niveles de día, noche, piscina y niebla,
 con guardado propio y pruebas mediante `npm run probar:pvz`. Su aventura Canvas, selección de semillas, almanaque y arte ilustrado están conectados;
-se abre en `jardin.html?modo=aventura`. Sin modo se abre la portada. **Historia** inicia el [primer sector nativo de Gardendless](../../docs/en-obra/pvz-historia-nativa.md)
-(`modo=historia`), con su balance original aprobado, tipos exclusivos y dos frentes. Guarda puntos entre combates;
+se abre en `jardin.html?modo=aventura`. Sin modo se abre la portada. **Historia** abre [las doce zonas con Gardendless](../../docs/en-obra/pvz-mapa-nativo-2026-10-24.md)
+(`modo=historia`), con su balance original aprobado, tipos exclusivos y hasta seis combates simultáneos. Guarda puntos entre combates;
 un ataque interrumpido se repite desde su inicio con aviso explícito.
-Los campos se preparan en paralelo y conservan sus motores; la siembra nativa admite arrastre y dos clics/toques.
+Los campos próximos se preparan en paralelo; los combates activos conservan sus motores; la siembra nativa admite arrastre y dos clics/toques.
 Ver [precarga y controles](../../docs/en-obra/pvz-precarga-controles-gardendless-2026-10-23.md).
 **Minijuegos → Historia anterior · V2** (`modo=historia-v2`) conserva los doce territorios y guardados anteriores.
 `modo=prototipo` conserva la historia y el versus anteriores con sus archivos independientes.

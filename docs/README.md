@@ -92,6 +92,7 @@ de referencia (personajes, súper y casa) están en [`archivo/renders/`](../arch
 - [PvZ: motores y fuentes facilitadas para reutilización](en-obra/pvz-referencias-motores-2026-10-23.md).
 - [PvZ 1 y PvZ 2: motores originales como minijuegos y primera conexión de historia](en-obra/pvz-motores-originales-2026-10-23.md).
 
+- [Historia nativa: doce zonas, carriles de tres a siete y compatibilidad de partidas](en-obra/pvz-mapa-nativo-2026-10-24.md).
 - [Historia nativa: casa, mapa y estación con Gardendless; límites del guardado](en-obra/pvz-historia-nativa.md).
 
 - [Gardendless: precarga paralela y siembra con arrastre, clic y toque](en-obra/pvz-precarga-controles-gardendless-2026-10-23.md).

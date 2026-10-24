@@ -3,14 +3,16 @@ import './historia.css';
 import './historia-nativa.css';
 import '@fontsource/nunito/700.css';
 import '@fontsource/nunito/900.css';
+import { CinematicaConquista } from './cinematica';
 import { HistoriaNativa, type ZonaNativa, type AtaqueNativo } from './historia-nativa-motor';
 import { GuardadoHistoriaNativa } from './historia-nativa-guardado';
 import { FrenteGardendless, type ObservacionGardendless } from '../motores/frente-gardendless';
-import { nivelHistoriaNativa, type SemillaNativa, type ConfigDefensaNativa } from '../motores/nivel-historia';
+import { ESCENARIOS_HISTORIA_PVZ, escenarioHistoriaPvZ } from './historia-datos';
+import { nivelHistoriaNativa, nombreSemillaNativa, type SemillaNativa, type ConfigDefensaNativa } from '../motores/nivel-historia';
 import { esModoAmigo } from '../../salas/perfil';
 import { botonRedondo, icono } from './iconos';
 import { regionesHistoria, trazoRegionHistoria, puntoZonaHistoria } from './regiones';
-import { PAISES_CONQUISTA, ciudadesConquista, zonasCiudad, type EscalaMapa } from './mapa';
+import { PAISES_CONQUISTA, ciudadesConquista, zonasCiudad, ubicacionConquista, type EscalaMapa } from './mapa';
 import { urlArtePvZ } from '../pvz/arte/catalogo';
 import { AtlasPvZ } from '../pvz/arte/atlas';
 import { RetratosPvZ } from '../pvz/ui/retratos';
@@ -33,6 +35,7 @@ export async function montarHistoriaNativa() {
     let visible: ZonaNativa | null = null, escala: EscalaMapa = 'ciudad', pais = 2, ciudad = 6, seleccion: ZonaNativa | null = null, editor: SemillaNativa[] | null = null, revisionEditor = 0;
     let liberar: () => void = () => { }, bloqueo = false, modal = '', avisoHasta = 0, ultimoEstado = '', necesitaGuardar = false, herramientasHTML = '';
     let importacion: HistoriaNativa | null = null, pausaAntesImportar: boolean | null = null, errorMotor = '', iniciando = false;
+    let cine:CinematicaConquista|null=null;
     const instancias = new Map<ZonaNativa, Instancia>(), atlas = new AtlasPvZ(), retratos = new RetratosPvZ(atlas);
     document.body.dataset.conquista = '1';
     document.title = 'La Semilla Madre · Historia';
@@ -43,12 +46,14 @@ export async function montarHistoriaNativa() {
     document.body.append(root);
     root.innerHTML = '<section class="hn-mapa"></section><section class="hn-defensas"></section><nav class="cq-herramientas hn-herramientas"></nav><nav class="hn-frentes" aria-label="Frentes activos"></nav><div class="hn-noticia" role="status" hidden></div><div class="hn-capa"></div><input type="file" id="hn-respaldo" accept=".json,application/json" hidden>';
     const $ = <T extends HTMLElement = HTMLElement>(s: string) => root.querySelector<T>(s)!;
-    const imagen = (t: SemillaNativa) => `<img src="${retratos.planta(t)}" alt="${esc(PLANTAS_PVZ[t].nombre)}" draggable="false">`;
-    const casa = (id: ZonaNativa) => id === 8 ? 'La casa' : 'Estación vieja';
+    const imagen = (t: SemillaNativa) => `<img src="${retratos.planta(t)}" alt="${esc(nombre(t))}" draggable="false">`;
+    const casa=(id:ZonaNativa)=>escenarioHistoriaPvZ(id).nombre;
+    const nombre=(t:SemillaNativa)=>nombreSemillaNativa(t,PLANTAS_PVZ[t].nombre);
+    const cortos=['Robles','Molino','Parque','Fuerte','Farol','Puente','Semillas','Mercado','Casa','Estación','Fuentes','Colina'];
     const boton = (a: string, n: string, i = a) => botonRedondo(a, n, i);
     // Los controles se conservan al cambiar de vista: sustituir el botón dentro
     // de su propio clic interrumpe foco y eventos de ratón entre iframes.
-    $('.hn-frentes').innerHTML = ([8, 9] as const).map(id => `<button class="cq-redondo" data-hn-frente="${id}" aria-label="Defender ${casa(id)}" style="visibility:hidden" disabled>${icono('atacar')}<small>${id === 8 ? 'Casa' : 'Estación'}</small></button>`).join('');
+    $('.hn-frentes').innerHTML = ESCENARIOS_HISTORIA_PVZ.map(({id})=>id).map(id => `<button class="cq-redondo" data-hn-frente="${id}" aria-label="Defender ${casa(id)}" style="visibility:hidden" disabled>${icono('atacar')}<small>${cortos[id]}</small></button>`).join('');
     function noticia(t: string) { const e = $('.hn-noticia'); e.textContent = t; e.hidden = false; avisoHasta = performance.now() + 5500; }
     function guardar() { if (!mundo)
         return false;
@@ -80,7 +85,7 @@ export async function montarHistoriaNativa() {
         else if (escala === 'pais')
             pines = ciudadesConquista(s, pais).map(c => `<button class="cq-pin cq-pin-region" data-hn-ciudad="${c.id}" style="--x:${c.x}%;--y:${c.y}%" aria-label="${c.nombre}"><span class="cq-emblema">${icono('ciudad')}</span><b>${c.nombre}</b></button>`).join('');
         else
-            pines = zonasCiudad(s, ciudad).map(z => { const p = puntoZonaHistoria(z.id), activa = m.estado.ataques.some(a => a.zona === z.id); return `<button class="cq-pin ${activa ? 'hn-atacada' : ''}" data-hn-zona="${z.id}" style="--x:${p.x}%;--y:${p.y}%" aria-label="${esc(z.nombre)}"><span class="cq-emblema">${icono(activa ? 'atacar' : z.base ? 'historia' : 'formacion')}</span><b>${esc(z.nombre)}</b></button>`; }).join('');
+            pines = zonasCiudad(s, ciudad).map(z => { const p = puntoZonaHistoria(z.id), accesible=m.puedeLlegar(z.id), activa = m.estado.ataques.some(a => a.zona === z.id); return `<button class="cq-pin ${!accesible?'hn-lejana':''} ${activa ? 'hn-atacada' : ''}" data-hn-zona="${z.id}" style="--x:${p.x}%;--y:${p.y}%" aria-label="${esc(z.nombre)}${!accesible?': necesita una ruta desde la casa':''}"><span class="cq-emblema">${icono(activa ? 'atacar' : z.base ? 'historia' : 'formacion')}</span><b>${esc(z.nombre)}</b></button>`; }).join('');
         const trazos = regionesHistoria(s, escala, pais, ciudad).map(r => `<g class="cq-region ${r.estado}">${r.estado === 'mixta' ? `<path class="cq-trazo-mixto" d="${trazoRegionHistoria(r.poligono)}"/>` : ''}<path class="cq-trazo-parcela" d="${trazoRegionHistoria(r.poligono)}"/></g>`).join('');
         $('.hn-mapa').innerHTML = `<div class="cq-cartografia cq-cartografia-${escala}" style="background-image:url('${urlArtePvZ('mapa-' + escala + '.png')}')"><svg class="cq-regiones" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${trazos}</svg>${pines}</div>`;
     }
@@ -106,6 +111,7 @@ export async function montarHistoriaNativa() {
             const activo = !!mundo?.estado.ataques.some(a => a.zona === Number(b.dataset.hnFrente));
             b.disabled = !activo;
             b.style.visibility = activo ? 'visible' : 'hidden';
+            b.style.display=activo?'':'none';
             b.style.pointerEvents = activo ? 'auto' : 'none';
             b.setAttribute('aria-hidden', String(!activo));
         }
@@ -114,6 +120,7 @@ export async function montarHistoriaNativa() {
         mapa();
     }
     function capa() {
+        cine?.destruir();cine=null;
         const c = $('.hn-capa');
         if (!modal) {
             c.innerHTML = '';
@@ -127,17 +134,19 @@ export async function montarHistoriaNativa() {
                 n.inert = true;
         let html = '';
         if (modal === 'inicio')
-            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.png')}" alt="Dave"><section class="cq-modal hn-pergamino"><h2>Primero, nuestra casa</h2><p>Los zombis llegaron a la ciudad. Arrastra una semilla hasta una casilla, o selecciónala y después toca dónde plantarla. Recoge los soles para plantar más defensas.</p><p>Vuelve al mapa para cambiar de zona: los ataques continúan en los otros frentes. Este primer tramo llega hasta la estación.</p><p>Termina las defensas antes de cerrar para conservar sus plantas. Si se interrumpe un combate, tendrás que repetir ese ataque desde su inicio.</p><button data-cq="iniciar" class="cq-verde">Proteger la casa</button>${boton('importar', 'Importar historia', 'importar')}${boton('volver', 'Volver al jardín', 'salir')}</section>`;
+            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.png')}" alt="Dave"><section class="cq-modal hn-pergamino"><h2>Primero, nuestra casa</h2><p>Los zombis llegaron a la ciudad. Arrastra una semilla hasta una casilla, o selecciónala y después toca dónde plantarla. Recoge los soles para plantar más defensas.</p><p>Vuelve al mapa para cambiar de zona: los ataques continúan en los otros frentes. Avanza por las zonas vecinas hasta recuperar las doce áreas del mapa y la fortaleza zombi.</p><p>Termina las defensas antes de cerrar para conservar sus plantas. Si se interrumpe un combate, tendrás que repetir ese ataque desde su inicio.</p><button data-cq="iniciar" class="cq-verde">Proteger la casa</button>${boton('importar', 'Importar historia', 'importar')}${boton('volver', 'Volver al jardín', 'salir')}</section>`;
+        else if(modal==='victoria')
+            html=`<div class="cq-cine cq-cine-final"></div><nav class="cq-final-controles">${boton('cerrar-modal','El mapa está purificado: volver al mapa','mapa')}${boton('exportar','Exportar historia','exportar')}${boton('salir','Volver al jardín','salir')}</nav>`;
         else if (modal === 'interrumpida')
             html = `<section class="cq-modal hn-pergamino"><h2>Una defensa quedó interrumpida</h2><p>Las zonas recuperadas y sus defensas anteriores se conservan. Al continuar se repetirán los ataques pendientes desde su inicio.</p><button data-cq="retomar" class="cq-verde">Repetir los ataques pendientes</button>${boton('volver', 'Conservar el archivo y volver', 'salir')}</section>`;
         else if (modal === 'equipo')
-            html = `<section class="cq-modal cq-editor hn-editor"><header><h2>Semillas para ${casa(seleccion!)}</h2>${boton('cerrar-modal', 'Volver al mapa', 'cerrar')}</header><div class="pvz-baraja-elegida" aria-label="Baraja de la zona">${editor!.map(t => `<button class="pvz-ranura" data-hn-quitar="${t}">${imagen(t)}</button>`).join('')}</div><div class="cq-catalogo">${mundo!.estado.desbloqueadas.map(t => { const origen = mundo!.propietaria(t), activa = origen !== null && mundo!.estado.ataques.some(a => a.zona === origen); return `<button class="cq-ficha ${editor!.includes(t) ? 'cq-elegida' : ''}" data-hn-semilla="${t}" aria-pressed="${editor!.includes(t)}" ${activa ? 'disabled' : ''}>${imagen(t)}<b>${PLANTAS_PVZ[t].nombre}</b><small>${origen === null ? 'Disponible' : casa(origen)}</small></button>`; }).join('')}</div><p>Cada tipo se reserva a una zona. Al trasladarlo se retiran sus plantas de la defensa anterior, sin devolver soles.</p><button class="cq-verde" data-cq="guardar-equipo">Guardar formación</button></section>`;
+            html = `<section class="cq-modal cq-editor hn-editor"><header><h2>Semillas para ${casa(seleccion!)}</h2>${boton('cerrar-modal', 'Volver al mapa', 'cerrar')}</header><div class="pvz-baraja-elegida" aria-label="Baraja de la zona">${editor!.map(t => `<button class="pvz-ranura" data-hn-quitar="${t}">${imagen(t)}</button>`).join('')}</div><div class="cq-catalogo">${mundo!.estado.desbloqueadas.map(t => { const origen = mundo!.propietaria(t), activa = origen !== null && mundo!.estado.ataques.some(a => a.zona === origen); return `<button class="cq-ficha ${editor!.includes(t) ? 'cq-elegida' : ''}" data-hn-semilla="${t}" aria-pressed="${editor!.includes(t)}" ${activa ? 'disabled' : ''}>${imagen(t)}<b>${esc(nombre(t))}</b><small>${origen === null ? 'Disponible' : casa(origen)}</small></button>`; }).join('')}</div><p>Hasta ocho semillas por formación, con las ranuras nativas. Cada tipo se reserva a una zona. Al trasladarlo se retiran sus plantas de la defensa anterior, sin devolver soles.</p><button class="cq-verde" data-cq="guardar-equipo">Guardar formación</button></section>`;
         else if (modal === 'zona')
             html = `<section class="cq-modal hn-zona"><h2>${casa(seleccion!)}</h2><div class="hn-equipo">${mundo!.zona(seleccion!).equipo.map(imagen).join('')}</div><nav>${boton('equipo', 'Preparar formación', 'equipo')}${mundo!.zona(seleccion!).capturada ? boton('ver', 'Ver la defensa', 'historia') : boton('expedicion', 'Iniciar expedición', 'atacar')}${boton('cerrar-modal', 'Volver al mapa', 'cerrar')}</nav></section>`;
         else if (modal === 'salida')
             html = `<section class="cq-modal hn-pergamino"><h2>La batalla sigue</h2><p>Puedes recorrer el mapa sin perder el combate. Termina los ataques antes de cerrar esta historia para guardar sus defensas.</p>${boton('cerrar-modal', 'Volver al mapa', 'mapa')}</section>`;
         else if (modal === 'ayuda')
-            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.png')}" alt="Dave"><section class="cq-modal hn-pergamino"><h2>Una ciudad, varios frentes</h2><p>Puedes arrastrar y soltar semillas, o seleccionarlas y tocar una casilla. Primero protege la casa. Después podrás explorar la estación y reservarle sus propias plantas. Un tipo no puede estar en dos zonas a la vez.</p><p>Toca el mapa para cambiar de frente. Las espadas señalan dónde atacan los zombis. El botón de pausa detiene todos los frentes.</p><p>Al ganar conservas las plantas, el daño, los soles y los cortacéspedes que queden. Cierra entre combates para conservar ese punto; un ataque interrumpido se repite desde el comienzo.</p>${mundo&&!mundo.estado.ataques.length?boton('nueva','Comenzar otra historia','historia'):''}${boton('cerrar-modal', 'Volver al jardín', 'cerrar')}</section>`;
+            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.png')}" alt="Dave"><section class="cq-modal hn-pergamino"><h2>Una ciudad, varios frentes</h2><p>Puedes arrastrar y soltar semillas, o seleccionarlas y tocar una casilla. Primero protege la casa. Después podrás explorar las zonas vecinas, desbloquear semillas y reservar a cada territorio su propia formación. Un tipo no puede estar en dos zonas a la vez.</p><p>Toca el mapa para cambiar de frente. Las espadas señalan dónde atacan los zombis. El botón de pausa detiene todos los frentes.</p><p>Al ganar conservas las plantas, el daño, los soles y los cortacéspedes que queden. Cierra entre combates para conservar ese punto; un ataque interrumpido se repite desde el comienzo.</p>${mundo&&!mundo.estado.ataques.length?boton('nueva','Comenzar otra historia','historia'):''}${boton('cerrar-modal', 'Volver al jardín', 'cerrar')}</section>`;
         else if (modal === 'pausa')
             html = `<section class="cq-modal hn-pergamino"><h2>Un respiro en el jardín</h2>${boton('pausa', 'Reanudar todos los frentes', 'reanudar')}${boton('salir', 'Volver al jardín', 'salir')}</section>`;
         else if (modal === 'perdida')
@@ -155,6 +164,7 @@ export async function montarHistoriaNativa() {
         else if (modal === 'error')
             html = `<section class="cq-modal hn-pergamino"><h2>No se pudo preparar la historia</h2><p>${esc(guardado.error || 'Conserva esta ventana y exporta la historia antes de salir.')}</p>${boton('exportar', 'Exportar historia', 'exportar')}${boton('volver', 'Conservar y volver', 'salir')}</section>`;
         c.innerHTML = html;
+        if(modal==='victoria')cine=new CinematicaConquista(atlas,$('.cq-cine-final'),false,true);
         disponibilidad();
     }
     async function pausar(si: boolean) {
@@ -212,11 +222,13 @@ export async function montarHistoriaNativa() {
     }, { signal: eventos.signal });
     const firmaCampo = (c: ConfigDefensaNativa) => JSON.stringify([c.zona, c.semillas, c.punto]);
     function configuracion(id: ZonaNativa) {
-        const z = mundo?.zona(id), previstas: SemillaNativa[] = id === 8 ? ['lanzaguisantes','girasol','nuez','petacereza'] : ['repetidora','patatapum'];
-        return nivelHistoriaNativa(id, z && (id === 8 || mundo!.estado.conocidas.includes(id)) ? z.equipo : previstas, mundo?.estado.semilla ?? 23, z?.punto ?? null);
+        const z=mundo?.zona(id),previstas=escenarioHistoriaPvZ(id).desbloquea as SemillaNativa[];
+        // Explorar un destino sin baraja aún no debe vaciar y reconstruir su vista previa.
+        // Una zona propia sin semillas sí conserva su defensa vacía y vulnerable.
+        return nivelHistoriaNativa(id,z&&(z.capturada||z.equipo.length>0)?z.equipo:previstas,mundo?.estado.semilla??23,z?.punto??null);
     }
     function disponibilidad() {
-        const listas = ([8,9] as const).every(id => instancias.get(id)?.lista);
+        const listas=camposInicio().every(id=>instancias.get(id)?.lista);
         for (const b of root.querySelectorAll<HTMLButtonElement>('[data-cq="iniciar"],[data-cq="retomar"]')) {
             b.disabled = !listas;
             b.setAttribute('aria-busy', String(!listas));
@@ -252,8 +264,20 @@ export async function montarHistoriaNativa() {
         finally { disponibilidad(); }
         return i;
     }
+    function camposInicio() { return mundo?.estado.ataques.length?mundo.estado.ataques.map(a=>a.zona):[8,9]; }
     function prepararCampos() {
-        void Promise.all(([8,9] as const).filter(id=>instancias.get(id)?.ataque==null).map(id=>prepararCampo(configuracion(id))))
+        if(muerto)return;
+        const activas=mundo?.estado.ataques.map(a=>a.zona)??[];
+        const proximas=mundo?.fin?[]:mundo&&!mundo.estado.inicioCasa
+            ? mundo.estado.zonas.filter(z=>mundo!.puedeLlegar(z.id)).map(z=>z.id):[8,9];
+        const deseadas=[...new Set([...activas,...(visible===null?[]:[visible]),...(seleccion===null?[]:[seleccion]),
+            ...(mundo?.fin?[]:mundo?.fronteras()??[]),...proximas])].slice(0,8);
+        // Los combates vivos nunca se descartan. Los puntos terminados permiten liberar
+        // motores de interiores seguros sin perder una sola planta ni su vida.
+        for(const [id,i] of instancias)if(!deseadas.includes(id)&&!activas.includes(id)) {
+            i.motor.destruir();instancias.delete(id);
+        }
+        void Promise.all(deseadas.filter(id=>instancias.get(id)?.ataque==null).map(id=>prepararCampo(configuracion(id))))
             .catch(e=>{if(!muerto)falloMotor(e);});
     }
     async function cargarAtaque(a: AtaqueNativo) {
@@ -297,7 +321,7 @@ export async function montarHistoriaNativa() {
         }
         if (!mundo)
             mundo = new HistoriaNativa();
-        await Promise.all(([8,9] as const).map(id=>prepararCampo(configuracion(id))));
+        await Promise.all(camposInicio().map(id=>prepararCampo(configuracion(id))));
         mundo.pausada = false;
         if (!guardar())
             return;
@@ -328,13 +352,13 @@ export async function montarHistoriaNativa() {
             modal = 'perdida';
             capa();
         }
-        if (mundo!.fin)
-            noticia('La casa y la estación están a salvo. La ciudad empieza a despertar.');
+        if(mundo!.fin){modal='victoria';capa();}
         pintar();
         if(!mundo!.estado.perdida) prepararCampos();
     }
     async function avanzar(now: number) {
         raf = requestAnimationFrame(avanzar);
+        cine?.dibujar(now);
         const delta = Math.min(.1, Math.max(0, (now - anterior) / 1000));
         anterior = now;
         if (avisoHasta && now > avisoHasta) {
@@ -370,7 +394,7 @@ export async function montarHistoriaNativa() {
             if (nueva && !mundo.estado.perdida) {
                 if (!guardar()) return;
                 void cargarAtaque(nueva);
-                noticia('¡Atacan la casa! Puedes volver desde el mapa.');
+                noticia('¡Atacan '+casa(nueva.zona)+'! Vuelve desde el mapa o las espadas.');
             }
             if (ultimoEstado !== mundo.estado.ataques.map(a => a.id + ':' + a.zona).join(','))
                 pintar();
@@ -406,25 +430,19 @@ export async function montarHistoriaNativa() {
             }
             if (target.dataset.hnZona !== undefined) {
                 const id = Number(target.dataset.hnZona);
-                if (id !== 8 && id !== 9) {
-                    noticia('Este primer tramo llega hasta la estación.');
-                    return;
-                }
-                if (!mundo)
-                    return;
-                if (id === 9 && mundo.estado.inicioCasa) {
-                    noticia('Primero protege la casa.');
-                    return;
+                if (!mundo || !Number.isInteger(id) || id<0 || id>=ESCENARIOS_HISTORIA_PVZ.length) return;
+                if(!mundo.puedeLlegar(id)&&!mundo.zona(id).capturada) {
+                    noticia(id===3?'Recupera primero las otras once zonas para llegar a la fortaleza.':'Necesitas recuperar una zona vecina y mantener una ruta hasta la casa.');return;
                 }
                 seleccion = id;
-                if (mundo.estado.ataques.some(a => a.zona === id)) {
-                    await ver(id);
-                    return;
-                }
-                if (id === 9 && mundo.explorar()) {
+                if (mundo.estado.ataques.some(a => a.zona === id)) {await ver(id);return;}
+                const anteriores=new Set(mundo.estado.desbloqueadas);
+                if (mundo.explorar(id)) {
                     if (!guardar()) return;
-                    noticia('Encontraste Repetidora y Patatapum. Prepara su formación.');
+                    const nuevas=mundo.estado.desbloqueadas.filter(t=>!anteriores.has(t));
+                    if(nuevas.length)noticia('Encontraste '+nuevas.map(nombre).join(', ')+'. Prepara su formación.');
                 }
+                prepararCampos();
                 modal = 'zona';
                 capa();
                 return;
@@ -432,6 +450,7 @@ export async function montarHistoriaNativa() {
             const semilla = (target.dataset.hnSemilla || target.dataset.hnQuitar) as SemillaNativa | undefined;
             if (semilla && editor) {
                 const elegida = editor.includes(semilla);
+                if(!elegida&&editor.length>=8){noticia('La baraja nativa admite ocho semillas. Retira una para cambiarla.');return;}
                 editor = elegida ? editor.filter(t => t !== semilla) : [...editor, semilla];
                 const r = target.getBoundingClientRect();
                 capa();
@@ -448,10 +467,9 @@ export async function montarHistoriaNativa() {
                     await activar();
                     break;
                 case 'mapa':
+                    if(visible!==null&&mundo){const u=ubicacionConquista(mundo.mapa(),visible);pais=u.pais;ciudad=u.ciudad;}
                     visible = null;
                     escala = 'ciudad';
-                    pais = 2;
-                    ciudad = 6;
                     pintar();
                     break;
                 case 'subir':
@@ -474,6 +492,7 @@ export async function montarHistoriaNativa() {
                 case 'equipo':
                     if (!mundo || seleccion === null)
                         break;
+                    if(!mundo.puedeLlegar(seleccion)){noticia('Recupera la ruta hasta la casa antes de cambiar esta formación.');break;}
                     editor = [...mundo.zona(seleccion).equipo];
                     revisionEditor = mundo.estado.revision;
                     modal = 'equipo';
@@ -495,16 +514,16 @@ export async function montarHistoriaNativa() {
                     prepararCampos();
                     break;
                 case 'expedicion': {
-                    const a = mundo?.expedicion();
+                    const a=seleccion===null?null:mundo?.expedicion(seleccion);
                     if (!a) {
-                        noticia('Prepara semillas disponibles para la estación; si acaba de caer, deja que pase su descanso.');
+                        noticia('Prepara semillas, conserva una ruta hasta la casa y espera el descanso de la zona. Hay hasta tres expediciones y seis combates a la vez.');
                         break;
                     }
                     if (!guardar()) break;
                     await cargarAtaque(a);
                     modal = '';
                     capa();
-                    visible = 9;
+                    visible = a.zona;
                     pintar();
                     break;
                 }
@@ -566,6 +585,7 @@ export async function montarHistoriaNativa() {
                         capa();
                         pintar();
                     }
+                    else if(mundo.fin){modal='victoria';capa();pintar();}
                     else if (mundo.estado.ataques.length) {
                         modal = 'interrumpida';
                         capa();
@@ -606,6 +626,7 @@ export async function montarHistoriaNativa() {
                         i.motor.destruir();
                     instancias.clear();
                     mundo = new HistoriaNativa();
+                    visible=null;seleccion=null;editor=null;escala='ciudad';pais=2;ciudad=6;
                     await activar();
                     break;
             }
@@ -645,7 +666,7 @@ export async function montarHistoriaNativa() {
         e.returnValue = '';
     } }, { signal: eventos.signal });
     window.addEventListener('pagehide', () => { muerto = true; cancelAnimationFrame(raf); eventos.abort(); for (const i of instancias.values())
-        i.motor.destruir(); liberar(); atlas.destruir(); }, { once: true });
+        i.motor.destruir(); liberar(); cine?.destruir(); atlas.destruir(); }, { once: true });
     if (params.has('prueba'))
         (window as any).__historiaNativa = {
             mundo: () => mundo, instancias: () => instancias, observar: () => mundo?.exportar(),
@@ -664,6 +685,9 @@ export async function montarHistoriaNativa() {
     else if (mundo.estado.perdida) {
         modal = 'perdida';
         capa();
+    }
+    else if(mundo.fin) {
+        await adquirir();modal='victoria';capa();
     }
     else if (mundo.estado.ataques.length) {
         modal = 'interrumpida';

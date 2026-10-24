@@ -1,5 +1,7 @@
 # Historia · primer sector con Gardendless
 
+> Estado posterior: el pedido del 24 de octubre extiende el motor a [las doce zonas del mapa](pvz-mapa-nativo-2026-10-24.md), con compatibilidad de los puntos V3. Este documento conserva la evidencia y límites del primer sector.
+
 23 de octubre de 2026. Continúa la [integración de motores originales](pvz-motores-originales-2026-10-23.md).
 Javier pidió conectar la historia para poder probarla antes de decidir cómo continuar. Aprobó expresamente
 usar el balance original de Gardendless; [propuesta aprobada](pvz-historia-nativa-propuesta.md).

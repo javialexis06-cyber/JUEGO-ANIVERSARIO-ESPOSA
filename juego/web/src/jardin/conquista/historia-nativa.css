@@ -241,3 +241,9 @@
   top: auto;
   bottom: 8px;
 }
+/* Los accesos mantienen su posición durante la batalla. Solo los frentes activos ocupan espacio. */
+.hn-frentes button[aria-hidden=true]{display:none}
+.hn-frentes{max-width:62vw;flex-wrap:wrap;justify-content:flex-end;gap:28px 18px}
+.hn-frentes small{max-width:54px;white-space:normal;text-align:center;line-height:1.1}
+.hn-lejana .cq-emblema{filter:grayscale(.8);opacity:.65}
+.hn-equipo{flex-wrap:wrap}
