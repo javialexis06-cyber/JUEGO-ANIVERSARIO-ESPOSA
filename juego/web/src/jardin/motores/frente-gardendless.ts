@@ -19,6 +19,7 @@ export class FrenteGardendless {
  private contador=0;
  private destruido=false;
  private preparado=false;
+ private cola:Promise<unknown>=Promise.resolve();
  private error:Error|null=null;
  private recibirListo!:(v:CapacidadesGardendless)=>void;
  private fallarListo!:(e:Error)=>void;
@@ -49,7 +50,14 @@ export class FrenteGardendless {
   this.frame.src=u.href;contenedor.append(this.frame);
  }
  private fallar(error:Error){this.error=error;clearTimeout(this.reloj);this.fallarListo(error);for(const p of this.pendientes.values()){clearTimeout(p.reloj);p.mal(error);}this.pendientes.clear();}
- private async ordenar(orden:string,datos:Record<string,unknown>={},limite=150000):Promise<ObservacionGardendless>{
+ private ordenar(orden:string,datos:Record<string,unknown>={},limite=150000):Promise<ObservacionGardendless>{
+  // Una zona termina su operación antes de recibir la siguiente. Las colas de
+  // otras zonas son independientes y continúan trabajando en paralelo.
+  const tarea=this.cola.then(()=>this.enviar(orden,datos,limite));
+  this.cola=tarea.catch(()=>{});
+  return tarea;
+ }
+ private async enviar(orden:string,datos:Record<string,unknown>={},limite=150000):Promise<ObservacionGardendless>{
   if(this.destruido)throw new Error('El frente está cerrado.');
   if(this.error)throw this.error;
   await this.listo;
@@ -62,6 +70,7 @@ export class FrenteGardendless {
   });
  }
  iniciar(){return this.ordenar('iniciar',{nivel:'tutorial1'});}
+ prepararHistoria(config:ConfigDefensaNativa){return this.ordenar('preparar-historia',{config});}
  iniciarHistoria(config:ConfigDefensaNativa){return this.ordenar('iniciar-historia',{config});}
  pasoHistoria(cantidad:number,visible:boolean){return this.ordenar('paso-historia',{cantidad,visible});}
  async puntoHistoria(){return await this.ordenar('punto-historia') as unknown as PuntoDescansoNativo;}

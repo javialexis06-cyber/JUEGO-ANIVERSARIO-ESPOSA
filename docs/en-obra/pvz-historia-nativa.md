@@ -34,7 +34,9 @@ por un piloto. Usa `KeyListener.GoToGame` con una definición de nivel propia y 
   35 segundos y las comprobaciones posteriores cada 38 segundos del reloj estratégico existente.
 - Casa y estación mantienen instancias nativas independientes. Al cambiar de vista no se cierran, no se
   reconstruyen ni se elimina el daño. El coordinador les entrega los mismos pasos de 1/60 s; el frente oculto
-  simula y omite dibujar. Mientras se prepara una instancia se detiene el avance conjunto para evitar carreras.
+  simula y omite dibujar. Los dos campos se preparan en paralelo desde el tutorial/mapa, sin iniciar ataques.
+  Cada zona conserva su motor entre combates; la preparación de una defensa en descanso no detiene los
+  otros frentes. Entrar a una defensa preparada reutiliza su escena.
 - La pausa, incluido el teclado nativo, detiene todos los frentes. Cambiar de pestaña activa esa pausa. El
   acelerador del minijuego no controla el reloj de la historia; el minijuego conserva su comportamiento propio.
 
@@ -65,7 +67,7 @@ La salida voluntaria durante ataques remite al mapa; una derrota de la casa term
 
 Este avance conecta el motor y las formaciones con los mapas ilustrados y croquis del territorio, baraja de
 selección y botones redondos. El combate usa por ahora los gráficos, animaciones y audio originales de
-Gardendless. Sustituirlos por el arte propio y conectar allí el banco de ElevenLabs sigue pendiente; los 253
+Gardendless. Javier pidió mantener esta presentación nativa por ahora; la adaptación del arte propio y ElevenLabs queda pausada; los 253
 audios continúan funcionando en V2 y en la aventura anterior. El texto interno de Gardendless no está traducido
 íntegramente al español.
 
@@ -125,3 +127,6 @@ el primer sector nativo.
 
 La comprobación de integración del build completo pasó sus seis controles, en un contexto aislado y sin
 otras pruebas de navegador simultáneas: acceso, movimiento, buzón, inventario, ida/vuelta y recarga.
+
+La mejora posterior de [precarga y controles nativos](pvz-precarga-controles-gardendless-2026-10-23.md) conserva
+los motores entre ataques y añade arrastre/táctil junto con los dos clics originales.

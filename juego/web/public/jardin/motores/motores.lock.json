@@ -19,8 +19,8 @@
   "files": [
     {
       "path": "perfil.js",
-      "bytes": 5496,
-      "sha256": "e8e6e50ac779d9c5ffca4d695853452c5c11b04e179723fd8fc8f9a4981b489f"
+      "bytes": 5690,
+      "sha256": "d04f9a9ac44e6f776f0160cc343bc17e2fd17e50ea77b44cfbb93367b849335b"
     },
     {
       "path": "pvz1/COPYING",
@@ -144,8 +144,8 @@
     },
     {
       "path": "pvz2/cache.js",
-      "bytes": 849,
-      "sha256": "7867b0ce92b5f04dce34c4ff5b07f271015caf0055e227ccd5d26c1954fbcc17"
+      "bytes": 1173,
+      "sha256": "eca60ee238c56b2c714cee9c529cc95c35b4deead97644dca8f377f60647dcf8"
     },
     {
       "path": "pvz2/cocos-js/_virtual_cc-937a2166.js",
@@ -209,8 +209,8 @@
     },
     {
       "path": "pvz2/frente.js",
-      "bytes": 6639,
-      "sha256": "3b894dee3478a6f39caa8018b1b1bed8083ff7660190d6683bcaf8c79e1a05a1"
+      "bytes": 6948,
+      "sha256": "454ca7392962b554eaa15e91d14fe69b34da75ec00248c2f1fa32b6e3492b496"
     },
     {
       "path": "pvz2/game-audio.js",
@@ -219,18 +219,23 @@
     },
     {
       "path": "pvz2/historia.js",
-      "bytes": 11412,
-      "sha256": "6ab50299464231d688489f13e28e2832b893e08354432c4af9f360637ff4d465"
+      "bytes": 13882,
+      "sha256": "082061de9bbec92eb398aa03ce1e9cad5f352425934d96168534fc395b309326"
     },
     {
       "path": "pvz2/index.html",
-      "bytes": 2022,
-      "sha256": "be26d59faf0704c957e5a7e3a4db78b5fa0644a6f8b7add43784a3c27bf4ce45"
+      "bytes": 2477,
+      "sha256": "5443978e7551228e8b9416667bbec7baa4f15e20bf3718d5931cf7081c0689da"
     },
     {
       "path": "pvz2/index.js",
       "bytes": 1026,
       "sha256": "0b037abab8cb0a123a7ff80ac181cdfd1496764ff56bb9848a82d97c4433c645"
+    },
+    {
+      "path": "pvz2/siembra.js",
+      "bytes": 6620,
+      "sha256": "c498f9c543fafbd3d2b395ad7f92f9ecf6881a34b6683aee69158f1d05566f6f"
     },
     {
       "path": "pvz2/src/chunks/bundle.js",
@@ -264,8 +269,8 @@
     },
     {
       "path": "pvz2/style.css",
-      "bytes": 1222,
-      "sha256": "338fc9d734af60103e6d303333e28b413f477b295fd7dd233dc7022320c56e48"
+      "bytes": 1244,
+      "sha256": "ab4916fdc5b6541d1afb2b48c7763143015cc7609ec918a990f85bb6ab3e16d9"
     },
     {
       "path": "pvz2/tmpPatch.js",

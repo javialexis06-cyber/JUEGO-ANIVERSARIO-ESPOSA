@@ -2,10 +2,16 @@
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>PvZ 2 · Gardendless</title><link rel="stylesheet" href="style.css"><style>body{background:#102b1b}#fallo{position:fixed;inset:15%;padding:24px;border:2px solid #d4b16c;border-radius:20px;background:#2d2416ed;color:#fff0bf;font:18px system-ui;z-index:20}#fallo[hidden]{display:none}#fallo button{padding:12px;border-radius:20px;background:#365b29;color:#fff0bf;border:1px solid #cfba79}</style><script src="../perfil.js"></script></head>
 <body><div id="GameDiv" cc_exact_fit_screen="true"><div id="Cocos3dGameContainer"><canvas id="GameCanvas" tabindex="0" oncontextmenu="event.preventDefault()"></canvas></div></div><div id="fallo" role="alert" hidden><p>No se pudo cargar el jardín. Comprueba la conexión para descargar los recursos que falten.</p><button onclick="location.reload()">Reintentar</button></div>
 <script>window.PVZGE_ASSETS_ROOT='https://raw.githubusercontent.com/Gzh0821/pvzge_web/53d2ebb3ec51d1f69e9f906a5c4f70a5864dbfc6/docs/assets/';window.PVZGE_AUDIO_ROOT='https://raw.githubusercontent.com/Gzh0821/pvzge_web/53d2ebb3ec51d1f69e9f906a5c4f70a5864dbfc6/docs/audio/';</script>
-<script src="src/polyfills.bundle.js"></script><script src="src/system.bundle.js"></script><script src="src/import-map.json" type="systemjs-importmap"></script><script src="tmpPatch.js"></script><script src="historia.js"></script><script src="frente.js"></script>
+<script src="src/polyfills.bundle.js"></script><script src="src/system.bundle.js"></script><script src="src/import-map.json" type="systemjs-importmap"></script><script src="tmpPatch.js"></script><script src="historia.js"></script><script src="frente.js"></script><script src="siembra.js"></script>
 <script type="module">
 try {
- if('serviceWorker' in navigator) await navigator.serviceWorker.register('./cache.js').catch(e=>console.warn('Caché no disponible; se mantiene la carga por red.',e));
- const audio=await import('./game-audio.js');await audio.initializeGameAudio();await System.import('./index.js');
+ if('serviceWorker' in navigator) await navigator.serviceWorker.register('./cache.js').then(async()=>{
+  await navigator.serviceWorker.ready;
+  if(!navigator.serviceWorker.controller)await new Promise(resolve=>{
+   const listo=()=>{clearTimeout(reloj);navigator.serviceWorker.removeEventListener('controllerchange',listo);resolve();};
+   const reloj=setTimeout(listo,2000);navigator.serviceWorker.addEventListener('controllerchange',listo);
+  });
+ }).catch(e=>console.warn('Caché no disponible; se mantiene la carga por red.',e));
+ const audio=await import('./game-audio.js');await audio.initializeGameAudio();await System.import('./index.js');semillaSiembraNativa.instalar(await System.import('cc'));
 } catch(e) {document.getElementById('fallo').hidden=false;semillaMotor.avisar('error','No se pudo iniciar PvZ 2. Revisa la conexión y pulsa Reintentar.');console.error(e);}
 </script></body></html>

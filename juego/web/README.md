@@ -71,6 +71,8 @@ con guardado propio y pruebas mediante `npm run probar:pvz`. Su aventura Canvas,
 se abre en `jardin.html?modo=aventura`. Sin modo se abre la portada. **Historia** inicia el [primer sector nativo de Gardendless](../../docs/en-obra/pvz-historia-nativa.md)
 (`modo=historia`), con su balance original aprobado, tipos exclusivos y dos frentes. Guarda puntos entre combates;
 un ataque interrumpido se repite desde su inicio con aviso explícito.
+Los campos se preparan en paralelo y conservan sus motores; la siembra nativa admite arrastre y dos clics/toques.
+Ver [precarga y controles](../../docs/en-obra/pvz-precarga-controles-gardendless-2026-10-23.md).
 **Minijuegos → Historia anterior · V2** (`modo=historia-v2`) conserva los doce territorios y guardados anteriores.
 `modo=prototipo` conserva la historia y el versus anteriores con sus archivos independientes.
 `modo=pvz1` ejecuta PvZ-Portable 0.2.5 y permite importar los recursos GOTY del usuario; `modo=pvz2` ejecuta

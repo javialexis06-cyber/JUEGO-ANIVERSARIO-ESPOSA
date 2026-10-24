@@ -31,14 +31,16 @@
   };
   indexedDB.deleteDatabase = nombre => borrar(prefijo + nombre);
   const contextos = new Set(), medios = new Set();
+  let silencio = !!frente && parametros.get('historia') === '1';
   for (const nombre of ['AudioContext', 'webkitAudioContext']) if (window[nombre]) {
     window[nombre] = new Proxy(window[nombre], { construct(T, args) { const a = Reflect.construct(T, args); contextos.add(a); return a; } });
   }
-  window.Audio = new Proxy(window.Audio, { construct(T, args) { const a = Reflect.construct(T, args); medios.add(a); return a; } });
+  window.Audio = new Proxy(window.Audio, { construct(T, args) { const a = Reflect.construct(T, args); a.muted = silencio; medios.add(a); return a; } });
   let pausada = false, reproduciendo = [];
   const avisar = (estado, mensaje = '') => parent.postMessage({ canal: 'semilla-motor-v1', motor, estado, mensaje }, location.origin);
   window.semillaMotor = {
     perfil, motor, prefijo, frente, avisar,
+    sonido(si) { if(silencio === !si) return; silencio = !si; medios.forEach(a => {a.muted = silencio;}); },
     async pausa(si) {
       if (si === pausada) return;
       pausada = si;

@@ -6,7 +6,7 @@ import '@fontsource/nunito/900.css';
 import { HistoriaNativa, type ZonaNativa, type AtaqueNativo } from './historia-nativa-motor';
 import { GuardadoHistoriaNativa } from './historia-nativa-guardado';
 import { FrenteGardendless, type ObservacionGardendless } from '../motores/frente-gardendless';
-import { nivelHistoriaNativa, type SemillaNativa } from '../motores/nivel-historia';
+import { nivelHistoriaNativa, type SemillaNativa, type ConfigDefensaNativa } from '../motores/nivel-historia';
 import { esModoAmigo } from '../../salas/perfil';
 import { botonRedondo, icono } from './iconos';
 import { regionesHistoria, trazoRegionHistoria, puntoZonaHistoria } from './regiones';
@@ -23,6 +23,8 @@ type Instancia = {
     ataque: number | null;
     lista: boolean;
     estado: ObservacionGardendless | null;
+    firma: string;
+    precarga: Promise<void> | null;
 };
 export async function montarHistoriaNativa() {
     const amigo = esModoAmigo(), perfil = amigo ? 'amigos' : 'pareja', params = new URLSearchParams(location.search), eventos = new AbortController();
@@ -39,7 +41,7 @@ export async function montarHistoriaNativa() {
     root.className = 'cq-historia cq-nativa';
     root.style.setProperty('--hn-portada', `url("${urlArtePvZ('portada-conquista.png')}")`);
     document.body.append(root);
-    root.innerHTML = '<section class="hn-mapa"></section><section class="hn-defensas"></section><nav class="cq-herramientas hn-herramientas"></nav><nav class="hn-frentes" aria-label="Frentes activos"></nav><div class="hn-carga" role="status" hidden>Preparando la defensa…</div><div class="hn-noticia" role="status" hidden></div><div class="hn-capa"></div><input type="file" id="hn-respaldo" accept=".json,application/json" hidden>';
+    root.innerHTML = '<section class="hn-mapa"></section><section class="hn-defensas"></section><nav class="cq-herramientas hn-herramientas"></nav><nav class="hn-frentes" aria-label="Frentes activos"></nav><div class="hn-noticia" role="status" hidden></div><div class="hn-capa"></div><input type="file" id="hn-respaldo" accept=".json,application/json" hidden>';
     const $ = <T extends HTMLElement = HTMLElement>(s: string) => root.querySelector<T>(s)!;
     const imagen = (t: SemillaNativa) => `<img src="${retratos.planta(t)}" alt="${esc(PLANTAS_PVZ[t].nombre)}" draggable="false">`;
     const casa = (id: ZonaNativa) => id === 8 ? 'La casa' : 'Estación vieja';
@@ -86,7 +88,12 @@ export async function montarHistoriaNativa() {
         $('.hn-mapa').hidden = visible !== null;
         for (const [id, v] of instancias) {
             v.motor.frame.className = 'hn-frente';
-            v.motor.frame.style.visibility = id === visible ? 'visible' : 'hidden';
+            v.motor.frame.style.visibility = 'visible';
+            v.motor.frame.style.opacity = id === visible ? '1' : '0';
+            v.motor.frame.dataset.visible = String(id === visible);
+            v.motor.frame.inert = id !== visible;
+            v.motor.frame.tabIndex = id === visible ? 0 : -1;
+            v.motor.frame.setAttribute('aria-hidden',String(id!==visible));
             v.motor.frame.style.pointerEvents = id === visible ? 'auto' : 'none';
         }
         const herramientas = boton('mapa', 'Mapa de la ciudad', 'ciudad') + boton('subir', 'Mapa del país o del mundo', 'mapa') + boton('pausa', mundo?.pausada ? 'Reanudar los frentes' : 'Pausar todos los frentes', mundo?.pausada ? 'reanudar' : 'pausa') + boton('ayuda', 'Dave te explica cómo jugar', 'ayuda') + boton('pantalla', 'Pantalla completa', 'pantalla') + boton('exportar', 'Exportar historia', 'exportar') + boton('importar', 'Importar historia', 'importar') + boton('salir', 'Volver al jardín', 'salir');
@@ -103,7 +110,7 @@ export async function montarHistoriaNativa() {
             b.setAttribute('aria-hidden', String(!activo));
         }
         ultimoEstado = firma;
-        $('.hn-carga').hidden = cargando === 0 || visible === null;
+        disponibilidad();
         mapa();
     }
     function capa() {
@@ -120,7 +127,7 @@ export async function montarHistoriaNativa() {
                 n.inert = true;
         let html = '';
         if (modal === 'inicio')
-            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.png')}" alt="Dave"><section class="cq-modal hn-pergamino"><h2>Primero, nuestra casa</h2><p>Los zombis llegaron a la ciudad. Elige una semilla y después una casilla del jardín. Recoge los soles para plantar más defensas.</p><p>Vuelve al mapa para cambiar de zona: los ataques continúan en los otros frentes. Este primer tramo llega hasta la estación.</p><p>Termina las defensas antes de cerrar para conservar sus plantas. Si se interrumpe un combate, tendrás que repetir ese ataque desde su inicio.</p><button data-cq="iniciar" class="cq-verde">Proteger la casa</button>${boton('importar', 'Importar historia', 'importar')}${boton('volver', 'Volver al jardín', 'salir')}</section>`;
+            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.png')}" alt="Dave"><section class="cq-modal hn-pergamino"><h2>Primero, nuestra casa</h2><p>Los zombis llegaron a la ciudad. Arrastra una semilla hasta una casilla, o selecciónala y después toca dónde plantarla. Recoge los soles para plantar más defensas.</p><p>Vuelve al mapa para cambiar de zona: los ataques continúan en los otros frentes. Este primer tramo llega hasta la estación.</p><p>Termina las defensas antes de cerrar para conservar sus plantas. Si se interrumpe un combate, tendrás que repetir ese ataque desde su inicio.</p><button data-cq="iniciar" class="cq-verde">Proteger la casa</button>${boton('importar', 'Importar historia', 'importar')}${boton('volver', 'Volver al jardín', 'salir')}</section>`;
         else if (modal === 'interrumpida')
             html = `<section class="cq-modal hn-pergamino"><h2>Una defensa quedó interrumpida</h2><p>Las zonas recuperadas y sus defensas anteriores se conservan. Al continuar se repetirán los ataques pendientes desde su inicio.</p><button data-cq="retomar" class="cq-verde">Repetir los ataques pendientes</button>${boton('volver', 'Conservar el archivo y volver', 'salir')}</section>`;
         else if (modal === 'equipo')
@@ -130,7 +137,7 @@ export async function montarHistoriaNativa() {
         else if (modal === 'salida')
             html = `<section class="cq-modal hn-pergamino"><h2>La batalla sigue</h2><p>Puedes recorrer el mapa sin perder el combate. Termina los ataques antes de cerrar esta historia para guardar sus defensas.</p>${boton('cerrar-modal', 'Volver al mapa', 'mapa')}</section>`;
         else if (modal === 'ayuda')
-            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.png')}" alt="Dave"><section class="cq-modal hn-pergamino"><h2>Una ciudad, varios frentes</h2><p>Primero protege la casa. Después podrás explorar la estación y reservarle sus propias plantas. Un tipo no puede estar en dos zonas a la vez.</p><p>Toca el mapa para cambiar de frente. Las espadas señalan dónde atacan los zombis. El botón de pausa detiene todos los frentes.</p><p>Al ganar conservas las plantas, el daño, los soles y los cortacéspedes que queden. Cierra entre combates para conservar ese punto; un ataque interrumpido se repite desde el comienzo.</p>${mundo&&!mundo.estado.ataques.length?boton('nueva','Comenzar otra historia','historia'):''}${boton('cerrar-modal', 'Volver al jardín', 'cerrar')}</section>`;
+            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.png')}" alt="Dave"><section class="cq-modal hn-pergamino"><h2>Una ciudad, varios frentes</h2><p>Puedes arrastrar y soltar semillas, o seleccionarlas y tocar una casilla. Primero protege la casa. Después podrás explorar la estación y reservarle sus propias plantas. Un tipo no puede estar en dos zonas a la vez.</p><p>Toca el mapa para cambiar de frente. Las espadas señalan dónde atacan los zombis. El botón de pausa detiene todos los frentes.</p><p>Al ganar conservas las plantas, el daño, los soles y los cortacéspedes que queden. Cierra entre combates para conservar ese punto; un ataque interrumpido se repite desde el comienzo.</p>${mundo&&!mundo.estado.ataques.length?boton('nueva','Comenzar otra historia','historia'):''}${boton('cerrar-modal', 'Volver al jardín', 'cerrar')}</section>`;
         else if (modal === 'pausa')
             html = `<section class="cq-modal hn-pergamino"><h2>Un respiro en el jardín</h2>${boton('pausa', 'Reanudar todos los frentes', 'reanudar')}${boton('salir', 'Volver al jardín', 'salir')}</section>`;
         else if (modal === 'perdida')
@@ -148,6 +155,7 @@ export async function montarHistoriaNativa() {
         else if (modal === 'error')
             html = `<section class="cq-modal hn-pergamino"><h2>No se pudo preparar la historia</h2><p>${esc(guardado.error || 'Conserva esta ventana y exporta la historia antes de salir.')}</p>${boton('exportar', 'Exportar historia', 'exportar')}${boton('volver', 'Conservar y volver', 'salir')}</section>`;
         c.innerHTML = html;
+        disponibilidad();
     }
     async function pausar(si: boolean) {
         if (!mundo)
@@ -202,68 +210,78 @@ export async function montarHistoriaNativa() {
             noticia('El archivo no es una historia nativa compatible. Tu historia se conserva.');
         }
     }, { signal: eventos.signal });
-    async function cargarAtaque(a: AtaqueNativo) {
-        if (instancias.get(a.zona)?.ataque === a.id)
-            return;
-        const previa = instancias.get(a.zona);
-        if (previa) {
-            await previa.motor.cerrar();
-            instancias.delete(a.zona);
+    const firmaCampo = (c: ConfigDefensaNativa) => JSON.stringify([c.zona, c.semillas, c.punto]);
+    function configuracion(id: ZonaNativa) {
+        const z = mundo?.zona(id), previstas: SemillaNativa[] = id === 8 ? ['lanzaguisantes','girasol','nuez','petacereza'] : ['repetidora','patatapum'];
+        return nivelHistoriaNativa(id, z && (id === 8 || mundo!.estado.conocidas.includes(id)) ? z.equipo : previstas, mundo?.estado.semilla ?? 23, z?.punto ?? null);
+    }
+    function disponibilidad() {
+        const listas = ([8,9] as const).every(id => instancias.get(id)?.lista);
+        for (const b of root.querySelectorAll<HTMLButtonElement>('[data-cq="iniciar"],[data-cq="retomar"]')) {
+            b.disabled = !listas;
+            b.setAttribute('aria-busy', String(!listas));
+            b.textContent = !listas ? 'Preparando semillas…' : b.dataset.cq === 'iniciar' ? 'Proteger la casa' : 'Repetir los ataques pendientes';
         }
-        const motor = new FrenteGardendless($('.hn-defensas'), String(a.zona), perfil, undefined, { historia: true }), i: Instancia = { motor, ataque: a.id, lista: false, estado: null };
-        instancias.set(a.zona, i);
-        cargando++;
-        pintar();
-        try {
-            i.estado = await motor.iniciarHistoria(nivelHistoriaNativa(a.zona, a.equipo, a.semilla, a.punto));
-            i.lista = true;
-            if (mundo!.pausada)
-                await motor.pausa();
-        }
-        catch (e) {
-            if (!muerto)
-                falloMotor(e);
-        }
-        finally {
-            cargando--;
-            anterior = performance.now();
-            acumulado = 0;
-            pintar();
+        for (const b of root.querySelectorAll<HTMLButtonElement>('[data-cq="ver"],[data-cq="expedicion"]')) {
+            b.disabled = iniciando || seleccion === null || !instancias.get(seleccion)?.lista;
+            b.setAttribute('aria-busy', String(b.disabled));
         }
     }
-    async function ver(id: ZonaNativa) {
-        visible = id;
-        modal = '';
-        capa();
-        pintar();
-        const actual = instancias.get(id);
-        if (actual) {
-            if (actual.lista) await actual.motor.pasoHistoria(0, true);
-            return;
-        }
-        const z = mundo!.zona(id);
-        if (!z.punto)
-            return;
-        const motor = new FrenteGardendless($('.hn-defensas'), String(id), perfil, undefined, { historia: true }), i: Instancia = { motor, ataque: null, lista: false, estado: null };
-        instancias.set(id, i);
-        cargando++;
-        pintar();
-        try {
-            i.estado = await motor.iniciarHistoria(nivelHistoriaNativa(id, z.equipo, mundo!.estado.semilla, z.punto, true));
-            i.lista = true;
-        }
-        catch (e) {
-            if (!muerto)
-                falloMotor(e);
-        }
-        finally {
-            cargando--;
+    async function prepararCampo(c: ConfigDefensaNativa) {
+        let i = instancias.get(c.zona);
+        if (!i) {
+            const motor = new FrenteGardendless($('.hn-defensas'), String(c.zona), perfil, undefined, { historia:true });
+            i = {motor, ataque:null, lista:false, estado:null, firma:'', precarga:null};
+            instancias.set(c.zona,i);
             pintar();
         }
+        if (i.ataque !== null) return i;
+        const firma = firmaCampo(c);
+        if (i.firma === firma) { if(i.precarga) await i.precarga; return i; }
+        const actual=i, previa=i.precarga;
+        i.firma=firma; i.lista=false;
+        const tarea=(async()=>{
+            if(previa) await previa;
+            if(muerto || instancias.get(c.zona)!==actual) return;
+            actual.estado=await actual.motor.prepararHistoria(c);
+        })();
+        i.precarga=tarea;
+        disponibilidad();
+        try { await tarea; if(i.precarga===tarea && instancias.get(c.zona)===i) {i.lista=true;i.precarga=null;} }
+        catch(e) { if(!muerto && instancias.get(c.zona)===i) throw e; }
+        finally { disponibilidad(); }
+        return i;
+    }
+    function prepararCampos() {
+        void Promise.all(([8,9] as const).filter(id=>instancias.get(id)?.ataque==null).map(id=>prepararCampo(configuracion(id))))
+            .catch(e=>{if(!muerto)falloMotor(e);});
+    }
+    async function cargarAtaque(a: AtaqueNativo) {
+        if (instancias.get(a.zona)?.ataque === a.id) return;
+        cargando++;
+        try {
+            const c=nivelHistoriaNativa(a.zona,a.equipo,a.semilla,a.punto), i=await prepararCampo(c);
+            i.estado=await i.motor.iniciarHistoria(c);
+            i.ataque=a.id;
+            if(mundo!.pausada) await i.motor.pausa();
+        } catch(e) {if(!muerto)falloMotor(e);}
+        finally {cargando--;pintar();}
+    }
+    async function ver(id: ZonaNativa) {
+        const i=instancias.get(id);
+        if(!i?.lista) {noticia('Las semillas de esta zona todavía se están preparando.');return;}
+        if(i.ataque===null && i.estado?.fase==='preparando') {
+            const c=configuracion(id);
+            if(!mundo!.zona(id).punto) return;
+            i.estado=await i.motor.iniciarHistoria({...c,reposo:true});
+        }
+        visible=id;modal='';capa();pintar();
+        await i.motor.pasoHistoria(0,true);
     }
     async function activar() {
         if (iniciando) return;
         iniciando = true;
+        const modalInicial=modal;
         try {
         if (!await adquirir()) {
             if (mundo)
@@ -279,15 +297,16 @@ export async function montarHistoriaNativa() {
         }
         if (!mundo)
             mundo = new HistoriaNativa();
+        await Promise.all(([8,9] as const).map(id=>prepararCampo(configuracion(id))));
         mundo.pausada = false;
-        modal = '';
-        capa();
         if (!guardar())
             return;
-        visible = mundo.estado.inicioCasa ? 8 : null;
-        pintar();
         await Promise.all(mundo.estado.ataques.map(cargarAtaque));
-        } finally { iniciando = false; }
+        if(mundo.estado.inicioCasa) visible=8;
+        if(modal===modalInicial) modal='';
+        capa();pintar();
+        prepararCampos();
+        } finally { iniciando = false; anterior=performance.now();acumulado=0;disponibilidad(); }
     }
     async function terminar(id: ZonaNativa, i: Instancia, estado: ObservacionGardendless) {
         if (i.ataque === null || !['victoria', 'derrota'].includes(estado.fase))
@@ -312,6 +331,7 @@ export async function montarHistoriaNativa() {
         if (mundo!.fin)
             noticia('La casa y la estación están a salvo. La ciudad empieza a despertar.');
         pintar();
+        if(!mundo!.estado.perdida) prepararCampos();
     }
     async function avanzar(now: number) {
         raf = requestAnimationFrame(avanzar);
@@ -321,7 +341,7 @@ export async function montarHistoriaNativa() {
             $('.hn-noticia').hidden = true;
             avisoHasta = 0;
         }
-        if (muerto || !mundo || cargando || mundo.pausada || !bloqueo || mundo.estado.perdida || modal === 'interrumpida') {
+        if (muerto || iniciando || !mundo || mundo.pausada || !bloqueo || mundo.estado.perdida || modal === 'interrumpida') {
             acumulado = 0;
             return;
         }
@@ -468,15 +488,11 @@ export async function montarHistoriaNativa() {
                         noticia('Las reservas cambiaron o una zona está combatiendo. Revisa la formación.');
                         break;
                     }
-                    for (const [id, i] of instancias)
-                        if (i.ataque === null) {
-                            await i.motor.cerrar();
-                            instancias.delete(id);
-                        }
                     if (!guardar()) break;
                     editor = null;
                     modal = 'zona';
                     capa();
+                    prepararCampos();
                     break;
                 case 'expedicion': {
                     const a = mundo?.expedicion();
@@ -485,10 +501,11 @@ export async function montarHistoriaNativa() {
                         break;
                     }
                     if (!guardar()) break;
+                    await cargarAtaque(a);
                     modal = '';
                     capa();
                     visible = 9;
-                    await cargarAtaque(a);
+                    pintar();
                     break;
                 }
                 case 'ver':
@@ -554,8 +571,10 @@ export async function montarHistoriaNativa() {
                         capa();
                         pintar();
                     }
-                    else
+                    else {
+                        modal='';capa();pintar();
                         await activar();
+                    }
                     break;
                 case 'pantalla':
                     await (document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen());
@@ -582,6 +601,7 @@ export async function montarHistoriaNativa() {
                     capa();
                     break;
                 case 'confirmar-nueva':
+                    if(iniciando) break;
                     for (const i of instancias.values())
                         i.motor.destruir();
                     instancias.clear();
@@ -654,5 +674,6 @@ export async function montarHistoriaNativa() {
         visible = null;
         pintar();
     }
+    if(!errorArchivo && (!mundo || !mundo.estado.perdida) && modal!=='ocupada') prepararCampos();
     raf = requestAnimationFrame(avanzar);
 }

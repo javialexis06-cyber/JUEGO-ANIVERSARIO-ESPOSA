@@ -1,5 +1,16 @@
 # Pedidos de Javier · estado vigente
 
+## Pedido vigente · precarga y controles de Gardendless
+
+Javier pidió conservar por ahora el arte, las animaciones, sonidos y reglas nativos de Gardendless.
+La adaptación del arte propio y del banco ElevenLabs a este motor queda pausada; V2/aventura conservan lo integrado.
+Preparar en paralelo los campos del sector mientras se muestran Dave y el mapa, conservar sus motores entre
+ataques y al cambiar de zona, y evitar pantallas de carga al entrar a un campo preparado. La descarga inicial
+sigue dependiendo de red/caché; no prometer que un dispositivo sin recursos pueda cargarlos instantáneamente.
+Permitir arrastrar/soltar y seleccionar/colocar con dos clics o toques, usando costes, recargas y casillas nativos.
+No ampliar mundos ni cambiar balance para resolver este pedido.
+
+
 Actualizado el 23 de octubre de 2026. Esta lista sustituye las prioridades contradictorias del
 [historial archivado](archivo/pedidos-hasta-2026-10-15.md).
 

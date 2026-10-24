@@ -1,0 +1,11 @@
+/** Carreras reales de solicitudes compartidas; no descarga recursos ni toca guardados. */
+import vm from'node:vm';import fs from'node:fs/promises';import assert from'node:assert/strict';
+const codigo=await fs.readFile(new URL('../public/jardin/motores/pvz2/cache.js',import.meta.url),'utf8'),eventos={},guardadas=new Map();
+let llamadas=0,terminar,fallar;
+const contexto=vm.createContext({self:{addEventListener:(t,f)=>eventos[t]=f,skipWaiting(){},clients:{claim(){}}},caches:{open:async()=>({match:async r=>guardadas.get(r.url)?.clone(),put:async(r,v)=>{await new Promise(r=>setTimeout(r,5));guardadas.set(r.url,v);}})},fetch:()=>{llamadas++;return new Promise((ok,mal)=>{terminar=ok;fallar=mal;});}});
+vm.runInContext(codigo,contexto);
+const base='https://raw.githubusercontent.com/Gzh0821/pvzge_web/53d2ebb3ec51d1f69e9f906a5c4f70a5864dbfc6/docs/';
+function pedir(url,headers={}){let respuesta=null;eventos.fetch({request:new Request(url,{headers}),respondWith:p=>respuesta=p});return respuesta;}
+const a=pedir(base+'assets/unidad.json'),b=pedir(base+'assets/unidad.json');await new Promise(setImmediate);assert.equal(llamadas,1);terminar(new Response('unidad original'));const [ra,rb]=await Promise.all([a,b]);assert.notEqual(ra,rb);assert.equal(await ra.text(),'unidad original');assert.equal(await rb.text(),'unidad original');assert.equal(await(await pedir(base+'assets/unidad.json')).text(),'unidad original');assert.equal(llamadas,1);console.log('OK Dos campos comparten una descarga, reciben cuerpos independientes y conservan la caché');
+const c=pedir(base+'assets/reintento.json'),d=pedir(base+'assets/reintento.json');await new Promise(setImmediate);fallar(Error('red temporal'));assert.ok((await Promise.allSettled([c,d])).every(x=>x.status==='rejected'));const nuevo=pedir(base+'assets/reintento.json');await new Promise(setImmediate);assert.equal(llamadas,3);terminar(new Response('recuperado'));assert.equal(await(await nuevo).text(),'recuperado');console.log('OK Un fallo de red libera la solicitud compartida y permite reintentar');
+assert.equal(pedir('https://ejemplo.test/partida.json'),null);assert.equal(pedir(base+'audio/pista.mp3',{range:'bytes=0-10'}),null);console.log('OK Los guardados, otras páginas y audio parcial quedan fuera de esta caché');

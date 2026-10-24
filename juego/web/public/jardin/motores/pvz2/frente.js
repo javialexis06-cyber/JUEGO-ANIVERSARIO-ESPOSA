@@ -72,8 +72,13 @@
           valor = observar();
           break;
         }
+        case 'preparar-historia':
+          if (!window.semillaHistoriaMotor) throw Error('Este frente no es de historia.');
+          cargando=true;
+          try { await semillaHistoriaMotor.preparar(p.config); iniciada=false; resultado=''; valor=observar(); } finally { cargando=false; }
+          break;
         case 'iniciar-historia':
-          if(iniciada||!window.semillaHistoriaMotor)throw Error('No se puede cargar otra defensa en esta instancia.');
+          if(!window.semillaHistoriaMotor?.preparada)throw Error('No se puede cargar otra defensa en esta instancia.');
           iniciada=true;cargando=true;
           try{await semillaHistoriaMotor.iniciar(p.config);valor=observar();}finally{cargando=false;}
           break;

@@ -57,7 +57,7 @@ async function frame(id) {
  },id,{timeout:180000});
  const sesion=await p.evaluate(id=>__historiaNativa.instancias().get(id).motor.sesion,id);
  const f=p.frames().find(f=>new URL(f.url()).searchParams.get('sesion')===sesion);
- if(dibujoPorCaptura&&await f.evaluate(()=>window.frameElement.style.visibility==='visible')) {
+ if(dibujoPorCaptura&&await f.evaluate(()=>window.frameElement.dataset.visible==='true')) {
   if(await f.evaluate(()=>semillaHistoriaMotor.pausada))await p.evaluate(id=>__historiaNativa.instancias().get(id).motor.pasoHistoria(0,true),id);
   else await f.waitForFunction(()=>window.__capturaNativaLista,null,{polling:100,timeout:120000});
  }
@@ -123,7 +123,7 @@ const desdeSector=!!process.env.HISTORIA_DESDE_SECTOR;
 const rutaPrevia=process.env.HISTORIA_DESDE_SECTOR??process.env.HISTORIA_DESDE_CASA;
 const registroPrevio=rutaPrevia?JSON.parse(fs.readFileSync(rutaPrevia,'utf8')):null;
 const previa=desdeSector?{...registroPrevio,casa:registroPrevio.final}:registroPrevio;
-let casa = null, final = null;
+let casa = null, final = null, sesiones = null;
 try {
     if (previa) {
         assert.ok(previa.casa?.zonas[0].punto && (desdeSector?previa.casa.zonas[1].capturada&&previa.checks.some(c=>c.startsWith('El contraataque')):previa.checks.some(c => c.startsWith('Victoria real'))));
@@ -132,6 +132,8 @@ try {
     }
     await p.goto(new URL('jardin.html?modo=historia&prueba=1&rol=ella&local=1', base).href);
     await p.waitForFunction(() => window.__historiaNativa);
+    await p.waitForFunction(() => __historiaNativa.instancias().size === 2);
+    sesiones=await p.evaluate(()=>[...__historiaNativa.instancias()].map(([id,i])=>[id,i.motor.sesion]));
     await p.evaluate(() => { localStorage.setItem('conquista-historia-v2', 'centinela-v2'); localStorage.setItem('semilla-pvz2-pareja:centinela', 'minijuego'); });
     let f, d, informe = 0;
     if(desdeSector){casa=registroPrevio.casa;await p.locator('[data-cq=retomar]').click();ok('Repite explícitamente el ataque pendiente desde el sector conquistado en el recorrido real anterior');}
@@ -212,7 +214,7 @@ try {
             ok('El contraataque de la casa avanza mientras se juega la expedición');
         }
         const vf = await frame(active);
-        if (await vf.evaluate(() => window.frameElement.style.visibility) !== 'visible') {
+        if (await vf.evaluate(() => window.frameElement.dataset.visible) !== 'true') {
             const boton=p.locator(`[data-hn-frente="${active}"]`);
             if(!await boton.isVisible())continue;
             try{await boton.click({timeout:120000});}catch(e){if(!(await estado()).ataques.some(a=>a.zona===active))continue;throw e;}
@@ -229,6 +231,8 @@ try {
     assert.equal(final.perdida, false);
     assert.ok(final.zonas[1].capturada);
     assert.equal(final.ataques.length, 0);
+    assert.deepEqual(await p.evaluate(()=>[...__historiaNativa.instancias()].map(([id,i])=>[id,i.motor.sesion])),sesiones);
+    ok('Casa y estación conservan sus motores y sesiones durante expedición, defensas y nuevas preparaciones');
     assert.ok(simultaneos);
     await captura({ path: path.join(out, 'sector-conquistado.png') });
     assert.equal(await p.evaluate(() => localStorage.getItem('conquista-historia-v2')), 'centinela-v2');
@@ -254,7 +258,7 @@ catch (e) {
     await captura({ path: path.join(out, 'fallo.png') }).catch(() => { });
 }
 finally {
-    fs.writeFileSync(path.join(out, 'resultado.json'), JSON.stringify({ checks, casa, final, errors, bad, continuacion: rutaPrevia ?? null, recuperacion:desdeSector, dibujoPorCaptura, limites: 'Piloto por ratón en el primer sector. No es restauración a mitad de combate ni prueba física de rendimiento.' }, null, 2));
+    fs.writeFileSync(path.join(out, 'resultado.json'), JSON.stringify({ checks, casa, final, sesiones, errors, bad, continuacion: rutaPrevia ?? null, recuperacion:desdeSector, dibujoPorCaptura, limites: 'Piloto por ratón en el primer sector. No es restauración a mitad de combate ni prueba física de rendimiento.' }, null, 2));
     console.log(JSON.stringify({ checks: checks.length, errors, bad }));
     await b.close();
 }

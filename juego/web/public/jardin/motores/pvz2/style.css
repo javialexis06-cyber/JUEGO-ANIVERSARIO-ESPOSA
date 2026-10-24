@@ -46,6 +46,7 @@ body {
 
 canvas {
   background-color: rgba(0, 0, 0, 0);
+  touch-action: none;
 }
 
 #GameDiv, #Cocos3dGameContainer, #GameCanvas {

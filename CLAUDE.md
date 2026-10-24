@@ -1,5 +1,15 @@
 # Guía de trabajo · Nuestro Hogar
 
+## Pedido vigente · precarga y controles de Gardendless
+
+Javier pidió conservar por ahora el arte, las animaciones, sonidos y reglas nativos de Gardendless.
+La adaptación del arte propio y del banco ElevenLabs a este motor queda pausada; V2/aventura conservan lo integrado.
+Preparar en paralelo los campos del sector mientras se muestran Dave y el mapa, conservar sus motores entre
+ataques y al cambiar de zona, y evitar pantallas de carga al entrar a un campo preparado. La descarga inicial
+sigue dependiendo de red/caché; no prometer que un dispositivo sin recursos pueda cargarlos instantáneamente.
+Permitir arrastrar/soltar y seleccionar/colocar con dos clics o toques, usando costes, recargas y casillas nativos.
+No ampliar mundos ni cambiar balance para resolver este pedido.
+
 ## Pedido vigente · motores PvZ 1 y PvZ 2
 
 Javier pidió incorporar PvZ-Portable y Gardendless completos como minijuegos separados, y adaptar el motor
@@ -36,7 +46,7 @@ No avanzar a otros mundos hasta que se revisen estos principios y la animación.
 Javier encargó a Claude producir efectos, música y balbuceos no verbales de Dave con el saldo existente de
 ElevenLabs; Codex integra reproducción, mapas, tutorial y animaciones. El manifiesto tiene 107 familias y
 253 archivos, ya producidos por Claude e integrados por Codex en V2 y aventura. La primera conexión
-nativa de Gardendless conserva su audio original; llevar allí ese banco sigue pendiente. Ver
+nativa de Gardendless conserva su audio original; su adaptación allí queda pausada mientras se conserva la presentación nativa. Ver
 [reproducción y presentación](docs/en-obra/pvz-presentacion-audio-2026-10-23.md). Este pedido sustituye la restricción de usar solo
 WebAudio en el Jardín; las voces clonadas y los diálogos hablados del encargo anterior siguen descartados.
 No comprar créditos ni habilitar sobrecostes. Conservar claves privadas fuera del código y de Git.
