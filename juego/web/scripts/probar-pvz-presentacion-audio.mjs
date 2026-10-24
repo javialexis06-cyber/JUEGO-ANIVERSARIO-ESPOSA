@@ -13,7 +13,7 @@ try{
  p.on('pageerror',e=>errores.push(e.message));p.on('response',r=>{if(r.status()>=400)bad.push(r.status()+' '+r.url());});
  p.on('request',r=>{if(r.url().startsWith('http')&&new URL(r.url()).origin!==new URL(base).origin)externas.push(r.url());});
  const click=async k=>{await p.locator(`[data-cq="${k}"]`).last().click();if(k==='historia')await completarCasaInicial(p);},foto=n=>p.screenshot({path:join(out,n+'.png')});
- await p.goto(new URL('jardin.html?prueba=1',base).href);await p.waitForFunction(()=>window.__historiaPvZ);await click('ayuda');await p.locator('.cq-dave').waitFor();await p.waitForFunction(()=>document.querySelector('.cq-dave').naturalWidth>0);
+ await p.goto(new URL('jardin.html?modo=historia-v2&prueba=1',base).href);await p.waitForFunction(()=>window.__historiaPvZ);await click('ayuda');await p.locator('.cq-dave').waitFor();await p.waitForFunction(()=>document.querySelector('.cq-dave').naturalWidth>0);
  await click('sonido');await p.waitForFunction(()=>[...window.__historiaPvZ.audio().banco.voces.values()].includes('dave-saludo'));await foto('dave-844');
  for(let i=0;i<11;i++){assert.match(await p.locator('.cq-tutorial small').textContent(),new RegExp(`DAVE · ${i+1} / 11`));assert.ok(await p.locator('.cq-tutorial-globo').evaluate(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&r.bottom<=innerHeight+1;}));if(i<10)await click('dave-siguiente');}
  assert.equal(await p.evaluate(()=>localStorage.getItem('conquista-historia-v2')),null);await click('cerrar-tutorial');done('Dave ilustrado: once explicaciones, balbuceo MP3 real, controles visibles en 844×390 y menú sin crear partida');

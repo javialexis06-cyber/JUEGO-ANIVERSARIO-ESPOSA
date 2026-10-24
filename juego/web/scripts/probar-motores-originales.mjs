@@ -1,6 +1,6 @@
 /** Motores reales en contexto aislado. Usa red para los recursos públicos fijados de Gardendless.
  * CHROME_PATH=/usr/bin/chromium node scripts/probar-motores-originales.mjs [URL] [salida]
- * PvZ1: arranque WASM y persistencia preparada; combate exige datos GOTY del usuario.
+ * PvZ1: arranque WASM y persistencia preparada; combate pendiente de recursos compatibles.
  */
 import {chromium} from '@playwright/test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';
 const base=process.argv[2]??'http://127.0.0.1:4196/',out=path.resolve(process.argv[3]??'test-results/motores-originales');fs.mkdirSync(out,{recursive:true});

@@ -5,14 +5,15 @@ Auditoría inicial del código publicado en `568aa9a0`; las casillas cerradas ti
 Seguimiento con casillas en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1).
 
 Audio y presentación del 23 de octubre: [avance integrado](pvz-presentacion-audio-2026-10-23.md).
-Los 253 MP3 están producidos y el reproductor está conectado; esto no completa L07/L11 para las unidades futuras.
+Los 253 MP3 están producidos y el reproductor está conectado en V2/aventura; su conexión nativa sigue pendiente; esto no completa L07/L11 para las unidades futuras.
 
 La ampliación de mundos está pausada para revisar [inicio, controles y animación base](pvz-principios-2026-10-23.md).
 Las [fuentes nuevas aportadas](pvz-referencias-motores-2026-10-23.md) quedan registradas para reutilización posterior.
 El pedido posterior incorpora [PvZ 1 y PvZ 2 como minijuegos con sus motores](pvz-motores-originales-2026-10-23.md).
-Javier no tiene datos GOTY: Gardendless pasa a candidato principal para la historia. Su puente de frentes,
-guardado completo y carriles ampliados sigue pendiente; montar los distribuibles no cierra los grupos del
-catálogo territorial ni exige que el usuario aporte recursos para continuar.
+Javier no tiene datos GOTY: Gardendless conecta el [primer sector nativo de historia](pvz-historia-nativa.md),
+casa y estación, con su balance original aprobado, reservas exclusivas y dos frentes. El guardado completo a
+mitad de combate y los carriles ampliados siguen pendientes. Este tramo no cierra los grupos del catálogo
+territorial ni exige que el usuario aporte recursos para continuar.
 El puente inicial ya abre, observa, pausa y cierra un tutorial nativo aislado de Gardendless, con resultado
 comprobado. La entrada `jardin.html?modo=prueba-frente` descarta el combate al salir; no completa instantáneas,
 reservas, carriles ampliados o simulación simultánea y no cierra casillas del catálogo territorial.
@@ -47,17 +48,17 @@ cuando se integre código. No reabrir ampliaciones por aparecer en documentos an
 | PvZ base | Motor de 60 Hz, cuarenta niveles de día/noche/piscina/niebla; 32 plantas normales y Nuez explosiva de bolos. |
 | Zombis registrados | 21 definiciones, incluidas variantes acuáticas con cono/cubo. No equivale a tener todo PvZ 1. |
 | Carriles del motor PvZ | `tablero.filas` configura carriles físicos; comprobados 3/4/5/6/7/9, con activos y agua por datos. Anchos/accesos de B03 siguen pendientes. |
-| Conquista | La historia nueva usa partidas normales de PvZ a 60 Hz y tableros de 3–7 carriles. Versus e historia anteriores conservan V1 aparte. |
-| Territorios | Historia de 12 áreas y versus de 36; mapas de tres países, ciudades y zonas. |
+| Conquista | La entrada Historia conecta Gardendless en casa (5 carriles) y estación (4 activos). La historia V2 conserva sus doce escenarios de 3–7 carriles; versus/prototipo V1 permanece aparte. |
+| Territorios | Sector nativo de dos áreas; historia V2 de doce y versus anterior de 36. Se conservan los mapas de país, ciudad y mundo. |
 | Asignaciones | La historia reserva tipos exclusivamente; traslada en descanso retirando sus ejemplares sin reembolso. PvP nuevo y Fusión siguen pendientes. |
-| Progresión | Llegar a territorios nuevos desbloquea las 32 plantas construidas una sola vez. Faltan el catálogo completo y su campaña definitiva. |
+| Progresión | El sector nativo conecta seis tipos y desbloquea dos al explorar la estación; V2 conserva sus 32 plantas. Faltan el catálogo completo y su campaña definitiva. |
 | Fusiones | Cinco muestras en el prototipo/versus anterior; no se presentan como recetas reales en la historia nueva. Fusión completo sigue pendiente. |
 | Presentación | Dieciocho recursos gráficos, portada, mapas, ropa y protecciones completas. No es el arte de todas las unidades futuras. |
-| Guardado/red | Historia V2 guarda mundo y tableros juntos, valida respaldos y conserva las claves V1. Las salas siguen en V1; falta adaptarlas y convertir el progreso antiguo. |
+| Guardado/red | Historia nativa V3 conserva puntos entre combates; un ataque interrumpido se repite con aviso. Historia V2 guarda mundo y tableros juntos, valida respaldos y conserva las claves V1. Las salas siguen en V1; falta adaptarlas y convertir el progreso antiguo. |
 | Mundo final | Las 240 áreas del boceto no están construidas. La escala definitiva no debe confundirse con el prototipo de 12 áreas. |
 
 [Núcleo de instancias](pvz-instancias-2026-10-23.md) e [historia integrada](pvz-historia-integrada.md):
-la nueva entrada ya conecta mapa, reservas, desbloqueos y guardado V2 con partidas PvZ normales.
+la entrada conservada `modo=historia-v2` conecta mapa, reservas, desbloqueos y guardado V2 con partidas PvZ normales.
 Las casillas cerradas se refieren a esta base de doce escenarios y 32 plantas; no completan la campaña
 final, PvP nuevo, migración V1 ni los catálogos de PvZ 1/2/Fusión.
 [Reservas y presión](pvz-reservas-y-presion-2026-10-23.md): el selector permite localizar la reserva en

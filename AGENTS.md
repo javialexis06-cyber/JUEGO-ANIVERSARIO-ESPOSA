@@ -6,14 +6,17 @@ Javier pidió incorporar PvZ-Portable y Gardendless completos como minijuegos se
 que más convenga a la historia. Ver [integración y límites reales](docs/en-obra/pvz-motores-originales-2026-10-23.md).
 Esto sustituye su uso solo como referencia. Los dos distribuibles se incorporan con versiones/licencias fijadas;
 Portable necesita datos compatibles y Javier confirmó que no tiene los archivos GOTY. No volver a pedírselos
-ni bloquear la historia por ellos. Gardendless, que dispone de recursos por demanda, pasa a candidato principal
-para adaptar la historia; el puente de frentes/guardado/carriles aún no sustituye el motor V2. El minijuego PvZ 1
+ni bloquear la historia por ellos. Gardendless ya conecta el primer sector nativo de historia (casa → estación), con reservas exclusivas,
+frentes simultáneos y puntos de descanso entre combates. Ver [conexión y límites](docs/en-obra/pvz-historia-nativa.md).
+Javier aprobó expresamente el balance original de Gardendless; V2 mantiene sus reglas y claves anteriores. El minijuego PvZ 1
 sigue encargado y pendiente de una solución de recursos compatible; no descartarlo ni exigir datos al usuario.
 No afirmar migración ni catálogo completo por montar un minijuego.
 Conservar guardados/perfiles, la aventura anterior y la pausa de nuevos mundos.
 Existe un primer puente aislado de Gardendless (inicio, observación, pausa, resultado y cierre), revisable en
-`jardin.html?modo=prueba-frente`. Usa un perfil temporal; no restaura tableros ni migra V2. No conectar sus
-resultados a territorios hasta completar persistencia, reservas y simulación de frentes.
+`jardin.html?modo=prueba-frente`. Usa un perfil temporal y se conserva aparte. La entrada Historia abre
+`modo=historia` con el primer sector nativo; `modo=historia-v2` conserva la historia anterior. No se migra V2.
+El cierre a mitad de combate nativo exige repetir los ataques pendientes desde su inicio, con aviso explícito;
+no anunciar una instantánea completa. No ampliar mundos sin revisar este primer sector con Javier.
 
 ## Prioridad vigente · primer escenario antes de ampliar mundos
 
@@ -21,8 +24,8 @@ Javier pausó la ampliación de mundos para cerrar el inicio, la interacción y 
 Ver [primer escenario y controles](docs/en-obra/pvz-principios-2026-10-23.md) y
 [fuentes de motores aportadas](docs/en-obra/pvz-referencias-motores-2026-10-23.md).
 Aprobó que las partidas nuevas defiendan primero La casa, conserven sus plantas y habiliten después
-expediciones y contraataques. Conservar los V2 anteriores sin imponer ese prólogo. Los costes y estadísticas
-siguen iguales. Croquis sobre lugares dibujados, pala/semilla en mano y selección hacia una baraja.
+expediciones y contraataques. Conservar los V2 anteriores sin imponer ese prólogo ni cambiar sus reglas.
+En el primer sector nativo se usa el balance original de Gardendless con aprobación expresa de Javier. Croquis sobre lugares dibujados, pala/semilla en mano y selección hacia una baraja.
 El zombi base tiene un esqueleto de piezas propias para revisar; el resto del catálogo gráfico sigue pendiente.
 No avanzar a otros mundos hasta que se revisen estos principios y la animación.
 
@@ -32,7 +35,8 @@ No avanzar a otros mundos hasta que se revisen estos principios y la animación.
 **Guía para Claude:** [docs/en-obra/pvz-elevenlabs-guia-claude.md](docs/en-obra/pvz-elevenlabs-guia-claude.md).
 Javier encargó a Claude producir efectos, música y balbuceos no verbales de Dave con el saldo existente de
 ElevenLabs; Codex integra reproducción, mapas, tutorial y animaciones. El manifiesto tiene 107 familias y
-253 archivos, ya producidos por Claude e integrados por Codex. Ver
+253 archivos, ya producidos por Claude e integrados por Codex en V2 y aventura. La primera conexión
+nativa de Gardendless conserva su audio original; llevar allí ese banco sigue pendiente. Ver
 [reproducción y presentación](docs/en-obra/pvz-presentacion-audio-2026-10-23.md). Este pedido sustituye la restricción de usar solo
 WebAudio en el Jardín; las voces clonadas y los diálogos hablados del encargo anterior siguen descartados.
 No comprar créditos ni habilitar sobrecostes. Conservar claves privadas fuera del código y de Git.

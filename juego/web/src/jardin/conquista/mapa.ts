@@ -1,5 +1,5 @@
 import type {Bando,Dueno} from './tipos';
-interface EstadoMapaConquista {config:{modo:'historia'|'pvp'};zonas:readonly {id:number;nombre:string;col:number;fila:number;dueno:Dueno;base:Bando|null}[]}
+export interface EstadoMapaConquista {config:{modo:'historia'|'pvp'};zonas:readonly {id:number;nombre:string;col:number;fila:number;dueno:Dueno;base:Bando|null}[]}
 export type EscalaMapa='mundo'|'pais'|'ciudad';
 export const PAISES_CONQUISTA=[{id:0,nombre:'Solaria',x:62,y:27},{id:1,nombre:'Marisma',x:72,y:66},{id:2,nombre:'Verdalia',x:25,y:64}];
 const NOMBRES=[['Distrito Prisma','Ciudad Solar','El Anillo Verde'],['Puerto Bruma','Bahía Farol','Isla Junco'],['Los Naranjos','Villa Alba','La Última Casa']];

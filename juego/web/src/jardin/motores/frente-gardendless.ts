@@ -1,11 +1,12 @@
-/** Primera frontera de integración. Todavía no sustituye DefensasConquistaPvZ ni ofrece restauración. */
+/** Puente nativo: tutorial aislado y primer sector de historia con puntos entre combates. */
+import type {ConfigDefensaNativa,PuntoDescansoNativo} from './nivel-historia';
 export interface ObservacionGardendless {
- version:1; zona:string; nivel:'tutorial1'|null;
+ version:1; zona:string; nivel:'tutorial1'|'historia'|null;
  fase:'preparando'|'combatiendo'|'victoria'|'derrota'|'cerrado';
  segundos:number; oleada:number; soles:number; plantas:number; zombis:number; pausada:boolean;
 }
 export interface CapacidadesGardendless {
- nivel:'tutorial1'; instantaneas:false; carrilesVariables:false; pasoExterno:false; perfilTemporal:true;
+ nivel:'tutorial1'|'historia'; instantaneas:false; carrilesVariables:false; pasoExterno:boolean; perfilTemporal:true;puntosDescanso?:boolean;
 }
 type Pendiente={ok:(v:any)=>void;mal:(e:Error)=>void;reloj:ReturnType<typeof setTimeout>};
 
@@ -22,7 +23,7 @@ export class FrenteGardendless {
  private recibirListo!:(v:CapacidadesGardendless)=>void;
  private fallarListo!:(e:Error)=>void;
  private reloj:ReturnType<typeof setTimeout>;
- constructor(contenedor:HTMLElement,readonly zona:string,perfil:'pareja'|'amigos',alResultado?:(v:ObservacionGardendless)=>void) {
+ constructor(contenedor:HTMLElement,readonly zona:string,perfil:'pareja'|'amigos',alResultado?:(v:ObservacionGardendless)=>void,opciones:{historia?:boolean}={}) {
   if(!/^[a-z0-9_-]{1,64}$/.test(zona))throw new Error('Identificador de zona inválido.');
   this.frame=document.createElement('iframe');this.frame.title=`Frente ${zona} · Gardendless`;
   this.frame.allow='autoplay; fullscreen';this.frame.setAttribute('sandbox','allow-scripts allow-same-origin');
@@ -44,6 +45,7 @@ export class FrenteGardendless {
   },{signal:this.eventos.signal});
   const u=new URL('jardin/motores/pvz2/index.html',document.baseURI);
   u.search=new URLSearchParams({perfil,frente:zona,sesion:this.sesion}).toString();
+  if(opciones.historia)u.searchParams.set('historia','1');
   this.frame.src=u.href;contenedor.append(this.frame);
  }
  private fallar(error:Error){this.error=error;clearTimeout(this.reloj);this.fallarListo(error);for(const p of this.pendientes.values()){clearTimeout(p.reloj);p.mal(error);}this.pendientes.clear();}
@@ -60,6 +62,9 @@ export class FrenteGardendless {
   });
  }
  iniciar(){return this.ordenar('iniciar',{nivel:'tutorial1'});}
+ iniciarHistoria(config:ConfigDefensaNativa){return this.ordenar('iniciar-historia',{config});}
+ pasoHistoria(cantidad:number,visible:boolean){return this.ordenar('paso-historia',{cantidad,visible});}
+ async puntoHistoria(){return await this.ordenar('punto-historia') as unknown as PuntoDescansoNativo;}
  observar(){return this.ordenar('observar');}
  pausa(){return this.ordenar('pausa');}
  reanudar(){return this.ordenar('reanudar');}

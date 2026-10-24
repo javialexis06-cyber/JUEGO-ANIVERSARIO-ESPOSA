@@ -20,7 +20,7 @@ Vite + TypeScript + three.js. El contenedor Android usa Capacitor; el de escrito
 | `celular.html` | `src/celular/` | Los doce teléfonos de Desaparecidos de Astra. |
 | `peleas.html` | `src/peleas/` | El Torneo del Despertar Dorado. |
 | `mente.html` | `src/mente/` | Dieciséis juegos mentales del patio, reto diario y clasificación. |
-| `jardin.html` | `src/jardin/` | Historia con defensas PvZ completas en 12 áreas; conquista/versus anterior, PvZ de 40 niveles y patios aparte. |
+| `jardin.html` | `src/jardin/` | Historia nativa de Gardendless en casa/estación; historia V2 de 12 áreas, versus anterior, aventura y patios aparte. |
 | `granja-v3.html` | `src/granja-v3/` | Granja V5 integrada; desarrollo pausado. |
 
 Lavarse la cara se abre desde la casa y desde la sala de amigos mediante `src/casa/lavado.ts`.
@@ -68,14 +68,17 @@ opciones de sala de amigos. [Reglas y comprobaciones](../../docs/sistemas/jardin
 
 La nueva aventura de PvZ tiene su motor independiente en `src/jardin/pvz/`: cuarenta niveles de día, noche, piscina y niebla,
 con guardado propio y pruebas mediante `npm run probar:pvz`. Su aventura Canvas, selección de semillas, almanaque y arte ilustrado están conectados;
-se abre en `jardin.html?modo=aventura`. Sin modo se abre la [historia con defensas PvZ](../../docs/en-obra/pvz-historia-integrada.md).
+se abre en `jardin.html?modo=aventura`. Sin modo se abre la portada. **Historia** inicia el [primer sector nativo de Gardendless](../../docs/en-obra/pvz-historia-nativa.md)
+(`modo=historia`), con su balance original aprobado, tipos exclusivos y dos frentes. Guarda puntos entre combates;
+un ataque interrumpido se repite desde su inicio con aviso explícito.
+**Minijuegos → Historia anterior · V2** (`modo=historia-v2`) conserva los doce territorios y guardados anteriores.
 `modo=prototipo` conserva la historia y el versus anteriores con sus archivos independientes.
 `modo=pvz1` ejecuta PvZ-Portable 0.2.5 y permite importar los recursos GOTY del usuario; `modo=pvz2` ejecuta
 Gardendless 0.16.0 con sus recursos pesados por demanda. Ambos se abren desde Minijuegos y guardan separados
 por motor y perfil. Ver [integración y límites](../../docs/en-obra/pvz-motores-originales-2026-10-23.md).
 `npm run verificar:motores-pvz` comprueba sus distribuibles; `npm run probar:pvz:originales` requiere Chromium
 y red para los recursos de Gardendless. La historia todavía no usa el motor Portable.
-Los sobres de historia permiten localizar su reserva en el mapa sin perder el equipo pendiente.
+En V2, los sobres de historia permiten localizar su reserva en el mapa sin perder el equipo pendiente.
 `npm run diagnosticar:conquista` registra intentos normales con contraataques; una derrota del piloto
 no equivale a imposibilidad humana. Ver [resultados y límites](../../docs/en-obra/pvz-reservas-y-presion-2026-10-23.md).
 Ver [contratos y límites](../../docs/en-obra/pvz-arte-2026-10-22.md).
@@ -85,5 +88,5 @@ Los nuevos juegos del patio se describen en [juegos mentales](../../docs/sistema
 específica de Supabase documentada allí; la marca local funciona sin red.
 
 El pedido posterior a probar Conquista se sigue en [la lista de pendientes](../../docs/en-obra/pvz-pendientes-2026-10-22.md)
-y en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). La historia ya conecta defensas completas, carriles por escenario, tipos exclusivos y desbloqueos de las 32 plantas construidas.
+y en [GitHub, issue #1](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). V2 conserva sus carriles, tipos exclusivos y las 32 plantas construidas; el sector nativo conecta seis tipos y dos zonas para revisar sus principios.
 Catálogo completo, PvP nuevo, conversión de V1 y validación del balance normal siguen pendientes.

@@ -90,4 +90,6 @@ de referencia (personajes, súper y casa) están en [`archivo/renders/`](../arch
 
 - [PvZ: primer escenario, croquis, baraja y pala](en-obra/pvz-principios-2026-10-23.md).
 - [PvZ: motores y fuentes facilitadas para reutilización](en-obra/pvz-referencias-motores-2026-10-23.md).
-- [PvZ 1 y PvZ 2: motores originales como minijuegos y adaptación pendiente de historia](en-obra/pvz-motores-originales-2026-10-23.md).
+- [PvZ 1 y PvZ 2: motores originales como minijuegos y primera conexión de historia](en-obra/pvz-motores-originales-2026-10-23.md).
+
+- [Historia nativa: casa, mapa y estación con Gardendless; límites del guardado](en-obra/pvz-historia-nativa.md).

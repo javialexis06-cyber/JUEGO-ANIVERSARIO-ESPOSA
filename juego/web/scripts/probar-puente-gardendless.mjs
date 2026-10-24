@@ -10,6 +10,8 @@ const modulos={
  'KeyListener':{KeyListener:{cp:{},screenColorTweening:false,goToLevel:async ids=>{partida.thisLevelsID=ids;}}},
  'PlayerProperties':{AllPlayerProperties:{currentPlayer:{}}},'mainScene':{mainScene:{}},'levelController':{LevelPlay:partida},
  'CharacterManager':{PlantPool:{cm:{},pool:()=>[]},ZombiePool:{cm:{},pool:()=>[]}},'SunCount':{SunCount:{Value:100}},
+ 'JSONs':{PvZ2ObjectContainer:Object.fromEntries(['LevelModules','LawnProps','PlantProps','PlantTypes','ZombieProps','ZombieTypes'].map(k=>[k,[{}]]))},
+ 'FrontYard':{FrontYard:{getLawnEnumByTypeName:()=>48,getLawnFeature:()=>({RESNAME:'Tutorial'})}},'Plants':{plants:{getPlantFeatureByType:()=>({CODENAME:'cherry_bomb'})}},
 };
 const cc={director:{getScene:()=>({name:'mainScene'})},game:{isPaused:()=>pausada}};
 const padre={postMessage:p=>mensajes.push(structuredClone(p))};

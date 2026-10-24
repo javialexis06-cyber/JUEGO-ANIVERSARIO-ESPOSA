@@ -5,7 +5,9 @@
   const frente = window.semillaMotor.frente;
   if (!frente || parent === window) return;
   const canal = 'semilla-frente-v1', modulo = nombre => window.System?.get(`chunks:///_virtual/${nombre}.ts`);
-  const capacidades = Object.freeze({nivel: 'tutorial1', instantaneas: false, carrilesVariables: false, pasoExterno: false, perfilTemporal: true});
+  const capacidades = Object.freeze(window.semillaHistoriaMotor
+    ? {nivel:'historia',instantaneas:false,carrilesVariables:false,pasoExterno:true,perfilTemporal:true,puntosDescanso:true}
+    : {nivel: 'tutorial1', instantaneas: false, carrilesVariables: false, pasoExterno: false, perfilTemporal: true});
   let cc, iniciada = false, cargando = false, cerrada = false, resultado = '', secuencia = 0, ultimoPedido = 0;
   const enviar = datos => parent.postMessage({canal, zona: frente.zona, sesion: frente.sesion, ...datos}, location.origin);
   const esperar = (condicion, limite = 120000) => new Promise((ok, mal) => {
@@ -20,21 +22,30 @@
   });
   const observar = () => {
     const partida = modulo('levelController')?.LevelPlay, nivel = partida?.component;
-    const valido = iniciada && nivel?.node?.isValid && partida.thisLevelsID?.length === 1 && partida.thisLevelsID[0] === 'tutorial1';
+    const historia=window.semillaHistoriaMotor?.activa;
+    const valido = iniciada && nivel?.node?.isValid && (historia || partida.thisLevelsID?.length === 1 && partida.thisLevelsID[0] === 'tutorial1');
     const personajes = modulo('CharacterManager');
     const contar = tipo => valido && personajes?.[tipo]?.cm ? personajes[tipo].pool().filter(p => p.node?.isValid).length : 0;
     return {
-      version: 1, zona: frente.zona, nivel: valido ? 'tutorial1' : null,
+      version: 1, zona: frente.zona, nivel: valido ? historia?'historia':'tutorial1' : null,
       fase: cerrada ? 'cerrado' : !valido ? 'preparando' : nivel.gameWon ? 'victoria' : nivel.gameLost ? 'derrota' : nivel.gameStarted ? 'combatiendo' : 'preparando',
       segundos: valido ? nivel.gamedTime : 0, oleada: valido ? nivel.currentWave : -1,
       soles: valido ? modulo('SunCount')?.SunCount?.Value ?? 0 : 0,
-      plantas: contar('PlantPool'), zombis: contar('ZombiePool'), pausada: !!cc?.game.isPaused(),
+      plantas: contar('PlantPool'), zombis: contar('ZombiePool'), pausada: historia?window.semillaHistoriaMotor.pausada:!!cc?.game.isPaused(),
     };
   };
   const lista = esperar(() => modulo('KeyListener')?.KeyListener?.cp && modulo('PlayerProperties')?.AllPlayerProperties?.currentPlayer && modulo('mainScene')?.mainScene)
     .then(async () => {
       cc = await System.import('cc');
-      await esperar(() => cc.director.getScene()?.name === 'mainScene' && !modulo('KeyListener').KeyListener.screenColorTweening);
+      if(window.semillaHistoriaMotor)cc.game.frameRate=60;
+      await esperar(() => {
+        const objetos=modulo('JSONs')?.PvZ2ObjectContainer;
+        const jardin=modulo('FrontYard')?.FrontYard,plantas=modulo('Plants')?.plants;
+        return cc.director.getScene()?.name === 'mainScene' && !modulo('KeyListener').KeyListener.screenColorTweening
+          && ['LevelModules','LawnProps','PlantProps','PlantTypes','ZombieProps','ZombieTypes'].every(k=>objetos?.[k]?.length>0)
+          && jardin?.getLawnFeature(jardin.getLawnEnumByTypeName('TutorialStage'))?.RESNAME==='Tutorial'
+          && plantas?.getPlantFeatureByType('cherry_bomb')?.CODENAME==='cherry_bomb';
+      });
       enviar({evento: 'listo', capacidades});
     });
   lista.catch(e => { if (!cerrada) enviar({evento: 'error', error: e.message}); });
@@ -61,9 +72,18 @@
           valor = observar();
           break;
         }
+        case 'iniciar-historia':
+          if(iniciada||!window.semillaHistoriaMotor)throw Error('No se puede cargar otra defensa en esta instancia.');
+          iniciada=true;cargando=true;
+          try{await semillaHistoriaMotor.iniciar(p.config);valor=observar();}finally{cargando=false;}
+          break;
+        case 'paso-historia':
+          if(!window.semillaHistoriaMotor?.activa)throw Error('No hay una defensa de historia.');
+          semillaHistoriaMotor.paso(p.cantidad,p.visible);valor=observar();break;
+        case 'punto-historia':valor=semillaHistoriaMotor.punto();break;
         case 'observar': valor = observar(); break;
-        case 'pausa': await semillaMotor.pausa(true); valor = observar(); break;
-        case 'reanudar': await semillaMotor.pausa(false); valor = observar(); break;
+        case 'pausa': await(window.semillaHistoriaMotor?.activa?semillaHistoriaMotor.pausa(true):semillaMotor.pausa(true)); valor = observar(); break;
+        case 'reanudar': await(window.semillaHistoriaMotor?.activa?semillaHistoriaMotor.pausa(false):semillaMotor.pausa(false)); valor = observar(); break;
         case 'cerrar':
           await semillaMotor.cerrar(); cerrada = true; clearInterval(vigilar); valor = observar(); break;
         default: throw new Error('Orden no admitida por el puente.');

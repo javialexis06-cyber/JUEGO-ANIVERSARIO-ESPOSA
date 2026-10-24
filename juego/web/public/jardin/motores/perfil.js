@@ -43,7 +43,7 @@
       if (si === pausada) return;
       pausada = si;
       if (motor === 'pvz1') window.Module?.[si ? 'pauseMainLoop' : 'resumeMainLoop']?.();
-      else if (window.System) { const cc = await System.import('cc'); cc.game[si ? 'pause' : 'resume'](); }
+      else if (window.System) { const cc = await System.import('cc'); cc.game[this.controlExterno || si ? 'pause' : 'resume'](); }
       if (si) {
         reproduciendo = [...medios].filter(a => !a.paused); reproduciendo.forEach(a => a.pause());
         await Promise.all([...contextos].filter(a => a.state === 'running').map(a => a.suspend()));
@@ -54,7 +54,7 @@
     },
     async cerrar() {
       if (this.puedeCerrar && !this.puedeCerrar()) {
-        avisar('error', 'Para guardar la partida en curso, usa «Salir» dentro de PvZ 1. El juego guardará el nivel y te devolverá al jardín.');
+        avisar('error', this.mensajeCierre || 'Para guardar la partida en curso, usa «Salir» dentro de PvZ 1. El juego guardará el nivel y te devolverá al jardín.');
         return;
       }
       await this.pausa(true);

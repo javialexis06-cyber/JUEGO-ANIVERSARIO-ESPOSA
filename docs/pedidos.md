@@ -9,9 +9,11 @@ Pedido posterior: incorporar PvZ-Portable como minijuego PvZ 1 y Gardendless com
 combates, habilidades y animaciones. Adaptar el motor más adecuado a la historia territorial.
 Ver [integración, versión y pendientes concretos](en-obra/pvz-motores-originales-2026-10-23.md).
 Javier confirmó después que no tiene los archivos GOTY. La historia no debe depender de que los aporte:
-Gardendless pasa a candidato principal por disponer de recursos, con el puente de frentes/carriles/guardado
-pendiente de completar. Ya hay un puente aislado de Gardendless que abre el tutorial nativo, observa el combate,
-pausa/reanuda y comunica resultados; revisión en `jardin.html?modo=prueba-frente`. No guarda tableros ni sustituye V2.
+La entrada **Historia** conecta ahora Gardendless con el primer sector: casa → mapa → estación. Javier
+aprobó su balance original. Las reservas de tipos son exclusivas y los frentes vivos avanzan simultáneamente;
+el guardado conserva puntos entre combates. Una interrupción exige repetir los ataques pendientes desde su
+inicio, con aviso explícito. Ver [conexión nativa y límites](en-obra/pvz-historia-nativa.md). El tutorial aislado
+sigue en `modo=prueba-frente`; V2 se conserva en **Minijuegos → Historia anterior · V2**. No hay migración automática.
 El minijuego PvZ 1 sigue encargado, pendiente de una solución de recursos compatible sin exigirlos
 al usuario. Se conservan historia V2, aventura de 40 niveles, patios y partidas previas; mundos nuevos pausados.
 
@@ -21,8 +23,8 @@ Javier pausó la ampliación de mundos para cerrar el inicio, la interacción y 
 Ver [primer escenario y controles](en-obra/pvz-principios-2026-10-23.md) y
 [fuentes de motores aportadas](en-obra/pvz-referencias-motores-2026-10-23.md).
 Aprobó que las partidas nuevas defiendan primero La casa, conserven sus plantas y habiliten después
-expediciones y contraataques. Conservar los V2 anteriores sin imponer ese prólogo. Los costes y estadísticas
-siguen iguales. Croquis sobre lugares dibujados, pala/semilla en mano y selección hacia una baraja.
+expediciones y contraataques. Conservar los V2 anteriores sin imponer ese prólogo ni cambiar sus reglas.
+El primer sector nativo usa el balance original de Gardendless aprobado expresamente por Javier. Croquis sobre lugares dibujados, pala/semilla en mano y selección hacia una baraja.
 El zombi base tiene un esqueleto de piezas propias para revisar; el resto del catálogo gráfico sigue pendiente.
 No avanzar a otros mundos hasta que se revisen estos principios y la animación.
 
@@ -32,7 +34,7 @@ No avanzar a otros mundos hasta que se revisen estos principios y la animación.
 archivos previstos, prompts, guion de Dave, rutas, producción con control de saldo y validación. Javier
 confirmó que Claude dispone de la clave y pidió dejarle esta parte preparada. **Hecho por Claude el 23 de octubre:
 los 253 audios están producidos y publicados con su índice** ([entrega](en-obra/pvz-audio-entrega-2026-10-23.md));
-**Reproducción integrada por Codex** en historia y aventura; ver
+**Reproducción integrada por Codex** en historia V2 y aventura; la primera conexión nativa conserva por ahora el audio de Gardendless; ver
 [detalle de integración y presentación](en-obra/pvz-presentacion-audio-2026-10-23.md).
 Efectos, música original y balbuceos no verbales están autorizados con el saldo existente; las voces
 clonadas y los diálogos hablados del encargo antiguo siguen descartados. La anterior restricción de
@@ -57,7 +59,7 @@ funcionales y dibujados. Las fusiones siguen siendo tardías en historia y acces
 **Seguimiento:** [180 tareas en 14 grupos, con casillas de avance](en-obra/pvz-pendientes-2026-10-22.md) ·
 [Issue #1 en GitHub](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). No marcar completado por crear fichas o reciclar arte.
 
-[Historia integrada](en-obra/pvz-historia-integrada.md): la entrada principal ya usa partidas PvZ normales
+[Historia V2 conservada](en-obra/pvz-historia-integrada.md): usa partidas PvZ normales
 por zona, carriles de tres a siete, reservas exclusivas, desbloqueos de las 32 plantas construidas y guardado
 V2 completo con respaldo y protección de pestañas. Los doce escenarios se recorrieron con piloto legal
 **sin incursiones estratégicas como fixture**; el balance normal con varios frentes sigue por validar.

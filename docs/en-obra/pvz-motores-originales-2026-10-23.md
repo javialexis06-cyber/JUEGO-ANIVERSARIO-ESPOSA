@@ -6,8 +6,8 @@ adaptar el motor que mejor permita frentes simultáneos, reservas exclusivas y c
 Este pedido sustituye el uso de esos proyectos únicamente como referencia. Los mundos nuevos siguen pausados.
 
 **Aclaración posterior del usuario:** Javier no tiene `main.pak` ni `properties/`. No esperar esos archivos
-ni volver a pedírselos para avanzar la historia. Gardendless pasa a candidato principal por disponer de sus
-recursos; la adaptación territorial sigue pendiente. El minijuego PvZ 1 sigue encargado y conserva su entrada
+ni volver a pedírselos para avanzar la historia. Gardendless conecta ya casa y estación con sus
+recursos; la ampliación territorial y la instantánea activa completa siguen pendientes. El minijuego PvZ 1 sigue encargado y conserva su entrada
 e importador, pero todavía necesita una solución de recursos compatible para ser jugable sin aportes del usuario.
 
 ## Integración realizada
@@ -58,7 +58,7 @@ Cambios sobre los distribuibles:
 
 La primera preferencia fue Portable por su fuente de combate y guardados a mitad de partida. Esa elección
 dependía de recursos que no están en el repositorio. Con la confirmación de Javier, **Gardendless pasa a
-candidato principal para adaptar la historia**, pues su motor y recursos ya permiten ejecutar y comprobar
+motor del primer sector conectado de historia**, pues su motor y recursos ya permiten ejecutar y comprobar
 combates completos. El minijuego PvZ 1 permanece pendiente de un paquete compatible; no se descarta.
 
 Se comprobó también el inventario del Haxe Engine aportado: 423 archivos en `assets/`, una definición de
@@ -108,7 +108,15 @@ ambos builds a 844 × 390. Los 50 archivos locales del distribuible y sus adapta
 El recorrido integrado final pasó seis controles sin errores de página ni recursos, en contexto aislado y
 con dibujo por captura; no mide rendimiento de un teléfono.
 
-Trabajo restante antes de conectar el motor nuevo a la historia:
+### Primera conexión territorial posterior
+
+La entrada **Historia** abre ahora casa → mapa → estación con Gardendless, sus estadísticas originales
+aprobadas por Javier, equipos exclusivos y dos frentes vivos. V2 se conserva explícitamente en Minijuegos.
+Ver [contrato, guardado entre combates y límites](pvz-historia-nativa.md). El puente de historia declara
+`pasoExterno: true` y `puntosDescanso: true`; sigue declarando `instantaneas: false`. La prueba de tutorial
+anterior conserva sus capacidades y su función independiente.
+
+Trabajo restante para ampliar la adaptación más allá de este primer sector:
 
 - Ampliar el puente de inicio/observación/pausa/resultado a órdenes legales, paso fijo, exportación y restauración
   completas desde Cocos. La instancia aislada de tutorial no sustituye ese contrato.
@@ -121,7 +129,8 @@ Trabajo restante antes de conectar el motor nuevo a la historia:
 - Conservar las habilidades del motor e integrar las unidades faltantes de PvZ 1/Fusión con pruebas por unidad; sustituir
   los recursos por el arte propio al adaptar pistas, pivotes y animaciones.
 
-La historia publicada sigue usando su motor territorial anterior mientras se construye y comprueba ese puente.
+El primer sector publicado usa el motor nativo. La historia territorial anterior permanece en `modo=historia-v2`,
+sin conversión automática; el primer sector no sustituye sus doce escenarios ni su guardado activo completo.
 El catálogo de ambos minijuegos y la migración territorial son trabajos distintos. La ausencia de recursos
 compatibles sigue impidiendo certificar una partida real de Portable; no bloquea el trabajo sobre Gardendless
 ni convierte su motor actual en una migración ya realizada. La historia no requiere que Javier consiga GOTY.

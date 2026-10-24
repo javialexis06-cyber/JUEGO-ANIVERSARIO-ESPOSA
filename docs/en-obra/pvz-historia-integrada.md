@@ -1,11 +1,13 @@
-# La Semilla Madre · historia con defensas PvZ
+# La Semilla Madre · historia V2 con defensas PvZ
 
 Actualizado el **23 de octubre de 2026**. Continúa el
 [núcleo de instancias](pvz-instancias-2026-10-23.md) y el [seguimiento en GitHub](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1).
 
 ## Entrada y alcance
 
-`jardin.html` y `?modo=conquista` abren la historia nueva. Cada defensa usa `MotorPvZ`: soles locales,
+`?modo=historia-v2` y **Minijuegos → Historia anterior · V2** abren esta historia conservada.
+La entrada principal Historia abre ahora el [primer sector nativo de Gardendless](pvz-historia-nativa.md), con
+una clave independiente y sin convertir estos guardados. Cada defensa usa `MotorPvZ`: soles locales,
 semillas, recargas, capas, proyectiles, habilidades, cortacéspedes y oleadas completas. No importa
 `MotorConquista`, sus unidades simplificadas ni su economía de reservas.
 

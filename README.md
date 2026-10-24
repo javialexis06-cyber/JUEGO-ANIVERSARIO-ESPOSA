@@ -49,8 +49,8 @@ Las compilaciones locales no generan por sí mismas una APK o un instalador Wind
 ## Estado y colaboración
 
 [Pedidos vigentes](docs/pedidos.md) es la fuente de alcance; [CLAUDE.md](CLAUDE.md) reúne los contratos y la
-forma de probar. La granja está pausada. Las voces nuevas, las ampliaciones premium no realizadas y el contenido
-futuro del sótano fueron descartados. Los documentos históricos y diseños no autorizan nuevas tareas.
+forma de probar. La granja está pausada. Las voces clonadas y los diálogos hablados nuevos, las ampliaciones premium no realizadas y el contenido
+futuro del sótano fueron descartados; los efectos, música y balbuceos no verbales del Jardín sí están autorizados. Los documentos históricos y diseños no autorizan nuevas tareas.
 
 Conservar las partidas y no subir credenciales. La versión de amigos se verifica con su filtro propio.
 [Resultados y límites de la revisión general](docs/en-obra/verificacion-general-2026-10-15.md) y

@@ -8,7 +8,7 @@ await mkdir(out,{recursive:true});const checks=[],errores=[],bad=[];let browser,
 try{
  browser=await chromium.launch({executablePath:process.env.CHROME_PATH??'/usr/bin/chromium',args:['--no-sandbox','--disable-background-timer-throttling','--disable-renderer-backgrounding']});
  const context=await browser.newContext({viewport:{width:1280,height:720},hasTouch:true});
- const crear=async(c=context)=>{const p=await c.newPage();p.setDefaultTimeout(45000);p.on('pageerror',e=>errores.push(e.message));p.on('response',r=>{if(r.status()>=400)bad.push(r.status()+' '+r.url());});await p.goto(new URL('jardin.html?prueba=1',base).href);await p.waitForFunction(()=>window.__historiaPvZ);return p;};
+ const crear=async(c=context)=>{const p=await c.newPage();p.setDefaultTimeout(45000);p.on('pageerror',e=>errores.push(e.message));p.on('response',r=>{if(r.status()>=400)bad.push(r.status()+' '+r.url());});await p.goto(new URL('jardin.html?modo=historia-v2&prueba=1',base).href);await p.waitForFunction(()=>window.__historiaPvZ);return p;};
  const p=await crear(),click=async(pagina,k)=>{await pagina.locator(`[data-cq="${k}"]`).last().click();if(k==='historia')await completarCasaInicial(pagina);},captura=async(n)=>p.screenshot({path:join(out,n+'.png')}),done=t=>{checks.push(t);console.log('OK',t);};
  assert.equal(await p.evaluate(()=>localStorage.getItem('conquista-historia-v2')),null);await captura('portada');
  const film=await p.locator('.cq-cine-canvas').screenshot();await p.waitForTimeout(250);assert.notDeepEqual(await p.locator('.cq-cine-canvas').screenshot(),film);done('Portada animada y apertura sin escribir guardados');

@@ -1,5 +1,5 @@
 import {PAISES_CONQUISTA,ciudadesConquista,zonasCiudad,zonasPais,type EscalaMapa} from './mapa';
-import type {EstadoHistoriaPvZ} from './historia-motor';
+import type {EstadoMapaConquista} from './mapa';
 type Punto={x:number;y:number};
 export interface RegionHistoria {id:number;zonas:number[];poligono:Punto[];estado:'plantas'|'zombis'|'mixta'}
 // Parcelas trazadas sobre mapa-ciudad.png: siguen calles, muros y cercas del dibujo.
@@ -24,7 +24,7 @@ const continentes:readonly (readonly number[][])[]=[
 ];
 export function puntoZonaHistoria(id:number){return pines[parcelasZona[id]];}
 /** Croquis de lugares dibujados, sin modificar la conectividad ni las reservas del motor. */
-export function regionesHistoria(s:EstadoHistoriaPvZ,escala:EscalaMapa,pais:number,ciudad:number):RegionHistoria[]{
+export function regionesHistoria(s:EstadoMapaConquista,escala:EscalaMapa,pais:number,ciudad:number):RegionHistoria[]{
  const destinos=escala==='mundo'?PAISES_CONQUISTA.map(p=>({...p,zonas:zonasPais(s,p.id).map(z=>z.id)})):escala==='pais'?ciudadesConquista(s,pais).map(c=>({...c,zonas:zonasCiudad(s,c.id).map(z=>z.id)})):zonasCiudad(s,ciudad).map(z=>({id:z.id,zonas:[z.id]}));
  return destinos.map((d,i)=>{const n=d.zonas.filter(id=>s.zonas[id].dueno==='plantas').length,contorno=escala==='mundo'?continentes[d.id]:escala==='pais'?ciudades[i]:parcelas[parcelasZona[d.id]];return{id:d.id,zonas:d.zonas,poligono:contorno.map(([x,y])=>({x,y})),estado:n===0?'zombis':n===d.zonas.length?'plantas':'mixta'};});
 }
