@@ -78,11 +78,14 @@ sin macetas vacías y la Maceta pesa 500 durante la caravana. Las cintas de los 
   jefe de noche. `scripts/arte-tejado/fondo-original.py` sube cada columna lo que baja la pendiente de PC
   (20 px por columna en las cinco primeras) para que las tejas coincidan con el tablero plano de la vista, y
   los deja del tamaño del lienzo (1100×650), que se dibuja 1:1 sin velos de fila ni noche simulada.
-- Arte propio vectorial (`scripts/arte-tejado/`): hoja de accesorios (escalera, catapulta, poste, balón,
-  robot, caravana, bolas). El colgado,
-  el zombi escalera, el gargantúa y el diablillo reutilizan los cuerpos con ropa ya aprobados más sus
-  accesorios. El gargantúa es un cuerpo agrandado con poste: falta un diseño propio. El robot del jefe es una
-  cabeza con cuello; no tiene un cuerpo animado completo.
+- Zombis del tejado con arte y animaciones originales de PvZ 1 (mismo repositorio, carpeta `reanim/`):
+  `scripts/arte-tejado/zombis-originales.py` lee cada `.reanim` con `reanim.py` y muestrea seis cuadros por
+  animación con un origen común. Gargantúa (camina y golpea, con y sin diablillo), diablillo (camina y come),
+  zombi escalera (con y sin escalera, camina y come), colgado (baja, espera, agarra y sube), catapulta (avanza
+  y lanza) y Dr. Zomboid (de pie solo se ven las piernas, como en PC; baja la cabeza para atacar). La hoja
+  de accesorios (escalera apoyada, poste, balón, caravana, bolas de fuego y hielo) y los retratos del
+  almanaque salen de las mismas piezas. No hay pérdida de brazo o cabeza ni animación de muerte propias
+  para estos seis; se conservan los filtros de congelado, mantequilla y ceniza. La hoja animada pesa 0,9 MB.
 
 ## Comprobaciones
 

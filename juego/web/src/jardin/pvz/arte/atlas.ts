@@ -24,10 +24,16 @@ export class AtlasPvZ {
  disponible(hoja:HojaPvZ){return this.imagenes.has(hoja);}
  imagen(hoja:HojaPvZ){return this.imagenes.get(hoja);}
  fondo(indice:number,noche=false){if(indice===4){const t=this.imagenes.get(noche?'fondoTejadoNoche':'fondoTejado');if(!t)throw Error('Falta el tejado');return{imagen:t,x:0,y:0,w:t.width,h:t.height};}const img=this.imagenes.get('fondos');if(!img)throw Error('Faltan los escenarios');return{imagen:img,x:(indice%2)*img.width/2,y:Math.floor(indice/2)*img.height/2,w:img.width/2,h:img.height/2};}
+ /** Celda fija sin recorte (cuadros de animación que comparten origen). */
+ cuadroFijo(hoja:HojaPvZ,fila:number,columna:number,celda:number):Fuente{
+  const clave=hoja+':f'+fila+':'+columna,anterior=this.figuras.get(clave);if(anterior)return anterior;
+  const img=this.imagenes.get(hoja);if(!img)throw Error('Falta el atlas '+hoja);
+  const c=document.createElement('canvas');c.width=c.height=celda;c.getContext('2d')!.drawImage(img,columna*celda,fila*celda,celda,celda,0,0,celda,celda);this.figuras.set(clave,c);return c;
+ }
  figura(f:Pick<FiguraPvZ,'hoja'|'celda'>):Fuente{
   const clave=f.hoja+':'+f.celda,anterior=this.figuras.get(clave);if(anterior)return anterior;
   const img=this.imagenes.get(f.hoja);if(!img)throw Error('Falta el atlas '+f.hoja);
-  const unica=f.hoja==='tripitidora'||f.hoja==='nave',columnas=unica?1:4,filas=unica?1:2;
+  const unica=f.hoja==='tripitidora'||f.hoja==='nave',columnas=unica?1:4,filas=unica?1:f.hoja==='accesoriosTejado'?4:2;
   const recortes=[[0,0,554,443],[554,0,850,443],[850,0,1326,443],[1326,0,1774,443],[0,443,512,887],[512,443,910,887],[910,443,1326,887],[1326,443,1774,887]];
   const r=f.hoja==='interfaz'?recortes[f.celda]:null;
   const x0=Math.round(r?r[0]*img.width/1774:(f.celda%columnas)*img.width/columnas),y0=Math.round(r?r[1]*img.height/887:Math.floor(f.celda/columnas)*img.height/filas),w=Math.round(r?(r[2]-r[0])*img.width/1774:((f.celda%columnas)+1)*img.width/columnas-x0),h=Math.round(r?(r[3]-r[1])*img.height/887:(Math.floor(f.celda/columnas)+1)*img.height/filas-y0);

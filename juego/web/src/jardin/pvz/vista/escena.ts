@@ -2,6 +2,7 @@ import {dibujarEsqueletoZombiPvZ,dibujarRestoEsqueletoPvZ,usaEsqueletoZombiPvZ} 
 import type {MotorPvZ} from '../motor/motor';
 import type {EventoPvZ,PlantaPvZ,ZombiPvZ,SolPvZ,NieblaPvZ} from '../tipos';
 import {AtlasPvZ} from '../arte/atlas';
+import {ANIM_TEJADO_PVZ,CELDA_TEJADO_ANIM,CUADROS_TEJADO_ANIM,type AnimTejadoPvZ} from '../arte/tejado-animacion';
 import {ARTE_PLANTAS_PVZ,ARTE_ZOMBIS_PVZ,ACCESORIOS_TEJADO_PVZ,ESCALA_ZOMBI_TEJADO_PVZ,ropaZombiPvZ,proteccionZombiPvZ,type FiguraPvZ} from '../arte/catalogo';
 import {dibujarZombiArticuladoPvZ,dibujarParteZombiPvZ,type ParteZombiPvZ} from './articulacion';
 import {ZOMBIS_PVZ} from '../datos/zombis';
@@ -154,7 +155,6 @@ export class EscenaPvZ {
   if(z.tipo==='zombi-globo'&&!m.esVolador(z))f={...base,celda:1};
   if(z.tipo==='zombi-futbolista'&&z.armadura<=0)f={...base,celda:7};
   h=f.alto*(z.datos.escala??1)*(ESCALA_ZOMBI_TEJADO_PVZ[z.tipo]??1);
-  if(z.tipo==='diablillo'&&(z.datos.aterrizaHasta??0)>m.t){const resto=(z.datos.aterrizaHasta-m.t);y-=Math.sin(Math.min(1,resto/1.2)*Math.PI)*90;x+=Math.min(1,resto/1.2)*((z.datos.desdeX??z.x)-z.x);}
   if(z.datos.bajoTierra){
    const sale=z.datos.emergiendoHasta&&m.t>(z.datos.pausaPicoHasta??0),avance=sale?Math.max(0,1-(z.datos.emergiendoHasta-m.t)/1.3):0;
    ctx.fillStyle='#5f4b34';for(let j=0;j<5;j++){ctx.beginPath();ctx.ellipse(x-18+j*9,y-4,7,3+Math.sin(j+m.t*10),0,0,Math.PI*2);ctx.fill();}
@@ -180,9 +180,6 @@ export class EscenaPvZ {
    ctx.fillStyle='#eeaf40';ctx.strokeStyle='#624527';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(x,y-25,31,13,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle='#6bd4df';ctx.beginPath();ctx.ellipse(x,y-28,19,6,0,0,Math.PI*2);ctx.fill();
   }
   if(z.tipo==='zombi-bandera'){ctx.strokeStyle='#624931';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x+25,y-10);ctx.lineTo(x+25,y-148);ctx.stroke();ctx.fillStyle='#c64439';ctx.beginPath();ctx.moveTo(x+25,y-148);ctx.lineTo(x+67,y-140);ctx.lineTo(x+58,y-108);ctx.lineTo(x+25,y-118);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#efd5a5';ctx.font='bold 21px sans-serif';ctx.fillText('!',x+40,y-121);}
-  if(z.tipo==='zombi-escalera'&&z.datos.llevaEscalera)this.figura({hoja:'accesoriosTejado',celda:ACCESORIOS_TEJADO_PVZ.escalera,alto:120*this.escalaFiguras},x-22,y+4,{giro:.12,espejo:z.sentido===1});
-  if(z.tipo==='gargantua'){this.figura({hoja:'accesoriosTejado',celda:ACCESORIOS_TEJADO_PVZ.poste,alto:170},x-34,y-30,{giro:z.datos.golpeDesde!==undefined?-Math.min(1.3,(m.t-z.datos.golpeDesde)*1.6):-.35});
-   if(z.datos.diablillo)dibujarZombiArticuladoPvZ(ctx,this.atlas,{hoja:'ropa',celda:(ropa+3)%8,alto:126},x+26,y-h*.55,{alto:62,escala:this.escalaFiguras,aspecto:this.escalaY/this.escalaX,giro:.2,espejo:true,paso:0,manos:0,sinBrazo:false,sinCabeza:false,alfa:1});}
   if(z.mantequilla>0){ctx.fillStyle='#f9da72';ctx.strokeStyle='#ad8033';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(x-14,y-h-4,28,13,4);ctx.fill();ctx.stroke();}
   if(z.datos.cajaAbriendo){ctx.fillStyle='#f4e4bd';ctx.font='bold 21px sans-serif';ctx.fillText('!',x+18,y-h+20);}
   if(z.datos.mareoHasta>m.t){for(let i=0;i<3;i++){const a=m.t*3+i*Math.PI*2/3;this.estrella(x+Math.cos(a)*21,y-h-8+Math.sin(a)*5,5,'#f7d660');}}
@@ -243,26 +240,52 @@ export class EscenaPvZ {
   c.fillStyle=oro?'#f5c542':'#d6dde3';c.strokeStyle=oro?'#a27412':'#7d8a94';c.lineWidth=3;c.beginPath();c.arc(0,0,r,0,Math.PI*2);c.fill();c.stroke();c.beginPath();c.arc(0,0,r*.62,0,Math.PI*2);c.stroke();c.restore();
  }
  /** Zombis del tejado con presentación propia; devuelve true si ya quedó dibujado. */
+ /** Cuadro de una animación original de PvZ 1 (zombis-tejado-anim), con la base de la figura en (x, y). */
+ private animTejado(nombre:AnimTejadoPvZ,t:number,x:number,y:number,op:{espejo?:boolean;filtro?:string;alfa?:number;escala?:number}={}){
+  const a=ANIM_TEJADO_PVZ[nombre],k=Math.floor(((t%a.duracion+a.duracion)%a.duracion)/a.duracion*CUADROS_TEJADO_ANIM)%CUADROS_TEJADO_ANIM;
+  const img=this.atlas.cuadroFijo('animTejado',a.fila,k,CELDA_TEJADO_ANIM),lado=CELDA_TEJADO_ANIM/a.escala*(op.escala??1)*this.escalaFiguras,c=this.ctx;
+  c.save();c.translate(x,y);c.scale(this.escalaY/this.escalaX*(op.espejo?-1:1),1);c.globalAlpha=op.alfa??1;if(op.filtro)c.filter=op.filtro;c.drawImage(img,-lado/2,-lado,lado,lado);c.restore();
+ }
  private zombiTejado(z:ZombiPvZ,m:MotorPvZ,x:number,y:number){
-  const c=this.ctx;
+  const c=this.ctx,quieto=z.congelado>0||z.mantequilla>0||z.datos.mareoHasta>m.t,t=quieto?z.id*.37:z.edad*(z.lento?.5:1)+z.id*.37,comiendo=z.comiendo!==null;
+  const filtro=z.ceniza?'brightness(.13)':z.hipnotizado?'sepia(.5) hue-rotate(235deg) saturate(1.7)':z.lento||z.congelado||z.mantequilla>0?'sepia(.45) hue-rotate(145deg) saturate(1.4)':undefined,op={espejo:z.sentido===1,filtro,alfa:z.datos.arrastrado?.45:1};
+  const manteca=(alto:number)=>{if(z.mantequilla>0){c.fillStyle='#f9da72';c.strokeStyle='#ad8033';c.lineWidth=2;c.beginPath();c.roundRect(x-14,y-alto-4,28,13,4);c.fill();c.stroke();}};
   if(z.tipo==='zombi-colgado'){
-   const alt=Math.min(700,z.datos.altura??0)*.75,cuerpoY=y-alt;
-   if(z.datos.fase===1&&(z.datos.altura??0)>40){c.save();c.strokeStyle='rgba(214,60,48,.75)';c.lineWidth=3;c.beginPath();c.arc(x,y-8,22,0,Math.PI*2);c.moveTo(x-30,y-8);c.lineTo(x+30,y-8);c.moveTo(x,y-38);c.lineTo(x,y+22);c.stroke();c.restore();}
-   c.strokeStyle='#3b2a1c';c.lineWidth=3;c.beginPath();c.moveTo(x,0);c.lineTo(x,cuerpoY-118*this.escalaFiguras);c.stroke();
-   const ropa=ropaZombiPvZ(z.id,m.nivel.id);
-   dibujarZombiArticuladoPvZ(c,this.atlas,{hoja:'ropa',celda:ropa,alto:126},x,cuerpoY,{alto:118,escala:this.escalaFiguras,aspecto:this.escalaY/this.escalaX,giro:Math.sin(m.t*3+z.id)*.05,espejo:false,paso:0,manos:z.datos.fase===3?1:0,sinBrazo:z.sinBrazo,sinCabeza:z.sinCabeza,alfa:1,filtro:z.mantequilla>0||z.congelado>0?'sepia(.45) hue-rotate(145deg) saturate(1.4)':undefined});
-   const p=m.plantas.find(p=>p.id===z.datos.presa&&p.vida>0);if(p&&z.datos.fase===4&&ARTE_PLANTAS_PVZ[p.tipo])this.figura(ARTE_PLANTAS_PVZ[p.tipo],x,cuerpoY+40,{alto:60});
+   const alt=Math.min(700,z.datos.altura??0)*.75,cuerpoY=y-alt,fase=z.datos.fase??1;
+   if(fase===1&&(z.datos.altura??0)>40){c.save();c.strokeStyle='rgba(214,60,48,.75)';c.lineWidth=3;c.beginPath();c.arc(x,y-8,22,0,Math.PI*2);c.moveTo(x-30,y-8);c.lineTo(x+30,y-8);c.moveTo(x,y-38);c.lineTo(x,y+22);c.stroke();c.restore();}
+   c.strokeStyle='#e9e2c8';c.lineWidth=4;c.beginPath();c.moveTo(x,0);c.lineTo(x,cuerpoY-100*this.escalaFiguras);c.stroke();c.strokeStyle='#6b5a3c';c.lineWidth=1.5;c.stroke();
+   const nombre:AnimTejadoPvZ=fase===1?'colgado-baja':fase===2?'colgado-espera':fase===3?'colgado-agarra':'colgado-sube';
+   this.animTejado(nombre,fase===1||fase===2?t:m.t-(z.datos.desde??0),x,cuerpoY,{...op,espejo:false});
+   const p=m.plantas.find(p=>p.id===z.datos.presa&&p.vida>0);if(p&&fase===4&&ARTE_PLANTAS_PVZ[p.tipo])this.figura(ARTE_PLANTAS_PVZ[p.tipo],x,cuerpoY+40,{alto:60});
    return true;
   }
   if(z.tipo==='zombi-catapulta'){
-   dibujarZombiArticuladoPvZ(c,this.atlas,{hoja:'ropa',celda:ropaZombiPvZ(z.id,m.nivel.id),alto:126},x+30,y-28,{alto:92,escala:this.escalaFiguras,aspecto:this.escalaY/this.escalaX,giro:0,espejo:z.sentido===1,paso:0,manos:0,sinBrazo:z.sinBrazo,sinCabeza:false,alfa:1});
-   this.sombra(x,y,40);this.figura({hoja:'accesoriosTejado',celda:ACCESORIOS_TEJADO_PVZ.catapulta,alto:118},x,y+4,{espejo:z.sentido===1,giro:z.datos.lanzaDesde!==undefined?Math.sin(Math.min(1,(m.t-z.datos.lanzaDesde)/.5)*Math.PI)*.05:0,filtro:z.vida<425?'saturate(.6) brightness(.85)':undefined});
-   return true;
+   this.sombra(x,y,40);
+   const lanza=z.datos.lanzaDesde!==undefined&&m.t-z.datos.lanzaDesde<ANIM_TEJADO_PVZ['catapulta-lanza'].duracion;
+   this.animTejado(lanza?'catapulta-lanza':'catapulta-avanza',lanza?m.t-z.datos.lanzaDesde:t,x+20,y+6,{...op,filtro:filtro??(z.vida<425?'saturate(.6) brightness(.85)':undefined)});
+   manteca(120);return true;
+  }
+  if(z.tipo==='gargantua'){
+   this.sombra(x,y,46);
+   const golpe=z.datos.golpeDesde!==undefined&&m.t-z.datos.golpeDesde<ANIM_TEJADO_PVZ['gargantua-golpe'].duracion,base=z.datos.diablillo?'gargantua':'gargantua-sola';
+   this.animTejado((base+(golpe?'-golpe':'-camina')) as AnimTejadoPvZ,golpe?m.t-z.datos.golpeDesde:t,x+10,y+8,op);
+   manteca(190);return true;
+  }
+  if(z.tipo==='diablillo'){
+   let xx=x,yy=y;if((z.datos.aterrizaHasta??0)>m.t){const resto=(z.datos.aterrizaHasta-m.t);yy-=Math.sin(Math.min(1,resto/1.2)*Math.PI)*90;xx+=Math.min(1,resto/1.2)*((z.datos.desdeX??z.x)-z.x);}
+   this.sombra(xx,y,16);this.animTejado(comiendo?'diablillo-come':'diablillo-camina',t,xx,yy+4,op);manteca(80);return true;
+  }
+  if(z.tipo==='zombi-escalera'){
+   this.sombra(x,y,24);const lleva=!!z.datos.llevaEscalera;
+   this.animTejado(lleva?comiendo?'escalera-lleva-come':'escalera-lleva':comiendo?'escalera-come':'escalera-camina',t,x,y+6,op);manteca(130);return true;
   }
   if(z.tipo==='dr-zomboid'){
    const cabeza=[8,9,10,11,12].includes(z.datos.fase),e=m.t-(z.datos.desde??0),baja=z.datos.fase===8?Math.min(1,e/(z.datos.dura||1)):z.datos.fase===12?Math.max(0,1-e/(z.datos.dura||1)):cabeza?1:0;
    const centro=TABLERO_PVZ.y+m.filas*m.altoFila*escalaVerticalPvZ(m)/2;
-   this.figura({hoja:'accesoriosTejado',celda:ACCESORIOS_TEJADO_PVZ.robot,alto:300},x+40,centro+130-baja*-60+Math.sin(m.t*1.4)*4,{filtro:z.congelado>0?'sepia(.4) hue-rotate(160deg) saturate(1.6)':undefined});
+   const fondo=TABLERO_PVZ.y+m.filas*m.altoFila*escalaVerticalPvZ(m),hielo=z.congelado>0?'sepia(.4) hue-rotate(160deg) saturate(1.6)':undefined;void centro;
+   // Como en PvZ 1, el robot es tan alto que de pie solo se le ven las piernas; baja la cabeza para atacar.
+   this.animTejado('jefe-piernas',m.t,x+70,fondo+20,{escala:.85,filtro:hielo});
+   if(baja>0)this.animTejado('jefe-cabeza',m.t,x-60,fondo+30-(1-baja)*620,{escala:.85,filtro:hielo});
    if(z.datos.fase===7){const f=Math.min(1,e/1.3),fila=z.datos.caravanaFila??0;this.figura({hoja:'accesoriosTejado',celda:ACCESORIOS_TEJADO_PVZ.caravana,alto:150},TABLERO_PVZ.x+(z.datos.caravanaCol??0)*80+120,TABLERO_PVZ.y+(fila+1.2)*m.altoFila*escalaVerticalPvZ(m)-(1-f)*400);}
    if(z.datos.bolaX!==undefined){const fila=z.datos.bolaFila;this.figura({hoja:'accesoriosTejado',celda:z.datos.bolaFuego?ACCESORIOS_TEJADO_PVZ.fuego:ACCESORIOS_TEJADO_PVZ.hielo,alto:110},TABLERO_PVZ.x+z.datos.bolaX,TABLERO_PVZ.y+(m.centroFila(fila)*escalaVerticalPvZ(m))+40,{giro:-m.t*3});}
    const max=m.zombisDef[z.tipo].vida,ancho=220;c.fillStyle='rgba(30,20,12,.7)';c.fillRect(860,98,ancho+8,18);c.fillStyle=z.datos.invulnerable?'#7d8a94':'#d8443a';c.fillRect(864,102,ancho*Math.max(0,z.vida/max),10);

@@ -1,6 +1,6 @@
 /** Recursos propios creados con la dirección artística aprobada. No intervienen en el azar del motor. */
 export const RECURSOS_ARTE_PVZ={
- dia:'plantas-dia.webp',noche:'plantas-noche.webp',piscina:'plantas-piscina.webp',niebla:'plantas-niebla.webp',tejado:'plantas-tejado.webp',accesoriosTejado:'zombis-tejado.webp',fondoTejado:'fondo-tejado.webp',fondoTejadoNoche:'fondo-tejado-noche.webp',
+ dia:'plantas-dia.webp',noche:'plantas-noche.webp',piscina:'plantas-piscina.webp',niebla:'plantas-niebla.webp',tejado:'plantas-tejado.webp',accesoriosTejado:'zombis-tejado.webp',fondoTejado:'fondo-tejado.webp',fondoTejadoNoche:'fondo-tejado-noche.webp',animTejado:'zombis-tejado-anim.webp',
  ropa:'zombis-ropa.webp',protegidos:'zombis-protegidos.webp',especiales:'zombis-especiales.webp',agua:'zombis-agua-accesorios.webp',fondos:'fondos-mundos.webp',objetos:'objetos.webp',tripitidora:'tripitidora.webp',
  interfaz:'interfaz-conquista.webp',lugares:'lugares-conquista.webp',nave:'nave-zomboid.webp',
  portada:'portada-conquista.webp',mundo:'mapa-mundo.webp',pais:'mapa-pais.webp',ciudad:'mapa-ciudad.webp',
@@ -17,16 +17,18 @@ export const ARTE_PLANTAS_PVZ:Readonly<Record<string,FiguraPvZ>>={
  'nuez-explosiva':{hoja:'dia',celda:3,alto:86},
  ...grupo('tejado',['coltapulta','maceta','lanzamaiz','grano-cafe','ajo','paraplanta','margarita','melonpulta'],[80,60,82,46,76,96,90,84]),
 };
-/** Accesorios del tejado (hoja propia vectorial): escalera, catapulta, poste, balón, robot, caravana y bolas del jefe. */
-export const ACCESORIOS_TEJADO_PVZ={escalera:0,catapulta:1,poste:2,balon:3,robot:4,caravana:5,fuego:6,hielo:7} as const;
+/** Accesorios y retratos del tejado (4×4, arte original de PvZ 1): escalera, catapulta, poste, balón, robot, caravana,
+ * bolas del jefe y retratos de gargantúa, diablillo, zombi escalera, colgado y cabeza del jefe. */
+export const ACCESORIOS_TEJADO_PVZ={escalera:0,catapulta:1,poste:2,balon:3,robot:4,caravana:5,fuego:6,hielo:7,gargantua:8,diablillo:9,zombiEscalera:10,colgado:11,cabezaJefe:12} as const;
 export const ROPAS_ZOMBI_PVZ=['Saco y corbata','Chaqueta vaquera','Sudadera','Camisa de cuadros','Overol','Impermeable','Pijama','Chaqueta deportiva'] as const;
 export const ARTE_ZOMBIS_PVZ:Readonly<Record<string,FiguraPvZ>>={
  ...grupo('especiales',['saltador','zombi-futbolista','zombi-bailon','zombi-acompanante','zombi-cajita','zombi-globo','zombi-minero','zombi-pogo'],[132,137,135,128,131,185,134,150]),
  ...grupo('agua',['zombi-buzo','zombi-delfin','zomboni','zombi-trineo'],[126,120,138,115]),
- 'zombi-catapulta':{hoja:'accesoriosTejado',celda:1,alto:120},'dr-zomboid':{hoja:'accesoriosTejado',celda:4,alto:330},
+ 'zombi-catapulta':{hoja:'accesoriosTejado',celda:1,alto:120},'dr-zomboid':{hoja:'accesoriosTejado',celda:12,alto:330},
+ gargantua:{hoja:'accesoriosTejado',celda:8,alto:200},diablillo:{hoja:'accesoriosTejado',celda:9,alto:80},'zombi-escalera':{hoja:'accesoriosTejado',celda:10,alto:135},'zombi-colgado':{hoja:'accesoriosTejado',celda:11,alto:120},
 };
-/** Colgado, escalera, gargantúa y diablillo usan el cuerpo con ropa variable más sus accesorios dibujados encima. */
-export const ESCALA_ZOMBI_TEJADO_PVZ:Readonly<Record<string,number>>={gargantua:1.6,diablillo:.62};
+/** Los zombis del tejado se dibujan con sus animaciones originales (tejado-animacion.ts); sin escalas propias. */
+export const ESCALA_ZOMBI_TEJADO_PVZ:Readonly<Record<string,number>>={};
 /** Cuerpo y protección ya están dibujados juntos: ningún casco o puerta flota sobre el cuerpo.
  * La ropa de debajo se conserva cuando el motor retira la armadura. */
 export function proteccionZombiPvZ(tipo:string,ropa:number):{figura:FiguraPvZ;ropa:number}|undefined {

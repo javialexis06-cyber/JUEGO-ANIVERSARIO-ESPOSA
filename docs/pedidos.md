@@ -19,7 +19,7 @@ veces (historia 147 → 117 MB, 104 de ellos son los recursos de Gardendless, qu
 la aventura llega a 50 niveles con el tejado: Coltapulta, Maceta, Lanzamaíz, Grano de café, Ajo, Paraplanta,
 Margarita y Melonpulta; zombi colgado, zombi escalera, catapulta, gargantúa, diablillo y Dr. Zomboid; lluvia de
 colgados (5-5) y jefe final (5-10), con valores originales de PC. Plantas con arte original (siete de Gardendless/PvZ2 y el Grano de café de
-PvZ 1, pedido de Javier) y escenarios originales de PvZ 1 de día y de noche; accesorios vectoriales propios. El piloto automático gana
+PvZ 1, pedido de Javier) escenarios originales de PvZ 1 de día y de noche, y zombis del tejado con sus animaciones originales de PvZ 1. El piloto automático gana
 los ocho niveles normales al menos una vez pero no 5-5 ni 5-10. Ver `en-obra/pvz-tejado-2026-10-26.md`.
 
 ## Pedido vigente · ampliar la historia al mapa existente
