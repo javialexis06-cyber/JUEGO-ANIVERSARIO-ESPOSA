@@ -20,6 +20,22 @@ integración a Codex. [Arte, controles y comprobaciones](../en-obra/pvz-arte-202
 Los doce patios originales y el duelo se conservan desde el menú nuevo. `modo=clasicos` o un ID antiguo de
 patio abren el controlador clásico. El resto de esta página describe esa campaña y su duelo.
 
+## Historia de Gardendless · ataques y refuerzo (26 de octubre)
+
+`jardin.html?modo=historia` (`conquista/historia-nativa-*.ts`). Reglas pedidas por Javier:
+
+- **Despejada 🛡️**: zona propia sin ninguna vecina zombi. No entra en el sorteo de ataques.
+- **Frontera ⚔️N**: zona propia con una vecina zombi. Cada defensa ganada suma un asedio; el refuerzo es
+  `min(6, asedios + minutos desde la conquista / 3)`. `nivel-historia.ts → reforzar()` añade ~12 % de zombis por
+  punto (más en la segunda mitad) y mejora algunos a cono/cubeta, con semilla fija y tope de 40 por oleada.
+- Conquistar o perder una zona reinicia sus asedios. El prólogo de La casa no cuenta.
+- Guardado `conquista-historia-nativa-v3`, documento versión 5 (`asedios`, `desde`, `refuerzo` por ataque);
+  v3 y v4 migran solos. Pruebas: `scripts/probar-historia-nativa.mjs` y `probar-historia-nativa-mapa.mjs`.
+
+Carga: el arte de `public/jardin/pvz/` va en WebP (`scripts/jardin-webp.py`, alfa exacto para el atlas). El menú
+carga solo `interfaz` y `portada`; el resto del atlas sigue de fondo. En la historia, el primer motor Gardendless se
+carga solo y los demás después (antes bajaban todo dos veces), con un máximo de 3 campos extra precargados.
+
 ## Cómo se juega
 
 Escoge una planta y toca una casilla libre. Recoge las luces del cielo y de las margaritas para pagar otras

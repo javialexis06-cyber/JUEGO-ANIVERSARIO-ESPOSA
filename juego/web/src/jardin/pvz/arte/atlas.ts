@@ -5,10 +5,15 @@ export class AtlasPvZ {
  private imagenes=new Map<HojaPvZ,HTMLImageElement>();private figuras=new Map<string,Fuente>();
  private piezas:HTMLImageElement|null=null;private recortesPiezas=new Map<number,HTMLCanvasElement>();
  constructor(private rutas:Partial<Record<HojaPvZ,string>>&{zombiPiezas?:string}={}){}
- async cargar(alCargar?:(clave:HojaPvZ)=>void){await Promise.all([this.cargarPiezas(),...Object.entries(RECURSOS_ARTE_PVZ).map(async([clave,archivo])=>{
-  const img=new Image();img.decoding='async';if(['fondos','dia','ropa'].includes(clave))img.fetchPriority='high';img.src=this.rutas[clave as HojaPvZ]??urlArtePvZ(archivo);await img.decode();this.imagenes.set(clave as HojaPvZ,img);alCargar?.(clave as HojaPvZ);
+ /** Carga las hojas pedidas (o todas) una sola vez; las que ya están no se vuelven a bajar ni a decodificar.
+  * Cada modo pide solo lo que dibuja: la historia del mapa no necesita los zombis ni las piezas animadas. */
+ async cargar(alCargar?:(clave:HojaPvZ)=>void,hojas?:readonly HojaPvZ[],piezas=!hojas){await Promise.all([piezas?this.cargarPiezas():null,...(Object.entries(RECURSOS_ARTE_PVZ) as [HojaPvZ,string][]).filter(([clave])=>!hojas||hojas.includes(clave)).map(([clave,archivo])=>{
+  let p=this.cargando.get(clave);
+  if(!p){p=(async()=>{const img=new Image();img.decoding='async';if(['fondos','dia','ropa'].includes(clave))img.fetchPriority='high';img.src=this.rutas[clave]??urlArtePvZ(archivo);await img.decode();this.imagenes.set(clave,img);})();this.cargando.set(clave,p);p.catch(()=>this.cargando.delete(clave));}
+  return p.then(()=>alCargar?.(clave));
  })]);}
- private async cargarPiezas(){const img=new Image();img.decoding='async';img.src=this.rutas.zombiPiezas??urlArtePvZ('zombi-base-piezas.png');await img.decode();this.piezas=img;}
+ private cargando=new Map<HojaPvZ,Promise<void>>();
+ private async cargarPiezas(){if(this.piezas)return;const img=new Image();img.decoding='async';img.src=this.rutas.zombiPiezas??urlArtePvZ('zombi-base-piezas.webp');await img.decode();this.piezas=img;}
  get piezasZombiCargadas(){return!!this.piezas;}
  piezaZombi(i:number){
   const anterior=this.recortesPiezas.get(i);if(anterior)return anterior;if(!this.piezas)throw Error('Faltan las piezas de animación');
@@ -48,5 +53,5 @@ export class AtlasPvZ {
  }
  miniatura(f:Pick<FiguraPvZ,'hoja'|'celda'>){return this.figura(f).toDataURL('image/png');}
  get cargadas(){return this.imagenes.size;}
- destruir(){for(const c of this.recortesPiezas.values())c.width=1;this.recortesPiezas.clear();if(this.piezas)this.piezas.src='';this.piezas=null;for(const c of this.figuras.values()){c.width=1;c.height=1;}this.figuras.clear();for(const img of this.imagenes.values())img.src='';this.imagenes.clear();}
+ destruir(){for(const c of this.recortesPiezas.values())c.width=1;this.recortesPiezas.clear();if(this.piezas)this.piezas.src='';this.piezas=null;for(const c of this.figuras.values()){c.width=1;c.height=1;}this.figuras.clear();for(const img of this.imagenes.values())img.src='';this.imagenes.clear();this.cargando.clear();}
 }

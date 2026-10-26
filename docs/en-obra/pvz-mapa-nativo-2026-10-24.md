@@ -72,6 +72,10 @@ por conectar estos tableros: el combate conserva los fondos y recursos nativos.
 Al recuperar las doce zonas y terminar los ataques pendientes se activa la escena existente de huida en nave.
 Volver al mapa muestra la conquista completa. No se conceden victorias por explorar ni por cerrar una ventana.
 
+**Cambio del 26 de octubre, pedido expreso de Javier:** las zonas propias sin vecinas zombis ya no reciben
+ataques y las de frontera se refuerzan con cada asedio y con el tiempo (tope 6, máximo 40 zombis por oleada).
+Es la única excepción aprobada al balance nativo; ver [Jardín](../sistemas/jardin.md).
+
 ## Partidas anteriores
 
 Se conserva la clave `conquista-historia-nativa-v3` y su equivalente de amigos; el documento interno nuevo

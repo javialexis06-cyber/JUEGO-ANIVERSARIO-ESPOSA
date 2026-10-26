@@ -22,7 +22,7 @@ const escapeHTML=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>
 
 export async function montarAventuraPvZ(){
  document.body.dataset.pvz='1';document.title='La Semilla Madre · Plantas contra Zombis';
- const params=new URLSearchParams(location.search),amigo=esModoAmigo(),root=document.createElement('main');root.id='pvz-app';root.style.setProperty('--fondo-pvz',`url("${urlArtePvZ('fondos-mundos.png')}")`);root.innerHTML='<section class="pvz-cargando"><div class="pvz-sol-icono">☀</div><h1>La Semilla Madre</h1><p>Preparando el jardín…</p></section>';document.body.append(root);
+ const params=new URLSearchParams(location.search),amigo=esModoAmigo(),root=document.createElement('main');root.id='pvz-app';root.style.setProperty('--fondo-pvz',`url("${urlArtePvZ('fondos-mundos.webp')}")`);root.innerHTML='<section class="pvz-cargando"><div class="pvz-sol-icono">☀</div><h1>La Semilla Madre</h1><p>Preparando el jardín…</p></section>';document.body.append(root);
  const atlas=new AtlasPvZ(),retratos=new RetratosPvZ(atlas),sonido=new SonidoPvZ(),eventos=new AbortController();
  const guardado=new GuardadoPvZ({getItem:k=>localStorage.getItem(k),setItem:(k,v)=>localStorage.setItem(k,v)},{amigo});
  let vista:EscenaPvZ|null=null,motor:MotorPvZ|null=null,partida:PartidaPvZ|null=null,seleccion:Seleccion=null,pausa=false,finalMostrado=false,destruido=false;

@@ -39,8 +39,28 @@ export interface ConfigDefensaNativa {
     punto: PuntoDescansoNativo | null;
     reposo: boolean;
 }
+/** Hasta dónde sube el refuerzo de una zona que vuelve a ser asediada (pedido de Javier, 26 de octubre de 2026). */
+export const REFUERZO_MAXIMO = 6;
+/**
+ * Refuerzo de un asedio: con 0 es la composición original. Cada punto agrega ~12 % más zombis por oleada (máximo ~70 %) y mejora a
+ * algunos con cono o cubo (los de agua con su flotador), siempre dentro del límite del motor (40 por oleada).
+ */
+function reforzar(oleadas: ConfigDefensaNativa['oleadas'], refuerzo: number, azar: AzarPvZ) {
+    if (refuerzo <= 0) return oleadas;
+    const sube: Record<string, string> = { tutorial: 'tutorial_armor1', tutorial_armor1: 'tutorial_armor2', duckytube: 'duckytube_armor1', duckytube_armor1: 'duckytube_armor2' };
+    return oleadas.map((ola, i) => {
+        if (!ola.length) return ola;
+        const extra = Math.min(40 - ola.length, Math.round(ola.length * 0.12 * refuerzo + (i >= oleadas.length / 2 ? refuerzo / 3 : 0)));
+        const nueva = ola.map((z) => (sube[z.tipo] && azar.siguiente() < 0.055 * refuerzo ? { ...z, tipo: sube[z.tipo] } : { ...z }));
+        for (let k = 0; k < extra; k++) {
+            const base = ola[azar.entero(ola.length)];
+            nueva.push({ tipo: base.tipo === 'tutorial_flag' ? 'tutorial' : base.tipo, fila: base.fila });
+        }
+        return nueva.slice(0, 40);
+    });
+}
 /** Composición/carriles del sector existente; habilidades y estadísticas son del motor nativo aprobado. */
-export function nivelHistoriaNativa(zona: number, equipo: readonly SemillaNativa[], semilla: number, punto: PuntoDescansoNativo | null = null, reposo = false): ConfigDefensaNativa {
+export function nivelHistoriaNativa(zona: number, equipo: readonly SemillaNativa[], semilla: number, punto: PuntoDescansoNativo | null = null, reposo = false, refuerzo = 0): ConfigDefensaNativa {
     const nivel=escenarioHistoriaPvZ(zona).nivel,azar=new AzarPvZ(semilla),lapidas:ConfigDefensaNativa['lapidas']=[];
     for(const [col,cantidad] of Object.entries(nivel.distribucionLapidas??{})) {
         const filas=[...nivel.filas];
@@ -57,5 +77,6 @@ export function nivelHistoriaNativa(zona: number, equipo: readonly SemillaNativa
         oleadas.push(salida.apariciones.map(z => { if (!ids[z.tipo])
             throw Error('No existe adaptación nativa para '+z.tipo); return { tipo: ids[z.tipo], fila: z.fila }; }));
     }
-    return { zona, nombre: escenarioHistoriaPvZ(zona).nombre, filas: nivel.tablero!.filas, agua: [...(nivel.filasAgua??[])], noche: !!nivel.sinSolCielo, solInicial: zona===8||zona===9?150:nivel.solInicial, lapidas:punto?(punto.lapidas??[]):lapidas, semillas: equipo.map(t => TIPOS_NATIVOS[t]), oleadas, punto: structuredClone(punto), reposo };
+    const r = Math.max(0, Math.min(REFUERZO_MAXIMO, Math.floor(refuerzo)));
+    return { zona, nombre: escenarioHistoriaPvZ(zona).nombre, filas: nivel.tablero!.filas, agua: [...(nivel.filasAgua??[])], noche: !!nivel.sinSolCielo, solInicial: zona===8||zona===9?150:nivel.solInicial, lapidas:punto?(punto.lapidas??[]):lapidas, semillas: equipo.map(t => TIPOS_NATIVOS[t]), oleadas: reforzar(oleadas, r, new AzarPvZ((semilla ^ 0x5bd1e995) >>> 0 || 1)), punto: structuredClone(punto), reposo };
 }

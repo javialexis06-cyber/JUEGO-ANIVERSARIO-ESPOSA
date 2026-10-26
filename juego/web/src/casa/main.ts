@@ -1,6 +1,7 @@
 // Nuestro Hogar: la mascota de pareja. Cada uno cuida a su personaje (Él o Ella), le da cariño al otro,
 // se mandan regalos y notas, decoran la casa, guardan fotos y cuentan los días para sus fechas.
 // El súper (Súper Manía) queda como minijuego que paga monedas para la casa.
+import { abrirRocola, sonarRocola } from '../carreras/rocola';
 import '../deslizar';
 import '@fontsource/fredoka/latin-500.css';
 import '@fontsource/fredoka/latin-600.css';
@@ -2027,6 +2028,8 @@ async function abrirRegaloDeVerdad() {
  *  mañana) la de dormir; si no, la de día. Mientras está la canción de la bienvenida, se deja terminar. */
 function pistaCasa(c: Cuarto | undefined = casa3d?.actual) {
   if (sonido.musica.enMinijuego) return;
+  // Con la rocola encendida suena su lista en toda la casa
+  if (sonarRocola()) return;
   const h = new Date().getHours();
   const id = c === 'patio' ? 'casa-patio' : h >= 20 || h < 6 ? 'casa-noche' : 'casa-dia';
   if (sonido.musica.pistaActual() === 'casa-cancion' && sonido.musica.pistaSonando() === 'casa-cancion') return;
@@ -2122,7 +2125,8 @@ function botonesCuarto(): Boton[] {
   const b: Boton[] = [];
   switch (cuartoVista()) {
     case 'sala':
-      b.push({ id: 'sofa', texto: 'Descansar', icono: ico('sofa') }, { id: 'tv', texto: tele?.prendida ? 'Tele prendida' : 'Ver tele', icono: ico('tv'), activo: !!tele?.prendida });
+      b.push({ id: 'sofa', texto: 'Descansar', icono: ico('sofa') }, { id: 'tv', texto: tele?.prendida ? 'Tele prendida' : 'Ver tele', icono: ico('tv'), activo: !!tele?.prendida },
+        { id: 'rocola', texto: 'Rocola', icono: '<span class="ico ico-emoji">🎵</span>' });
       break;
     case 'cocina':
       b.push(
@@ -2309,6 +2313,10 @@ async function alAccion(id: string) {
       return patio.activar();
     case 'banca':
       return hacer('usar', 'patio', 25, { energia: 4, carino: 2 }, 'banca');
+    case 'rocola':
+      // Toda la música de la app en la sala (la misma rocola de Carreras: lo que se ponga sigue sonando en la casa)
+      sonido.activar();
+      return void abrirRocola(document.body, () => {}, () => pistaCasa());
     case 'jugar-mente':
     case 'jugar-jardin': {
       const url = new URL(id === 'jugar-mente' ? './mente.html' : './jardin.html', location.href);

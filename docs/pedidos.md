@@ -5,6 +5,16 @@
 Carreras tiene música propia y una **rocola** con todas las canciones de la app; siete canciones de amor nuevas
 (letras inventadas con apodos y palabras del chat); el Show de Nosotros tiene canciones de verdad y el perro
 «habla» con ladridos. Se gastó el saldo de ElevenLabs (quedan 606 créditos). Ver `sistemas/musica.md`.
+**Hecho por Claude el 26 de octubre · casa y Jardín:** la sala de la casa tiene botón **Rocola** con toda la música
+de la app (la misma lista de Carreras; lo que se ponga sigue sonando por la casa y «Apagar la rocola» devuelve la
+música del cuarto). En la historia de Gardendless (`modo=historia`), con pedido expreso de Javier sobre el balance:
+una zona propia sin vecinas zombis queda **despejada 🛡️** y ya no la atacan; cada defensa ganada en una zona de
+frontera suma un **asedio ⚔️** y el tiempo también la endurece (+1 cada 3 min, tope 6). El refuerzo agrega hasta
+~70 % más zombis y algunos con cono/cubeta, sin pasar los límites del motor (40 por oleada). Conquistar o perder
+la zona reinicia sus asedios. Guardado v5 con migración desde v3/v4. Menú del Jardín limpio (Historia, Minijuegos,
+Versus), textos sin jerga técnica, arte del Jardín en WebP (menú 47 → 9 MB) y motores que ya no se descargan dos
+veces (historia 147 → 117 MB, 104 de ellos son los recursos de Gardendless, que quedan en caché). Ver `sistemas/jardin.md`.
+
 ## Pedido vigente · ampliar la historia al mapa existente
 
 El 24 de octubre Javier autorizó extender Gardendless a las doce zonas del mapa. Esto sustituye la pausa

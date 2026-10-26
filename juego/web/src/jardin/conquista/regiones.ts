@@ -2,7 +2,7 @@ import {PAISES_CONQUISTA,ciudadesConquista,zonasCiudad,zonasPais,type EscalaMapa
 import type {EstadoMapaConquista} from './mapa';
 type Punto={x:number;y:number};
 export interface RegionHistoria {id:number;zonas:number[];poligono:Punto[];estado:'plantas'|'zombis'|'mixta'}
-// Parcelas trazadas sobre mapa-ciudad.png: siguen calles, muros y cercas del dibujo.
+// Parcelas trazadas sobre mapa-ciudad.webp: siguen calles, muros y cercas del dibujo.
 // No se calcula una partición rectangular de la pantalla ni distancias entre marcadores.
 const parcelas:readonly (readonly number[][])[]=[
  [[1,52],[4,49],[9,47],[14,50],[16,54],[18,57],[20,61],[20,65],[17,69],[12,72],[7,72],[3,70],[1,66]],

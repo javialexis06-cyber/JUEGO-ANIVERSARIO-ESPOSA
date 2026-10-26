@@ -1,9 +1,9 @@
 /** Recursos propios creados con la dirección artística aprobada. No intervienen en el azar del motor. */
 export const RECURSOS_ARTE_PVZ={
- dia:'plantas-dia.png',noche:'plantas-noche.png',piscina:'plantas-piscina.png',niebla:'plantas-niebla.png',
- ropa:'zombis-ropa.png',protegidos:'zombis-protegidos.png',especiales:'zombis-especiales.png',agua:'zombis-agua-accesorios.png',fondos:'fondos-mundos.png',objetos:'objetos.png',tripitidora:'tripitidora.png',
- interfaz:'interfaz-conquista.png',lugares:'lugares-conquista.png',nave:'nave-zomboid.png',
- portada:'portada-conquista.png',mundo:'mapa-mundo.png',pais:'mapa-pais.png',ciudad:'mapa-ciudad.png',
+ dia:'plantas-dia.webp',noche:'plantas-noche.webp',piscina:'plantas-piscina.webp',niebla:'plantas-niebla.webp',
+ ropa:'zombis-ropa.webp',protegidos:'zombis-protegidos.webp',especiales:'zombis-especiales.webp',agua:'zombis-agua-accesorios.webp',fondos:'fondos-mundos.webp',objetos:'objetos.webp',tripitidora:'tripitidora.webp',
+ interfaz:'interfaz-conquista.webp',lugares:'lugares-conquista.webp',nave:'nave-zomboid.webp',
+ portada:'portada-conquista.webp',mundo:'mapa-mundo.webp',pais:'mapa-pais.webp',ciudad:'mapa-ciudad.webp',
 } as const;
 export type HojaPvZ=keyof typeof RECURSOS_ARTE_PVZ;
 export interface FiguraPvZ {hoja:HojaPvZ;celda:number;alto:number;ancho?:number}

@@ -3,6 +3,7 @@
 // scripts/musica-ia.mjs) para oírlas una tras otra, al azar o una sola. Mientras la rocola esté encendida, sus
 // canciones suenan también en las carreras en vez de la música de cada circuito. Se recuerda en este aparato.
 import * as sonido from '../sonido';
+import './rocola.css';
 
 type Nombres = Record<string, [string, string]>;
 interface Cancion { id: string; nombre: string; juego: string }
@@ -53,7 +54,7 @@ export function sonarRocola(): boolean {
 }
 
 /** La ventana de la rocola encima de la pantalla actual. */
-export async function abrirRocola(raiz: HTMLElement, alCerrar: () => void) {
+export async function abrirRocola(raiz: HTMLElement, alCerrar: () => void, alApagar: () => void = () => sonido.musica.pista('carreras-menu', { bucle: true, reiniciar: true })) {
   const todas = await cancionesRocola();
   const capa = document.createElement('div');
   capa.className = 'car-rocola-capa';
@@ -70,7 +71,7 @@ export async function abrirRocola(raiz: HTMLElement, alCerrar: () => void) {
       <header><h2>🎵 Rocola</h2><small>${todas.length} canciones${e.activa ? ` · sonando ${e.azar ? 'al azar' : 'en orden'}` : ''}</small></header>
       <div class="acciones">
         <button data-todas>▶ Todas en orden</button><button data-azar>🔀 Todas al azar</button>
-        ${e.activa ? '<button data-apagar>⏹ Volver a la música de cada pista</button>' : ''}
+        ${e.activa ? '<button data-apagar>⏹ Apagar la rocola</button>' : ''}
       </div>
       <ul class="lista">${filas || '<li>Todavía no hay canciones en este aparato.</li>'}</ul>
       <button class="car-boton" data-cerrar>Listo</button></div>`;
@@ -97,7 +98,7 @@ export async function abrirRocola(raiz: HTMLElement, alCerrar: () => void) {
     if (b.dataset.cerrar !== undefined) return cerrar();
     if (b.dataset.todas !== undefined) guardar({ activa: true, lista: ids, azar: false });
     else if (b.dataset.azar !== undefined) guardar({ activa: true, lista: barajar(ids), azar: true });
-    else if (b.dataset.apagar !== undefined) { guardar({ activa: false, lista: [], azar: false }); sonido.musica.pista('carreras-menu', { bucle: true, reiniciar: true }); pintar(); return; }
+    else if (b.dataset.apagar !== undefined) { guardar({ activa: false, lista: [], azar: false }); alApagar(); pintar(); return; }
     else if (b.dataset.una) {
       // Desde esa canción sigue el resto de la lista
       const i = ids.indexOf(b.dataset.una);

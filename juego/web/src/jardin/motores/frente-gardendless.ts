@@ -26,7 +26,7 @@ export class FrenteGardendless {
  private reloj:ReturnType<typeof setTimeout>;
  constructor(contenedor:HTMLElement,readonly zona:string,perfil:'pareja'|'amigos',alResultado?:(v:ObservacionGardendless)=>void,opciones:{historia?:boolean}={}) {
   if(!/^[a-z0-9_-]{1,64}$/.test(zona))throw new Error('Identificador de zona inválido.');
-  this.frame=document.createElement('iframe');this.frame.title=`Frente ${zona} · Gardendless`;
+  this.frame=document.createElement('iframe');this.frame.title=`Defensa de la zona ${zona + 1}`;
   this.frame.allow='autoplay; fullscreen';this.frame.setAttribute('sandbox','allow-scripts allow-same-origin');
   Object.assign(this.frame.style,{width:'100%',height:'100%',border:'0'});
   this.listo=new Promise((ok,mal)=>{this.recibirListo=ok;this.fallarListo=mal;});
@@ -64,7 +64,7 @@ export class FrenteGardendless {
   if(this.destruido)throw new Error('El frente está cerrado.');
   const solicitud=++this.contador;
   return new Promise((ok,mal)=>{
-   const reloj=setTimeout(()=>{this.pendientes.delete(solicitud);mal(new Error(`El frente no respondió a ${orden}.`));},limite);
+   const reloj=setTimeout(()=>{this.pendientes.delete(solicitud);mal(new Error('La batalla tardó demasiado en responder.'));},limite);
    this.pendientes.set(solicitud,{ok,mal,reloj});
    this.frame.contentWindow!.postMessage({canal:'semilla-frente-v1',zona:this.zona,sesion:this.sesion,solicitud,orden,...datos},location.origin);
   });
