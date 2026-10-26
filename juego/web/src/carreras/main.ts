@@ -1,6 +1,7 @@
 // La Carrera de las Tres Lunas (carreras.html): carreras tipo Mario Kart por las regiones de Astra, con carros de
 // madera y fieltro tirados por criaturas. Cuatro copas, 16 circuitos, contrarreloj con fantasma, salas y desafíos.
 // Ver docs/sistemas/carreras.md.
+import { abrirRocola, sonarRocola } from './rocola';
 import './carreras.css';
 import * as sonido from '../sonido';
 import { cuadros } from '../segundo_plano';
@@ -170,7 +171,8 @@ function refrescarGaraje() {
 function portada() {
   if (!asegurarGuardado()) { navegacionPendiente = portada; return; }
   arrancarGaraje();
-  sonido.musica.pista('super-cancion', { bucle: true });
+  // Música propia de Carreras (o la rocola, si está encendida)
+  if (!sonarRocola()) sonido.musica.pista('carreras-menu', { bucle: true, oSino: 'super-cancion' });
   const copas = Object.values(progreso.copas).reduce((a, b) => a + (b ?? 0), 0);
   const r = pantalla(`
     <div class="car-menu">
@@ -186,6 +188,7 @@ function portada() {
       </div>
       <div class="car-fila-abajo">
         <button class="car-redondo" data-ir="volver" aria-label="Volver">⟵</button>
+        <button class="car-chip car-rocola-boton" data-ir="rocola">🎵 Rocola</button>
         <label class="car-chip">Máquina
           <select data-dif>${Object.entries(DIFICULTADES).map(([k, d]) => `<option value="${k}" ${k === ajustes.dificultad ? 'selected' : ''}>${d.nombre}</option>`).join('')}</select></label>
         <label class="car-chip"><input type="checkbox" data-solo ${ajustes.aceleraSolo ? 'checked' : ''}> Acelerar solo</label>
@@ -212,6 +215,7 @@ function portada() {
       else if (ir === 'minijuegos') escogerMinijuego();
       else if (ir === 'garaje') garaje(portada);
       else if (ir === 'linea') void enLinea();
+      else if (ir === 'rocola') void abrirRocola(document.body, () => {});
       else salir();
     }),
   );
@@ -383,7 +387,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
   const galope = new Galope();
   const mio = o.mio;
   (window as unknown as { __carreras?: unknown }).__carreras = { sim, vista, hud, mio };
-  sonido.musica.pista(info.musica[0], { bucle: true, rueda: info.musica, reiniciar: true });
+  if (!sonarRocola()) sonido.musica.pista(info.musica[0], { bucle: info.musica.length < 2, rueda: info.musica.length > 1 ? info.musica : undefined, reiniciar: true, oSino: 'super-dia' });
   sonido.musica.prisa(1);
   void voces.decir(`presentador.${o.pista}`, true);
   setTimeout(() => {
@@ -547,7 +551,7 @@ export async function correr(o: OpcionesCarrera): Promise<Resultado> {
         if (esMio) {
           efecto.meta();
           hud.avisar(`${o.minijuego ? '¡Tiempo!' : '¡Meta!'} ${ev.puesto}º`, 'meta', 3000);
-          sonido.musica.remate(ev.puesto <= 3 ? 'mesa-ganar' : 'mesa-perder');
+          sonido.musica.remate(ev.puesto <= 3 ? 'carreras-gano' : 'carreras-perdio');
           terminoT = performance.now();
           o.red?.meta(ev.tiempo);
         }
@@ -680,7 +684,7 @@ async function podio(top: Corredor[], titulo: string, voces = new Voces()) {
   cargaVisible(true, 'Armando el podio…', 0.6);
   await vista.mostrarPodio(top);
   cargaVisible(false);
-  sonido.musica.pista('cocina-cancion', { bucle: true, oSino: 'super-cancion' });
+  if (!sonarRocola()) sonido.musica.pista('carreras-podio', { bucle: false, luego: 'carreras-menu', reiniciar: true, oSino: 'super-cancion' });
   void voces.decir(titulo.includes('Gran Premio') ? 'presentador.campeon' : 'presentador.podio', true);
   const r = pantalla(`<div class="car-podio-texto"><h2>${escapar(titulo)}</h2>
     <p>${top.slice(0, 3).map((c, i) => `<span>${['🥇', '🥈', '🥉'][i]} ${escapar(c.nombre)}</span>`).join('')}</p>

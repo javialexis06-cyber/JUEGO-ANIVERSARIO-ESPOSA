@@ -141,13 +141,13 @@ export interface InfoPista {
 }
 const BASE: Record<'valle' | 'brasa' | 'nieve' | 'cielo', InfoPista> = {
   valle: { id: 'valle', nombre: 'Camino del Pueblo del Sol', region: 'Valle de Celia', lema: 'Trigales, girasoles y el puente del río.',
-    musica: ['super-dia', 'lavado-partida', 'cohete-tramo1'], cielo: ['#7fc4f0', '#e8f4ff'], niebla: ['#cfe6f5', 120, 420], sol: '#fff2d6', tarjeta: '#7db857' },
+    musica: ['carreras-valle'], cielo: ['#7fc4f0', '#e8f4ff'], niebla: ['#cfe6f5', 120, 420], sol: '#fff2d6', tarjeta: '#7db857' },
   brasa: { id: 'brasa', nombre: 'Hornos de Brasaviva', region: 'Brasaviva', lema: 'Lava a la orilla: no te caigas.',
-    musica: ['lavado-intensa', 'cohete-tramo3', 'lavado-partida3'], cielo: ['#4a1f22', '#f28c45'], niebla: ['#6a3328', 90, 380], sol: '#ffb070', tarjeta: '#e8603c' },
+    musica: ['carreras-brasa'], cielo: ['#4a1f22', '#f28c45'], niebla: ['#6a3328', 90, 380], sol: '#ffb070', tarjeta: '#e8603c' },
   nieve: { id: 'nieve', nombre: 'Pista de Nieveclara', region: 'Nieveclara', lema: 'Pinos, muñecos de nieve y el lago que resbala.',
-    musica: ['lavado-partida2', 'cohete-tramo2', 'lavado-partida4'], cielo: ['#9fc3ea', '#f4f8ff'], niebla: ['#dfe9f6', 100, 380], sol: '#ffffff', tarjeta: '#8ec5f0' },
+    musica: ['carreras-nieve'], cielo: ['#9fc3ea', '#f4f8ff'], niebla: ['#dfe9f6', 100, 380], sol: '#ffffff', tarjeta: '#8ec5f0' },
   cielo: { id: 'cielo', nombre: 'Anillos de las Tres Lunas', region: 'El cielo de Astra', lema: 'Una cinta entre las lunas. Sin baranda.',
-    musica: ['cohete-tramo5', 'cohete-tramo6', 'lavado-intensa2'], cielo: ['#0b0f2e', '#3b2e6e'], niebla: ['#2a2558', 160, 620], sol: '#fff2d6', tarjeta: '#7a5bb8' },
+    musica: ['carreras-cielo'], cielo: ['#0b0f2e', '#3b2e6e'], niebla: ['#2a2558', 160, 620], sol: '#fff2d6', tarjeta: '#7a5bb8' },
 };
 export const PISTAS: Record<IdPista, InfoPista> = {
   ...BASE,

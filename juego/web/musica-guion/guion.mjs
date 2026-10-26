@@ -13,6 +13,8 @@ const BUCLE = 'Instrumental only, no vocals. Steady energy from the first second
 const REMATE = 'Instrumental only, no vocals. A very short video game jingle (stinger), clean ending.';
 const i = (id, juego, nombre, seg, estilo, extra = {}) => ({ id, juego, nombre, seg, bucle: true, prompt: `${estilo} ${BUCLE}`, ...extra });
 const r = (id, juego, nombre, seg, estilo, extra = {}) => ({ id, juego, nombre, seg, bucle: false, prompt: `${estilo} ${REMATE}`, ...extra });
+/** Una pista descargada (CC0 de OpenGameArt): se baja, se pasa a opus con el volumen parejo y se repite en rueda. */
+const d = (id, juego, nombre, autor, pagina, archivo) => ({ id, juego, nombre, bucle: true, seg: 0, descarga: { autor, pagina: `https://opengameart.org/content/${pagina}`, url: `https://opengameart.org/sites/default/files/${archivo}` } });
 /** Una parte de canción: [nombre, segundos, letra, estilos]. */
 const c = (nombre, seg, letra, estilos = []) => ({ nombre, seg, letra, estilos });
 
@@ -184,6 +186,135 @@ export const PISTAS = [
     id: 'cine-boda-creditos', juego: 'granja', nombre: 'La boda · Créditos «Siempre te elegiré»', seg: 120, bucle: false, pareja: true,
     prompt: 'End credits theme for an animated fantasy love story: begins with a solo piano statement of a tender love theme under a starry night, then grows with warm strings, harp and celesta, a soft wordless choir and a hopeful, sweeping orchestral climax remembering a whole journey across worlds, finally returning to a quiet piano and a gentle morning feeling with a simple acoustic guitar; ends with a soft, resolved final chord. 70 bpm, nostalgic, grateful, deeply romantic, instrumental only, no lyrics.',
   },
+
+  // ---------------------------------------------------------------------------------- La Carrera de las Tres Lunas
+  // Javier pidió (26 de octubre de 2026) música propia de Carreras, no la de otros minijuegos: una por circuito, la
+  // del garaje y la del podio. Instrumental (también la juegan los amigos).
+  i('carreras-menu', 'carreras', 'El garaje', 70, 'Upbeat kart racing garage menu instrumental: funky slap bass, bright brass stabs, electric guitar licks, claps, cheerful and cocky, 118 bpm.'),
+  i('carreras-valle', 'carreras', 'Camino del Pueblo del Sol', 90, 'Sunny countryside kart racing instrumental: fast banjo and fiddle bluegrass mixed with pop rock drums and electric guitar, wheat fields and sunflowers, joyful speed, 150 bpm.'),
+  i('carreras-brasa', 'carreras', 'Hornos de Brasaviva', 90, 'Hot volcanic kart racing instrumental: driving surf rock guitars, taiko drums, distorted bass, fiery brass hits, intense and fun, 156 bpm.'),
+  i('carreras-nieve', 'carreras', 'Pista de Nieveclara', 90, 'Snowy kart racing instrumental: sleigh bells, glockenspiel and bright synth arpeggios over energetic pop rock drums and electric guitar, icy and exciting, 148 bpm.'),
+  i('carreras-cielo', 'carreras', 'Anillos de las Tres Lunas', 90, 'Cosmic kart racing instrumental among three moons: soaring synthwave leads, fast drum and bass beat, shimmering pads, heroic and dreamy, 170 bpm.'),
+  r('carreras-gano', 'carreras', 'Llegaste al podio', 8, 'Short happy kart racing finish jingle: brass and guitar, celebratory.'),
+  r('carreras-perdio', 'carreras', 'Otra vez será', 6, 'Short comedic kart racing lose jingle: descending trombone wah-wah, friendly.'),
+  r('carreras-podio', 'carreras', 'El podio', 30, 'Triumphant kart racing podium celebration: brass fanfare, cheering energy, rock drums and guitar, confetti feeling, big happy ending.'),
+
+  // --------------------------------------------------------------------------------------------- El Show de Nosotros
+  // Javier pidió más canciones en el show (26 de octubre de 2026): de concurso de TV, instrumentales (antes era todo
+  // sintetizado; si no carga, suena lo de siempre).
+  i('show-tema', 'show', 'El Show de Nosotros', 75, 'Bright retro TV game show theme instrumental: big band brass, Hammond organ, funky guitar, studio audience energy, glamorous and fun, 124 bpm.'),
+  i('show-tema2', 'show', 'Después de la pausa', 60, 'Groovy TV quiz show background instrumental: disco strings, wah guitar, brass hits, playful and sparkly, 120 bpm.'),
+  i('show-suspenso', 'show', 'La respuesta…', 60, 'Tense but cute TV quiz show thinking music: ticking pizzicato strings, low synth pulse, soft timpani, suspenseful without being scary, 84 bpm.'),
+  i('show-relampago', 'show', 'Ronda relámpago', 50, 'Super fast frantic TV game show lightning round instrumental: racing brass, snare rolls, galloping bass, comedic urgency, 160 bpm.'),
+  r('show-ganador', 'show', '¡Tenemos ganador!', 20, 'Huge TV game show winner fanfare: brass, choir oohs, cymbal crash, confetti energy.'),
+
+  // --------------------------------------------------------------------------------------------- Un ratito en el patio
+  // Javier pidió (26 de octubre de 2026) música variada descargada para el patio. Todas son CC0 de OpenGameArt (libres,
+  // sin pedir crédito; igual quedan sus autores en docs/sistemas/musica.md). Suenan en rueda mientras se juega.
+  d('patio-cider', 'patio', 'Apple Cider', 'Zane Little Music', 'apple-cider', 'apple_cider.ogg'),
+  d('patio-dondeiba', 'patio', 'Where was I?', 'yd', 'where-was-i', 'WereWasI_0.ogg'),
+  d('patio-lofi', 'patio', 'Chill lofi inspired', 'omfgdude', 'chill-lofi-inspired', 'ChillLofi.ogg'),
+  d('patio-cuna', 'patio', 'Happy Lullaby (song17)', 'cynicmusic', 'happy-lullaby-song17', 'song17.mp3'),
+  d('patio-piano', 'patio', 'JRPG Piano', 'joth', 'jrpg-piano', 'JRPG%20Piano.mp3'),
+  d('patio-nube', 'patio', 'Napping on a Cloud', 'congusbongus', 'napping-on-a-cloud', 'napping_on_a_cloud.ogg'),
+  d('patio-parque', 'patio', 'Summer Park', 'scribe', 'summer-park-8bit-tune-loop', '8bit%20attempt.ogg'),
+  d('patio-kalimba', 'patio', 'Short kalimba loop', 'extenz', 'short-kalimba-loop', 'Kalimba.ogg'),
+  d('patio-hiphop', 'patio', 'lofi hip hop', 'omfgdude', 'lofi-hip-hop', 'lofihiphop.ogg'),
+  d('patio-cuento', 'patio', 'Once Upon a Time (loop)', 'tad', 'once-upon-a-time-loop', 'once_upon_a_time_loop_0.mp3'),
+
+  // --------------------------------------------------------------------------------------------- La rocola (pareja)
+  // Javier pidió (26 de octubre de 2026) más canciones románticas con lo que quedaba de ElevenLabs. Letras INVENTADAS
+  // solo con los apodos y las palabras del chat (docs/la-pareja.md, «Quién cuenta qué»: fila La rocola); ningún
+  // recuerdo. Se oyen en la rocola de Carreras y en la lista de todas las canciones. Cambiarlas cuando Javier quiera.
+  {
+    id: 'amor-pulga', juego: 'rocola', nombre: '«Pulga aventurera»', seg: 150, bucle: false, pareja: true,
+    estilos: ['romantic Colombian vallenato pop', 'accordion', 'caja and guacharaca', 'acoustic guitar', 'warm male lead vocal in Spanish', 'joyful and tender'],
+    partes: [
+      c('Intro', 8, '{acordeón alegre}'),
+      c('Verso 1', 22, 'Mi pulga aventurera se fue a buscar el sol,\nse subió a la montaña y se bajó en un camión;\nyo le digo «esposa, cuídate ese corazón»,\ny ella se ríe y me manda un muak con emoción.', ['warm male vocal']),
+      c('Pre-coro', 12, 'Ay deoz, qué mujer, la protagonista,\nla mejor guerrera que Dios puso en mi vista.', ['building']),
+      c('Coro', 24, 'Pulga aventurera, vuelve a mí,\naquí te guardo betitos que te prometí;\nque se caiga el mundo, yo me quedo aquí,\nmi pulga aventurera, yo vivo por ti.', ['catchy chorus', 'accordion riffs']),
+      c('Verso 2', 22, 'Le pregunto «¿cómo tas?» y me contesta «shi»,\nle digo «te amodoro» y me dice «yo a ti»;\nsi me falta su risa, todo se pone gris,\nmi esposa, mi cotita, mi razón de ser feliz.', ['warm male vocal']),
+      c('Coro', 24, 'Pulga aventurera, vuelve a mí,\naquí te guardo betitos que te prometí;\nque se caiga el mundo, yo me quedo aquí,\nmi pulga aventurera, yo vivo por ti.', ['catchy chorus']),
+      c('Puente', 18, 'Y si un día te cansas de tanta aventura,\naquí tienes mis brazos, tu casa segura.', ['softer', 'accordion solo after']),
+      c('Final', 20, 'Mi pulga aventurera, yo vivo por ti…\nmuak.', ['big final chorus', 'gentle ending']),
+    ],
+  },
+  {
+    id: 'amor-panda', juego: 'rocola', nombre: '«Mi panda»', seg: 150, bucle: false, pareja: true,
+    estilos: ['tender acoustic Latin pop ballad', 'nylon guitar', 'soft piano', 'light strings', 'sweet female lead vocal in Spanish', 'romantic and playful'],
+    partes: [
+      c('Intro', 8, '{guitarra suave}'),
+      c('Verso 1', 22, 'Tengo un panda que me abraza aunque esté lejos de aquí,\nun perro lanudo que me dice «oki» cuando digo «sí»;\nmi niño hermoso, mi bb, mi cosita preciosa,\ncontigo hasta los lunes se me vuelven color rosa.', ['sweet female vocal']),
+      c('Pre-coro', 12, 'Nop, no hay nadie igual,\nsip, eres mi final.', ['building']),
+      c('Coro', 24, 'Mi panda, mi panda,\nel que me abraza con el alma;\nliefje, amorcito, quédate a mi lado,\nque contigo el mundo se siente abrazado.', ['catchy chorus', 'strings']),
+      c('Verso 2', 22, 'Hi baby, ¿cómo vas?, te escribo sin parar,\ny tú me mandas «ti amu» para hacerme suspirar;\nmor, amor, o como quieras que te llame,\nlo que siento por ti no hay nada que lo apague.', ['sweet female vocal']),
+      c('Coro', 24, 'Mi panda, mi panda,\nel que me abraza con el alma;\nliefje, amorcito, quédate a mi lado,\nque contigo el mundo se siente abrazado.', ['catchy chorus']),
+      c('Puente', 18, 'Pera, pera, déjame decirlo bien:\nte amo hoy, mañana y también después.', ['softer', 'piano']),
+      c('Final', 20, 'Mi panda… mi panda…\nte amo, mi bb.', ['gentle final chorus', 'soft ending']),
+    ],
+  },
+  {
+    id: 'amor-amodoro', juego: 'rocola', nombre: '«Te amodoro»', seg: 140, bucle: false, pareja: true,
+    estilos: ['romantic soft reggaeton pop', 'smooth dembow beat', 'warm synths', 'acoustic guitar', 'male and female duet vocals in Spanish', 'flirty and sweet'],
+    partes: [
+      c('Intro', 8, '{ritmo suave}'),
+      c('Verso 1 - él', 20, 'Esposha, dime esposa, ven pa\'cá,\nque tengo mil betitos guardados para ya;\nmimilona, la más hermota y petota,\ncuando me sonríes todo se alborota.', ['male vocal']),
+      c('Verso 1 - ella', 20, 'Ay deoz, mi panda, qué cosas dices tú,\nme pones colorada con tu «uwu»;\nva va, te lo acepto, pero escúchame bien:\nyo te amo más, y no me digas que también.', ['female vocal']),
+      c('Coro - dúo', 24, 'Te amo, te amodoro,\neres mi tesoro, mi tesoro de oro;\nshi, shi, okis, okis,\nmuak, muak, muak, y otro de propina.', ['duet', 'catchy chorus']),
+      c('Verso 2 - se contestan', 20, '¿Me extrañas? Shi.\n¿Mucho? Mucho más.\n¿Oki? Okis.\n¿Me das un betito? Y diez más.', ['playful call and response']),
+      c('Coro - dúo', 24, 'Te amo, te amodoro,\neres mi tesoro, mi tesoro de oro;\nshi, shi, okis, okis,\nmuak, muak, muak, y otro de propina.', ['duet', 'catchy chorus']),
+      c('Final', 24, 'Te amodoro, te amodoro…\nmuak.', ['duet', 'fade out ending']),
+    ],
+  },
+  {
+    id: 'amor-liefje', juego: 'rocola', nombre: '«Liefje»', seg: 150, bucle: false, pareja: true,
+    estilos: ['slow romantic bolero', 'requinto guitar', 'soft bongos', 'warm strings', 'male and female duet vocals in Spanish', 'tender, classic and heartfelt'],
+    partes: [
+      c('Intro', 10, '{requinto romántico}'),
+      c('Verso 1 - ella', 24, 'Liefje, te digo en un idioma que no es mío,\nporque en el mío ya no caben mis suspiros;\namorcito de otra tierra, amor de aquí,\nmi perro lanudo, yo nací para ti.', ['female vocal']),
+      c('Verso 1 - él', 24, 'Esposa mía, mi vida, mi amor,\ncontigo la noche se vuelve calor;\nsi me dices «liefje» con tu voz de miel,\nyo te escribo «te amo» en el cielo y en la piel.', ['male vocal']),
+      c('Coro - dúo', 26, 'Liefje, liefje,\nla palabra más dulce que aprendí;\nliefje, liefje,\nen todos los idiomas, sí, te elijo a ti.', ['duet', 'swelling strings']),
+      c('Puente', 18, 'Que pasen los años, que cambie la luna,\ncomo tú, mi amor, no hay ninguna.', ['softer', 'guitar solo after']),
+      c('Coro - dúo', 26, 'Liefje, liefje,\nla palabra más dulce que aprendí;\nliefje, liefje,\nen todos los idiomas, sí, te elijo a ti.', ['duet']),
+      c('Final', 22, 'Te elijo a ti… liefje.', ['gentle ending', 'held final chord']),
+    ],
+  },
+  {
+    id: 'amor-cotita', juego: 'rocola', nombre: '«La cotita más hermota»', seg: 140, bucle: false, pareja: true,
+    estilos: ['happy romantic cumbia pop', 'accordion', 'güira and congas', 'bright brass', 'male lead vocal and female backing vocals in Spanish', 'festive, funny and loving'],
+    partes: [
+      c('Intro', 8, '{cumbia alegre}'),
+      c('Verso 1', 22, 'Tengo una cotita, la más hermota y petota,\ncuando baila cumbia todo el barrio se alborota;\nle digo «qué dico», le digo «mi vida»,\ny ella me contesta: «mi niño hermoso, mi vida».', ['male vocal']),
+      c('Coro', 24, 'La cotita más hermota, la más hermota,\nla que me deja el corazón que se alborota;\nmuak para acá, muak para allá,\nmi esposa linda, mi felicidad.', ['catchy chorus', 'group backing vocals']),
+      c('Verso 2', 22, 'Le canto en la mañana, le canto al anochecer,\n«yei», le digo, «hoy te quiero más que ayer»;\nella dice «nop» cuando le pido otra canción,\npero al ratico me pide «otra, por favor».', ['male vocal', 'female backing vocals']),
+      c('Coro', 24, 'La cotita más hermota, la más hermota,\nla que me deja el corazón que se alborota;\nmuak para acá, muak para allá,\nmi esposa linda, mi felicidad.', ['catchy chorus']),
+      c('Final', 40, '¡Wepa! La cotita…\nla más hermota y petota…\nmuak.', ['accordion solo', 'big festive ending']),
+    ],
+  },
+  {
+    id: 'amor-hibaby', juego: 'rocola', nombre: '«Hi baby»', seg: 110, bucle: false, pareja: true,
+    estilos: ['bright romantic Latin pop', 'acoustic guitar', 'claps', 'light synths', 'sweet female lead vocal in Spanish', 'happy and flirty'],
+    partes: [
+      c('Intro', 6, '{palmas y guitarra}'),
+      c('Verso', 22, 'Hi baby, ¿cómo tas?, te escribo otra vez,\nmi esposo, mi panda, mi cosita de diez;\nme dices «mimilona» y me pongo a reír,\nay deoz, este hombre, no lo dejo ir.', ['sweet female vocal']),
+      c('Coro', 24, 'Hi baby, hi baby, ven y dame un muak,\nque sin tus betitos no sé ni qué hacer;\nhi baby, hi baby, tú eres mi amor,\nmi bb, mi niño, mi panda mejor.', ['catchy chorus', 'claps']),
+      c('Verso 2', 18, 'Sip, ya lo sé, me lo dices mil veces,\ny mil veces más yo te digo «me mereces».', ['sweet female vocal']),
+      c('Coro', 24, 'Hi baby, hi baby, ven y dame un muak,\nque sin tus betitos no sé ni qué hacer;\nhi baby, hi baby, tú eres mi amor,\nmi bb, mi niño, mi panda mejor.', ['catchy chorus']),
+      c('Final', 16, 'Hi baby… muak.', ['happy ending']),
+    ],
+  },
+  {
+    id: 'amor-esposa', juego: 'rocola', nombre: '«Esposa mía»', seg: 100, bucle: false, pareja: true,
+    estilos: ['tender romantic piano ballad', 'soft piano', 'warm cello', 'gentle strings', 'warm male lead vocal in Spanish', 'heartfelt and calm'],
+    partes: [
+      c('Intro', 8, '{piano suave}'),
+      c('Verso', 24, 'Esposa mía, la más linda del lugar,\nla mejor guerrera que me tocó amar;\nsi el día se pone pesado y gris,\nte nombro bajito y me vuelvo feliz.', ['warm male vocal']),
+      c('Coro', 26, 'Esposa mía, mi vida, mi amor,\nte amodoro con todo el corazón;\ncontigo hasta el silencio sabe a canción,\nesposa mía, mi mejor decisión.', ['emotional chorus', 'strings swell']),
+      c('Puente', 16, 'Y aunque pasen los años, yo te diré igual:\n«dime, esposa», y tú: «shi, mi amor».', ['softer']),
+      c('Final', 26, 'Esposa mía, mi mejor decisión…\nte amo.', ['gentle ending', 'held piano chord']),
+    ],
+  },
 ];
 
 // ------------------------------------------------------------------------------------- Efectos de sonido
@@ -234,4 +365,26 @@ export const EFECTOS = {
   pasos: [1.2, `Cartoon tiptoe footsteps, ${P}`],
   tada: [1.4, `Ta-da reveal fanfare with sparkle, ${P}`],
   huida: [1.4, `Cartoon running away scramble footsteps zoom, ${P}`],
+  // Un ratito en el patio (src/mente/): los 16 juegos de memoria y lógica (26 de octubre de 2026)
+  patio_toque: [0.5, `Soft wooden tile tap, gentle UI click, ${P}`],
+  patio_acierto: [0.8, `Bright happy correct answer chime with a tiny sparkle, ${P}`],
+  patio_error: [0.7, `Soft gentle wrong answer bonk, friendly not harsh, ${P}`],
+  patio_ronda: [1.2, `Cheerful level up arpeggio on marimba, ${P}`],
+  patio_carta: [0.5, `Paper card flip, ${P}`],
+  patio_mover: [0.5, `Small wooden block sliding on a board, ${P}`],
+  patio_disco: [0.6, `Wooden ring dropped onto a peg, soft clack, ${P}`],
+  patio_pieza: [0.6, `Tangram wooden piece snapping into place, ${P}`],
+  patio_letra: [0.5, `Scrabble letter tile placed on a board, ${P}`],
+  patio_paso: [0.5, `Tiny soft paw step, ${P}`],
+  patio_gano: [2, `Joyful victory jingle with xylophone, claps and sparkles, ${P}`],
+  patio_descanso: [1.6, `Gentle relaxed two-note ending chime, calm, ${P}`],
+  // El perro presentador del Show de Nosotros: su «voz» (ladridos y ruiditos de perro de peluche, sin palabras)
+  perro_hola: [1, `Happy small dog two cheerful barks, cute plush puppy, no words, ${P}`],
+  perro_charla: [1.4, `Small dog chatty playful woofs and grumbles like talking, cute, no words, ${P}`],
+  perro_pregunta: [0.9, `Curious small dog questioning rising whine and short bark, cute, no words, ${P}`],
+  perro_emocion: [1.2, `Excited small dog yappy barks with happy panting, cute, no words, ${P}`],
+  perro_suspenso: [1.2, `Small dog low dramatic suspense growl that turns playful, cute, no words, ${P}`],
+  perro_ohh: [1.2, `Sad sympathetic small dog whimper aww, cute, no words, ${P}`],
+  perro_aullido: [2, `Small dog proud happy howl awoo for a winner, cute, no words, ${P}`],
+  perro_risa: [1, `Small dog happy huffing laugh and wagging excitement, cute, no words, ${P}`],
 };

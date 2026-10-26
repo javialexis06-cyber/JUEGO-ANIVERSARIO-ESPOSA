@@ -2,6 +2,7 @@
 // suspenso mientras contestan), el redoble, el timbre de acierto, el «¡bzzz!» del error, los aplausos y el «¡ohhh!» del
 // público, el tic tac del reloj y la fanfarria de cada ronda. La música respeta el botón ♪ de la mesa.
 import * as sonido from '../../sonido';
+import { efectoArchivo, precargarEfectos } from '../../efecto_archivo';
 
 const { nota, rumor } = sonido;
 const midi = (n: number) => 440 * Math.pow(2, (n - 69) / 12);
@@ -144,12 +145,41 @@ function tocar(t: Tema, i: number, cuando: number, corchea: number) {
   }
 }
 
+// Canciones de verdad (Eleven Music, 26 de octubre de 2026: Javier pidió más canciones en el show). Si están en el
+// aparato suenan esas por el canal de la música (la de la casa se guarda y vuelve al final); si no, la sintetizada.
+const ARCHIVOS: Record<NonNullable<Tema>, string[]> = { tema: ['show-tema', 'show-tema2'], suspenso: ['show-suspenso'], relampago: ['show-relampago'] };
+const hay: Record<string, boolean> = {};
+for (const id of [...Object.values(ARCHIVOS).flat(), 'show-ganador']) void sonido.hayPista(id).then((si) => (hay[id] = si));
+let previa: string | null | undefined;
+function enArchivo(t: Tema): boolean {
+  const ids = t ? ARCHIVOS[t] : [];
+  if (t && !ids.every((id) => hay[id])) return false;
+  if (previa === undefined) previa = sonido.musica.pistaActual();
+  sonido.musica.callar(false);
+  if (!t) sonido.musica.pista(null);
+  else if (!ids.includes(sonido.musica.pistaSonando() ?? '')) sonido.musica.pista(ids[0], ids.length > 1 ? { rueda: ids, reiniciar: true } : { bucle: true, reiniciar: true });
+  return true;
+}
+/** Al salir del show: vuelve la música que sonaba antes en la casa. */
+export function finMusica() {
+  if (previa === undefined) return;
+  sonido.musica.pista(previa ?? null);
+  previa = undefined;
+}
+/** El remate del ganador en archivo (si está). */
+export function remateGanador(): boolean {
+  if (!hay['show-ganador']) return false;
+  sonido.musica.remate('show-ganador');
+  return true;
+}
+
 /** Cambia (o apaga con null) la música del show. */
 export function musica(t: Tema) {
   tema = t;
-  if (!t) {
+  if (!t || enArchivo(t)) {
     clearInterval(reloj);
     reloj = 0;
+    if (!t && previa !== undefined) enArchivo(null);
     return;
   }
   if (reloj) return;
@@ -166,4 +196,21 @@ export function musica(t: Tema) {
       paso = (paso + 1) % 64;
     }
   }, 40);
+}
+
+// La «voz» del perro presentador (26 de octubre de 2026, pedido de Javier): ladridos y ruiditos de perro de peluche,
+// sin palabras (public/sfx/perro_*), según lo que dice en su globo. Si no han cargado, no suena nada.
+const PERRO = ['perro_hola', 'perro_charla', 'perro_pregunta', 'perro_emocion', 'perro_suspenso', 'perro_ohh', 'perro_aullido', 'perro_risa'];
+let perroPrecargado = false;
+export function vozPerro(texto: string, como?: 'hola' | 'aullido' | 'ohh') {
+  if (!perroPrecargado && sonido.contextoAudio()) { perroPrecargado = true; precargarEfectos(PERRO); }
+  const t = texto.toLowerCase();
+  const nombre = como ? `perro_${como}`
+    : /^(hola|bienvenid|buenas)/.test(t) ? 'perro_hola'
+    : /(ja ?ja|jaja|risa)/.test(t) ? 'perro_risa'
+    : t.includes('¿') || t.includes('?') ? 'perro_pregunta'
+    : /…|\.\.\./.test(t) ? 'perro_suspenso'
+    : (t.match(/!/g)?.length ?? 0) >= 2 ? 'perro_emocion'
+    : 'perro_charla';
+  efectoArchivo(nombre, 0.8);
 }

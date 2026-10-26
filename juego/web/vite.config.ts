@@ -148,11 +148,16 @@ function versionAmigos(): Plugin {
       // La música de los juegos que tienen los amigos (nada de la casa ni de public/musica/pareja/) y los efectos
       const musica = resolve(pub, 'musica');
       if (existsSync(resolve(musica, 'lista.json'))) {
-        const de = (id: string) => /^(super|mesa|lavado|sangre|cohete|cocina|amigos)-/.test(id);
+        const de = (id: string) => /^(super|mesa|lavado|sangre|cohete|cocina|amigos|carreras|show|patio)-/.test(id);
         const lista = JSON.parse(readFileSync(resolve(musica, 'lista.json'), 'utf8')) as Record<string, [string, number]>;
         const suya = Object.fromEntries(Object.entries(lista).filter(([id]) => de(id)));
         for (const [a] of Object.values(suya)) copiar(`musica/${a}`);
         writeFileSync(resolve(salida, 'musica/lista.json'), JSON.stringify(suya) + '\n');
+        // Los nombres para la rocola de Carreras: solo los de la música que sí trae
+        if (existsSync(resolve(musica, 'nombres.json'))) {
+          const nombres = JSON.parse(readFileSync(resolve(musica, 'nombres.json'), 'utf8')) as Record<string, unknown>;
+          writeFileSync(resolve(salida, 'musica/nombres.json'), JSON.stringify(Object.fromEntries(Object.entries(nombres).filter(([id]) => de(id)))) + '\n');
+        }
       }
       // Los efectos (los de la granja no: la granja no va en la versión para amigos)
       for (const f of readdirSync(resolve(pub, 'sfx'))) if (f !== 'granja') copiar(`sfx/${f}`);

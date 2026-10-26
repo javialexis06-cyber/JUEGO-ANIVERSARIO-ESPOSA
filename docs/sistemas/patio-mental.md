@@ -10,6 +10,10 @@ se anuncian como prevención de enfermedades. No dan recursos de la casa ni modi
 |---|---|
 | Parejas del jardín | Ocho parejas en dieciséis cartas. |
 | El coro de luces | Cinco secuencias, de tres a siete luces; sonido opcional. |
+
+**Sonido (26 de octubre de 2026):** diez pistas CC0 variadas que rotan barajadas desde el primer toque y efectos
+propios (`patio_*`: acierto, error, ronda, ganó, y el golpe de cada juego: carta, ficha, disco, pieza, letra, paso).
+Botón 🔊/🔇 en el menú y en la partida.
 | Ventanas de colores | Tres cuadrículas que se muestran y luego se ocultan. |
 | Dos patios | Cinco diferencias entre dos cuadrículas de figuras. |
 | ¿Dónde está? | Diez búsquedas entre distractores. |

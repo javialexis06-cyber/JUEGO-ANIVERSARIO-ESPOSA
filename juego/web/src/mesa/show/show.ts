@@ -17,7 +17,7 @@ import {
 } from './motor';
 import { armar, NOMBRE, pregunta, type Pregunta, type Rol } from './preguntas';
 import { type MsgShow, RedShow } from './red';
-import { musica, SFX } from './sonidos';
+import { finMusica, musica, remateGanador, SFX, vozPerro } from './sonidos';
 import { UI } from './ui';
 
 export interface OpcionesShow {
@@ -325,6 +325,7 @@ export class Show {
   private async perroDice(texto: string, ms: number, rapido = false) {
     await this.libre();
     this.estudio?.perroHabla(true);
+    vozPerro(texto);
     this.ui.globoPerro(texto, this.perro.nombre, this.estudio);
     await this.dormir(rapido ? 500 : ms);
     this.estudio?.perroHabla(false);
@@ -557,6 +558,7 @@ export class Show {
     } else if (res.tono === 'mal') {
       SFX.bzzz();
       setTimeout(() => SFX.ohh(), 350);
+      setTimeout(() => vozPerro('', 'ohh'), 700);
       e?.animo('mal');
       e?.publico('ohh');
       e?.perroAccion('reir');
@@ -769,7 +771,8 @@ export class Show {
     e?.pantalla({ modo: 'medidor', valor: con });
     e?.plano('pantalla');
     await this.ui.medidor(con, nivelConexion(con));
-    SFX.fanfarriaGrande();
+    if (!remateGanador()) SFX.fanfarriaGrande();
+    setTimeout(() => vozPerro('', 'aullido'), 900);
     e?.animo('fiesta');
     e?.confeti(true);
     e?.publico('ovacion');
@@ -894,6 +897,7 @@ export class Show {
     clearInterval(this.relojPresencia);
     document.removeEventListener('visibilitychange', this.alVisibilidad);
     musica(null);
+    finMusica();
     this.estudio?.destruir();
     this.estudio = null;
     this.ui.destruir();

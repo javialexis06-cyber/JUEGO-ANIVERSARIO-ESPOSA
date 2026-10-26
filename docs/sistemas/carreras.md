@@ -41,7 +41,10 @@ amigos. Página: `juego/web/carreras.html`; código: `juego/web/src/carreras/`.
   al lanzar un objeto y al ganar). Javier y Laura con sus voces clonadas (solo en la versión de la pareja; con amigos
   en la sala se callan). Todo sale también escrito en un globito abajo.
 - Calidad que baja sola (mide el tiempo de cada cuadro), 30 cuadros por segundo, el contexto WebGL se suelta al salir.
-  Música de las pistas existentes (`PISTAS[...].musica` en `datos.ts`).
+  Música propia (26 de octubre de 2026): el garaje, una por circuito y el podio (`carreras-*`, ver `musica.md`).
+- **Rocola** (botón 🎵 en la portada, `src/carreras/rocola.ts`): todas las canciones de la app (en la versión de la
+  pareja, también las de amor) para oírlas en orden, al azar o desde una; mientras está encendida suenan en las
+  carreras en vez de la música de cada circuito. Se recuerda en el aparato.
 
 Los tiempos aún no logrados se recuperan como `Infinity` al leer el `null` que deja JSON: una vuelta previa ya no
 bloquea el primer contrarreloj ni muestra un récord falso de cero. La marca válida, la mejor vuelta, el fantasma y
@@ -203,7 +206,7 @@ amigos está en `src/amigos/juegos.ts`, con arte `ARTE_CARRERAS`, tema `carreras
 `carreras.html` está en el `input` de rollup, en `PAGINAS_AMIGOS`, `src/carreras/` en
 `PERMITIDOS_AMIGOS`, la sustitución de `src/carreras/pareja.ts` en `SUSTITUTOS` y en `PUBLICOS_AMIGOS` los modelos
 (`modelos/carreras/`, las tres criaturas de la granja), `carreras/` (íconos y fotos) y `audio/carreras/` (sin la
-pareja). La música usa pistas que la app de amigos ya trae (súper, lavado, retrete, mesa, cocina).
+pareja). La música propia (`carreras-*`) va también en la de amigos, y su rocola solo lista lo que esa versión trae.
 
 ## Desafíos en sala e icono · 16 de octubre de 2026
 

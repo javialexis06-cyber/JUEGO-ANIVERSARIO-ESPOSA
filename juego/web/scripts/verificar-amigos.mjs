@@ -61,7 +61,7 @@ const RUTAS_PROHIBIDAS = [
   // del mito del Escudo (audio/escudo/: las de la pareja van aparte en audio/escudo-pareja/) con su música de la granja
   // las de la carrera (presentador y vecinos; las de la pareja van en audio/carreras-pareja/, que no se copia) y las
   // notas de voz del celular (ningún caso es de la pareja) y las voces comunes del torneo de peleas
-  /^(?!musica\/(super|mesa|lavado|sangre|cohete|cocina|amigos)-|sfx\/|audio\/escudo\/|audio\/carreras\/|audio\/celular\/|audio\/peleas\/comun\/|audio\/astra\/musica\/M(16|19|20)-|jardin\/pvz\/audio\/).*\.(mp3|ogg|m4a|wav)$/, /(^|\/)musica\/pareja\//,
+  /^(?!musica\/(super|mesa|lavado|sangre|cohete|cocina|amigos|carreras|show|patio)-|sfx\/|audio\/escudo\/|audio\/carreras\/|audio\/celular\/|audio\/peleas\/comun\/|audio\/astra\/musica\/M(16|19|20)-|jardin\/pvz\/audio\/).*\.(mp3|ogg|m4a|wav)$/, /(^|\/)musica\/pareja\//,
   // la pareja cuando llega a comer a la cocina y el cine de las escenas premium de la mesa (su CSS solo viene con el
   // cine de verdad: la versión para amigos lleva uno vacío, src/amigos/sin_pareja/cine.ts)
   /cocina\/gente\/pareja_/, /(^|\/)cine-[\w-]+\.css$/,

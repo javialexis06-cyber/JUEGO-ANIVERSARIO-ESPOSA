@@ -27,7 +27,7 @@ const CREDITOS_MIN = 800; // medido el 11 de octubre de 2026
 const SOLO = process.env.SOLO;
 
 const huella = (x) => createHash('sha1').update(JSON.stringify(x)).digest('hex').slice(0, 5);
-const archivoPista = (p) => `${p.id}-${huella([MODELO, p.prompt ?? p.partes, p.estilos, p.seg])}.ogg`;
+const archivoPista = (p) => `${p.id}-${p.descarga ? huella([p.descarga.url]) : huella([MODELO, p.prompt ?? p.partes, p.estilos, p.seg])}.ogg`;
 const dirPista = (p) => (p.pareja ? DIR_PAREJA : DIR);
 const archivoEfecto = (n, [seg, txt]) => `${n}-${huella([seg, txt])}.ogg`;
 
@@ -90,6 +90,13 @@ async function transcribir(f) {
 }
 
 async function hacerPista(p) {
+  if (p.descarga) {
+    // Pista CC0 descargada (OpenGameArt): se baja tal cual y se pasa a opus con el volumen parejo
+    const crudo = join(CRUDO, `${p.id}-descarga.${p.descarga.url.split('.').pop()}`);
+    execFileSync('curl', ['-s', '-L', '-f', '-m', '300', '-A', 'Mozilla/5.0', '-o', crudo, p.descarga.url]);
+    if (segundos(crudo) < 10) throw new Error(`la descarga de ${p.id} salió corta`);
+    return convertir(crudo, join(dirPista(p), archivoPista(p)), 'musica');
+  }
   const tomas = p.tomas ?? 1;
   const cuerpo = p.partes ? { model_id: MODELO, composition_plan: plan(p) } : { model_id: MODELO, prompt: p.prompt, music_length_ms: p.seg * 1000, force_instrumental: true };
   let mejor = null;
@@ -130,7 +137,7 @@ function armarLista(dir, entradas) {
   mkdirSync(dir, { recursive: true });
   const vieja = existsSync(join(dir, 'lista.json')) ? JSON.parse(readFileSync(join(dir, 'lista.json'), 'utf8')) : {};
   const lista = {};
-  const usados = new Set(['lista.json', 'pareja']);
+  const usados = new Set(['lista.json', 'nombres.json', 'pareja']);
   for (const [id, archivo] of entradas) {
     if (!existsSync(join(dir, archivo))) continue;
     usados.add(archivo);
@@ -176,5 +183,8 @@ if (!process.env.SECO) {
 }
 const nNeutras = armarLista(DIR, PISTAS.filter((p) => !p.pareja).map((p) => [p.id, archivoPista(p)]));
 const nPareja = armarLista(DIR_PAREJA, PISTAS.filter((p) => p.pareja).map((p) => [p.id, archivoPista(p)]));
+// Los nombres para la rocola (id → [nombre, juego]), uno por carpeta
+for (const [dir, lista] of [[DIR, PISTAS.filter((p) => !p.pareja)], [DIR_PAREJA, PISTAS.filter((p) => p.pareja)]])
+  writeFileSync(join(dir, 'nombres.json'), JSON.stringify(Object.fromEntries(lista.filter((p) => existsSync(join(dir, archivoPista(p)))).map((p) => [p.id, [p.nombre, p.juego]])), null, 0).replace(/\],"/g, '],\n"') + '\n');
 const nEf = armarLista(DIR_SFX, Object.entries(EFECTOS).map(([n, d]) => [n, archivoEfecto(n, d)]));
 console.log(`listas: ${nNeutras} pistas para todos, ${nPareja} de la pareja, ${nEf} efectos`);

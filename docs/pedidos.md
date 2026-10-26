@@ -1,5 +1,10 @@
 # Pedidos de Javier · estado vigente
 
+
+**Hecho por Claude el 26 de octubre · sonido:** el patio tiene música CC0 variada (10 pistas) y efectos propios;
+Carreras tiene música propia y una **rocola** con todas las canciones de la app; siete canciones de amor nuevas
+(letras inventadas con apodos y palabras del chat); el Show de Nosotros tiene canciones de verdad y el perro
+«habla» con ladridos. Se gastó el saldo de ElevenLabs (quedan 606 créditos). Ver `sistemas/musica.md`.
 ## Pedido vigente · ampliar la historia al mapa existente
 
 El 24 de octubre Javier autorizó extender Gardendless a las doce zonas del mapa. Esto sustituye la pausa

@@ -19,6 +19,15 @@ premium **solo efectos** (sin voces ni videos con IA). La granja se musicaliza d
 | Retrete cohete | `cohete-cancion` («Del baño a la NASA», con letra) · `cohete-tramo0` … `cohete-tramo6` | La canción en el primer despegue; después una por tramo (si cambia de tramo mientras canta, espera a que termine); el turbo la acelera (`src/casa/cohete/musica.ts`). Mientras suena la canción no se oye nada encima: ni voces ni efectos (`src/casa/cohete/silencio.ts`; el globito sale mudo) |
 | Cocina de chef | `cocina-cancion` («Hecho con amor», con letra) · `cocina-wafles` · `cocina-fresas` · `cocina-frappes` · `cocina-pico` | La canción al entrar, la del restaurante al jugar y la de hora pico con 4 o más en la fila (`src/casa/cocina/motor.ts`) |
 | Sala de amigos | `amigos-sala` | Desde el primer toque |
+| Carreras | `carreras-menu` · `carreras-valle` · `carreras-brasa` · `carreras-nieve` · `carreras-cielo` · `carreras-podio` · remates `carreras-gano`, `carreras-perdio` | Música propia (26 de octubre de 2026; antes prestaba la de otros juegos): el garaje en el menú, una por circuito y el podio. Con la **rocola** encendida suena su lista en lugar de esas (`src/carreras/rocola.ts`) |
+| El Show de Nosotros | `show-tema` · `show-tema2` · `show-suspenso` · `show-relampago` · remate `show-ganador` | Antes era sintetizada; si el archivo no está, sigue sonando la sintetizada (`src/mesa/show/sonidos.ts`). La de la casa se guarda y vuelve al salir |
+| Un ratito en el patio | `patio-cider` · `patio-dondeiba` · `patio-lofi` · `patio-cuna` · `patio-piano` · `patio-nube` · `patio-parque` · `patio-kalimba` · `patio-hiphop` · `patio-cuento` (CC0 descargadas, ver abajo) | Rotan barajadas desde el primer toque; botón 🔊/🔇 arriba (`src/mente/main.ts`) |
+| La rocola (pareja) | `amor-pulga` «Pulga aventurera» · `amor-panda` «Mi panda» · `amor-amodoro` «Te amodoro» · `amor-liefje` «Liefje» · `amor-cotita` «La cotita más hermota» · `amor-hibaby` «Hi baby» · `amor-esposa` «Esposa mía» (con letra) | En la rocola de Carreras, con todas las demás canciones de la app: en orden, al azar o desde una. Letras inventadas solo con apodos y palabras del chat |
+
+Efectos nuevos (26 de octubre de 2026): `patio_*` (toque, acierto, error, ronda, carta, mover, disco, pieza, letra,
+paso, ganó, descanso) para los 16 juegos del patio y la «voz» del perro del show, `perro_*` (hola, charla, pregunta,
+emoción, suspenso, ohh, aullido, risa): ladridos y ruiditos de peluche, sin palabras, según lo que dice su globo.
+Se tocan con `src/efecto_archivo.ts`, que carga solo los que se piden.
 
 Efectos (`public/sfx/`): los 43 de `src/reacciones/sonidos.ts` con el mismo nombre (beso, carcajada, almohadazo,
 splash, fanfarria, desmayo…), con tono de caricatura de peluche y sin palabras. `sonar()` los usa en cuanto cargan;
@@ -109,3 +118,25 @@ Para cambiar una pista, se cambia su entrada en `MUSICA_GRANJA` y se vuelve a co
   - No hizo falta subir de plan: las voces de la biblioteca se usan sin ocupar cupo.
 - El Show está integrado y tiene tema de concurso, suspenso y relámpago sintetizados en `src/mesa/show/sonidos.ts`. No falta música para que funcione.
 - Se conserva el audio de las escenas existentes. Las ampliaciones no realizadas de escenarios premium fueron descartadas; no generar contenido nuevo para ellas.
+
+## La música del patio (CC0)
+
+Descargada de OpenGameArt con licencia CC0 (26 de octubre de 2026; libre, no pide crédito, pero aquí queda). La baja
+`scripts/musica-ia.mjs` desde las entradas `d(...)` del guion y la pasa a opus con el volumen parejo.
+
+| Clave | Pista | Autor | Página |
+|---|---|---|---|
+| `patio-cider` | Apple Cider | Zane Little Music | opengameart.org/content/apple-cider |
+| `patio-dondeiba` | Where was I? | yd | opengameart.org/content/where-was-i |
+| `patio-lofi` | Chill lofi inspired | omfgdude | opengameart.org/content/chill-lofi-inspired |
+| `patio-cuna` | Happy Lullaby (song17) | cynicmusic | opengameart.org/content/happy-lullaby-song17 |
+| `patio-piano` | JRPG Piano | joth | opengameart.org/content/jrpg-piano |
+| `patio-nube` | Napping on a Cloud | congusbongus | opengameart.org/content/napping-on-a-cloud |
+| `patio-parque` | Summer Park | scribe | opengameart.org/content/summer-park-8bit-tune-loop |
+| `patio-kalimba` | Short kalimba loop | extenz | opengameart.org/content/short-kalimba-loop |
+| `patio-hiphop` | lofi hip hop | omfgdude | opengameart.org/content/lofi-hip-hop |
+| `patio-cuento` | Once Upon a Time (loop) | tad | opengameart.org/content/once-upon-a-time-loop |
+
+Lo demás de esta tanda (Carreras, Show, rocola, efectos) se compuso con ElevenLabs: unos 23.600 créditos; quedaron
+606 en la cuenta. Las letras de amor se transcribieron para escoger: se entienden entre 68 % («Te amodoro») y 99 %.
+

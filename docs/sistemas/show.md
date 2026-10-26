@@ -189,3 +189,11 @@ suelta todo y se llama `forceContextLoss()`.
 - `mesa.html?juego=show&modo=ia|local&rol=el|ella&rapido=4` entra directo; `&sin3d` no pinta (pruebas);
   `window.__show.show` es el show actual (`estudio.pintar()` pinta un cuadro, `estudio.plano('pareja')`…) y
   `__show.banco()` cuenta las preguntas.
+
+## Canciones y voz del perro · 26 de octubre de 2026
+
+Pedido de Javier: más canciones y voz para el perro. La música del show ya es de verdad (`show-tema`, `show-tema2`,
+`show-suspenso`, `show-relampago` y el remate `show-ganador`, ver `musica.md`); si no carga, suena la sintetizada de
+siempre. El perro presentador «habla» con ladridos y ruiditos de peluche sin palabras (`perro_*`): saluda, charla,
+pregunta, se emociona, hace suspenso, se apena con un error, se ríe y aúlla de felicidad con el ganador
+(`vozPerro` en `src/mesa/show/sonidos.ts`).
