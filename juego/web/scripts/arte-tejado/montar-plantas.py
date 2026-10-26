@@ -1,9 +1,9 @@
 """Arma la hoja de plantas del tejado (4×2 celdas de 444 px) con el arte original de las plantas.
 
 Siete plantas salen de Gardendless (PvZ2), capturadas con `capturar-gardendless.mjs` sobre fondo negro y blanco
-para obtener el alfa exacto; el grano de café sale del sprite de PvZ 1 del repositorio de pvzm.net, porque
-Gardendless no lo tiene. Uso:
-  python3 scripts/arte-tejado/montar-plantas.py CAPTURAS CoffeeBean.gif
+para obtener el alfa exacto; el grano de café, que Gardendless no tiene, se arma con reanim.py desde
+Coffeebean.reanim y sus piezas de PvZ 1 (repositorio ruslan831/PlantsVsZombies-decompilation). Uso:
+  python3 scripts/arte-tejado/montar-plantas.py CAPTURAS ruta/reanim/Coffeebean.reanim
 CAPTURAS contiene <Id>DIS-negro.png y <Id>DIS-blanco.png. Escribe public/jardin/pvz/plantas-tejado.png;
 después `python3 scripts/jardin-webp.py --borrar-png` la pasa a WebP con alfa sin pérdida.
 """
@@ -11,7 +11,9 @@ import pathlib
 import sys
 
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image
+
+from reanim import dibujar
 
 CAPTURAS, CAFE = pathlib.Path(sys.argv[1]), sys.argv[2]
 DESTINO = pathlib.Path(__file__).resolve().parents[2] / 'public' / 'jardin' / 'pvz' / 'plantas-tejado.png'
@@ -30,13 +32,8 @@ def con_alfa(id_):
 
 
 def cafe():
-    gif = Image.open(CAFE)
-    gif.seek(0)
-    img = gif.convert('RGBA')
-    img = img.crop(img.getbbox())
-    # Sprite de 37×46: se amplía con suavizado para que el escalón de píxeles no se note en la hoja.
-    img = img.resize((img.width * 8, img.height * 8), Image.LANCZOS).filter(ImageFilter.GaussianBlur(2))
-    return img
+    # Resolución nativa de las piezas (en el juego se dibujan a la mitad).
+    return dibujar(CAFE, 'anim_idle', escala=2.0)
 
 
 hoja = Image.new('RGBA', (CELDA * 4, CELDA * 2), (0, 0, 0, 0))

@@ -1,6 +1,6 @@
 /** Recursos propios creados con la dirección artística aprobada. No intervienen en el azar del motor. */
 export const RECURSOS_ARTE_PVZ={
- dia:'plantas-dia.webp',noche:'plantas-noche.webp',piscina:'plantas-piscina.webp',niebla:'plantas-niebla.webp',tejado:'plantas-tejado.webp',accesoriosTejado:'zombis-tejado.webp',fondoTejado:'fondo-tejado.webp',
+ dia:'plantas-dia.webp',noche:'plantas-noche.webp',piscina:'plantas-piscina.webp',niebla:'plantas-niebla.webp',tejado:'plantas-tejado.webp',accesoriosTejado:'zombis-tejado.webp',fondoTejado:'fondo-tejado.webp',fondoTejadoNoche:'fondo-tejado-noche.webp',
  ropa:'zombis-ropa.webp',protegidos:'zombis-protegidos.webp',especiales:'zombis-especiales.webp',agua:'zombis-agua-accesorios.webp',fondos:'fondos-mundos.webp',objetos:'objetos.webp',tripitidora:'tripitidora.webp',
  interfaz:'interfaz-conquista.webp',lugares:'lugares-conquista.webp',nave:'nave-zomboid.webp',
  portada:'portada-conquista.webp',mundo:'mapa-mundo.webp',pais:'mapa-pais.webp',ciudad:'mapa-ciudad.webp',

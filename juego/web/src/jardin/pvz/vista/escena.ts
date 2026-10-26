@@ -57,13 +57,15 @@ export class EscenaPvZ {
  private dibujarFondo(m:MotorPvZ){
   const indice=m.nivel.area==='tejado'?4:m.nivel.area==='niebla'?3:m.nivel.area==='piscina'?2:m.esNoche?1:0,firma=indice+':'+(m.esNoche?'n':'d')+':'+m.nivel.filas.join(',')+':'+m.filas+':'+(m.nivel.tablero?'nuevo':'original')+':'+m.nivel.filasAgua?.join(',');
   if(firma!==this.firmaFondo){
-   const c=document.createElement('canvas');c.width=1100;c.height=650;const ctx=c.getContext('2d')!,f=this.atlas.fondo(indice);
+   const c=document.createElement('canvas');c.width=1100;c.height=650;const ctx=c.getContext('2d')!,f=this.atlas.fondo(indice,m.esNoche);
    // Ajustar las franjas del fondo al tablero mantiene tierra y agua bajo sus carriles reales.
    const xs=[0,.23,.85,1],xd=[0,TABLERO_PVZ.x,TABLERO_PVZ.x+720,1100],g=geometriaPvZ(m);
    const franja=(imagen:typeof f,desde:number,hasta:number,y:number,alto:number)=>{
     for(let i=0;i<xs.length-1;i++)ctx.drawImage(imagen.imagen,imagen.x+xs[i]*imagen.w,imagen.y+desde*imagen.h,(xs[i+1]-xs[i])*imagen.w,(hasta-desde)*imagen.h,xd[i],y,xd[i+1]-xd[i],alto);
    };
-   if(!m.nivel.tablero){
+   // El tejado original de PvZ 1 ya viene aplanado y alineado con el lienzo (fondo-original.py): se dibuja 1:1.
+   if(indice===4&&!m.nivel.tablero)ctx.drawImage(f.imagen,f.x,f.y,f.w,f.h,0,0,1100,650);
+   else if(!m.nivel.tablero){
     const ys=indice===2||indice===3?[0,.27,.43,.65,.98,1]:[0,.27,.98,1],yd=indice===2||indice===3?[0,TABLERO_PVZ.y,TABLERO_PVZ.y+170*g.escalaY,TABLERO_PVZ.y+340*g.escalaY,TABLERO_PVZ.y+510*g.escalaY,650]:[0,TABLERO_PVZ.y,TABLERO_PVZ.y+g.alto,650];
     for(let j=0;j<ys.length-1;j++)franja(f,ys[j],ys[j+1],yd[j],yd[j+1]-yd[j]);
    }else{
@@ -76,13 +78,13 @@ export class EscenaPvZ {
     franja(tierra,.98,1,TABLERO_PVZ.y+g.alto,650-TABLERO_PVZ.y-g.alto);
    }
    for(let fila=0;fila<m.filas;fila++){
+    // Las tejas originales ya marcan las casillas; solo se oscurecen las filas cerradas.
+    if(indice===4&&m.nivel.filas.includes(fila))continue;
     const agua=m.esAgua(fila),y=TABLERO_PVZ.y+fila*m.altoFila*escalaVerticalPvZ(m);
     ctx.fillStyle=!m.nivel.filas.includes(fila)?'rgba(12,30,24,.59)':agua?'rgba(26,163,192,.32)':fila%2?'rgba(34,78,30,.13)':'rgba(184,222,101,.1)';ctx.fillRect(TABLERO_PVZ.x,y,720,m.altoFila*escalaVerticalPvZ(m));
     ctx.strokeStyle=agua?'rgba(194,246,250,.30)':'rgba(75,110,38,.32)';ctx.lineWidth=1;
     for(let col=0;col<9;col++)ctx.strokeRect(TABLERO_PVZ.x+col*80+.5,y+.5,79,m.altoFila*escalaVerticalPvZ(m)-1);
    }
-   // Tejado de noche (5-10): el mismo escenario bajo un cielo nocturno.
-   if(indice===4&&m.esNoche){ctx.fillStyle='rgba(14,22,58,.55)';ctx.fillRect(0,0,1100,650);ctx.fillStyle='#fff6c9';ctx.beginPath();ctx.arc(980,52,26,0,Math.PI*2);ctx.fill();}
    this.cacheFondo=c;this.firmaFondo=firma;
   }this.ctx.drawImage(this.cacheFondo!,0,0);
   const ctx=this.ctx;for(const fila of m.nivel.filas.filter(f=>m.esAgua(f)))for(let j=0;j<9;j++){
