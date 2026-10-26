@@ -15,7 +15,7 @@ export const ARTE_PLANTAS_PVZ:Readonly<Record<string,FiguraPvZ>>={
  tripitidora:{hoja:'tripitidora',celda:0,alto:110},
  ...grupo('niebla',['marseta','planterna','cactus','trebolador','bipetidora','frustrella','calabaza','magnetoseta'],[52,94,106,83,83,74,58,92]),
  'nuez-explosiva':{hoja:'dia',celda:3,alto:86},
- ...grupo('tejado',['coltapulta','maceta','lanzamaiz','grano-cafe','ajo','paraplanta','margarita','melonpulta'],[92,50,92,46,76,96,90,96]),
+ ...grupo('tejado',['coltapulta','maceta','lanzamaiz','grano-cafe','ajo','paraplanta','margarita','melonpulta'],[80,60,82,46,76,96,90,84]),
 };
 /** Accesorios del tejado (hoja propia vectorial): escalera, catapulta, poste, balón, robot, caravana y bolas del jefe. */
 export const ACCESORIOS_TEJADO_PVZ={escalera:0,catapulta:1,poste:2,balon:3,robot:4,caravana:5,fuego:6,hielo:7} as const;

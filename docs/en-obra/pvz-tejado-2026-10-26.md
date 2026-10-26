@@ -65,8 +65,18 @@ sin macetas vacías y la Maceta pesa 500 durante la caravana. Las cintas de los 
 - Progreso: una partida publicada que terminaba en 4-10 abre 5-1 sin acreditar victorias. Las monedas de la
   Margarita se suman al progreso aunque se pierda, como en PC. La tienda sigue pendiente.
 - Instantánea del motor: tiros parabólicos, monedas, escaleras y estado del jefe se guardan y se reanudan iguales.
-- Arte propio vectorial (`scripts/arte-tejado/`), del mismo estilo de pegatina: hoja de ocho plantas, hoja de
-  accesorios (escalera, catapulta, poste, balón, robot, caravana, bolas) y escenario del tejado. El colgado,
+- Plantas con arte original (pedido de Javier del 26 de octubre, tras rechazar las versiones vectorial y de
+  Blender): siete salen de Gardendless 0.16.0, el distribuible PvZ2 ya fijado en `motores.lock.json`
+  (Coltapulta, Maceta, Lanzamaíz, Ajo, Paraplanta, Margarita y Melonpulta, variantes DIS en pose de reposo);
+  el Grano de café sale del sprite de PvZ 1 de [pvzm.net](https://tangled.org/pvzm.net/game) (37×46 px,
+  ampliado y suavizado), porque Gardendless no lo tiene. `scripts/arte-tejado/capturar-gardendless.mjs` las
+  captura sobre negro y blanco y `montar-plantas.py` calcula el alfa y arma la hoja. Ese arte pertenece a
+  PopCap/EA; ninguno de los dos repositorios lo licencia. El estilo PvZ2 difiere de las hojas ilustradas de
+  los mundos 1–4.
+- No se encontró un escenario original del tejado: pvzm.net no tiene mundo del tejado (solo una textura de
+  tejas de 200 px) y PvZ2 tampoco. El escenario sigue siendo el vectorial propio.
+- Arte propio vectorial (`scripts/arte-tejado/`): hoja de accesorios (escalera, catapulta, poste, balón,
+  robot, caravana, bolas) y escenario del tejado. El colgado,
   el zombi escalera, el gargantúa y el diablillo reutilizan los cuerpos con ropa ya aprobados más sus
   accesorios. El gargantúa es un cuerpo agrandado con poste: falta un diseño propio. El robot del jefe es una
   cabeza con cuello; no tiene un cuerpo animado completo.

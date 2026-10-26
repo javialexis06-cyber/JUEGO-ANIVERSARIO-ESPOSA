@@ -18,7 +18,8 @@ veces (historia 147 → 117 MB, 104 de ellos son los recursos de Gardendless, qu
 **Hecho por Claude el 26 de octubre · mundo 5 del Jardín:** siguiendo el orden de pendientes (P2, completar PvZ 1),
 la aventura llega a 50 niveles con el tejado: Coltapulta, Maceta, Lanzamaíz, Grano de café, Ajo, Paraplanta,
 Margarita y Melonpulta; zombi colgado, zombi escalera, catapulta, gargantúa, diablillo y Dr. Zomboid; lluvia de
-colgados (5-5) y jefe final (5-10), con valores originales de PC. Arte vectorial propio. El piloto automático gana
+colgados (5-5) y jefe final (5-10), con valores originales de PC. Plantas con arte original (siete de Gardendless/PvZ2 y el Grano de café de
+PvZ 1, pedido de Javier); escenario y accesorios vectoriales propios. El piloto automático gana
 los ocho niveles normales al menos una vez pero no 5-5 ni 5-10. Ver `en-obra/pvz-tejado-2026-10-26.md`.
 
 ## Pedido vigente · ampliar la historia al mapa existente
