@@ -139,4 +139,3 @@ Descargada de OpenGameArt con licencia CC0 (26 de octubre de 2026; libre, no pid
 
 Lo demás de esta tanda (Carreras, Show, rocola, efectos) se compuso con ElevenLabs: unos 23.600 créditos; quedaron
 606 en la cuenta. Las letras de amor se transcribieron para escoger: se entienden entre 68 % («Te amodoro») y 99 %.
-
