@@ -176,19 +176,21 @@ dos órdenes recibidas juntas, una fusión o una carga de partida.
 
 ## F · Plantas y terrenos de PvZ 1
 
+> 26 de octubre: el [mundo del tejado](pvz-tejado-2026-10-26.md) completa en la aventura las ocho plantas de 4-10/5-x, el tejado, las macetas y los seis enemigos de PvZ 1 con pruebas preparadas. Faltan las mejoras de la tienda (F10–F18), el arte de nueve plantas de mejora (F22) y la integración en Conquista (F01). El piloto no gana 5-5 ni 5-10; su dificultad no se certifica.
+
 Las 32 plantas de día/noche/piscina/niebla ya tienen comportamiento en el **motor PvZ**. Sus perfiles
 simplificados de Conquista no equivalen a conectar ese comportamiento. Nuez explosiva es una variante de bolos,
 no una de las diecisiete plantas normales restantes.
 
 - [ ] F01 Conectar y comprobar en las defensas territoriales las 32 plantas existentes con su comportamiento real.
-- [ ] F02 Coltapulta / Cabbage-pult: parábola, daño y uso correcto en tejado.
-- [ ] F03 Maceta / Flower Pot: capa de base y dependencia de las plantas que sostiene.
-- [ ] F04 Lanzamaíz / Kernel-pult: maíz, mantequilla y estados del objetivo.
-- [ ] F05 Grano de café / Coffee Bean: despertar hongos y capa temporal.
-- [ ] F06 Ajo / Garlic: mordida, desvío de carril y comprobaciones de terreno.
-- [ ] F07 Paraplanta / Umbrella Leaf: cobertura y defensas contra ataques correspondientes.
-- [ ] F08 Margarita / Marigold: producción y recompensa sin duplicación de economía.
-- [ ] F09 Melonpulta / Melon-pult: trayectoria, salpicadura y objetivos.
+- [x] F02 Coltapulta / Cabbage-pult: parábola, daño y uso correcto en tejado.
+- [x] F03 Maceta / Flower Pot: capa de base y dependencia de las plantas que sostiene.
+- [x] F04 Lanzamaíz / Kernel-pult: maíz, mantequilla y estados del objetivo.
+- [x] F05 Grano de café / Coffee Bean: despertar hongos y capa temporal.
+- [x] F06 Ajo / Garlic: mordida, desvío de carril y comprobaciones de terreno.
+- [x] F07 Paraplanta / Umbrella Leaf: cobertura y defensas contra ataques correspondientes.
+- [x] F08 Margarita / Marigold: producción y recompensa sin duplicación de economía.
+- [x] F09 Melonpulta / Melon-pult: trayectoria, salpicadura y objetivos.
 - [ ] F10 Guisantralladora / Gatling Pea: mejora, ráfaga y planta base requerida.
 - [ ] F11 Birasol / Twin Sunflower: mejora y producción.
 - [ ] F12 Gasoseta / Gloom-shroom: mejora, área y comportamiento nocturno.
@@ -198,7 +200,7 @@ no una de las diecisiete plantas normales restantes.
 - [ ] F16 Pinchorroca / Spikerock: mejora y respuesta a vehículos.
 - [ ] F17 Mazorcañón / Cob Cannon: ocupación doble, bases requeridas, apuntado y recarga.
 - [ ] F18 Imitadora / Imitater: selección, transformación y restricciones de asignación por tipo.
-- [ ] F19 Completar tejado inclinado y todas las dependencias necesarias de bases, proyectiles y protección.
+- [x] F19 Completar tejado inclinado y todas las dependencias necesarias de bases, proyectiles y protección.
 - [ ] F20 Integrar las mejoras y los casos de abono que correspondan, sin afectar los cuarenta niveles existentes.
 - [ ] F21 Verificar interacciones entre sueño/despertar, agua, hielo, niebla, capas y plantas mejoradas.
 - [ ] F22 Dibujar las diecisiete plantas faltantes y sus estados; comprobar también el arte actual al incorporar capacidades nuevas.
@@ -213,13 +215,13 @@ restando 21 a un número de entradas de almanaque que cuenta las variantes de ot
 
 - [ ] G01 Auditar los 21 registros actuales frente a las entradas canónicas y conservar sus comportamientos reales en Conquista.
 - [ ] G02 Zombi Yeti: aparición, retirada y recompensa verificadas.
-- [ ] G03 Zombi colgado / Bungee: llegada, selección de planta, robo y respuesta de Paraplanta.
-- [ ] G04 Zombi escalador / Ladder: colocación de escalera, protección y retirada de metal.
-- [ ] G05 Zombi catapulta / Catapult: vehículo, proyectiles, alcance y defensa correspondiente.
-- [ ] G06 Zombistein / Gargantuar: resistencia, golpes, lanzamiento de acompañante y estados.
-- [ ] G07 Zombidito / Imp: aparición independiente y lanzamiento desde Gargantuar.
-- [ ] G08 Dr. Zomboid/Zomboss y su máquina: fases, ataques, objetivos y condición de derrota.
-- [ ] G09 Añadir escaleras y objetos persistentes a terreno, guardado y render.
+- [x] G03 Zombi colgado / Bungee: llegada, selección de planta, robo y respuesta de Paraplanta.
+- [x] G04 Zombi escalador / Ladder: colocación de escalera, protección y retirada de metal.
+- [x] G05 Zombi catapulta / Catapult: vehículo, proyectiles, alcance y defensa correspondiente.
+- [x] G06 Zombistein / Gargantuar: resistencia, golpes, lanzamiento de acompañante y estados.
+- [x] G07 Zombidito / Imp: aparición independiente y lanzamiento desde Gargantuar.
+- [x] G08 Dr. Zomboid/Zomboss y su máquina: fases, ataques, objetivos y condición de derrota.
+- [x] G09 Añadir escaleras y objetos persistentes a terreno, guardado y render.
 - [ ] G10 Verificar saltos, buceo, globos, excavación, vehículos, trineos e invocaciones sin degradarlos a una mordida genérica.
 - [ ] G11 Completar arte de las unidades faltantes, vehículos, jefes y poses de acción.
 - [ ] G12 Mantener cuerpo/ropa/conos/cubos/puertas como conjuntos coherentes al moverse y perder protección.

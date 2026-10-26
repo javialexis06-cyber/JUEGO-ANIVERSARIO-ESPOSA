@@ -12,7 +12,7 @@ export interface InstantaneaMotorPvZ {
  version:1;reglas:1;nivel:DefNivel;semillas:string[];sinOleadas:boolean;
  catalogo:{plantas:Record<string,string>;zombis:Record<string,string>};
  estado:EstadoPersistente;azar:number;
- relojes:{proximo:number;cieloEn:number;cielosCaidos:number;cintaEn:number;cintaEmitida:Record<string,number>;vidaOleada:number;alzamientoEn:number|null;emboscadaEn:number|null};
+ relojes:{proximo:number;cieloEn:number;cielosCaidos:number;cintaEn:number;cintaEmitida:Record<string,number>;cintaUltima?:string;vidaOleada:number;alzamientoEn:number|null;emboscadaEn:number|null};
  director:InstantaneaDirectorPvZ|null;visibilidad:InstantaneaVisibilidadPvZ;
  aplastazombis:InstantaneaAplastazombisPvZ|null;rompejarrones:InstantaneaRompejarronesPvZ|null;
 }
@@ -28,7 +28,7 @@ export function cabeceraInstantaneaPvZ(v:unknown):asserts v is InstantaneaMotorP
 /** Valida el contrato completo antes de sustituir el motor que se está jugando. */
 export function validarInstantaneaPvZ(s:InstantaneaMotorPvZ,m:MotorPvZ){
  const e=s.estado,r=s.relojes;
- exigirPvZ(objetoPvZ(e)&&e.version===1&&e.nivel===m.nivel.id&&enteroPvZ(e.pasos)&&e.t===e.pasos/60&&numeroPvZ(e.sol)&&e.sol>=0&&enteroPvZ(e.abono,0,3)&&enteroPvZ(e.oleada)&&['','gano','perdio'].includes(e.terminado)&&enteroPvZ(e.eliminados)&&enteroPvZ(e.sembradas));
+ exigirPvZ(objetoPvZ(e)&&e.version===1&&e.nivel===m.nivel.id&&enteroPvZ(e.pasos)&&e.t===e.pasos/60&&numeroPvZ(e.sol)&&e.sol>=0&&enteroPvZ(e.abono,0,3)&&enteroPvZ(e.oleada)&&['','gano','perdio'].includes(e.terminado)&&enteroPvZ(e.eliminados)&&enteroPvZ(e.sembradas)&&(e.monedas===undefined||enteroPvZ(e.monedas)));
  exigirPvZ(objetoPvZ(r)&&enteroPvZ(r.proximo,1)&&numeroPvZ(r.cieloEn)&&enteroPvZ(r.cielosCaidos)&&numeroPvZ(r.cintaEn)&&numeroPvZ(r.vidaOleada)&&r.vidaOleada>=0);
  for(const v of[r.alzamientoEn,r.emboscadaEn])exigirPvZ(v===null||numeroPvZ(v)&&v>=0);
  exigirPvZ(enteroPvZ(s.azar,1,4294967295)&&objetoPvZ(s.catalogo));
@@ -41,7 +41,7 @@ export function validarInstantaneaPvZ(s:InstantaneaMotorPvZ,m:MotorPvZ){
  const zombi=(id:unknown):id is string=>typeof id==='string'&&Object.hasOwn(s.catalogo.zombis,id);
  exigirPvZ(s.semillas.every(planta)&&m.nivel.zombis.every(zombi)&&(m.nivel.cinta??[]).every(planta));
  const registro=(v:unknown,clave:(id:string)=>boolean,entero=false)=>{exigirPvZ(objetoPvZ(v));for(const[id,n]of Object.entries(v))exigirPvZ(clave(id)&&numeroPvZ(n)&&n>=0&&(!entero||enteroPvZ(n)));};
- registro(e.recargas,planta);registro(r.cintaEmitida,id=>(m.nivel.cinta??[]).includes(id),true);
+ registro(e.recargas,planta);registro(r.cintaEmitida,id=>(m.nivel.cinta??[]).includes(id),true);exigirPvZ(r.cintaUltima===undefined||typeof r.cintaUltima==='string'&&(m.nivel.cinta??[]).includes(r.cintaUltima));
  const lista=(v:unknown,max:number)=>exigirPvZ(Array.isArray(v)&&v.length<=max);
  const ids=new Set<number>();
  const identidad=(q:{id:number})=>{exigirPvZ(q&&enteroPvZ(q.id,1,r.proximo-1)&&!ids.has(q.id),'Identidades de entidades inválidas');ids.add(q.id);};
@@ -55,10 +55,10 @@ export function validarInstantaneaPvZ(s:InstantaneaMotorPvZ,m:MotorPvZ){
  lista(e.zombis,300);
  for(const z of e.zombis){identidad(z);fila(z.fila);exigirPvZ(zombi(z.tipo)&&[-1,1].includes(z.sentido)&&enteroPvZ(z.oleada)&&(z.comiendo===null||enteroPvZ(z.comiendo,1,r.proximo-1)));numeros(z,['x']);numeros(z,['vida','edad','armadura','armaduraInicial','lento','congelado','mantequilla'],0);booleanos(z,['escudo','metal','hipnotizado','ceniza','sinBrazo','sinCabeza']);datos(z.datos);}
  lista(e.proyectiles,500);
- for(const p of e.proyectiles){identidad(p);fila(p.fila);exigirPvZ(typeof p.tipo==='string'&&enteroPvZ(p.origen)&&['recto','lanzado','perforante','explosion','fuego','hielo','aplastar'].includes(p.danoTipo));numeros(p,['x','velocidad']);numeros(p,['dano'],0);lista(p.impactados,300);exigirPvZ(p.impactados.every(id=>enteroPvZ(id,1,r.proximo-1)));for(const k of['y','velocidadY','lento','hasta']as const)if(p[k]!==undefined)exigirPvZ(numeroPvZ(p[k]));for(const k of['aereo','perforante']as const)if(p[k]!==undefined)exigirPvZ(typeof p[k]==='boolean');if(p.antorchas!==undefined){lista(p.antorchas,m.filas*9);exigirPvZ(p.antorchas.every(id=>enteroPvZ(id,1,r.proximo-1)));}}
+ for(const p of e.proyectiles){identidad(p);fila(p.fila);exigirPvZ(typeof p.tipo==='string'&&enteroPvZ(p.origen)&&['recto','lanzado','perforante','explosion','fuego','hielo','aplastar','salpicadura'].includes(p.danoTipo));numeros(p,['x','velocidad']);numeros(p,['dano'],0);lista(p.impactados,300);exigirPvZ(p.impactados.every(id=>enteroPvZ(id,1,r.proximo-1)));for(const k of['y','velocidadY','lento','hasta','salida','llegada','desdeX','destinoX','mantequilla']as const)if(p[k]!==undefined)exigirPvZ(numeroPvZ(p[k]));for(const k of['objetivo','destinoCol']as const)if(p[k]!==undefined)exigirPvZ(enteroPvZ(p[k]));for(const k of['aereo','perforante','enemigo']as const)if(p[k]!==undefined)exigirPvZ(typeof p[k]==='boolean');if(p.antorchas!==undefined){lista(p.antorchas,m.filas*9);exigirPvZ(p.antorchas.every(id=>enteroPvZ(id,1,r.proximo-1)));}}
  lista(e.soles,100);
- for(const q of e.soles){identidad(q);fila(q.fila);numeros(q,['x','valor','edad','vida'],0);exigirPvZ(['cielo','planta'].includes(q.origen));}
- lista(e.cortacespedes,m.nivel.filas.length);exigirPvZ(e.cortacespedes.length===m.nivel.filas.length&&new Set(e.cortacespedes.map(c=>c.fila)).size===e.cortacespedes.length);
+ for(const q of e.soles){identidad(q);fila(q.fila);numeros(q,['x','valor','edad','vida'],0);exigirPvZ(['cielo','planta','moneda'].includes(q.origen));}
+ lista(e.cortacespedes,m.nivel.filas.length);exigirPvZ(e.cortacespedes.length===(m.nivel.sinCortacespedes?0:m.nivel.filas.length)&&new Set(e.cortacespedes.map(c=>c.fila)).size===e.cortacespedes.length);
  for(const q of e.cortacespedes){fila(q.fila);numeros(q,['x']);exigirPvZ(['listo','activo','gastado'].includes(q.estado));}
  lista(e.cinta,10);for(const q of e.cinta){identidad(q);exigirPvZ(planta(q.planta)&&m.nivel.cinta?.includes(q.planta));}
  lista(e.lapidas,m.filas*9);lista(e.crateres,m.filas*9);lista(e.pistasHielo,m.filas);lista(e.zonas,100);

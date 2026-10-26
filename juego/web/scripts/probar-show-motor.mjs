@@ -36,6 +36,7 @@ try {
         export const crearCierreShow = x => x; export const guardarCierreShow = async () => true;
         export const pagar = () => {}; export const vistas = () => [];
         export const musica = () => {}; export const SFX = {}; export const UI = class {};
+        export const finMusica = () => {}; export const remateGanador = () => false; export const vozPerro = () => {};
         export const abrirLibro = () => {};
       `, loader: 'js' }));
     } }],

@@ -171,7 +171,7 @@ Usar la conexión Supabase cuando esté autorizada, sin pedir al usuario escribi
 
 El pedido gráfico del 22 de octubre sustituye el reparto anterior: Javier aprobó el estilo ilustrado y
 encargó a Codex implementar plantas, escenarios y zombis con variedad de ropa. La aventura Canvas conecta
-los cuarenta niveles construidos, selección, guardado, almanaque y controles; los patios clásicos y el duelo
+los cincuenta niveles construidos (mundo 5, el tejado, desde el 26 de octubre), selección, guardado, almanaque y controles; los patios clásicos y el duelo
 conservan sus motores y claves. Ver `docs/en-obra/pvz-arte-2026-10-22.md` y los contratos de
-`docs/en-obra/pvz-arquitectura.md`. Los mundos 5–10 y demás modos del plan siguen pendientes; no confundir
+`docs/en-obra/pvz-arquitectura.md`. Los mundos 6–10, la tienda y demás modos del plan siguen pendientes; no confundir
 las animaciones procedurales actuales con animación independiente de cada extremidad.

@@ -1,3 +1,4 @@
+import {PLANTAS_TEJADO,ZOMBIS_TEJADO} from '../pvz/datos/tejado';
 import type {FichaConquista} from './tipos';
 import {PLANTAS_PVZ} from '../pvz/datos/plantas';
 import {ZOMBIS_PVZ} from '../pvz/datos/zombis';
@@ -45,8 +46,10 @@ const extras:Record<string,Partial<FichaConquista>>={
  'zomboni':{rol:'vehiculo',vida:360,armadura:150,dano:90,intervalo:1.7,velocidad:17},'zombi-trineo':{rol:'vehiculo',vida:260,dano:45,velocidad:31},
  'zombi-delfin':{rol:'salto',velocidad:34},
 };
-for(const p of Object.values(PLANTAS_PVZ)){if(p.id==='nuez-explosiva')continue;if(!base[p.id])base[p.id]={id:p.id,nombre:p.nombre,bando:'plantas',coste:Math.max(5,Math.round(p.sol/7)),vida:110,armadura:0,dano:22,intervalo:1.4,alcance:390,velocidad:0,recarga:3,descripcion:p.descripcion};}
-for(const z of Object.values(ZOMBIS_PVZ))if(!base[z.id])base[z.id]={id:z.id,nombre:z.nombre,bando:'zombis',coste:Math.min(42,10+(z.datos?.puntos??1)*4),vida:Math.min(360,Math.max(120,z.vida*.45)),armadura:Math.min(380,(z.armadura?.vida??0)*.3),dano:26,intervalo:1,alcance:26,velocidad:Math.max(18,Math.min(34,z.velocidad*1.2)),recarga:3,descripcion:z.descripcion};
+// Conquista V1 conserva su catálogo: las unidades del tejado (26 de octubre) no entran en su balance.
+const DEL_TEJADO=new Set([...PLANTAS_TEJADO.map(p=>p.id),...ZOMBIS_TEJADO.map(z=>z.id)]);
+for(const p of Object.values(PLANTAS_PVZ)){if(p.id==='nuez-explosiva'||DEL_TEJADO.has(p.id))continue;if(!base[p.id])base[p.id]={id:p.id,nombre:p.nombre,bando:'plantas',coste:Math.max(5,Math.round(p.sol/7)),vida:110,armadura:0,dano:22,intervalo:1.4,alcance:390,velocidad:0,recarga:3,descripcion:p.descripcion};}
+for(const z of Object.values(ZOMBIS_PVZ))if(!base[z.id]&&!DEL_TEJADO.has(z.id))base[z.id]={id:z.id,nombre:z.nombre,bando:'zombis',coste:Math.min(42,10+(z.datos?.puntos??1)*4),vida:Math.min(360,Math.max(120,z.vida*.45)),armadura:Math.min(380,(z.armadura?.vida??0)*.3),dano:26,intervalo:1,alcance:26,velocidad:Math.max(18,Math.min(34,z.velocidad*1.2)),recarga:3,descripcion:z.descripcion};
 for(const [id,ajustes]of Object.entries(extras))if(base[id])Object.assign(base[id],ajustes);
 const fusiones: FichaConquista[]=[
  {id:'fusion-guisante-hielo',nombre:'Guisante glacial',bando:'plantas',coste:36,vida:150,armadura:0,dano:32,intervalo:1.2,alcance:460,velocidad:0,recarga:4,rol:'hielo',fusion:['lanzaguisantes','hielaguisantes'],arte:'hielaguisantes',descripcion:'Combina potencia y ralentización.'},

@@ -78,8 +78,8 @@ export const COMPORTAMIENTO_PISCINA_PLANTAS:Record<string,ComportamientoPlantaPv
  jalapeno:{
   paso(m,p){
    const d=datos(m,p);if(p.edad+1e-9<d.retardo)return;
-   for(const z of m.zombis)if(z.vida>0&&!z.hipnotizado&&z.fila===p.fila&&z.x<800)m.danarZombi(z,d.dano,'fuego');
-   m.quitarHielo(p.fila);m.eventos.push({t:'explosion',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x});consumir(m,p);
+   for(const z of m.zombis)if(z.vida>0&&!z.hipnotizado&&(z.fila===p.fila||z.datos.todasFilas)&&z.x<800)m.danarZombi(z,d.dano,'fuego');
+   m.quitarHielo(p.fila);m.quemarFila(p.fila);m.eventos.push({t:'explosion',id:p.id,tipo:p.tipo,fila:p.fila,x:p.x});consumir(m,p);
   },
  },
  pinchohierba:{

@@ -17,8 +17,8 @@ try{
  const planta=(m,t,f,c)=>{assert.ok(m.plantar(t,f,c));return m.plantaEn(f,c,m.plantasDef[t].capa??'principal');};
  const prueba=(nombre,fn)=>{fn();resultados.push({nombre,ok:true});console.log('OK',nombre);};
  const puzzle=()=>new MotorPvZ(NIVELES_NIEBLA[4],{semilla:23,semillas:['petacereza']});
- prueba('cuarenta niveles y geometría propia de Rompejarrones y tormenta',()=>{
-  assert.equal(NIVELES_PVZ.length,40);assert.equal(NIVELES_NIEBLA[4].area,'noche');assert.equal(NIVELES_NIEBLA[4].filas.length,5);
+ prueba('cuarenta niveles hasta 4-10 (el tejado sigue después) y geometría propia de Rompejarrones y tormenta',()=>{
+  assert.equal(NIVELES_PVZ.length,50);assert.equal(NIVELES_PVZ[39].id,'4-10');assert.equal(NIVELES_PVZ[40].id,'5-1');assert.equal(NIVELES_NIEBLA[4].area,'noche');assert.equal(NIVELES_NIEBLA[4].filas.length,5);
   assert.equal(NIVELES_NIEBLA[9].tormenta,true);assert.equal(NIVELES_NIEBLA[9].premio.planta,'coltapulta');
  });
  prueba('Planterna aclara 31 celdas, excluye esquinas y desaparece al morir',()=>{

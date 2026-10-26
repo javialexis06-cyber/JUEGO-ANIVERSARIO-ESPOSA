@@ -29,9 +29,10 @@ try{
   assert.equal(actual.nivelAlcanzado,'4-1');
  };
  prueba('catálogo de cuarenta niveles abre Marseta y reserva Coltapulta como premio futuro',()=>{
-  assert.deepEqual(NIVELES_PVZ.map(n=>n.id),[1,2,3,4].flatMap(m=>Array.from({length:10},(_,i)=>m+'-'+(i+1))));
+  // Desde el 26 de octubre de 2026 el tejado continúa tras 4-10 y Coltapulta ya está registrada.
+  assert.deepEqual(NIVELES_PVZ.map(n=>n.id),[1,2,3,4,5].flatMap(m=>Array.from({length:10},(_,i)=>m+'-'+(i+1))));
   assert.equal(NIVELES_PVZ.find(n=>n.id==='3-10').premio.planta,'marseta');assert.equal(Object.hasOwn(PLANTAS_PVZ,'marseta'),true);
-  assert.equal(NIVELES_PVZ.find(n=>n.id==='4-10').premio.planta,'coltapulta');assert.equal(Object.hasOwn(PLANTAS_PVZ,'coltapulta'),false);
+  assert.equal(NIVELES_PVZ.find(n=>n.id==='4-10').premio.planta,'coltapulta');assert.equal(Object.hasOwn(PLANTAS_PVZ,'coltapulta'),true);
   const inicial=progresoInicialPvZ();assert.deepEqual(inicial.plantasDesbloqueadas,['lanzaguisantes']);assert.equal(inicial.nivelAlcanzado,'1-1');assert.deepEqual(inicial.completados,[]);
  });
  prueba('frontera acuática literal avanza a 4-1 sin victorias ni premios de niebla nuevos',()=>{

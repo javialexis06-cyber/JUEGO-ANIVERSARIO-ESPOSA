@@ -13,7 +13,7 @@ exclusivos por zona y catálogo/desbloqueos progresivos. **Pendiente de implemen
 [listado vigente y seguimiento en GitHub](../en-obra/pvz-pendientes-2026-10-22.md). Se reanuda el arte del catálogo.
 
 La aventura «Plantas contra Zombis: La Semilla Madre» queda en `jardin.html?modo=aventura`. Usa Canvas
-2D y el motor separado de `src/jardin/pvz/`: cuarenta niveles de día, noche, piscina y niebla, selección de
+2D y el motor separado de `src/jardin/pvz/`: cincuenta niveles de día, noche, piscina, niebla y [tejado](../en-obra/pvz-tejado-2026-10-26.md), selección de
 semillas, progreso propio y almanaque ilustrado. El pedido del 22 de octubre aprobó su arte y encargó la
 integración a Codex. [Arte, controles y comprobaciones](../en-obra/pvz-arte-2026-10-22.md).
 

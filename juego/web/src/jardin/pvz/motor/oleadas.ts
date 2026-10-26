@@ -2,7 +2,9 @@ import type {DefNivel,DefZombi} from '../tipos';
 import {AzarPvZ} from './azar';
 import {exigirPvZ,numeroPvZ,enteroPvZ} from './validacion';
 export interface InstantaneaDirectorPvZ {actual:number;siguiente:number;lanzada:number|null;aviso:boolean}
-export interface AparicionPvZ {tipo:string;fila:number;x:number;oleada:number}
+export interface AparicionPvZ {tipo:string;fila:number;x:number;oleada:number;
+ /** Lo trae un zombi colgado desde el cielo (5-5). */
+ cielo?:boolean}
 export interface SituacionOleada {vida:number;inicial:number;pendientes:number;plantas:number;filasHielo?:number[]}
 /** Director parametrizado. No decide por el nombre del nivel ni depende de la vista. */
 export class DirectorOleadasPvZ {
@@ -29,6 +31,8 @@ export class DirectorOleadasPvZ {
   this.actual++;this.lanzada=t;this.siguiente=t+(this.nivel.minijuego==='minizombis'?7.5:this.azar.entre(25,31));this.aviso=false;
   const fijos=this.nivel.fijos?.[this.actual]??{};
   const apariciones:AparicionPvZ[]=[];
+  // Bombardeo (PC, 5-5): cada oleada enorme trae cinco colgados que roban; solo la última suma la oleada normal.
+  if(this.nivel.bombardeo&&enorme){for(let k=0;k<5;k++)apariciones.push(...this.apariciones('zombi-colgado',s));if(this.actual!==this.total)return{aviso:false,apariciones,enorme,ultima:false};}
   for(const [tipo,cantidad] of Object.entries(fijos))for(let k=0;k<cantidad;k++)apariciones.push(...this.apariciones(tipo,s));
   if(!this.nivel.composicionCompleta){
    // Presupuesto de PvZ 1; toda aparición fija se descuenta antes de rellenar con elecciones aleatorias.
@@ -43,6 +47,7 @@ export class DirectorOleadasPvZ {
     const pesos=posibles.map(id=>this.defs[id].datos?.peso??1),suma=pesos.reduce((a,b)=>a+b,0);let dado=this.azar.siguiente()*suma,i=0;while(i<pesos.length-1&&dado>=pesos[i])dado-=pesos[i++];const tipo=posibles[i];apariciones.push(...this.apariciones(tipo,s));puntos-=this.defs[tipo].datos?.puntos??1;
    }
   }
+  if(this.nivel.bombardeo)for(const a of apariciones)if(a.tipo!=='zombi-colgado')a.cielo=true;
   return{aviso:false,apariciones,enorme,ultima:this.actual===this.total};
  }
  private apariciones(tipo:string,s:SituacionOleada):AparicionPvZ[]{

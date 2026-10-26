@@ -73,9 +73,9 @@ export function normalizarProgresoPvZ(v:unknown):ProgresoPvZ|null {
  if(completados.length!==p.completados.length)return null;
  Object.assign(p,premios(p.completados));
  p.nivelAlcanzado=niveles[Math.min(p.completados.length,niveles.length-1)];
- // Solo las tres fronteras efectivamente publicadas admiten su antiguo nivel final.
+ // Solo las fronteras efectivamente publicadas (10, 20, 30 y 40 niveles) admiten su antiguo nivel final.
  // Añadir un mundo abre el siguiente nivel; nunca acredita una victoria por migrar.
- const fronteraAnterior=([['1-10',10],['2-10',20],['3-10',30]] as const).some(([id,cantidad])=>
+ const fronteraAnterior=([['1-10',10],['2-10',20],['3-10',30],['4-10',40]] as const).some(([id,cantidad])=>
   p.completados.length===cantidad&&niveles[cantidad-1]===id&&propia(v,'nivelAlcanzado')===id);
  if(Object.hasOwn(v,'nivelAlcanzado')&&propia(v,'nivelAlcanzado')!==p.nivelAlcanzado&&!fronteraAnterior)return null;
  const monedas=propia(v,'monedas'),ranuras=propia(v,'ranuras'),compras=propia(v,'compras');
@@ -170,9 +170,12 @@ export class GuardadoPvZ {
   if(!estadoFinal(estado,partida.nivel))return {ok:false,aplicado:false,guardado:this.guardado,motivo:'estado'};
   if(this.fallo||this.porGuardar)return {ok:false,aplicado:false,guardado:false,motivo:'guardado'};
   const gano=estado.terminado==='gano',aplicado=gano&&!this.actual.completados.includes(partida.nivel);
+  // Monedas de la Margarita: como en PC se conservan las recogidas aunque se pierda la partida.
+  const monedas=natural(estado.monedas)&&estado.monedas<=1e6?estado.monedas:0;
   this.activa=null;this.recibos.set(partida,{gano,aplicado});
-  if(aplicado){
-   const p=copia(this.actual);p.completados.push(partida.nivel);agregarPremios(p);p.nivelAlcanzado=niveles[Math.min(p.completados.length,niveles.length-1)];
+  if(aplicado||monedas>0){
+   const p=copia(this.actual);p.monedas+=monedas;
+   if(aplicado){p.completados.push(partida.nivel);agregarPremios(p);p.nivelAlcanzado=niveles[Math.min(p.completados.length,niveles.length-1)];}
    this.actual=p;this.porGuardar=copia(p);this.escribir();
   }
   return {ok:true,gano,aplicado,guardado:this.guardado};

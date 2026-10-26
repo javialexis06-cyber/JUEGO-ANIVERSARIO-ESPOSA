@@ -23,7 +23,7 @@ export class AtlasPvZ {
  }
  disponible(hoja:HojaPvZ){return this.imagenes.has(hoja);}
  imagen(hoja:HojaPvZ){return this.imagenes.get(hoja);}
- fondo(indice:number){const img=this.imagenes.get('fondos');if(!img)throw Error('Faltan los escenarios');return{imagen:img,x:(indice%2)*img.width/2,y:Math.floor(indice/2)*img.height/2,w:img.width/2,h:img.height/2};}
+ fondo(indice:number){if(indice===4){const t=this.imagenes.get('fondoTejado');if(!t)throw Error('Falta el tejado');return{imagen:t,x:0,y:0,w:t.width,h:t.height};}const img=this.imagenes.get('fondos');if(!img)throw Error('Faltan los escenarios');return{imagen:img,x:(indice%2)*img.width/2,y:Math.floor(indice/2)*img.height/2,w:img.width/2,h:img.height/2};}
  figura(f:Pick<FiguraPvZ,'hoja'|'celda'>):Fuente{
   const clave=f.hoja+':'+f.celda,anterior=this.figuras.get(clave);if(anterior)return anterior;
   const img=this.imagenes.get(f.hoja);if(!img)throw Error('Falta el atlas '+f.hoja);

@@ -74,7 +74,7 @@ export const COMPORTAMIENTO_NOCHE_PLANTAS:Record<string,ComportamientoPlantaPvZ>
     if((z.datos.saltando??0)<=m.t)m.aplicarEstado(z,'congelado',congelado);
     m.aplicarEstado(z,'lento',d.lento);
    }
-   consumir(m,p);
+   m.helarTablero();consumir(m,p);
   },
  },
  petaseta:{

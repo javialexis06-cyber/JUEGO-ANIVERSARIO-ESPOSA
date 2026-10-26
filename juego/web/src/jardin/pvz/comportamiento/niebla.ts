@@ -94,6 +94,10 @@ export const COMPORTAMIENTO_NIEBLA_PLANTAS:Record<string,ComportamientoPlantaPvZ
    const distancia=(z:ZombiPvZ)=>Math.hypot(z.x-p.x,(z.fila-p.fila)*m.altoFila)+Math.abs(z.fila-p.fila)*80;
    candidatos.sort((a,b)=>distancia(a)-distancia(b)||a.id-b.id);
    for(const z of candidatos)if(m.quitarMetal(z)){p.datos.carga=d.cada;p.datos.objeto=z.id;m.eventos.push({t:'estado',id:p.id,tipo:'iman-cargando',origen:z.id,fila:p.fila,x:p.x,duracion:d.cada});return;}
+   // PC: sin metal en zombis, retira la escalera más cercana a dos casillas o menos.
+   const escalera=m.plantas.filter(q=>q.vida>0&&q.datos.escalera&&Math.max(Math.abs(q.col-p.col),Math.abs(q.fila-p.fila))<=2)
+    .sort((a,b)=>Math.max(Math.abs(a.col-p.col),Math.abs(a.fila-p.fila))+Math.abs(a.fila-p.fila)*.05-(Math.max(Math.abs(b.col-p.col),Math.abs(b.fila-p.fila))+Math.abs(b.fila-p.fila)*.05)||a.id-b.id)[0];
+   if(escalera&&m.quitarEscalera(escalera.fila,escalera.col)){p.datos.carga=d.cada;m.eventos.push({t:'estado',id:p.id,tipo:'iman-cargando',fila:p.fila,x:p.x,duracion:d.cada});}
   },
  },
 };
