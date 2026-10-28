@@ -8,6 +8,13 @@ export interface ObservacionGardendless {
 export interface CapacidadesGardendless {
  nivel:'tutorial1'|'historia'; instantaneas:false; carrilesVariables:boolean; pasoExterno:boolean; perfilTemporal:true;puntosDescanso?:boolean;
 }
+/** Tablero del versus visto desde fuera del motor: posiciones en casillas (0–8). */
+export interface EstadoVersusNativo {
+ soles:number;zombis:{tipo:string;fila:number;x:number;vida:number}[];plantas:{tipo:string;fila:number;col:number;vida:number}[];
+ cortacespedes:boolean[];ganaron:'plantas'|'zombis'|null;
+ /** Centro de cada carril (y) y borde derecho del tablero (x), en fracciones de la ventana del motor. */
+ pantalla:{filas:number[];derecha:number;ancho:number};
+}
 type Pendiente={ok:(v:any)=>void;mal:(e:Error)=>void;reloj:ReturnType<typeof setTimeout>};
 
 export class FrenteGardendless {
@@ -74,6 +81,8 @@ export class FrenteGardendless {
  iniciarHistoria(config:ConfigDefensaNativa){return this.ordenar('iniciar-historia',{config});}
  pasoHistoria(cantidad:number,visible:boolean){return this.ordenar('paso-historia',{cantidad,visible});}
  async puntoHistoria(){return await this.ordenar('punto-historia') as unknown as PuntoDescansoNativo;}
+ soltarZombi(tipo:string,fila:number){return this.ordenar('soltar-zombi',{tipo,fila});}
+ async estadoVersus(){return await this.ordenar('estado-versus') as unknown as EstadoVersusNativo;}
  observar(){return this.ordenar('observar');}
  pausa(){return this.ordenar('pausa');}
  reanudar(){return this.ordenar('reanudar');}

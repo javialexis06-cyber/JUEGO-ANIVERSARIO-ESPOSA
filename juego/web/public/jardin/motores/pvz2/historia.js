@@ -31,18 +31,21 @@
     };
     const objetos = c => {
         const local = n => `RTID(${n}@CurrentLevel)`, global = n => `RTID(${n}@LevelModules)`;
-        const modules = ['StandardIntro','DefaultZombieWinCondition',...(!c.noche?['DefaultSunDropper']:[]),'ZombiesDeadWinCon'].map(global).concat([local('Semillas'), local('Cortacespedes'), local('Oleadas')]);
+        // En versus no hay victoria por oleadas: termina un zombi en la casa o el reloj del coordinador.
+        const modules = ['StandardIntro','DefaultZombieWinCondition',...(!c.noche?['DefaultSunDropper']:[]),...(c.versus?[]:['ZombiesDeadWinCon'])].map(global).concat([local('Semillas'), local('Cortacespedes'), local('Oleadas')]);
         return [{ objclass: 'LevelDefinition', objdata: { Name:c.nombre, Description: 'La Semilla Madre', StartingSun:c.punto?.soles??c.solInicial, StageModule:global(c.noche?'ModernNightStage':'TutorialStage'), Loot: global('NoLoot'), Modules: modules } },
                 { objclass: 'SeedBankProperties', aliases: ['Semillas'], objdata: { SelectionMethod: 'preset', SuppressObjectiveTip: true, PresetPlantList: c.semillas.map(PlantType => ({ PlantType })) } },
                 { objclass: 'LawnMowerProperties', aliases: ['Cortacespedes'], objdata: { MowerType: 'mower_lawn', MowerEntryAnimDuration: 2.5, MowerRows: Array.from({ length: Math.max(5,c.filas) }, (_, i) => i < c.filas && (c.punto?.cortacespedes[i] ?? true)) } },
                 { objclass: 'WaveManagerModuleProperties', aliases: ['Oleadas'], objdata: { WaveManagerProps: local('Director') } },
-                { objclass: 'WaveManagerProperties', aliases: ['Director'], objdata: { ZombieCountdownFirstWaveSecs: 18, SpawnRows: Array.from({ length: c.filas }, (_, i) => i), SuppressFlagZombie: true, MinNextWaveHealthPercentage: .5, MaxNextWaveHealthPercentage: .5, FlagWaveInterval: c.oleadas.length, Waves: c.oleadas.map((_, i) => [local('O' + i)]) } },
+                { objclass: 'WaveManagerProperties', aliases: ['Director'], objdata: { ZombieCountdownFirstWaveSecs: 18, SpawnRows: Array.from({ length: c.filas }, (_, i) => i), SuppressFlagZombie: true, MinNextWaveHealthPercentage: .5, MaxNextWaveHealthPercentage: .5, FlagWaveInterval: c.versus ? 99 : c.oleadas.length, Waves: c.oleadas.map((_, i) => [local('O' + i)]) } },
                 ...c.oleadas.map((o, i) => ({ objclass: 'SpawnZombiesJitteredWaveActionProps', aliases: ['O' + i], objdata: { Zombies: o.map(z => ({ Row: z.fila + 1, Type: `RTID(${z.tipo}@ZombieTypes)` })) } }))];
     };
     const base = c => JSON.stringify([c.zona,c.filas,c.agua,c.noche,c.lapidas,c.semillas,c.punto]);
     const validar = c => {
             if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>11||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||![50,150].includes(c.solInicial) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))
                 throw Error('Equipo o escenario incompatible.');
+            if (c.versus !== undefined && typeof c.versus !== 'boolean')
+                throw Error('Modo incompatible.');
             if (!Array.isArray(c.oleadas) || c.oleadas.length < 1 || c.oleadas.length > 20 || c.oleadas.some(o => !Array.isArray(o) || o.length > 40 || o.some(z => !Object.values(semillaCatalogoHistoria.zombis).includes(z.tipo) || !Number.isInteger(z.fila) || z.fila < 0 || z.fila >= c.filas)))
                 throw Error('Oleadas incompatibles.');
             if (c.punto) {
@@ -160,6 +163,8 @@
             n.module_SetWaveProperties(datos.find(o => o.objclass === 'WaveManagerProperties').objdata);
             n.currentWave = -1;
             n.gamedTime = 0;
+            // Versus: las plantas no ganan por agotar oleadas; decide el reloj del coordinador.
+            if (c.versus) n.judgeVictory = () => {};
             await n.nextWave();
             preparada = false;
             reposo = !!c.reposo;
@@ -191,6 +196,35 @@
                 dibujar();
         },
         async pausa(si) { pausada = !!si; await semillaMotor.pausa(si); cc.game.pause(); },
+        /** Versus: el jugador de los zombis suelta uno en un carril, por el borde derecho, con sus reglas nativas. */
+        async soltarZombi(tipo, fila) {
+            if (!config?.versus || preparada || nivel().gameWon || nivel().gameLost)
+                throw Error('No hay un versus en curso.');
+            if (!Object.values(semillaCatalogoHistoria.zombis).includes(tipo) || !Number.isInteger(fila) || fila < 0 || fila >= config.filas)
+                throw Error('Zombi o carril no válido.');
+            const agua = config.agua.includes(fila), flota = tipo.startsWith('duckytube');
+            if (agua !== flota)
+                throw Error(agua ? 'En el agua solo entran zombis con flotador.' : 'Los zombis con flotador solo entran al agua.');
+            const z = await m('Zombies').zombies.spawnZombieFromLaneByType(fila, tipo, {}, true, false, false);
+            if (!z) throw Error('El motor no pudo soltar el zombi.');
+            return true;
+        },
+        /** Versus: lo que ve el otro dispositivo (posiciones en casillas) y el estado del duelo. */
+        estadoVersus() {
+            const sq = m('Square').Square, a = sq.getSquareWorldPosition(0, 0).x, b = sq.getSquareWorldPosition(0, 8).x;
+            const col = x => b !== a ? Math.round((x - a) / (b - a) * 8 * 100) / 100 : 0;
+            const zs = m('CharacterManager').ZombiePool.pool().filter(z => z.node?.isValid && z.health > 0).map(z => ({ tipo: z.Zombie_Type, fila: z.inLane?.LaneIndex ?? z.lIndex ?? 0, x: col(z.node.worldPosition.x), vida: Math.round(z.health) }));
+            const ps = plantas().map(p => ({ tipo: p.Plant_Type, fila: p.plantInLnC?.lIndex ?? 0, col: p.plantInLnC?.cIndex ?? 0, vida: Math.round(p.health) }));
+            // Centro de cada carril y borde derecho del tablero, en fracciones de la ventana del motor, para
+            // alinear los botones del jugador de los zombis con las filas reales.
+            // La cámara que dibuja las casillas es la que comparte capa con sus nodos (la de personajes).
+            const lienzo = cc.game.canvas, caja = lienzo.getBoundingClientRect(), capa = sq.getLnC(0, 0).node.layer;
+            const cam = cc.director.getScene().getComponentsInChildren(cc.Camera).find(k => k.enabledInHierarchy && (k.visibility & capa));
+            const pantalla = (f, k) => { const q = cam.worldToScreen(sq.getLnC(f, k).node.worldPosition); return { x: (caja.left + q.x / lienzo.width * caja.width) / innerWidth, y: (caja.top + (1 - q.y / lienzo.height) * caja.height) / innerHeight }; };
+            const filas = cam ? Array.from({ length: config.filas }, (_, f) => pantalla(f, 8).y) : [];
+            const derecha = cam ? pantalla(0, 8).x : .9, ancho = cam ? derecha - pantalla(0, 7).x : .07;
+            return { soles: m('SunCount').SunCount.Value, zombis: zs, plantas: ps, cortacespedes: nivel().currentMowerLanes.slice(), ganaron: nivel().gameWon ? 'plantas' : nivel().gameLost ? 'zombis' : null, pantalla: { filas, derecha, ancho } };
+        },
         punto() {
             if (!reposo && !nivel().gameWon)
                 throw Error('El combate activo todavía no se puede guardar como defensa terminada.');

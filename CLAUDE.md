@@ -1,5 +1,11 @@
 # Guía de trabajo · Nuestro Hogar
 
+## Pedido vigente · versus de dos personas con Gardendless
+
+El 28 de octubre Javier pidió terminar Historia y Versus: probar y pulir lo actual, y un Versus sobre Gardendless para
+dos personas (plantas contra zombis, en un dispositivo o por sala). Ver [versus nativo](docs/en-obra/pvz-versus-nativo.md).
+Cerebros, costes, recargas y duración del versus son provisionales hasta que Javier los apruebe.
+
 ## Pedido vigente · ampliar la historia al mapa existente
 
 El 24 de octubre Javier autorizó extender Gardendless a las doce zonas del mapa. Esto sustituye la pausa

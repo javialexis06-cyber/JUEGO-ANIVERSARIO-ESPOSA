@@ -86,6 +86,10 @@
           if(!window.semillaHistoriaMotor?.activa)throw Error('No hay una defensa de historia.');
           semillaHistoriaMotor.paso(p.cantidad,p.visible);valor=observar();break;
         case 'punto-historia':valor=semillaHistoriaMotor.punto();break;
+        case 'soltar-zombi':
+          if(!window.semillaHistoriaMotor?.activa)throw Error('No hay un versus en curso.');
+          await semillaHistoriaMotor.soltarZombi(p.tipo,p.fila);valor=observar();break;
+        case 'estado-versus':valor=semillaHistoriaMotor.estadoVersus();break;
         case 'observar': valor = observar(); break;
         case 'pausa': await(window.semillaHistoriaMotor?.activa?semillaHistoriaMotor.pausa(true):semillaMotor.pausa(true)); valor = observar(); break;
         case 'reanudar': await(window.semillaHistoriaMotor?.activa?semillaHistoriaMotor.pausa(false):semillaMotor.pausa(false)); valor = observar(); break;

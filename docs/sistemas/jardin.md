@@ -20,6 +20,12 @@ integración a Codex. [Arte, controles y comprobaciones](../en-obra/pvz-arte-202
 Los doce patios originales y el duelo se conservan desde el menú nuevo. `modo=clasicos` o un ID antiguo de
 patio abren el controlador clásico. El resto de esta página describe esa campaña y su duelo.
 
+## Versus de dos personas (28 de octubre)
+
+`jardin.html?modo=versus` (`conquista/versus-nativo.ts`, reglas en `motores/versus-reglas.ts`): plantas en el tablero
+nativo de Gardendless contra un jugador de zombis con cerebros, en un dispositivo o por sala. Ver
+[versus nativo](../en-obra/pvz-versus-nativo.md). Valores provisionales pendientes de aprobación.
+
 ## Historia de Gardendless · ataques y refuerzo (26 de octubre)
 
 `jardin.html?modo=historia` (`conquista/historia-nativa-*.ts`). Reglas pedidas por Javier:

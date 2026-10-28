@@ -1,0 +1,61 @@
+/* Versus de dos personas sobre Gardendless. */
+.vs-app{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 30% 20%,#2f6b3a,#14301d 70%);color:#fff8e6;font-family:Nunito,system-ui,sans-serif;font-weight:700}
+.vs-app button{font:inherit;cursor:pointer}
+.vs-menu,.vs-preparar,.vs-carga{height:100%;overflow:auto;padding:max(16px,env(safe-area-inset-top)) 16px 24px;box-sizing:border-box}
+.vs-menu{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
+.vs-menu header small,.vs-preparar small,.vs-carga small{letter-spacing:.14em;color:#c9e7a4;font-size:12px}
+.vs-menu h1{margin:4px 0;font-size:clamp(34px,6vw,56px);font-weight:900;text-shadow:0 3px 0 #0b1d10}
+.vs-menu header p{max-width:560px;margin:0 auto;color:#e6f2d8}
+.vs-opciones{display:grid;grid-template-columns:repeat(3,minmax(0,220px));gap:12px}
+.vs-opciones>button,.vs-unirse{display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:18px;border:3px solid #0d2414;background:#f7efd6;color:#3a2a17;text-align:left;box-shadow:0 5px 0 #0d2414}
+.vs-opciones b{font-size:18px;font-weight:900}.vs-opciones span{font-size:13px}
+.vs-unirse label{display:flex;flex-direction:column;gap:6px}
+.vs-unirse input{font:inherit;font-size:20px;letter-spacing:.2em;text-transform:uppercase;padding:8px;border-radius:10px;border:2px solid #9b7b4c;width:100%;box-sizing:border-box}
+.vs-unirse>button,.vs-app .vs-principal{border:0;border-radius:999px;padding:10px 20px;background:#ffcf3a;color:#3a2405;font-weight:900;box-shadow:0 4px 0 #9b6a00}
+.vs-principal:disabled{opacity:.5}
+.vs-volver{border:2px solid #c9e7a4;background:transparent;color:#fff8e6;border-radius:999px;padding:8px 16px}
+.vs-error{background:#7b1f1f;padding:8px 14px;border-radius:12px}
+@media (max-width:760px){.vs-opciones{grid-template-columns:1fr;width:100%;max-width:420px}}
+.vs-preparar header{display:flex;align-items:center;gap:12px;justify-content:space-between;position:sticky;top:0;background:#173a22ee;padding:8px;border-radius:14px;z-index:2}
+.vs-preparar h1{margin:0;font-size:24px;font-weight:900}
+.vs-preparar h2{font-size:16px;margin:16px 0 8px}.vs-preparar h2 small{color:#c9e7a4;letter-spacing:0}
+.vs-escenarios{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.vs-escenarios button{display:flex;flex-direction:column;align-items:flex-start;padding:8px 10px;border-radius:12px;border:2px solid #0d2414;background:#24502f;color:#fff8e6}
+.vs-escenarios button span{font-size:12px;color:#c9e7a4}
+.vs-escenarios [aria-pressed=true],.vs-semillas [aria-pressed=true]{background:#ffcf3a;color:#3a2405;border-color:#9b6a00}
+.vs-escenarios [aria-pressed=true] span{color:#5d4100}
+.vs-semillas{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px}
+.vs-semillas button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border-radius:12px;border:2px solid #0d2414;background:#f7efd6;color:#3a2a17;font-size:11px;line-height:1.1}
+.vs-semillas img{width:52px;height:52px;object-fit:contain}
+.vs-zombis-lista{display:flex;flex-wrap:wrap;gap:8px}
+.vs-zombis-lista figure{margin:0;width:84px;text-align:center;font-size:11px;background:#2b2a3a;border-radius:12px;padding:6px 4px}
+.vs-zombis-lista img{width:56px;height:68px;object-fit:contain}.vs-zombis-lista span{display:block;color:#ffd0e0}
+.vs-carga{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.vs-juego{position:absolute;inset:0;display:grid;grid-template-columns:1fr;grid-template-areas:"t"}
+.vs-juego.vs-con-barra{grid-template-columns:1fr 104px;grid-template-areas:"t b"}
+.vs-tablero,.vs-carriles{grid-area:t;position:relative;min-width:0;min-height:0}
+.vs-tablero iframe,.vs-lienzo{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vs-carriles{pointer-events:none;z-index:2}
+.vs-carril{position:absolute;transform:translate(-10%,-50%);width:clamp(40px,6vw,64px);border-radius:14px;border:3px solid #3a0d22;background:#7b2a52cc;color:#fff;font-size:22px;pointer-events:auto;opacity:.55}
+.vs-carril.vs-activo{opacity:1;background:#c2387ccc;box-shadow:0 0 0 3px #ffd0e0}
+.vs-carril:disabled{opacity:.15}
+.vs-hud{display:flex;flex-direction:column;gap:4px;align-items:stretch;position:sticky;top:-6px;z-index:1;background:#26162b;padding:6px 0 4px;margin-top:-6px}
+.vs-hud>span{background:#120a14;border-radius:10px;padding:4px 6px;font-size:15px;font-weight:900;text-align:center}
+.vs-hud>div{display:flex;gap:4px;justify-content:center}
+.vs-hud .cq-redondo{width:38px;height:38px;font-size:15px}
+.vs-barra{grid-area:b;display:flex;flex-direction:column;gap:6px;align-items:stretch;padding:6px;background:#26162b;overflow:auto;border-left:3px solid #120a14}
+.vs-barra>*{flex-shrink:0}
+.vs-barra small{text-align:center;letter-spacing:.12em;color:#ffd0e0}
+.vs-barra p{font-size:11px;text-align:center;margin:4px 0;color:#e8d1e0}
+.vs-carta{position:relative;display:flex;flex-direction:column;align-items:center;border-radius:12px;border:3px solid #120a14;background:#f3e2c7;color:#3a1f2c;padding:2px 2px 4px;overflow:hidden}
+.vs-carta img{width:58px;height:62px;object-fit:contain}.vs-carta span{font-size:12px;font-weight:900}
+.vs-carta[aria-pressed=true]{background:#ffcf3a;box-shadow:0 0 0 3px #fff}
+.vs-carta:disabled{filter:grayscale(.85) brightness(.8)}
+.vs-recarga{position:absolute;left:0;right:0;top:0;height:0;background:#0009;pointer-events:none}
+.vs-aviso{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:#1b1208e6;padding:8px 14px;border-radius:12px;z-index:4;grid-area:t;max-width:80%}
+.vs-capa{position:absolute;inset:0;z-index:5;pointer-events:none;display:grid;place-items:center}
+.vs-capa>*{pointer-events:auto}
+.vs-cargando,.vs-fin{background:#f7efd6;color:#3a2a17;border:4px solid #0d2414;border-radius:22px;padding:20px 26px;text-align:center;box-shadow:0 8px 0 #0d2414;max-width:min(440px,90vw)}
+.vs-fin h2{font-size:30px;font-weight:900;margin:0 0 6px}.vs-fin-zombis h2{color:#7b2a52}.vs-fin-plantas h2{color:#2f7a2f}
+.vs-fin div{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.vs-fin div>button:not(.vs-principal){border:2px solid #3a2a17;background:transparent;border-radius:999px;padding:8px 16px}

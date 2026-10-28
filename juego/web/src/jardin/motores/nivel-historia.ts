@@ -38,6 +38,8 @@ export interface ConfigDefensaNativa {
     }[][];
     punto: PuntoDescansoNativo | null;
     reposo: boolean;
+    /** Versus de dos personas: sin oleadas ni victoria automática; los zombis los suelta el otro jugador. */
+    versus?: boolean;
 }
 /** Hasta dónde sube el refuerzo de una zona que vuelve a ser asediada (pedido de Javier, 26 de octubre de 2026). */
 export const REFUERZO_MAXIMO = 6;
