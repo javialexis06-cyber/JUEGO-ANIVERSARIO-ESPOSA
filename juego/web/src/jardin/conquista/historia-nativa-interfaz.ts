@@ -249,6 +249,9 @@ export async function montarHistoriaNativa() {
         for (const b of root.querySelectorAll<HTMLButtonElement>('[data-cq="ver"],[data-cq="expedicion"]')) {
             b.disabled = iniciando || seleccion === null || !instancias.get(seleccion)?.lista;
             b.setAttribute('aria-busy', String(b.disabled));
+            // Mientras se prepara el campo, el botón dice que está cargando en vez de verse apagado sin razón.
+            const rotulo = b.parentElement?.querySelector('small');
+            if (rotulo) rotulo.textContent = b.disabled && !iniciando ? 'Preparando…' : b.dataset.cq === 'ver' ? 'Ver defensa' : 'Expedición';
         }
     }
     async function prepararCampo(c: ConfigDefensaNativa) {
@@ -366,7 +369,9 @@ export async function montarHistoriaNativa() {
             return;
         if (visible === id) visible = null;
         if (seleccion === id && modal !== 'equipo') seleccion = null;
-        noticia(estado.fase === 'victoria' ? casa(id) + ' está a salvo' : casa(id) + ' cayó ante los zombis');
+        // Tras una victoria, decir cuál es el siguiente paso si no hay otra expedición en marcha.
+        const siguiente = estado.fase === 'victoria' && !mundo!.estado.ataques.length ? ESCENARIOS_HISTORIA_PVZ.map(e => e.id).find(z => !mundo!.zona(z).capturada && mundo!.puedeLlegar(z)) : undefined;
+        noticia(estado.fase === 'victoria' ? casa(id) + ' está a salvo' + (siguiente !== undefined ? `. Siguiente: toca ${casa(siguiente)} en el mapa para recuperarla.` : '') : casa(id) + ' cayó ante los zombis', siguiente !== undefined ? 10000 : 5500);
         if (mundo!.estado.perdida) {
             mundo!.pausada = true;
             for (const v of instancias.values())

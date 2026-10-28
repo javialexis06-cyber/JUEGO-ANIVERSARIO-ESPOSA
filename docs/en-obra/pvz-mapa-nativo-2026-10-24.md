@@ -135,3 +135,15 @@ El build final pasó también sus seis controles de integración en un contexto 
 navegador: acceso, movimiento, buzón, inventario, ida/vuelta entre casa y granja y recarga. En ese mismo build
 se repitieron los 17 casos de interfaz y los tres de coordinación. Son verificaciones separadas de las partidas
 nativas y de la prueba física de un dispositivo.
+
+### Recorrido jugado (28 de octubre)
+
+Partida nueva en Chromium sin GPU, solo con toques reales y sin recursos añadidos: la defensa de **La casa** se
+ganó con 18 plantas (6 oleadas); la expedición a la **Estación vieja**, con solo Repetidora y Patatapum por las
+reservas exclusivas, se ganó con 11 plantas (8 oleadas) mientras La casa recibía su asedio, que también resistió
+(asedio 2 → 3). Cerrar a mitad de la expedición mostró el aviso y la repetición desde el inicio. En este entorno el
+primer campo tarda unos 2 minutos en prepararse (descarga y dibujo por software); no es una medida de teléfono.
+Se vio dos veces un error interno de Cocos (`Cannot read properties of null (reading 'push')`) durante la
+expedición con dos frentes; no afectó el resultado y no se repitió en el recorrido siguiente.
+Mejoras de esta revisión: tras una victoria sin otra expedición en marcha, el aviso indica la siguiente zona a
+recuperar; los botones de expedición y defensa dicen «Preparando…» mientras su campo carga.
