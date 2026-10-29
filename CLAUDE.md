@@ -1,10 +1,17 @@
 # Guía de trabajo · Nuestro Hogar
 
+## Pedido vigente · catálogo completo y campaña territorial (29 de octubre)
+
+Javier pidió, en este orden: terminar PvZ 1, PvZ 2 y Fusión con todas sus plantas, zombis y mecánicas (se pueden tomar
+recursos de repositorios de GitHub), después desarrollar la campaña territorial completa y al final hacer las pruebas
+finales. **No probar hasta terminar todo**: las pruebas quedan para el cierre. Dejó a criterio de Claude el balance del
+versus y aceptó que el arte del tejado mezcle estilos. El minijuego PvZ 1 usa datos remotos fijados por commit.
+
 ## Pedido vigente · versus de dos personas con Gardendless
 
 El 28 de octubre Javier pidió terminar Historia y Versus: probar y pulir lo actual, y un Versus sobre Gardendless para
 dos personas (plantas contra zombis, en un dispositivo o por sala). Ver [versus nativo](docs/en-obra/pvz-versus-nativo.md).
-Cerebros, costes, recargas y duración del versus son provisionales hasta que Javier los apruebe.
+El 29 de octubre Javier dejó el balance del versus a criterio de Claude.
 
 ## Pedido vigente · ampliar la historia al mapa existente
 
@@ -30,11 +37,11 @@ La ampliación posterior de las doce zonas se rige por el pedido vigente de arri
 Javier pidió incorporar PvZ-Portable y Gardendless completos como minijuegos separados, y adaptar el motor
 que más convenga a la historia. Ver [integración y límites reales](docs/en-obra/pvz-motores-originales-2026-10-23.md).
 Esto sustituye su uso solo como referencia. Los dos distribuibles se incorporan con versiones/licencias fijadas;
-Portable necesita datos compatibles y Javier confirmó que no tiene los archivos GOTY. No volver a pedírselos
-ni bloquear la historia por ellos. Gardendless conecta las doce zonas existentes, con reservas exclusivas, hasta seis combates simultáneos
+Portable descarga sus datos (main.pak y properties) de un repositorio público fijado por commit
+(29 de octubre, pedido de Javier); no se suben al repositorio ni se piden al usuario. Gardendless conecta las doce zonas existentes, con reservas exclusivas, hasta seis combates simultáneos
 y puntos de descanso entre combates. Ver [conexión y límites](docs/en-obra/pvz-mapa-nativo-2026-10-24.md).
 Javier aprobó expresamente el balance original de Gardendless; V2 mantiene sus reglas y claves anteriores. El minijuego PvZ 1
-sigue encargado y pendiente de una solución de recursos compatible; no descartarlo ni exigir datos al usuario.
+ya tiene sus recursos remotos; falta comprobarlo con las pruebas finales.
 No afirmar migración ni catálogo completo por montar un minijuego.
 Conservar guardados/perfiles y la aventura anterior. La ampliación del 24 de octubre sustituye la pausa para las doce zonas.
 Existe un primer puente aislado de Gardendless (inicio, observación, pausa, resultado y cierre), revisable en

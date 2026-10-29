@@ -4,7 +4,7 @@
 **Hecho por Claude el 28 de octubre · Versus con Gardendless:** **Versus** del menú del Jardín abre ahora un duelo de
 dos personas sobre el motor de la historia: una siembra en el tablero nativo y la otra suelta zombis pagando
 cerebros, en un dispositivo o por sala con código. Ganan las plantas si resisten 5 minutos; los zombis, si uno entra
-a la casa. **Cerebros, costes, recargas y duración son provisionales y esperan la aprobación de Javier.** El versus de
+a la casa. Javier dejó cerebros, costes, recargas y duración a criterio de Claude (29 de octubre). El versus de
 36 territorios sigue en Minijuegos → Versus clásico. Ver `en-obra/pvz-versus-nativo.md`.
 
 **Hecho por Claude el 26 de octubre · sonido:** el patio tiene música CC0 variada (10 pistas) y efectos propios;

@@ -1,5 +1,5 @@
 /** Reglas del versus de dos personas sobre Gardendless: un jugador siembra con las reglas nativas y el otro suelta
- * zombis pagando cerebros. Valores provisionales, pendientes de la aprobación de Javier (docs/en-obra/pvz-versus-nativo.md):
+ * zombis pagando cerebros. Javier dejó el balance a criterio de Claude el 29 de octubre (docs/en-obra/pvz-versus-nativo.md):
  * cerebros, costes, recargas y duración se ajustan aquí sin tocar el motor. */
 import catalogo from '../../../public/jardin/motores/pvz2/catalogo-historia.json';
 

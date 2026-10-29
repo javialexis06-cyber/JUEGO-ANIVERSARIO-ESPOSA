@@ -6,7 +6,17 @@
     "commit": "141c1476dd462ac3526f796e303177616f4de6bc",
     "license": "LGPL-3.0-or-later",
     "source": "pvz1/fuentes-0.2.5.tar.gz",
-    "datosIncluidos": false
+    "datosIncluidos": false,
+    "datosRemotos": {
+      "repo": "https://github.com/ruslan831/PlantsVsZombies-decompilation",
+      "commit": "325b2229a7225d73870bb69322eefcda3a45bf8d",
+      "ruta": "SexyAppFramework/DebugVS2005/",
+      "archivos": [
+        "main.pak",
+        "properties/"
+      ],
+      "nota": "Recursos de PopCap/EA descargados al usarlos; no se distribuyen en este repositorio."
+    }
   },
   "pvz2": {
     "repo": "https://github.com/Gzh0821/pvzge_web",
@@ -44,8 +54,8 @@
     },
     {
       "path": "pvz1/adaptador.js",
-      "bytes": 3505,
-      "sha256": "34edea1c18f2f9a07318ae8c773a0f5abb3a4a4ab0736bc5988c6f96b88f9aee"
+      "bytes": 4973,
+      "sha256": "b443272659e4c9a14652546ee35b2174b4dbf93de92e758cb036404c73c3207a"
     },
     {
       "path": "pvz1/fuentes-0.2.5.tar.gz",

@@ -16,9 +16,10 @@ territorios con el motor propio sigue en **Minijuegos → Versus clásico** (`mo
 - **Ganan las plantas** si resisten hasta que el reloj llega a cero. **Ganan los zombis** si uno llega a la casa
   (la podadora nativa protege una vez por carril). No hay oleadas ni victoria automática del motor.
 
-## Valores provisionales (pendientes de aprobación)
+## Valores
 
-Están en `src/jardin/motores/versus-reglas.ts` y se cambian sin tocar el motor. Necesitan la aprobación de Javier.
+Están en `src/jardin/motores/versus-reglas.ts` y se cambian sin tocar el motor. El 29 de octubre Javier dejó el
+balance del versus a criterio de Claude; estos valores quedan como definitivos.
 
 | | Valor |
 |---|---|

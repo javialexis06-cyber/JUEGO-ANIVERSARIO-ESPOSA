@@ -24,7 +24,7 @@ patio abren el controlador clásico. El resto de esta página describe esa campa
 
 `jardin.html?modo=versus` (`conquista/versus-nativo.ts`, reglas en `motores/versus-reglas.ts`): plantas en el tablero
 nativo de Gardendless contra un jugador de zombis con cerebros, en un dispositivo o por sala. Ver
-[versus nativo](../en-obra/pvz-versus-nativo.md). Valores provisionales pendientes de aprobación.
+[versus nativo](../en-obra/pvz-versus-nativo.md). Balance a criterio de Claude (29 de octubre).
 
 ## Historia de Gardendless · ataques y refuerzo (26 de octubre)
 
