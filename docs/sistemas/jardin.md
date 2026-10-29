@@ -20,6 +20,12 @@ integración a Codex. [Arte, controles y comprobaciones](../en-obra/pvz-arte-202
 Los doce patios originales y el duelo se conservan desde el menú nuevo. `modo=clasicos` o un ID antiguo de
 patio abren el controlador clásico. El resto de esta página describe esa campaña y su duelo.
 
+## Catálogo completo y campaña de 240 áreas (29 de octubre)
+
+La Historia (`modo=historia`) pasa a 240 áreas en 12 países con los mundos nativos de Gardendless, el catálogo de
+185 plantas, 235 zombis y 117 fusiones, y el Almanaque (`modo=almanaque`). Ver
+[campaña y catálogo](../en-obra/pvz-campana-240-2026-10-29.md). Pendiente de las pruebas finales.
+
 ## Versus de dos personas (28 de octubre)
 
 `jardin.html?modo=versus` (`conquista/versus-nativo.ts`, reglas en `motores/versus-reglas.ts`): plantas en el tablero

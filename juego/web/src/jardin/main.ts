@@ -1,6 +1,7 @@
 /** Motores y claves independientes para la aventura y los patios clásicos. */
 const params=new URLSearchParams(location.search),nivel=params.get('nivel');
 if(params.get('modo')==='historia')void import('./conquista/historia-nativa-interfaz').then(m=>m.montarHistoriaNativa());
+else if(params.get('modo')==='almanaque')void import('./conquista/almanaque-nativo').then(m=>m.montarAlmanaqueNativo());
 else if(params.get('modo')==='versus')void import('./conquista/versus-nativo').then(m=>m.montarVersusNativo());
 else if(params.get('modo')==='prueba-frente')void import('./motores/prueba-frente').then(m=>m.montarPruebaFrente());
 else if(params.get('modo')==='pvz1'||params.get('modo')==='pvz2')void import('./motores/minijuego').then(m=>m.montarMotorOriginal(params.get('modo') as 'pvz1'|'pvz2'));

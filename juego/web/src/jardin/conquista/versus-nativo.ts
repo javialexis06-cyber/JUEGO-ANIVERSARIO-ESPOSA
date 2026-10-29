@@ -6,7 +6,9 @@ import './versus-nativo.css';
 import '@fontsource/nunito/700.css';
 import '@fontsource/nunito/900.css';
 import { FrenteGardendless, type EstadoVersusNativo } from '../motores/frente-gardendless';
-import { nivelHistoriaNativa, nombreSemillaNativa, TIPOS_NATIVOS, type SemillaNativa, type ConfigDefensaNativa } from '../motores/nivel-historia';
+import { nivelHistoriaNativa, nombreSemillaNativa, nombrePlantaCatalogo, nativoDe, TIPOS_NATIVOS, PLANTAS_NATIVAS, FUSIONES_NATIVAS, type SemillaNativa, type ConfigDefensaNativa } from '../motores/nivel-historia';
+import { cargarRetratosNativos, retratoPlantaNativa } from '../motores/retratos-nativos';
+import { ARTE_PLANTAS_PVZ } from '../pvz/arte/catalogo';
 import { ReglasVersus, VERSUS, ZOMBIS_VERSUS, PROPIO_PLANTA, PROPIO_ZOMBI, type EstadoReglasVersus } from '../motores/versus-reglas';
 import { ESCENARIOS_HISTORIA_PVZ, escenarioHistoriaPvZ } from './historia-datos';
 import { esModoAmigo } from '../../salas/perfil';
@@ -16,7 +18,9 @@ import { RetratosPvZ } from '../pvz/ui/retratos';
 import { PLANTAS_PVZ } from '../pvz/datos/plantas';
 
 const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-const SEMILLAS = Object.keys(TIPOS_NATIVOS) as SemillaNativa[];
+// Todo el catálogo: las 32 heredadas con su identificador propio y el resto de plantas nativas.
+const HEREDADAS = new Set<string>(Object.values(TIPOS_NATIVOS));
+const SEMILLAS = [...Object.keys(TIPOS_NATIVOS), ...PLANTAS_NATIVAS.map(p => p.id).filter(id => !HEREDADAS.has(id))] as SemillaNativa[];
 const reloj = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 type Rol = 'local' | 'anfitrion' | 'invitado';
 type Pantalla = 'menu' | 'sala' | 'preparar' | 'esperando' | 'cargando' | 'juego';
@@ -45,9 +49,9 @@ export async function montarVersusNativo() {
     let tablero: EstadoVersusNativo | null = null, anteriorTablero: EstadoVersusNativo | null = null, llegada = 0;
     let elegido: string | null = null, ganador: 'plantas' | 'zombis' | null = null, pausa = false, aviso = '', avisoHasta = 0;
     let raf = 0, anterior = performance.now(), acumulado = 0, enPaso = false, ultimoEstado = 0, n = 0, ultimaFoto = -1, muerto = false, generacion = 0, envios = 0;
-    await atlas.cargar(undefined, ['dia', 'noche', 'piscina', 'niebla', 'tripitidora', 'ropa', 'protegidos', 'especiales', 'agua']);
-    const nombrePlanta = (t: SemillaNativa) => nombreSemillaNativa(t, PLANTAS_PVZ[t]?.nombre ?? t);
-    const imgPlanta = (t: string) => { try { return retratos.planta(t); } catch { return ''; } };
+    await Promise.all([atlas.cargar(undefined, ['dia', 'noche', 'piscina', 'niebla', 'tripitidora', 'ropa', 'protegidos', 'especiales', 'agua']), cargarRetratosNativos().catch(() => undefined)]);
+    const nombrePlanta = (t: SemillaNativa) => nombrePlantaCatalogo(t, PLANTAS_PVZ[t] ? nombreSemillaNativa(t, PLANTAS_PVZ[t].nombre) : undefined);
+    const imgPlanta = (t: string) => { try { return ARTE_PLANTAS_PVZ[t] ? retratos.planta(t) : retratoPlantaNativa(t); } catch { return ''; } };
     const imgZombi = (t: string) => { try { return retratos.zombi(t); } catch { return ''; } };
     function noticia(t: string, ms = 2600) { aviso = t; avisoHasta = performance.now() + ms; const e = root.querySelector('.vs-aviso'); if (e) { e.textContent = t; (e as HTMLElement).hidden = false; } }
     function volverJardin() { const u = new URL('jardin.html', location.href); u.search = ''; u.searchParams.set('modo', 'conquista'); location.href = u.href; }
@@ -130,7 +134,8 @@ export async function montarVersusNativo() {
         const g = ++generacion;
         sesion = crypto.randomUUID();
         const base = nivelHistoriaNativa(zona, semillas, 4242);
-        config = { ...base, oleadas: [[]], versus: true, punto: null, reposo: false };
+        // En versus las fusiones están disponibles desde el inicio: plantar B sobre A forma la fusión.
+        config = { ...base, semillas: semillas.map(nativoDe), oleadas: [[]], versus: true, punto: null, reposo: false, fusiones: FUSIONES_NATIVAS.map(f => f.id) };
         reglas = new ReglasVersus(config.agua, config.filas);
         if (rol === 'anfitrion') sala?.mandar('vs:eleccion', { version: 1, sesion, zona, semillas } satisfies EleccionVersus);
         plantillaJuego();

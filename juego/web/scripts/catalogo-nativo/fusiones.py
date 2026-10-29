@@ -165,3 +165,11 @@ FUSIONES = [
     ('Explode-o-shooter', 'Tiradora explosiva', 'repe', 'cereza', tirador('repeater', 'pea_mega', 1.6)),
     ('Charm-shroom', 'Seta encantadora', 'hipno', 'hipno', ('hypnoshroom', {'Toughness': 600})),
 ]
+
+
+# Plantas de PvZ 1 que Gardendless no trae: tipos derivados de la planta nativa más parecida, sembrables como
+# cualquier semilla (la carta y el dibujo son los de su base).
+DERIVADAS = [
+    ('cattail', 'Totora', 'Cattail', 'homingthistle', {'SunCost': 225, 'Toughness': 300}),
+    ('cobcannon', 'Lanzamazorcas', 'Cob Cannon', 'coconutcannon', {'SunCost': 500, 'Toughness': 600}),
+]

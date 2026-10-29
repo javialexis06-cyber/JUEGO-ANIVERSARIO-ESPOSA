@@ -9,7 +9,7 @@ import pathlib
 
 import re
 
-from fusiones import FUSIONES, P
+from fusiones import DERIVADAS, FUSIONES, P
 from nombres import EXCLUIDAS, EXCLUIDOS_ZOMBI, PLANTAS, nombre_zombi
 
 AQUI = pathlib.Path(__file__).resolve().parent
@@ -36,7 +36,9 @@ for en, es, a, b, (base, props) in FUSIONES:
     slug = re.sub(r'[^a-z0-9]+', '_', en.lower()).strip('_')
     fusiones.append({'id': base if props is None else 'fus_' + slug, 'nombre': es, 'fusion': en, 'padres': [P[a], P[b]],
                      'base': base, 'props': props})
-catalogo = {'version': 1, 'fusiones': fusiones, 'motor': fuente['version'], 'plantas': plantas, 'zombis': zombis, 'escenarios': fuente['escenarios']}
+derivadas = [{'id': i, 'nombre': es, 'en': en, 'base': base, 'props': props} for i, es, en, base, props in DERIVADAS]
+assert all(d['base'] in ids_plantas for d in derivadas)
+catalogo = {'version': 1, 'fusiones': fusiones, 'derivadas': derivadas, 'motor': fuente['version'], 'plantas': plantas, 'zombis': zombis, 'escenarios': fuente['escenarios']}
 DESTINO.write_text(json.dumps(catalogo, ensure_ascii=False, separators=(',', ':')) + '\n')
 print(f'{len(fusiones)} fusiones, {len(plantas)} plantas, {len(zombis)} zombis, {len(fuente["escenarios"])} escenarios →', DESTINO)
 if sin_nombre:

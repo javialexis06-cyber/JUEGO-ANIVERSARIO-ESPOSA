@@ -4,7 +4,8 @@
 
 Javier pidió, en este orden: terminar PvZ 1, PvZ 2 y Fusión con todas sus plantas, zombis y mecánicas (se pueden tomar
 recursos de repositorios de GitHub), después desarrollar la campaña territorial completa y al final hacer las pruebas
-finales. **No probar hasta terminar todo**: las pruebas quedan para el cierre. Dejó a criterio de Claude el balance del
+finales. **No probar hasta terminar todo**: las pruebas quedan para el cierre.
+Avance y diseño: [catálogo, Fusión y campaña de 240 áreas](docs/en-obra/pvz-campana-240-2026-10-29.md). Dejó a criterio de Claude el balance del
 versus y aceptó que el arte del tejado mezcle estilos. El minijuego PvZ 1 usa datos remotos fijados por commit.
 
 ## Pedido vigente · versus de dos personas con Gardendless

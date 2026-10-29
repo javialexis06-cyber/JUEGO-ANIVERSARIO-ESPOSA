@@ -4,7 +4,7 @@
     'use strict';
     if (!semillaMotor.frente || new URLSearchParams(location.search).get('historia') !== '1')
         return;
-    const m=n=>System.get(`chunks:///_virtual/${n}.ts`), tipos=()=>[...new Set([...Object.values(semillaCatalogoHistoria.tipos),...semillaCatalogoNativo.plantas.map(p=>p.id)])],
+    const m=n=>System.get(`chunks:///_virtual/${n}.ts`), tipos=()=>[...new Set([...Object.values(semillaCatalogoHistoria.tipos),...semillaCatalogoNativo.plantas.map(p=>p.id),...semillaCatalogoNativo.derivadas.map(p=>p.id)])],
         zombisValidos=()=>new Set([...Object.values(semillaCatalogoHistoria.zombis),...semillaCatalogoNativo.zombis.map(z=>z.id)]);
     const camposTemporales=['busy','grown','activated','growthCountdown_','growthCountdown','growthStage','sunValue','lifeCD','resting','cds'];
     let cc, config = null, pausada = false, visible = true, reposo = false, preparada = false, preparando = false, render;
@@ -45,13 +45,18 @@
     /** Fusión: los tipos nuevos y los padres con sus recetas de evolución viajan en los datos del nivel (CurrentLevel),
      * que el motor consulta antes que sus tablas. Plantar B sobre A (o A sobre B) forma la fusión. */
     const fusionesNivel = c => {
-        if (!c.fusiones?.length) return [];
+        const derivadas = semillaCatalogoNativo.derivadas.filter(d => c.semillas.includes(d.id));
+        if (!c.fusiones?.length && !derivadas.length) return [];
         const o = m('JSONs').PvZ2ObjectContainer, porId = new Map(semillaCatalogoNativo.fusiones.map(f => [f.id, f]));
         const tipoNativo = a => o.PlantTypes.find(t => t.aliases?.[0] === a)?.objdata;
         const propsNativas = a => { const t = tipoNativo(a), rtid = t?.Properties ?? `RTID(${a}@PlantProps)`, id = rtid.slice(5, rtid.indexOf('@'));
             return structuredClone(o.PlantProps.find(x => x.aliases?.[0] === id)?.objdata ?? {}); };
         const salida = [], recetas = new Map();
-        for (const id of c.fusiones) {
+        // Plantas de PvZ 1 que el motor no trae: tipo derivado de su base, sembrable desde la baraja.
+        for (const d of derivadas)
+            salida.push({ objclass: 'PlantType', aliases: [d.id], objdata: { PlantBasedOn: d.base, Properties: `RTID(${d.id}@CurrentLevel)` } },
+                { objclass: 'PlantProperties', aliases: [d.id], objdata: { ...propsNativas(d.base), ...d.props } });
+        for (const id of c.fusiones ?? []) {
             const f = porId.get(id);
             if (!f) continue;
             if (f.props) {
@@ -74,7 +79,7 @@
     };
     const base = c => JSON.stringify([c.zona,c.filas,c.agua,c.noche,c.lapidas,c.semillas,c.punto,c.escenario??null,c.fusiones??[]]);
     // Capa de una planta (las fusiones ocupan la de su planta base: calabaza encima, nenúfar debajo).
-    const baseFusion = t => semillaCatalogoNativo.fusiones.find(f => f.id === t && f.props)?.base ?? t;
+    const baseFusion = t => semillaCatalogoNativo.fusiones.find(f => f.id === t && f.props)?.base ?? semillaCatalogoNativo.derivadas.find(d => d.id === t)?.base ?? t;
     const fusionadas = c => new Set((c.fusiones ?? []).map(id => semillaCatalogoNativo.fusiones.find(f => f.id === id)?.id).filter(Boolean));
     const validar = c => {
             if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>11||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||![50,150].includes(c.solInicial) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))

@@ -164,8 +164,8 @@
     },
     {
       "path": "pvz2/catalogo-nativo.json",
-      "bytes": 86751,
-      "sha256": "cf6b9f50013707842ab6634d5a384286119e31a44831e297916aa94df8b0e8d9"
+      "bytes": 87003,
+      "sha256": "8889333223447e51be0257029b808c23de3b0156b1020ecd5e4355113ac32276"
     },
     {
       "path": "pvz2/cocos-js/_virtual_cc-937a2166.js",
@@ -239,8 +239,8 @@
     },
     {
       "path": "pvz2/historia.js",
-      "bytes": 20745,
-      "sha256": "cd3be616a84100d87a8f3757eaeabaf74071a5354149683415c16056037ffdeb"
+      "bytes": 21381,
+      "sha256": "502a552b09dfcb24b0101460f1d251f74161a26e0151e2874a516c075c90a139"
     },
     {
       "path": "pvz2/index.html",

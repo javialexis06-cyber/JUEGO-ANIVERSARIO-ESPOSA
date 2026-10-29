@@ -1,6 +1,11 @@
 # Pedidos de Javier · estado vigente
 
 
+**En curso (Claude, 29 de octubre) · catálogo completo, Fusión y campaña de 240 áreas:** catálogo nativo de 185 plantas,
+2 derivadas de PvZ 1, 235 zombis y 117 fusiones (recetas nativas de evolución); campaña de 12 países × 4 ciudades × 5
+áreas con mundos nativos, guardado v6 que migra el v5, y Almanaque. PvZ 1 completo en su minijuego con datos remotos.
+**Sin probar todavía**: Javier pidió dejar las pruebas para el final. Ver `en-obra/pvz-campana-240-2026-10-29.md`.
+
 **Hecho por Claude el 28 de octubre · Versus con Gardendless:** **Versus** del menú del Jardín abre ahora un duelo de
 dos personas sobre el motor de la historia: una siembra en el tablero nativo y la otra suelta zombis pagando
 cerebros, en un dispositivo o por sala con código. Ganan las plantas si resisten 5 minutos; los zombis, si uno entra

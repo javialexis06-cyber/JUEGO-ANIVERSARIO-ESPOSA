@@ -1,5 +1,6 @@
 import {PAISES_CONQUISTA,ciudadesConquista,zonasCiudad,zonasPais,type EscalaMapa} from './mapa';
 import type {EstadoMapaConquista} from './mapa';
+import {AREAS_CAMPANA,CIUDADES_CAMPANA,PAISES_CAMPANA} from './campana-datos';
 type Punto={x:number;y:number};
 export interface RegionHistoria {id:number;zonas:number[];poligono:Punto[];estado:'plantas'|'zombis'|'mixta'}
 // Parcelas trazadas sobre mapa-ciudad.webp: siguen calles, muros y cercas del dibujo.
@@ -30,3 +31,15 @@ export function regionesHistoria(s:EstadoMapaConquista,escala:EscalaMapa,pais:nu
 }
 /** Contorno cerrado: conserva esquinas de cercas, calles y costa, sin redondear toda la parcela. */
 export function trazoRegionHistoria(p:readonly Punto[]){return p.length?'M'+p.map(q=>`${q.x.toFixed(3)},${q.y.toFixed(3)}`).join('L')+'Z':'';}
+
+// ------------------------------------------------------------------ Campaña de 240 áreas
+/** Silueta irregular alrededor de un marcador (el mapa es 16:9, por eso se estira en vertical). */
+function mancha(x:number,y:number,r:number,semilla:number):Punto[]{return Array.from({length:16},(_,i)=>{const a=i/16*Math.PI*2,k=1+.16*Math.sin(i*2.3+semilla)+.08*Math.cos(i*3.7+semilla*1.7);return{x:Math.max(0,Math.min(100,x+Math.cos(a)*r*k)),y:Math.max(0,Math.min(100,y+Math.sin(a)*r*k*1.6))};});}
+export function puntoAreaCampana(id:number){return pines[AREAS_CAMPANA[id].ranura];}
+/** Mundo: los doce países; país: sus cuatro ciudades; ciudad: sus cinco áreas sobre las parcelas dibujadas. */
+export function regionesCampana(s:EstadoMapaConquista,escala:EscalaMapa,pais:number,ciudad:number):RegionHistoria[]{
+ const dueno=(ids:number[])=>{const n=ids.filter(id=>s.zonas[id].dueno==='plantas').length;return n===0?'zombis':n===ids.length?'plantas':'mixta';};
+ if(escala==='mundo')return PAISES_CAMPANA.map(p=>{const zonas=AREAS_CAMPANA.filter(a=>a.pais===p.id).map(a=>a.id);return{id:p.id,zonas,poligono:mancha(p.x,p.y,6.5,p.id),estado:dueno(zonas)};});
+ if(escala==='pais')return CIUDADES_CAMPANA.filter(c=>c.pais===pais).map(c=>{const zonas=AREAS_CAMPANA.filter(a=>a.ciudad===c.id).map(a=>a.id);return{id:c.id,zonas,poligono:mancha(c.x,c.y,10,c.id),estado:dueno(zonas)};});
+ return AREAS_CAMPANA.filter(a=>a.ciudad===ciudad).map(a=>({id:a.id,zonas:[a.id],poligono:parcelas[a.ranura].map(([x,y])=>({x,y})),estado:dueno([a.id])}));
+}

@@ -1,0 +1,16 @@
+/* Almanaque del catálogo nativo completo. */
+.an-app{position:fixed;inset:0;overflow:auto;background:radial-gradient(circle at 30% 10%,#2f6b3a,#14301d 70%);color:#fff8e6;font-family:Nunito,system-ui,sans-serif;font-weight:700;padding:max(12px,env(safe-area-inset-top)) 16px 24px;box-sizing:border-box}
+.an-app button{font:inherit;cursor:pointer}
+.an-cabecera{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.an-cabecera small{letter-spacing:.14em;color:#c9e7a4;font-size:12px}.an-cabecera h1{margin:0;font-size:28px;font-weight:900}
+.an-volver{border:2px solid #c9e7a4;background:transparent;color:#fff8e6;border-radius:999px;padding:8px 16px}
+.an-pestanas,.an-mundos{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.an-pestanas button,.an-mundos button{border:2px solid #0d2414;background:#24502f;color:#fff8e6;border-radius:999px;padding:6px 14px}
+.an-pestanas [aria-pressed=true],.an-mundos [aria-pressed=true]{background:#ffcf3a;color:#3a2405;border-color:#9b6a00}
+.an-pestanas input{flex:1;min-width:160px;font:inherit;border-radius:999px;border:2px solid #0d2414;padding:6px 14px}
+.an-nota{color:#e6f2d8;margin:0 0 10px}
+.an-grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.an-ficha{display:flex;flex-direction:column;align-items:center;gap:2px;background:#f7efd6;color:#3a2a17;border:3px solid #0d2414;border-radius:14px;padding:6px;text-align:center}
+.an-ficha>img{width:84px;height:84px;object-fit:contain}
+.an-ficha b{font-size:13px;line-height:1.1}.an-ficha small{font-size:11px;color:#6b5434}
+.an-receta{display:flex;align-items:center;gap:2px}.an-receta img{width:34px;height:34px;object-fit:contain}.an-receta span{font-weight:900}
