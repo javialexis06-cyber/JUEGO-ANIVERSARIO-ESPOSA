@@ -4,7 +4,8 @@
     'use strict';
     if (!semillaMotor.frente || new URLSearchParams(location.search).get('historia') !== '1')
         return;
-    const m=n=>System.get(`chunks:///_virtual/${n}.ts`), tipos=()=>Object.values(semillaCatalogoHistoria.tipos);
+    const m=n=>System.get(`chunks:///_virtual/${n}.ts`), tipos=()=>[...new Set([...Object.values(semillaCatalogoHistoria.tipos),...semillaCatalogoNativo.plantas.map(p=>p.id)])],
+        zombisValidos=()=>new Set([...Object.values(semillaCatalogoHistoria.zombis),...semillaCatalogoNativo.zombis.map(z=>z.id)]);
     const camposTemporales=['busy','grown','activated','growthCountdown_','growthCountdown','growthStage','sunValue','lifeCD','resting','cds'];
     let cc, config = null, pausada = false, visible = true, reposo = false, preparada = false, preparando = false, render;
     const esperar = fn => new Promise((ok, mal) => { const inicio = performance.now(); const ver = () => { if (fn())
@@ -33,24 +34,62 @@
         const local = n => `RTID(${n}@CurrentLevel)`, global = n => `RTID(${n}@LevelModules)`;
         // En versus no hay victoria por oleadas: termina un zombi en la casa o el reloj del coordinador.
         const modules = ['StandardIntro','DefaultZombieWinCondition',...(!c.noche?['DefaultSunDropper']:[]),...(c.versus?[]:['ZombiesDeadWinCon'])].map(global).concat([local('Semillas'), local('Cortacespedes'), local('Oleadas')]);
-        return [{ objclass: 'LevelDefinition', objdata: { Name:c.nombre, Description: 'La Semilla Madre', StartingSun:c.punto?.soles??c.solInicial, StageModule:global(c.noche?'ModernNightStage':'TutorialStage'), Loot: global('NoLoot'), Modules: modules } },
+        return [{ objclass: 'LevelDefinition', objdata: { Name:c.nombre, Description: 'La Semilla Madre', StartingSun:c.punto?.soles??c.solInicial, StageModule:global(c.escenario??(c.noche?'ModernNightStage':'TutorialStage')), Loot: global('NoLoot'), Modules: modules } },
                 { objclass: 'SeedBankProperties', aliases: ['Semillas'], objdata: { SelectionMethod: 'preset', SuppressObjectiveTip: true, PresetPlantList: c.semillas.map(PlantType => ({ PlantType })) } },
                 { objclass: 'LawnMowerProperties', aliases: ['Cortacespedes'], objdata: { MowerType: 'mower_lawn', MowerEntryAnimDuration: 2.5, MowerRows: Array.from({ length: Math.max(5,c.filas) }, (_, i) => i < c.filas && (c.punto?.cortacespedes[i] ?? true)) } },
                 { objclass: 'WaveManagerModuleProperties', aliases: ['Oleadas'], objdata: { WaveManagerProps: local('Director') } },
                 { objclass: 'WaveManagerProperties', aliases: ['Director'], objdata: { ZombieCountdownFirstWaveSecs: 18, SpawnRows: Array.from({ length: c.filas }, (_, i) => i), SuppressFlagZombie: true, MinNextWaveHealthPercentage: .5, MaxNextWaveHealthPercentage: .5, FlagWaveInterval: c.versus ? 99 : c.oleadas.length, Waves: c.oleadas.map((_, i) => [local('O' + i)]) } },
-                ...c.oleadas.map((o, i) => ({ objclass: 'SpawnZombiesJitteredWaveActionProps', aliases: ['O' + i], objdata: { Zombies: o.map(z => ({ Row: z.fila + 1, Type: `RTID(${z.tipo}@ZombieTypes)` })) } }))];
+                ...c.oleadas.map((o, i) => ({ objclass: 'SpawnZombiesJitteredWaveActionProps', aliases: ['O' + i], objdata: { Zombies: o.map(z => ({ Row: z.fila + 1, Type: `RTID(${z.tipo}@ZombieTypes)` })) } })),
+                ...fusionesNivel(c)];
     };
-    const base = c => JSON.stringify([c.zona,c.filas,c.agua,c.noche,c.lapidas,c.semillas,c.punto]);
+    /** Fusión: los tipos nuevos y los padres con sus recetas de evolución viajan en los datos del nivel (CurrentLevel),
+     * que el motor consulta antes que sus tablas. Plantar B sobre A (o A sobre B) forma la fusión. */
+    const fusionesNivel = c => {
+        if (!c.fusiones?.length) return [];
+        const o = m('JSONs').PvZ2ObjectContainer, porId = new Map(semillaCatalogoNativo.fusiones.map(f => [f.id, f]));
+        const tipoNativo = a => o.PlantTypes.find(t => t.aliases?.[0] === a)?.objdata;
+        const propsNativas = a => { const t = tipoNativo(a), rtid = t?.Properties ?? `RTID(${a}@PlantProps)`, id = rtid.slice(5, rtid.indexOf('@'));
+            return structuredClone(o.PlantProps.find(x => x.aliases?.[0] === id)?.objdata ?? {}); };
+        const salida = [], recetas = new Map();
+        for (const id of c.fusiones) {
+            const f = porId.get(id);
+            if (!f) continue;
+            if (f.props) {
+                salida.push({ objclass: 'PlantType', aliases: [f.id], objdata: { PlantBasedOn: f.base, Properties: `RTID(${f.id}@CurrentLevel)` } },
+                    { objclass: 'PlantProperties', aliases: [f.id], objdata: { ...propsNativas(f.base), ...f.props } });
+            }
+            const [a, b] = f.padres;
+            for (const [x, y] of [[a, b], [b, a]]) {
+                if (!recetas.has(x)) recetas.set(x, []);
+                if (!recetas.get(x).some(r => r.OtherPlantType === y)) recetas.get(x).push({ Name: 'fusion_' + f.id, OtherPlantType: y, TargetPlantType: f.id, MaxCount: 1 });
+            }
+        }
+        for (const [padre, nuevas] of recetas) {
+            const props = propsNativas(padre);
+            props.EvolutionRecipes = [...(props.EvolutionRecipes ?? []), ...nuevas];
+            salida.push({ objclass: 'PlantType', aliases: [padre], objdata: { ...structuredClone(tipoNativo(padre) ?? { PlantBasedOn: padre }), Properties: `RTID(fusion_${padre}@CurrentLevel)` } },
+                { objclass: 'PlantProperties', aliases: ['fusion_' + padre], objdata: props });
+        }
+        return salida;
+    };
+    const base = c => JSON.stringify([c.zona,c.filas,c.agua,c.noche,c.lapidas,c.semillas,c.punto,c.escenario??null,c.fusiones??[]]);
+    // Capa de una planta (las fusiones ocupan la de su planta base: calabaza encima, nenúfar debajo).
+    const baseFusion = t => semillaCatalogoNativo.fusiones.find(f => f.id === t && f.props)?.base ?? t;
+    const fusionadas = c => new Set((c.fusiones ?? []).map(id => semillaCatalogoNativo.fusiones.find(f => f.id === id)?.id).filter(Boolean));
     const validar = c => {
             if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>11||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||![50,150].includes(c.solInicial) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))
                 throw Error('Equipo o escenario incompatible.');
+            if (c.escenario !== undefined && !Object.hasOwn(semillaCatalogoNativo.escenarios, c.escenario))
+                throw Error('Escenario desconocido.');
+            if (c.fusiones !== undefined && (!Array.isArray(c.fusiones) || c.fusiones.length > 200 || c.fusiones.some(f => !semillaCatalogoNativo.fusiones.some(x => x.id === f))))
+                throw Error('Fusiones desconocidas.');
             if (c.versus !== undefined && typeof c.versus !== 'boolean')
                 throw Error('Modo incompatible.');
-            if (!Array.isArray(c.oleadas) || c.oleadas.length < 1 || c.oleadas.length > 20 || c.oleadas.some(o => !Array.isArray(o) || o.length > 40 || o.some(z => !Object.values(semillaCatalogoHistoria.zombis).includes(z.tipo) || !Number.isInteger(z.fila) || z.fila < 0 || z.fila >= c.filas)))
+            if (!Array.isArray(c.oleadas) || c.oleadas.length < 1 || c.oleadas.length > 20 || c.oleadas.some(o => !Array.isArray(o) || o.length > 40 || o.some(z => !zombisValidos().has(z.tipo) || !Number.isInteger(z.fila) || z.fila < 0 || z.fila >= c.filas)))
                 throw Error('Oleadas incompatibles.');
             if (c.punto) {
                 const p = c.punto;
-                if (p.version !== 1 || !Number.isFinite(p.soles) || p.soles < 0 || p.soles > 9900 || !Array.isArray(p.plantas) || p.plantas.length > c.filas*9*3 || p.plantas.some(x => !c.semillas.includes(x.tipo) || !Number.isInteger(x.fila) || x.fila < 0 || x.fila >= c.filas || !Number.isInteger(x.col) || x.col < 0 || x.col > 8 || !Number.isFinite(x.vida) || x.vida <= 0))
+                if (p.version !== 1 || !Number.isFinite(p.soles) || p.soles < 0 || p.soles > 9900 || !Array.isArray(p.plantas) || p.plantas.length > c.filas*9*3 || p.plantas.some(x => !(c.semillas.includes(x.tipo) || fusionadas(c).has(x.tipo)) || !Number.isInteger(x.fila) || x.fila < 0 || x.fila >= c.filas || !Number.isInteger(x.col) || x.col < 0 || x.col > 8 || !Number.isFinite(x.vida) || x.vida <= 0))
                     throw Error('Defensa conservada incompatible.');
             }
     };
@@ -113,7 +152,8 @@
             nivel().dropCoins = false;
             nivel().dropSprouts = false;
             if (c.punto) {
-                for (const foto of [...c.punto.plantas].sort((a,b)=>(a.tipo==='lilypad'?-1:a.tipo==='pumpkin'?1:0)-(b.tipo==='lilypad'?-1:b.tipo==='pumpkin'?1:0))) {
+                const orden=t=>{const k=baseFusion(t);return k==='lilypad'?-1:k==='pumpkin'?1:0;};
+                for (const foto of [...c.punto.plantas].sort((a,b)=>orden(a.tipo)-orden(b.tipo))) {
                     const p = await m('Square').Square.getLnC(foto.fila, foto.col).SpawnPlantByType(foto.tipo);
                     if (!p)
                         throw Error('No se pudo recuperar una planta.');
@@ -129,7 +169,7 @@
                         if (camposTemporales.includes(k) && k in p)
                             p[k] = Array.isArray(v)?[...v]:v;
                     if(Array.isArray(p.cds))p.inMouthAmount=p.cds.length;
-                    if(['wallnut','tallnut','pumpkin'].includes(foto.tipo)&&p.onDamaged)p.onDamaged(null,p.health,p.health);
+                    if(['wallnut','tallnut','pumpkin'].includes(baseFusion(foto.tipo))&&p.onDamaged)p.onDamaged(null,p.health,p.health);
                 }
                 const cards = m('Cards').Cards.component;
                 for (const cu of cards.CUs) {
@@ -200,7 +240,7 @@
         async soltarZombi(tipo, fila) {
             if (!config?.versus || preparada || nivel().gameWon || nivel().gameLost)
                 throw Error('No hay un versus en curso.');
-            if (!Object.values(semillaCatalogoHistoria.zombis).includes(tipo) || !Number.isInteger(fila) || fila < 0 || fila >= config.filas)
+            if (!zombisValidos().has(tipo) || !Number.isInteger(fila) || fila < 0 || fila >= config.filas)
                 throw Error('Zombi o carril no válido.');
             const agua = config.agua.includes(fila), flota = tipo.startsWith('duckytube');
             if (agua !== flota)
@@ -229,8 +269,8 @@
             if (!reposo && !nivel().gameWon)
                 throw Error('El combate activo todavía no se puede guardar como defensa terminada.');
             const cells = new Set();
-            const ps = plantas().map(p => { const q = p.plantInLnC; if (!q || !tipos().includes(p.Plant_Type))
-                throw Error('Planta no compatible con este tramo.'); const key=q.lIndex+':'+q.cIndex+':'+(p.Plant_Type==='lilypad'?'base':p.Plant_Type==='pumpkin'?'coraza':'planta'); if (cells.has(key))
+            const ps = plantas().map(p => { const q = p.plantInLnC; if (!q || !(tipos().includes(p.Plant_Type) || fusionadas(config).has(p.Plant_Type)))
+                throw Error('Planta no compatible con este tramo.'); const capa=baseFusion(p.Plant_Type),key=q.lIndex+':'+q.cIndex+':'+(capa==='lilypad'?'base':capa==='pumpkin'?'coraza':'planta'); if (cells.has(key))
                 throw Error('Defensa con casillas superpuestas.'); cells.add(key); const temporales = {}; for (const k of camposTemporales)
                 if (k==='cds'&&Array.isArray(p[k])||typeof p[k] === 'boolean' || typeof p[k] === 'number' && Number.isFinite(p[k]) && p[k] >= 0)
                     temporales[k] = p[k]; return { tipo: p.Plant_Type, fila: q.lIndex, col: q.cIndex, vida:p.health,...('armorHealth' in p?{armadura:Math.max(0,p.armorHealth)}:{}),temporales }; });

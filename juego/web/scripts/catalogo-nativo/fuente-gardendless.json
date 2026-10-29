@@ -1,0 +1,5454 @@
+{
+"version": "Gardendless 0.16.0",
+"plantas": [
+{
+"id": "inferno",
+"en": "Inferno",
+"mundo": "epic",
+"coste": 200,
+"recarga": 25,
+"vida": 300,
+"familia": "Fire",
+"res": "Inferno",
+"basadaEn": "inferno"
+},
+{
+"id": "zoybeanpod",
+"en": "Zoybean Pod",
+"mundo": "market",
+"coste": 200,
+"recarga": 20,
+"vida": 300,
+"familia": "Magic",
+"res": "ZoybeanPod",
+"basadaEn": "zoybeanpod"
+},
+{
+"id": "icebloom",
+"en": "Ice Bloom",
+"mundo": "epic",
+"coste": 200,
+"recarga": 30,
+"vida": 300,
+"familia": "Cold",
+"res": "IceBloom",
+"basadaEn": "icebloom"
+},
+{
+"id": "goldbloom",
+"en": "Gold Bloom",
+"mundo": "epic",
+"coste": 0,
+"recarga": 75,
+"vida": 300,
+"familia": "Sun",
+"res": "GoldBloom",
+"basadaEn": "goldbloom"
+},
+{
+"id": "twinsunflower",
+"en": "Twin Sunflower",
+"mundo": "egypt",
+"coste": 125,
+"recarga": 10,
+"vida": 300,
+"familia": "Sun",
+"res": "SunflowerTwin",
+"basadaEn": "twinsunflower"
+},
+{
+"id": "sunshroom",
+"en": "Sun-shroom",
+"mundo": "dark",
+"coste": 25,
+"recarga": 5,
+"vida": 300,
+"familia": "Sun",
+"res": "SunShroom",
+"basadaEn": "sunshroom"
+},
+{
+"id": "lilypad",
+"en": "Lily Pad",
+"mundo": "water",
+"coste": 25,
+"recarga": 5,
+"vida": 300,
+"familia": "Nope",
+"res": "LilyPad",
+"basadaEn": "lilypad"
+},
+{
+"id": "shootingstarfruit",
+"en": "Shooting Starfruit",
+"mundo": "lod",
+"coste": 500,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "ShootingStarfruit",
+"basadaEn": "shootingstarfruit"
+},
+{
+"id": "starfruit",
+"en": "Starfruit",
+"mundo": "market",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "StarFruit",
+"basadaEn": "starfruit"
+},
+{
+"id": "pinkstarfruit",
+"en": "Angel Starfruit",
+"mundo": "market",
+"coste": 225,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "PinkStarFruit",
+"basadaEn": "pinkstarfruit"
+},
+{
+"id": "homingthistle",
+"en": "Homing Thistle",
+"mundo": "market",
+"coste": 250,
+"recarga": 5,
+"vida": 300,
+"familia": "Sharp",
+"res": "HomingThistle",
+"basadaEn": "homingthistle"
+},
+{
+"id": "xshot",
+"en": "Rotobaga",
+"mundo": "ice",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "Rotobaga",
+"basadaEn": "xshot"
+},
+{
+"id": "primalpeashooter",
+"en": "Primal Peashooter",
+"mundo": "dino",
+"coste": 175,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "PrimalPea",
+"basadaEn": "primalpeashooter"
+},
+{
+"id": "slingpea",
+"en": "Sling Pea",
+"mundo": "lod",
+"coste": 125,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "SlingPea",
+"basadaEn": "slingpea"
+},
+{
+"id": "darkmatterdragonfruit",
+"en": "Dark Matter Dragonfruit",
+"mundo": "lod",
+"coste": 350,
+"recarga": 5,
+"vida": 300,
+"familia": "Shadow",
+"res": "DarkMatterDragonfruit",
+"basadaEn": "darkmatterdragonfruit"
+},
+{
+"id": "asparagus",
+"en": "Asparajet",
+"mundo": "market",
+"coste": 225,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "Asparagus",
+"basadaEn": "asparagus"
+},
+{
+"id": "threepeater",
+"en": "Threepeater",
+"mundo": "pirate",
+"coste": 300,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "ThreePeater",
+"basadaEn": "threepeater"
+},
+{
+"id": "firepeashooter",
+"en": "Fire Peashooter",
+"mundo": "market",
+"coste": 175,
+"recarga": 5,
+"vida": 300,
+"familia": "Fire",
+"res": "FirePeashooter",
+"basadaEn": "firepeashooter"
+},
+{
+"id": "floawerPot",
+"en": "Floawer Pot",
+"mundo": "market",
+"coste": 100,
+"recarga": 10,
+"vida": 300,
+"familia": "Nope",
+"res": "FloawerPot",
+"basadaEn": "floawerPot"
+},
+{
+"id": "pvine",
+"en": "Pea Vine",
+"mundo": "epic",
+"coste": 125,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "PeaVine",
+"basadaEn": "pvine"
+},
+{
+"id": "pumpkin",
+"en": "Pumpkin",
+"mundo": "epic",
+"coste": 150,
+"recarga": 20,
+"vida": 4000,
+"familia": "Defence",
+"res": "Pumpkin",
+"basadaEn": "pumpkin"
+},
+{
+"id": "gravebuster",
+"en": "Grave Buster",
+"mundo": "egypt",
+"coste": 0,
+"recarga": 10,
+"vida": 300,
+"familia": "Slow",
+"res": "GraveBuster",
+"basadaEn": "gravebuster"
+},
+{
+"id": "fumeshroom",
+"en": "Fume-shroom",
+"mundo": "dark",
+"coste": 125,
+"recarga": 5,
+"vida": 300,
+"familia": "Poison",
+"res": "FumeShroom",
+"basadaEn": "fumeshroom"
+},
+{
+"id": "scaredyshroom",
+"en": "Scaredy Shroom",
+"mundo": "dark",
+"coste": 25,
+"recarga": 5,
+"vida": 300,
+"familia": "Poison",
+"res": "ScaredyShroom",
+"basadaEn": "scaredyshroom"
+},
+{
+"id": "megagatling",
+"en": "Mega Gatling Pea",
+"mundo": "epic",
+"coste": 450,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "MegaGatlingPea",
+"basadaEn": "megagatling"
+},
+{
+"id": "repeater",
+"en": "Repeater",
+"mundo": "egypt",
+"coste": 200,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "Repeater",
+"basadaEn": "repeater"
+},
+{
+"id": "bonkchoy",
+"en": "Bonk Choy",
+"mundo": "egypt",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Melee",
+"res": "BonkChoy",
+"basadaEn": "bonkchoy"
+},
+{
+"id": "wasabiwhip",
+"en": "Wasabi Whip",
+"mundo": "epic",
+"coste": 225,
+"recarga": 5,
+"vida": 300,
+"familia": "Fire",
+"res": "WasabiWhip",
+"basadaEn": "wasabiwhip"
+},
+{
+"id": "iceburg",
+"en": "Iceberg Lettuce",
+"mundo": "egypt",
+"coste": 0,
+"recarga": 20,
+"vida": 300,
+"familia": "Cold",
+"res": "IcebergLettuce",
+"basadaEn": "iceburg"
+},
+{
+"id": "bloomerang",
+"en": "Bloomerang",
+"mundo": "egypt",
+"coste": 175,
+"recarga": 5,
+"vida": 300,
+"familia": "Sharp",
+"res": "Bloomerang",
+"basadaEn": "bloomerang"
+},
+{
+"id": "bambooshoot",
+"en": "Bamboo Shoot",
+"mundo": "kongfu",
+"coste": 175,
+"recarga": 5,
+"vida": 300,
+"familia": "Sharp",
+"res": "BambooShoot",
+"basadaEn": "bambooshoot"
+},
+{
+"id": "cabbagepult",
+"en": "Cabbage-pult",
+"mundo": "egypt",
+"coste": 100,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "CabbagePult",
+"basadaEn": "cabbagepult"
+},
+{
+"id": "stickybombrice",
+"en": "Stickybomb Rice",
+"mundo": "epic",
+"coste": 225,
+"recarga": 10,
+"vida": 300,
+"familia": "Lobber",
+"res": "StickyBombRice",
+"basadaEn": "stickybombrice"
+},
+{
+"id": "turkeypult",
+"en": "Turkey-pult",
+"mundo": "lod",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Magic",
+"res": "TurkeyPult",
+"basadaEn": "turkeypult"
+},
+{
+"id": "bloominghearts",
+"en": "Blooming Heart",
+"mundo": "epic",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Poison",
+"res": "BloomingHeart",
+"basadaEn": "bloominghearts"
+},
+{
+"id": "shrinkingviolet",
+"en": "Shrinking Violet",
+"mundo": "market",
+"coste": 50,
+"recarga": 15,
+"vida": 300,
+"familia": "Magic",
+"res": "ShrinkingViolet",
+"basadaEn": "shrinkingviolet"
+},
+{
+"id": "solarsage",
+"en": "Solar Sage",
+"mundo": "kongfu",
+"coste": 75,
+"recarga": 20,
+"vida": 300,
+"familia": "Sun",
+"res": "SolarSage",
+"basadaEn": "solarsage"
+},
+{
+"id": "lychee",
+"en": "Lychee",
+"mundo": "kongfu",
+"coste": 150,
+"recarga": 20,
+"vida": 3000,
+"familia": "Defence",
+"res": "Lychee",
+"basadaEn": "lychee"
+},
+{
+"id": "atombomb",
+"en": "Atomic Bombegranate",
+"mundo": "",
+"coste": 275,
+"recarga": 20,
+"vida": 300,
+"familia": "Explosive",
+"res": "AtomBomb",
+"basadaEn": "atombomb"
+},
+{
+"id": "potatomine",
+"en": "Potato Mine",
+"mundo": "frontyard",
+"coste": 25,
+"recarga": 20,
+"vida": 300,
+"familia": "Explosive",
+"res": "PotatoMine",
+"basadaEn": "potatomine"
+},
+{
+"id": "peashooter",
+"en": "Peashooter",
+"mundo": "frontyard",
+"coste": 100,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "Peashooter",
+"basadaEn": "peashooter"
+},
+{
+"id": "poisonpeashooter",
+"en": "Goo Peashooter",
+"mundo": "epic",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Poison",
+"res": "GooPeashooter",
+"basadaEn": "poisonpeashooter"
+},
+{
+"id": "snappea",
+"en": "Snap Pea",
+"mundo": "lod",
+"coste": 200,
+"recarga": 10,
+"vida": 300,
+"familia": "Melee",
+"res": "SnapPea",
+"basadaEn": "snappea"
+},
+{
+"id": "shadowpeashooter",
+"en": "Shadow Peashooter",
+"mundo": "epic",
+"coste": 225,
+"recarga": 10,
+"vida": 300,
+"familia": "Shadow",
+"res": "ShadowPeashooter",
+"basadaEn": "shadowpeashooter"
+},
+{
+"id": "seashooter",
+"en": "Seashooter",
+"mundo": "epic",
+"coste": 275,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "Seashooter",
+"basadaEn": "seashooter"
+},
+{
+"id": "sunflower",
+"en": "Sunflower",
+"mundo": "frontyard",
+"coste": 50,
+"recarga": 5,
+"vida": 300,
+"familia": "Sun",
+"res": "Sunflower",
+"basadaEn": "sunflower"
+},
+{
+"id": "shinevine",
+"en": "Shine Vine",
+"mundo": "epic",
+"coste": 75,
+"recarga": 5,
+"vida": 300,
+"familia": "Sun",
+"res": "ShineVine",
+"basadaEn": "shinevine"
+},
+{
+"id": "primalsunflower",
+"en": "Primal Sunflower",
+"mundo": "dino",
+"coste": 75,
+"recarga": 5,
+"vida": 300,
+"familia": "Sun",
+"res": "PrimalSunflower",
+"basadaEn": "primalsunflower"
+},
+{
+"id": "wallnut",
+"en": "Wall-nut",
+"mundo": "frontyard",
+"coste": 50,
+"recarga": 20,
+"vida": 4000,
+"familia": "Defence",
+"res": "Wallnut",
+"basadaEn": "wallnut"
+},
+{
+"id": "mirrornut",
+"en": "Mirror-nut",
+"mundo": "epic",
+"coste": 150,
+"recarga": 25,
+"vida": 4000,
+"familia": "Defence",
+"res": "MirrorNut",
+"basadaEn": "mirrornut"
+},
+{
+"id": "pineapple",
+"en": "Spinapple",
+"mundo": "sky",
+"coste": 125,
+"recarga": 20,
+"vida": 6000,
+"familia": "Defence",
+"res": "Pineapple",
+"basadaEn": "pineapple"
+},
+{
+"id": "murkadamia",
+"en": "Murkadamia Nut",
+"mundo": "epic",
+"coste": 100,
+"recarga": 13,
+"vida": 2500,
+"familia": "Shadow",
+"res": "MurkadamiaNut",
+"basadaEn": "murkadamia"
+},
+{
+"id": "dragonbruit",
+"en": "Dragon Bruit",
+"mundo": "market",
+"coste": 200,
+"recarga": 10,
+"vida": 350,
+"familia": "Shadow",
+"res": "Dragonbruit",
+"basadaEn": "dragonbruit"
+},
+{
+"id": "moonflower",
+"en": "Moonflower",
+"mundo": "modern",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Shadow",
+"res": "Moonflower",
+"basadaEn": "moonflower"
+},
+{
+"id": "grimrose",
+"en": "Grimrose",
+"mundo": "modern",
+"coste": 75,
+"recarga": 20,
+"vida": 300,
+"familia": "Shadow",
+"res": "Grimrose",
+"basadaEn": "grimrose"
+},
+{
+"id": "nightshade",
+"en": "Nightshade",
+"mundo": "modern",
+"coste": 75,
+"recarga": 5,
+"vida": 300,
+"familia": "Shadow",
+"res": "NightShade",
+"basadaEn": "nightshade"
+},
+{
+"id": "dusklobber",
+"en": "Dusk Lobber",
+"mundo": "modern",
+"coste": 150,
+"recarga": 10,
+"vida": 300,
+"familia": "Shadow",
+"res": "DuskLobber",
+"basadaEn": "dusklobber"
+},
+{
+"id": "snowpea",
+"en": "Snow Pea",
+"mundo": "kongfu",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Cold",
+"res": "SnowPea",
+"basadaEn": "snowpea"
+},
+{
+"id": "lightningreed",
+"en": "Lightning Reed",
+"mundo": "cowboy",
+"coste": 125,
+"recarga": 5,
+"vida": 300,
+"familia": "Electricity",
+"res": "LightningReed",
+"basadaEn": "lightningreed"
+},
+{
+"id": "witchhazel",
+"en": "Witch Hazel",
+"mundo": "lod",
+"coste": 200,
+"recarga": 30,
+"vida": 300,
+"familia": "Magic",
+"res": "WitchHazel",
+"basadaEn": "witchhazel"
+},
+{
+"id": "anthurium",
+"en": "Ampereum",
+"mundo": "sky",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Electricity",
+"res": "Anthurium",
+"basadaEn": "anthurium"
+},
+{
+"id": "kernelpult",
+"en": "Kernel-pult",
+"mundo": "pirate",
+"coste": 100,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "KernelPult",
+"basadaEn": "kernelpult"
+},
+{
+"id": "snowdrop",
+"en": "Snowdrop",
+"mundo": "market",
+"coste": 200,
+"recarga": 5,
+"vida": 300,
+"familia": "Cold",
+"res": "SnowDrop",
+"basadaEn": "snowdrop"
+},
+{
+"id": "meteorflower",
+"en": "Meteor Flower",
+"mundo": "epic",
+"coste": 250,
+"recarga": 10,
+"vida": 300,
+"familia": "Fire",
+"res": "MeteorFlower",
+"basadaEn": "meteorflower"
+},
+{
+"id": "springbean",
+"en": "Spring Bean",
+"mundo": "pirate",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Slow",
+"res": "SpringBean",
+"basadaEn": "springbean"
+},
+{
+"id": "umbrellaleaf",
+"en": "Umbrella Leaf",
+"mundo": "epic",
+"coste": 100,
+"recarga": 5,
+"vida": 300,
+"familia": "Defence",
+"res": "UmbrellaLeaf",
+"basadaEn": "umbrellaleaf"
+},
+{
+"id": "melonpult",
+"en": "Melon-pult",
+"mundo": "cowboy",
+"coste": 325,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "MelonPult",
+"basadaEn": "melonpult"
+},
+{
+"id": "cantaloupe",
+"en": "Cantaloupe-pult",
+"mundo": "kongfu",
+"coste": 500,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "CantaloupePult",
+"basadaEn": "cantaloupe"
+},
+{
+"id": "wintermelon",
+"en": "Winter Melon",
+"mundo": "cowboy",
+"coste": 500,
+"recarga": 5,
+"vida": 300,
+"familia": "Cold",
+"res": "WinterMelon",
+"basadaEn": "wintermelon"
+},
+{
+"id": "blover",
+"en": "Blover",
+"mundo": "future",
+"coste": 50,
+"recarga": 5,
+"vida": 300,
+"familia": "Slow",
+"res": "Blover",
+"basadaEn": "blover"
+},
+{
+"id": "spikeweed",
+"en": "Spikeweed",
+"mundo": "pirate",
+"coste": 100,
+"recarga": 5,
+"vida": 300,
+"familia": "Sharp",
+"res": "Spikeweed",
+"basadaEn": "spikeweed"
+},
+{
+"id": "iceweed",
+"en": "Iceweed",
+"mundo": "market",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Cold",
+"res": "Iceweed",
+"basadaEn": "iceweed"
+},
+{
+"id": "spikerock",
+"en": "Spikerock",
+"mundo": "pirate",
+"coste": 250,
+"recarga": 5,
+"vida": 900,
+"familia": "Sharp",
+"res": "Spikerock",
+"basadaEn": "spikerock"
+},
+{
+"id": "chomper",
+"en": "Chomper",
+"mundo": "market",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Melee",
+"res": "Chomper",
+"basadaEn": "chomper"
+},
+{
+"id": "glaciershroom",
+"en": "Ice-shroom",
+"mundo": "epic",
+"coste": 300,
+"recarga": 30,
+"vida": 700,
+"familia": "Cold",
+"res": "GlacierShroom",
+"basadaEn": "glaciershroom"
+},
+{
+"id": "primalwallnut",
+"en": "Primal Wall-nut",
+"mundo": "dino",
+"coste": 75,
+"recarga": 5,
+"vida": 4000,
+"familia": "Defence",
+"res": "PrimalWallnut",
+"basadaEn": "primalwallnut"
+},
+{
+"id": "buttercup",
+"en": "Buttercup",
+"mundo": "epic",
+"coste": 25,
+"recarga": 10,
+"vida": 900,
+"familia": "Slow",
+"res": "Buttercup",
+"basadaEn": "buttercup"
+},
+{
+"id": "banana",
+"en": "Banana Launcher",
+"mundo": "beach",
+"coste": 500,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "BananaLauncher",
+"basadaEn": "banana"
+},
+{
+"id": "bamboozle",
+"en": "Bamboozle",
+"mundo": "market",
+"coste": 225,
+"recarga": 15,
+"vida": 1000,
+"familia": "Defence",
+"res": "Bamboozle",
+"basadaEn": "bamboozle"
+},
+{
+"id": "gumnut",
+"en": "Gumnut",
+"mundo": "epic",
+"coste": 125,
+"recarga": 20,
+"vida": 450,
+"familia": "Defence",
+"res": "Gumnut",
+"basadaEn": "gumnut"
+},
+{
+"id": "aloe",
+"en": "Aloe",
+"mundo": "epic",
+"coste": 75,
+"recarga": 20,
+"vida": 450,
+"familia": "Defence",
+"res": "Aloe",
+"basadaEn": "aloe"
+},
+{
+"id": "hollyknight",
+"en": "Holly Knight",
+"mundo": "epic",
+"coste": 150,
+"recarga": 15,
+"vida": 2500,
+"familia": "Defence",
+"res": "HollyKnight",
+"basadaEn": "hollyknight"
+},
+{
+"id": "missiletoe",
+"en": "Missile Toe",
+"mundo": "market",
+"coste": 500,
+"recarga": 5,
+"vida": 300,
+"familia": "Cold",
+"res": "MissileToe",
+"basadaEn": "missiletoe"
+},
+{
+"id": "cherry_bomb",
+"en": "Cherry Bomb",
+"mundo": "pirate",
+"coste": 150,
+"recarga": 35,
+"vida": 300,
+"familia": "Explosive",
+"res": "CherryBomb",
+"basadaEn": "cherry_bomb"
+},
+{
+"id": "loquat",
+"en": "Loquanado",
+"mundo": "sky",
+"coste": 100,
+"recarga": 20,
+"vida": 300,
+"familia": "Slow",
+"res": "Loquat",
+"basadaEn": "loquat"
+},
+{
+"id": "noctarine",
+"en": "Noctarine",
+"mundo": "epic",
+"coste": 150,
+"recarga": 15,
+"vida": 300,
+"familia": "Shadow",
+"res": "Noctarine",
+"basadaEn": "noctarine"
+},
+{
+"id": "reinforcemint",
+"en": "Reinforce-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Defence",
+"res": "ReinforceMint",
+"basadaEn": "reinforcemint"
+},
+{
+"id": "enlightenmint",
+"en": "Enlighten-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Sun",
+"res": "EnlightenMint",
+"basadaEn": "enlightenmint"
+},
+{
+"id": "wintermint",
+"en": "Winter-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Cold",
+"res": "WinterMint",
+"basadaEn": "wintermint"
+},
+{
+"id": "spearmint",
+"en": "Spear-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Sharp",
+"res": "SpearMint",
+"basadaEn": "spearmint"
+},
+{
+"id": "armamint",
+"en": "Arma-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Lobber",
+"res": "ArmaMint",
+"basadaEn": "armamint"
+},
+{
+"id": "containmint",
+"en": "Contain-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Slow",
+"res": "ContainMint",
+"basadaEn": "containmint"
+},
+{
+"id": "filamint",
+"en": "Fila-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Electricity",
+"res": "FilaMint",
+"basadaEn": "filamint"
+},
+{
+"id": "appeasemint",
+"en": "Appease-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Peashooter",
+"res": "AppeaseMint",
+"basadaEn": "appeasemint"
+},
+{
+"id": "bombardmint",
+"en": "Bombard-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Explosive",
+"res": "BombardMint",
+"basadaEn": "bombardmint"
+},
+{
+"id": "enforcemint",
+"en": "Enforce-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Melee",
+"res": "EnforceMint",
+"basadaEn": "enforcemint"
+},
+{
+"id": "concealmint",
+"en": "Conceal-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Shadow",
+"res": "ConcealMint",
+"basadaEn": "concealmint"
+},
+{
+"id": "ailmint",
+"en": "Ail-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Poison",
+"res": "AilMint",
+"basadaEn": "ailmint"
+},
+{
+"id": "enchantmint",
+"en": "Enchant-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Magic",
+"res": "EnchantMint",
+"basadaEn": "enchantmint"
+},
+{
+"id": "peppermint",
+"en": "Pepper-mint",
+"mundo": "mint",
+"coste": 0,
+"recarga": 85,
+"vida": 300,
+"familia": "Fire",
+"res": "PepperMint",
+"basadaEn": "peppermint"
+},
+{
+"id": "doomshroom",
+"en": "Doom-shroom",
+"mundo": "epic",
+"coste": 225,
+"recarga": 35,
+"vida": 300,
+"familia": "Explosive",
+"res": "DoomShroom",
+"basadaEn": "doomshroom"
+},
+{
+"id": "cranjelly",
+"en": "Cran Jelly",
+"mundo": "market",
+"coste": 75,
+"recarga": 10,
+"vida": 300,
+"familia": "Slow",
+"res": "CranJelly",
+"basadaEn": "cranjelly"
+},
+{
+"id": "dragonbabybruit",
+"en": "Baby Dragon Bruit",
+"mundo": "",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Shadow",
+"res": "DragonbruitBaby",
+"basadaEn": "dragonbabybruit"
+},
+{
+"id": "torchwood",
+"en": "Torchwood",
+"mundo": "epic",
+"coste": 175,
+"recarga": 5,
+"vida": 2000,
+"familia": "Peashooter",
+"res": "Torchwood",
+"basadaEn": "torchwood"
+},
+{
+"id": "jalapeno",
+"en": "Jalapeno",
+"mundo": "market",
+"coste": 125,
+"recarga": 35,
+"vida": 300,
+"familia": "Fire",
+"res": "Jalapeno",
+"basadaEn": "jalapeno"
+},
+{
+"id": "chillypepper",
+"en": "Chilly Pepper",
+"mundo": "market",
+"coste": 125,
+"recarga": 25,
+"vida": 300,
+"familia": "Cold",
+"res": "ChillyPepper",
+"basadaEn": "chillypepper"
+},
+{
+"id": "perfumeshroom",
+"en": "Perfume-shroom",
+"mundo": "dino",
+"coste": 150,
+"recarga": 30,
+"vida": 300,
+"familia": "Nope",
+"res": "PerfumeShroom",
+"basadaEn": "perfumeshroom"
+},
+{
+"id": "puffshroom",
+"en": "Puff-shroom",
+"mundo": "dark",
+"coste": 0,
+"recarga": 5,
+"vida": 150,
+"familia": "Poison",
+"res": "PuffShroom",
+"basadaEn": "puffshroom"
+},
+{
+"id": "gloomvine",
+"en": "Gloom Vine",
+"mundo": "epic",
+"coste": 125,
+"recarga": 5,
+"vida": 250,
+"familia": "Shadow",
+"res": "GloomVine",
+"basadaEn": "gloomvine"
+},
+{
+"id": "vamporcini",
+"en": "Vamporcini",
+"mundo": "epic",
+"coste": 100,
+"recarga": 20,
+"vida": 4000,
+"familia": "Poison",
+"res": "Vamporcini",
+"basadaEn": "vamporcini"
+},
+{
+"id": "primalpotatomine",
+"en": "Primal Potato Mine",
+"mundo": "dino",
+"coste": 50,
+"recarga": 25,
+"vida": 300,
+"familia": "Explosive",
+"res": "PrimalPotatoMine",
+"basadaEn": "primalpotatomine"
+},
+{
+"id": "cactus",
+"en": "Cactus",
+"mundo": "market",
+"coste": 175,
+"recarga": 5,
+"vida": 300,
+"familia": "Sharp",
+"res": "Cactus",
+"basadaEn": "cactus"
+},
+{
+"id": "powerlily",
+"en": "Power Lily",
+"mundo": "market",
+"coste": 175,
+"recarga": 60,
+"vida": 300,
+"familia": "Nope",
+"res": "PowerLily",
+"basadaEn": "powerlily"
+},
+{
+"id": "firegourd",
+"en": "Fire Gourd",
+"mundo": "kongfu",
+"coste": 200,
+"recarga": 5,
+"vida": 300,
+"familia": "Fire",
+"res": "FireGourd",
+"basadaEn": "firegourd"
+},
+{
+"id": "coconutcannon",
+"en": "Coconut Cannon",
+"mundo": "pirate",
+"coste": 400,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "CoconutCannon",
+"basadaEn": "coconutcannon"
+},
+{
+"id": "peapod",
+"en": "Pea Pod",
+"mundo": "cowboy",
+"coste": 125,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "PeaPod",
+"basadaEn": "peapod"
+},
+{
+"id": "snapdragon",
+"en": "Snapdragon",
+"mundo": "pirate",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Fire",
+"res": "SnapDragon",
+"basadaEn": "snapdragon"
+},
+{
+"id": "coldsnapdragon",
+"en": "Cold Snapdragon",
+"mundo": "market",
+"coste": 225,
+"recarga": 5,
+"vida": 300,
+"familia": "Cold",
+"res": "ColdSnapDragon",
+"basadaEn": "coldsnapdragon"
+},
+{
+"id": "gatling",
+"en": "Gatling Pea",
+"mundo": "epic",
+"coste": 450,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "GatlingPea",
+"basadaEn": "gatling"
+},
+{
+"id": "splitpea",
+"en": "Split Pea",
+"mundo": "cowboy",
+"coste": 125,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "SplitPea",
+"basadaEn": "splitpea"
+},
+{
+"id": "chilibean",
+"en": "Chili Bean",
+"mundo": "cowboy",
+"coste": 50,
+"recarga": 20,
+"vida": 300,
+"familia": "Poison",
+"res": "ChiliBean",
+"basadaEn": "chilibean"
+},
+{
+"id": "tallnut",
+"en": "Tall-nut",
+"mundo": "cowboy",
+"coste": 125,
+"recarga": 20,
+"vida": 8000,
+"familia": "Defence",
+"res": "Tallnut",
+"basadaEn": "tallnut"
+},
+{
+"id": "hurrikale",
+"en": "Hurrikale",
+"mundo": "market",
+"coste": 100,
+"recarga": 15,
+"vida": 300,
+"familia": "Slow",
+"res": "Hurrikale",
+"basadaEn": "hurrikale"
+},
+{
+"id": "stallia",
+"en": "Stallia",
+"mundo": "lostcity",
+"coste": 0,
+"recarga": 20,
+"vida": 300,
+"familia": "Slow",
+"res": "Stallia",
+"basadaEn": "stallia"
+},
+{
+"id": "electricpeashooter",
+"en": "Electric Peashooter",
+"mundo": "market",
+"coste": 200,
+"recarga": 5,
+"vida": 300,
+"familia": "Electricity",
+"res": "ElectricPeashooter",
+"basadaEn": "electricpeashooter"
+},
+{
+"id": "squash",
+"en": "Squash",
+"mundo": "epic",
+"coste": 50,
+"recarga": 20,
+"vida": 300,
+"familia": "Melee",
+"res": "Squash",
+"basadaEn": "squash"
+},
+{
+"id": "gloomshroom",
+"en": "Gloom-shroom",
+"mundo": "epic",
+"coste": 250,
+"recarga": 5,
+"vida": 300,
+"familia": "Shadow",
+"res": "GloomShroom",
+"basadaEn": "gloomshroom"
+},
+{
+"id": "magnifyinggrass",
+"en": "Magnifying Grass",
+"mundo": "future",
+"coste": 50,
+"recarga": 5,
+"vida": 300,
+"familia": "Sun",
+"res": "MagnifyingGrass",
+"basadaEn": "magnifyinggrass"
+},
+{
+"id": "celerystalker",
+"en": "Celery Stalker",
+"mundo": "eighties",
+"coste": 50,
+"recarga": 15,
+"vida": 1200,
+"familia": "Melee",
+"res": "CeleryStalker",
+"basadaEn": "celerystalker"
+},
+{
+"id": "sapfling",
+"en": "Sap-fling",
+"mundo": "epic",
+"coste": 75,
+"recarga": 5,
+"vida": 300,
+"familia": "Slow",
+"res": "Sapfling",
+"basadaEn": "sapfling"
+},
+{
+"id": "parsnip",
+"en": "Parsnip",
+"mundo": "epic",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Melee",
+"res": "Parsnip",
+"basadaEn": "parsnip"
+},
+{
+"id": "explodeonut",
+"en": "Explode-O-Nut",
+"mundo": "market",
+"coste": 50,
+"recarga": 10,
+"vida": 3000,
+"familia": "Explosive",
+"res": "ExplodeONut",
+"basadaEn": "explodeonut"
+},
+{
+"id": "grapeshot",
+"en": "Grapeshot",
+"mundo": "market",
+"coste": 150,
+"recarga": 35,
+"vida": 300,
+"familia": "Explosive",
+"res": "GrapeShot",
+"basadaEn": "grapeshot"
+},
+{
+"id": "plantern",
+"en": "Plantern",
+"mundo": "epic",
+"coste": 75,
+"recarga": 10,
+"vida": 300,
+"familia": "Sun",
+"res": "Plantern",
+"basadaEn": "plantern"
+},
+{
+"id": "bulbkekengi",
+"en": "Glowkengi",
+"mundo": "sky",
+"coste": 75,
+"recarga": 20,
+"vida": 300,
+"familia": "Nope",
+"res": "Bulbkekengi",
+"basadaEn": "bulbkekengi"
+},
+{
+"id": "peach",
+"en": "Heavenly Peach",
+"mundo": "kongfu",
+"coste": 125,
+"recarga": 10,
+"vida": 300,
+"familia": "Defence",
+"res": "HeavenlyPeach",
+"basadaEn": "peach"
+},
+{
+"id": "jackolantern",
+"en": "Jack O' Lantern",
+"mundo": "market",
+"coste": 225,
+"recarga": 20,
+"vida": 300,
+"familia": "Fire",
+"res": "JackOLantern",
+"basadaEn": "jackolantern"
+},
+{
+"id": "pyrevine",
+"en": "Pyre Vine",
+"mundo": "epic",
+"coste": 125,
+"recarga": 12,
+"vida": 300,
+"familia": "Fire",
+"res": "PyreVine",
+"basadaEn": "pyrevine"
+},
+{
+"id": "dandelion",
+"en": "Dandelion",
+"mundo": "epic",
+"coste": 275,
+"recarga": 15,
+"vida": 300,
+"familia": "Peashooter",
+"res": "Dandelion",
+"basadaEn": "dandelion"
+},
+{
+"id": "chardguard",
+"en": "Chard Guard",
+"mundo": "ice",
+"coste": 75,
+"recarga": 15,
+"vida": 1500,
+"familia": "Defence",
+"res": "ChardGuard",
+"basadaEn": "chardguard"
+},
+{
+"id": "hypnoshroom",
+"en": "Hypno-shroom",
+"mundo": "market",
+"coste": 125,
+"recarga": 20,
+"vida": 50,
+"familia": "Magic",
+"res": "HypnoShroom",
+"basadaEn": "hypnoshroom"
+},
+{
+"id": "electriccurrant",
+"en": "Electric Currant",
+"mundo": "epic",
+"coste": 150,
+"recarga": 10,
+"vida": 300,
+"familia": "Electricity",
+"res": "ElectricCurrant",
+"basadaEn": "electriccurrant"
+},
+{
+"id": "escaperoot",
+"en": "Escape Root",
+"mundo": "market",
+"coste": 50,
+"recarga": 20,
+"vida": 300,
+"familia": "Explosive",
+"res": "EscapeRoot",
+"basadaEn": "escaperoot"
+},
+{
+"id": "imitater",
+"en": "Imitater",
+"mundo": "lod",
+"coste": 0,
+"recarga": 20,
+"vida": 30000,
+"familia": "Nope",
+"res": "Imitater",
+"basadaEn": "imitater"
+},
+{
+"id": "shadowshroom",
+"en": "Shadow-shroom",
+"mundo": "modern",
+"coste": 50,
+"recarga": 10,
+"vida": 50,
+"familia": "Shadow",
+"res": "ShadowShroom",
+"basadaEn": "shadowshroom"
+},
+{
+"id": "magnetshroom",
+"en": "Magnet-shroom",
+"mundo": "dark",
+"coste": 100,
+"recarga": 15,
+"vida": 300,
+"familia": "Slow",
+"res": "MagnetShroom",
+"basadaEn": "magnetshroom"
+},
+{
+"id": "turnip",
+"en": "Resistant Radish",
+"mundo": "kongfu",
+"coste": 50,
+"recarga": 10,
+"vida": 2000,
+"familia": "Defence",
+"res": "Turnip",
+"basadaEn": "turnip"
+},
+{
+"id": "empea",
+"en": "E.M. Peach",
+"mundo": "future",
+"coste": 25,
+"recarga": 25,
+"vida": 2000,
+"familia": "Electricity",
+"res": "EMPeach",
+"basadaEn": "empea"
+},
+{
+"id": "citron",
+"en": "Citron",
+"mundo": "future",
+"coste": 350,
+"recarga": 5,
+"vida": 300,
+"familia": "Electricity",
+"res": "Citron",
+"basadaEn": "citron"
+},
+{
+"id": "laser_bean",
+"en": "Laser Bean",
+"mundo": "future",
+"coste": 200,
+"recarga": 5,
+"vida": 300,
+"familia": "Sharp",
+"res": "LaserBean",
+"basadaEn": "laser_bean"
+},
+{
+"id": "solartomato",
+"en": "Solar Tomato",
+"mundo": "epic",
+"coste": 100,
+"recarga": 25,
+"vida": 3000,
+"familia": "Sun",
+"res": "SolarTomato",
+"basadaEn": "solartomato"
+},
+{
+"id": "powerplant_alpha",
+"en": "Tile Turnip",
+"mundo": "future",
+"coste": 250,
+"recarga": 10,
+"vida": 3000,
+"familia": "Nope",
+"res": "TileTurnipAlpha",
+"basadaEn": "powerplant_alpha"
+},
+{
+"id": "powerplant_beta",
+"en": "Tile Turnip",
+"mundo": "future",
+"coste": 250,
+"recarga": 10,
+"vida": 3000,
+"familia": "Nope",
+"res": "TileTurnipBeta",
+"basadaEn": "powerplant_beta"
+},
+{
+"id": "powerplant_gamma",
+"en": "Tile Turnip",
+"mundo": "future",
+"coste": 250,
+"recarga": 10,
+"vida": 3000,
+"familia": "Nope",
+"res": "TileTurnipGamma",
+"basadaEn": "powerplant_gamma"
+},
+{
+"id": "powerplant_delta",
+"en": "Tile Turnip",
+"mundo": "future",
+"coste": 250,
+"recarga": 10,
+"vida": 3000,
+"familia": "Nope",
+"res": "TileTurnipDelta",
+"basadaEn": "powerplant_delta"
+},
+{
+"id": "powerplant_epsilon",
+"en": "Tile Turnip",
+"mundo": "future",
+"coste": 250,
+"recarga": 10,
+"vida": 3000,
+"familia": "Nope",
+"res": "TileTurnipEpsilon",
+"basadaEn": "powerplant_epsilon"
+},
+{
+"id": "holonut",
+"en": "Infi-nut",
+"mundo": "future",
+"coste": 75,
+"recarga": 15,
+"vida": 2000,
+"familia": "Defence",
+"res": "InfiNut",
+"basadaEn": "holonut"
+},
+{
+"id": "powerplant",
+"en": "Tile Turnip",
+"mundo": "future",
+"coste": 250,
+"recarga": 10,
+"vida": 3000,
+"familia": "Nope",
+"res": "TileTurnipEpsilon",
+"basadaEn": "powerplant"
+},
+{
+"id": "marigold",
+"en": "Marigold",
+"mundo": "frontyard",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Slow",
+"res": "MariGold",
+"basadaEn": "marigold"
+},
+{
+"id": "marigold_red",
+"en": "Red Marigold",
+"mundo": "",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Fire",
+"res": "MariGoldRed",
+"basadaEn": "marigold_red"
+},
+{
+"id": "marigold_orange",
+"en": "Orange Marigold",
+"mundo": "",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Explosive",
+"res": "MariGoldOrange",
+"basadaEn": "marigold_orange"
+},
+{
+"id": "marigold_yellow",
+"en": "Yellow Marigold",
+"mundo": "",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Sun",
+"res": "MariGoldYellow",
+"basadaEn": "marigold_yellow"
+},
+{
+"id": "marigold_green",
+"en": "Green Marigold",
+"mundo": "",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Peashooter",
+"res": "MariGoldGreen",
+"basadaEn": "marigold_green"
+},
+{
+"id": "marigold_blue",
+"en": "Blue Marigold",
+"mundo": "",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Cold",
+"res": "MariGoldBlue",
+"basadaEn": "marigold_blue"
+},
+{
+"id": "marigold_pink",
+"en": "Pink Marigold",
+"mundo": "",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Magic",
+"res": "MariGoldPink",
+"basadaEn": "marigold_pink"
+},
+{
+"id": "marigold_purple",
+"en": "Purple Marigold",
+"mundo": "",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Poison",
+"res": "MariGoldPurple",
+"basadaEn": "marigold_purple"
+},
+{
+"id": "applemortar",
+"en": "Apple Mortar",
+"mundo": "market",
+"coste": 250,
+"recarga": 8,
+"vida": 300,
+"familia": "Lobber",
+"res": "AppleMortar",
+"basadaEn": "applemortar"
+},
+{
+"id": "redstinger",
+"en": "Red Stinger",
+"mundo": "lostcity",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "RedStinger",
+"basadaEn": "redstinger"
+},
+{
+"id": "skyshooter",
+"en": "Skyshooter",
+"mundo": "sky",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "Skyshooter",
+"basadaEn": "skyshooter"
+},
+{
+"id": "sunbean",
+"en": "Sun Bean",
+"mundo": "dark",
+"coste": 50,
+"recarga": 20,
+"vida": 50,
+"familia": "Sun",
+"res": "SunBean",
+"basadaEn": "sunbean"
+},
+{
+"id": "moonbean",
+"en": "Moon Bean",
+"mundo": "sky",
+"coste": 25,
+"recarga": 20,
+"vida": 150,
+"familia": "Sun",
+"res": "MoonBean",
+"basadaEn": "moonbean"
+},
+{
+"id": "peanut",
+"en": "Pea-nut",
+"mundo": "market",
+"coste": 150,
+"recarga": 15,
+"vida": 6000,
+"familia": "Defence",
+"res": "Peanut",
+"basadaEn": "peanut"
+},
+{
+"id": "zombiepotion_speed",
+"en": "Potion of Speed",
+"mundo": "",
+"coste": 0,
+"recarga": 0.01,
+"vida": 1,
+"familia": "Nope",
+"res": "PotionSpeed",
+"basadaEn": "zombiepotion_speed"
+},
+{
+"id": "zombiepotion_toughness",
+"en": "Potion of Toughness",
+"mundo": "",
+"coste": 0,
+"recarga": 0.01,
+"vida": 1,
+"familia": "Nope",
+"res": "PotionToughness",
+"basadaEn": "zombiepotion_toughness"
+},
+{
+"id": "zombiepotion_invisibility",
+"en": "Potion of Invisibility",
+"mundo": "",
+"coste": 0,
+"recarga": 0.01,
+"vida": 1,
+"familia": "Nope",
+"res": "PotionInvisibility",
+"basadaEn": "zombiepotion_invisibility"
+},
+{
+"id": "tanglekelp",
+"en": "Tangle Kelp",
+"mundo": "water",
+"coste": 25,
+"recarga": 20,
+"vida": 300,
+"familia": "Melee",
+"res": "TangleKelp",
+"basadaEn": "tanglekelp"
+},
+{
+"id": "bowlingbulb",
+"en": "Bowling Bulb",
+"mundo": "beach",
+"coste": 200,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "BowlingBulb",
+"basadaEn": "bowlingbulb"
+},
+{
+"id": "guacodile",
+"en": "Guacodile",
+"mundo": "beach",
+"coste": 125,
+"recarga": 5,
+"vida": 50,
+"familia": "Melee",
+"res": "Guacodile",
+"basadaEn": "guacodile"
+},
+{
+"id": "empty",
+"en": null,
+"mundo": null,
+"coste": null,
+"recarga": null,
+"vida": null,
+"familia": null,
+"res": null,
+"basadaEn": null
+},
+{
+"id": "tool_projectile_bowling_tallnut",
+"en": "Bowling Tall-nut",
+"mundo": "",
+"coste": 250,
+"recarga": 20,
+"vida": 1,
+"familia": "Nope",
+"res": "BowlingSpawnerTallNut",
+"basadaEn": "tool_projectile_bowling_tallnut"
+},
+{
+"id": "ghostpepper",
+"en": "Ghost Pepper",
+"mundo": "epic",
+"coste": 75,
+"recarga": 15,
+"vida": 300,
+"familia": "Fire",
+"res": "GhostPepper",
+"basadaEn": "ghostpepper"
+},
+{
+"id": "sweetpotato",
+"en": "Sweet Potato",
+"mundo": "epic",
+"coste": 150,
+"recarga": 20,
+"vida": 4000,
+"familia": "Defence",
+"res": "SweetPotato",
+"basadaEn": "sweetpotato"
+},
+{
+"id": "pepperpult",
+"en": "Pepper-pult",
+"mundo": "ice",
+"coste": 200,
+"recarga": 20,
+"vida": 300,
+"familia": "Fire",
+"res": "PepperPult",
+"basadaEn": "pepperpult"
+},
+{
+"id": "hotdate",
+"en": "Hot Date",
+"mundo": "epic",
+"coste": 175,
+"recarga": 25,
+"vida": 2000,
+"familia": "Fire",
+"res": "HotDate",
+"basadaEn": "hotdate"
+},
+{
+"id": "hotpotato",
+"en": "Hot Potato",
+"mundo": "ice",
+"coste": 0,
+"recarga": 10,
+"vida": 300,
+"familia": "Fire",
+"res": "HotPotato",
+"basadaEn": "hotpotato"
+},
+{
+"id": "stunion",
+"en": "Stunion",
+"mundo": "ice",
+"coste": 25,
+"recarga": 20,
+"vida": 300,
+"familia": "Slow",
+"res": "Stunion",
+"basadaEn": "stunion"
+},
+{
+"id": "goldleaf",
+"en": "Gold Leaf",
+"mundo": "lostcity",
+"coste": 50,
+"recarga": 10,
+"vida": 300,
+"familia": "Nope",
+"res": "GoldLeaf",
+"basadaEn": "goldleaf"
+},
+{
+"id": "akee",
+"en": "A.K.E.E.",
+"mundo": "lostcity",
+"coste": 175,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "AKEE",
+"basadaEn": "akee"
+},
+{
+"id": "endurian",
+"en": "Endurian",
+"mundo": "lostcity",
+"coste": 100,
+"recarga": 15,
+"vida": 3000,
+"familia": "Defence",
+"res": "Endurian",
+"basadaEn": "endurian"
+},
+{
+"id": "toadstool",
+"en": "Toadstool",
+"mundo": "market",
+"coste": 200,
+"recarga": 5,
+"vida": 300,
+"familia": "Sun",
+"res": "Toadstool",
+"basadaEn": "toadstool"
+},
+{
+"id": "lavaguava",
+"en": "Lava Guava",
+"mundo": "market",
+"coste": 75,
+"recarga": 15,
+"vida": 300,
+"familia": "Fire",
+"res": "LavaGuava",
+"basadaEn": "lavaguava"
+},
+{
+"id": "phatbeet",
+"en": "Phat Beet",
+"mundo": "eighties",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Melee",
+"res": "PhatBeet",
+"basadaEn": "phatbeet"
+},
+{
+"id": "strawburst",
+"en": "Strawburst",
+"mundo": "epic",
+"coste": 400,
+"recarga": 5,
+"vida": 300,
+"familia": "Explosive",
+"res": "Strawburst",
+"basadaEn": "strawburst"
+},
+{
+"id": "thymewarp",
+"en": "Thyme Warp",
+"mundo": "eighties",
+"coste": 75,
+"recarga": 60,
+"vida": 300,
+"familia": "Nope",
+"res": "ThymeWarp",
+"basadaEn": "thymewarp"
+},
+{
+"id": "phatbeet_rhythm",
+"en": "Rhythm Phat Beet",
+"mundo": "",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Melee",
+"res": "PhatBeetRhythm",
+"basadaEn": "phatbeet_rhythm"
+},
+{
+"id": "seashroom",
+"en": "Sea-shroom",
+"mundo": "water",
+"coste": 0,
+"recarga": 8,
+"vida": 150,
+"familia": "Poison",
+"res": "SeaShroom",
+"basadaEn": "seashroom"
+},
+{
+"id": "garlic",
+"en": "Garlic",
+"mundo": "eighties",
+"coste": 50,
+"recarga": 5,
+"vida": 900,
+"familia": "Poison",
+"res": "Garlic",
+"basadaEn": "garlic"
+},
+{
+"id": "peacommando",
+"en": "Pea Commando",
+"mundo": "sky",
+"coste": 450,
+"recarga": 5,
+"vida": 300,
+"familia": "Peashooter",
+"res": "PeaCommando",
+"basadaEn": "peacommando"
+},
+{
+"id": "caulipower",
+"en": "Caulipower",
+"mundo": "market",
+"coste": 250,
+"recarga": 45,
+"vida": 300,
+"familia": "Magic",
+"res": "Caulipower",
+"basadaEn": "caulipower"
+},
+{
+"id": "electricblueberry",
+"en": "Electric Blueberry",
+"mundo": "market",
+"coste": 150,
+"recarga": 45,
+"vida": 300,
+"familia": "Electricity",
+"res": "ElectricBlueBerry",
+"basadaEn": "electricblueberry"
+},
+{
+"id": "lotorpedo",
+"en": "Lotorpedo",
+"mundo": "epic",
+"coste": 325,
+"recarga": 5,
+"vida": 300,
+"familia": "Lobber",
+"res": "Lotorpedo",
+"basadaEn": "lotorpedo"
+},
+{
+"id": "sporeshroom",
+"en": "Spore-shroom",
+"mundo": "eighties",
+"coste": 150,
+"recarga": 5,
+"vida": 300,
+"familia": "Poison",
+"res": "SporeShroom",
+"basadaEn": "sporeshroom"
+},
+{
+"id": "blastberry",
+"en": "Blastberry Vine",
+"mundo": "epic",
+"coste": 175,
+"recarga": 10,
+"vida": 300,
+"familia": "Lobber",
+"res": "BlastBerryVine",
+"basadaEn": "blastberry"
+},
+{
+"id": "intensivecarrot",
+"en": "Intensive Carrot",
+"mundo": "eighties",
+"coste": 100,
+"recarga": 20,
+"vida": 300,
+"familia": "Magic",
+"res": "IntensiveCarrot",
+"basadaEn": "intensivecarrot"
+}
+],
+"zombis": [
+{
+"id": "tutorial",
+"en": "Basic Zombie",
+"mundo": "frontyard",
+"res": "Basic",
+"basadoEn": "tutorial"
+},
+{
+"id": "tutorial_armor1",
+"en": "Conehead Zombie",
+"mundo": "frontyard",
+"res": "Basic",
+"basadoEn": "tutorial_armor1"
+},
+{
+"id": "tutorial_armor2",
+"en": "Buckethead Zombie",
+"mundo": "frontyard",
+"res": "Basic",
+"basadoEn": "tutorial_armor2"
+},
+{
+"id": "tutorial_armor4",
+"en": "Brickhead Zombie",
+"mundo": "frontyard",
+"res": "Basic",
+"basadoEn": "tutorial_armor4"
+},
+{
+"id": "tutorial_flag",
+"en": "Flag Zombie",
+"mundo": "frontyard",
+"res": "BasicFlag",
+"basadoEn": "tutorial_flag"
+},
+{
+"id": "tutorial_flag_veteran",
+"en": "Rally Zombie",
+"mundo": "frontyard",
+"res": "BasicRally",
+"basadoEn": "tutorial_flag_veteran"
+},
+{
+"id": "tutorial_imp",
+"en": "Imp",
+"mundo": "frontyard",
+"res": "Imp",
+"basadoEn": "tutorial_imp"
+},
+{
+"id": "tutorial_gargantuar",
+"en": "Gargantuar",
+"mundo": "frontyard",
+"res": "Gargantuar",
+"basadoEn": "tutorial_gargantuar"
+},
+{
+"id": "supernova_gargantuar",
+"en": "Supernova Gargantuar",
+"mundo": "market",
+"res": "SupernovaGargantuar",
+"basadoEn": "supernova_gargantuar"
+},
+{
+"id": "empty",
+"en": null,
+"mundo": null,
+"res": null,
+"basadoEn": null
+},
+{
+"id": "duckytube",
+"en": "Ducky Tube",
+"mundo": "frontyard",
+"res": "DuckyTube",
+"basadoEn": "duckytube"
+},
+{
+"id": "vase_gargantuar",
+"en": "Vase Gargantuar",
+"mundo": "frontyard",
+"res": "VaseGargantuar",
+"basadoEn": "vase_gargantuar"
+},
+{
+"id": "bobsled_team",
+"en": "Zombie Bobsled Team",
+"mundo": "modern",
+"res": "BobSledTeam",
+"basadoEn": "bobsled_team"
+},
+{
+"id": "bobsled",
+"en": "Zombie Bobsled Crew",
+"mundo": "modern",
+"res": "BobSled",
+"basadoEn": "bobsled"
+},
+{
+"id": "modern_balloon",
+"en": "Balloon Zombie",
+"mundo": "modern",
+"res": "Balloon",
+"basadoEn": "modern_balloon"
+},
+{
+"id": "newspaper",
+"en": null,
+"mundo": null,
+"res": null,
+"basadoEn": null
+},
+{
+"id": "newspaper_veteran",
+"en": "Sunday Edition Zombie",
+"mundo": "modern",
+"res": "ModernNewspaperVeteran",
+"basadoEn": "newspaper_veteran"
+},
+{
+"id": "modern_allstar",
+"en": "All-Star Zombie",
+"mundo": "modern",
+"res": "Allstar",
+"basadoEn": "modern_allstar"
+},
+{
+"id": "modern_superfanimp",
+"en": "Super-Fan Imp",
+"mundo": "modern",
+"res": "ModernSuperFan",
+"basadoEn": "modern_superfanimp"
+},
+{
+"id": "zomboni",
+"en": "Zomboni",
+"mundo": "modern",
+"res": "Zomboni",
+"basadoEn": "zomboni"
+},
+{
+"id": "catapult",
+"en": "Catapult Zombie",
+"mundo": "modern",
+"res": "Catapult",
+"basadoEn": "catapult"
+},
+{
+"id": "mummy",
+"en": "Mummy Zombie",
+"mundo": "egypt",
+"res": "EgyptBasic",
+"basadoEn": "mummy"
+},
+{
+"id": "mummy_armor1",
+"en": "Conehead Mummy",
+"mundo": "egypt",
+"res": "EgyptBasic",
+"basadoEn": "mummy_armor1"
+},
+{
+"id": "mummy_armor2",
+"en": "Buckethead Mummy",
+"mundo": "egypt",
+"res": "EgyptBasic",
+"basadoEn": "mummy_armor2"
+},
+{
+"id": "mummy_armor4",
+"en": "Pyramid-Head Mummy",
+"mundo": "egypt",
+"res": "EgyptBasic",
+"basadoEn": "mummy_armor4"
+},
+{
+"id": "mummy_flag",
+"en": "Flag Mummy Zombie",
+"mundo": "egypt",
+"res": "EgyptFlag",
+"basadoEn": "mummy_flag"
+},
+{
+"id": "mummy_flag_veteran",
+"en": "Egypt Rally Zombie",
+"mundo": "egypt",
+"res": "EgyptRally",
+"basadoEn": "mummy_flag_veteran"
+},
+{
+"id": "ra",
+"en": "Ra Zombie",
+"mundo": "egypt",
+"res": "EgyptRa",
+"basadoEn": "ra"
+},
+{
+"id": "camel_onehump",
+"en": "Camel Zombies",
+"mundo": "egypt",
+"res": "EgyptCamel",
+"basadoEn": "camel_onehump"
+},
+{
+"id": "explorer",
+"en": "Explorer Zombie",
+"mundo": "egypt",
+"res": "EgyptExplorer",
+"basadoEn": "explorer"
+},
+{
+"id": "explorer_veteran",
+"en": "Torchlight Zombie",
+"mundo": "egypt",
+"res": "EgyptTorchlight",
+"basadoEn": "explorer_veteran"
+},
+{
+"id": "tomb_raiser",
+"en": "Tomb Raiser Zombie",
+"mundo": "egypt",
+"res": "EgyptTombRaiser",
+"basadoEn": "tomb_raiser"
+},
+{
+"id": "pharaoh",
+"en": "Pharoah Zombie",
+"mundo": "egypt",
+"res": "EgyptPharaoh",
+"basadoEn": "pharaoh"
+},
+{
+"id": "egypt_imp",
+"en": "Imp Mummy",
+"mundo": "egypt",
+"res": "EgyptImp",
+"basadoEn": "egypt_imp"
+},
+{
+"id": "egypt_gargantuar",
+"en": "Mummified Gargantuar",
+"mundo": "egypt",
+"res": "EgyptGargantuar",
+"basadoEn": "egypt_gargantuar"
+},
+{
+"id": "zombossmech_egypt",
+"en": "Zombot Sphinx-inator",
+"mundo": "egypt",
+"res": "EgyptZombossMech",
+"basadoEn": "zombossmech_egypt"
+},
+{
+"id": "pirate",
+"en": "Pirate Zombie",
+"mundo": "pirate",
+"res": "PirateBasic",
+"basadoEn": "pirate"
+},
+{
+"id": "pirate_armor1",
+"en": "Conehead Pirate",
+"mundo": "pirate",
+"res": "PirateBasic",
+"basadoEn": "pirate_armor1"
+},
+{
+"id": "pirate_armor2",
+"en": "Buckethead Pirate",
+"mundo": "pirate",
+"res": "PirateBasic",
+"basadoEn": "pirate_armor2"
+},
+{
+"id": "pirate_armor4",
+"en": "Barrelhead Pirate",
+"mundo": "pirate",
+"res": "PirateBasic",
+"basadoEn": "pirate_armor4"
+},
+{
+"id": "pirate_flag",
+"en": "Jolly Roger Zombie",
+"mundo": "pirate",
+"res": "PirateFlag",
+"basadoEn": "pirate_flag"
+},
+{
+"id": "pirate_flag_veteran",
+"en": "Rally Roger Zombie",
+"mundo": "pirate",
+"res": "PirateRally",
+"basadoEn": "pirate_flag_veteran"
+},
+{
+"id": "swashbuckler",
+"en": "Swashbuckler Zombie",
+"mundo": "pirate",
+"res": "PirateSwashbuckler",
+"basadoEn": "swashbuckler"
+},
+{
+"id": "seagull",
+"en": "Seagull Zombie",
+"mundo": "pirate",
+"res": "PirateSeagull",
+"basadoEn": "seagull"
+},
+{
+"id": "pelican",
+"en": "Pelican Zombie",
+"mundo": "pirate",
+"res": "PiratePelican",
+"basadoEn": "pelican"
+},
+{
+"id": "barrelroller",
+"en": "Barrel Roller Zombie",
+"mundo": "pirate",
+"res": "PirateBarrelPusher",
+"basadoEn": "barrelroller"
+},
+{
+"id": "cannon",
+"en": "Imp Cannon",
+"mundo": "pirate",
+"res": "PirateImpCannon",
+"basadoEn": "cannon"
+},
+{
+"id": "pirate_captain",
+"en": "Pirate Captain Zombie",
+"mundo": "pirate",
+"res": "PirateCaptain",
+"basadoEn": "pirate_captain"
+},
+{
+"id": "pirate_captain_parrot",
+"en": "Zombie Parrot",
+"mundo": "pirate",
+"res": "PirateCaptainParrot",
+"basadoEn": "pirate_captain_parrot"
+},
+{
+"id": "pirate_imp",
+"en": "Imp Pirate Zombie",
+"mundo": "pirate",
+"res": "PirateImp",
+"basadoEn": "pirate_imp"
+},
+{
+"id": "pirate_gargantuar",
+"en": "Gargantuar Pirate",
+"mundo": "pirate",
+"res": "PirateGargantuar",
+"basadoEn": "pirate_gargantuar"
+},
+{
+"id": "zombossmech_pirate",
+"en": "Zombot Plank Walker",
+"mundo": "pirate",
+"res": "PirateZombossMech",
+"basadoEn": "zombossmech_pirate"
+},
+{
+"id": "cowboy",
+"en": "Cowboy Zombie",
+"mundo": "cowboy",
+"res": "CowboyBasic",
+"basadoEn": "cowboy"
+},
+{
+"id": "cowboy_armor1",
+"en": "Conehead Cowboy",
+"mundo": "cowboy",
+"res": "CowboyBasic",
+"basadoEn": "cowboy_armor1"
+},
+{
+"id": "cowboy_armor2",
+"en": "Buckethead Cowboy",
+"mundo": "cowboy",
+"res": "CowboyBasic",
+"basadoEn": "cowboy_armor2"
+},
+{
+"id": "cowboy_armor4",
+"en": "Cart-head Cowboy",
+"mundo": "cowboy",
+"res": "CowboyBasic",
+"basadoEn": "cowboy_armor4"
+},
+{
+"id": "cowboy_flag",
+"en": "Flag Cowboy Zombie",
+"mundo": "cowboy",
+"res": "CowboyFlag",
+"basadoEn": "cowboy_flag"
+},
+{
+"id": "cowboy_flag_veteran",
+"en": "Cowboy Rally Zombie",
+"mundo": "cowboy",
+"res": "CowboyRally",
+"basadoEn": "cowboy_flag_veteran"
+},
+{
+"id": "prospector",
+"en": "Prospector Zombie",
+"mundo": "cowboy",
+"res": "CowboyProspector",
+"basadoEn": "prospector"
+},
+{
+"id": "piano",
+"en": "Pianist Zombie",
+"mundo": "cowboy",
+"res": "CowboyPiano",
+"basadoEn": "piano"
+},
+{
+"id": "poncho",
+"en": "Poncho Zombie",
+"mundo": "cowboy",
+"res": "CowboyPoncho",
+"basadoEn": "poncho"
+},
+{
+"id": "chicken_farmer",
+"en": "Chicken Wrangler Zombie",
+"mundo": "cowboy",
+"res": "CowboyChickenFarmer",
+"basadoEn": "chicken_farmer"
+},
+{
+"id": "chicken",
+"en": "Zombie Chicken",
+"mundo": "cowboy",
+"res": "CowboyChicken",
+"basadoEn": "chicken"
+},
+{
+"id": "west_bull",
+"en": "Machine Bull",
+"mundo": "cowboy",
+"res": "CowboyBull",
+"basadoEn": "west_bull"
+},
+{
+"id": "west_bull_veteran",
+"en": "Rodeo Legend",
+"mundo": "cowboy",
+"res": "CowboyBlackBull",
+"basadoEn": "west_bull_veteran"
+},
+{
+"id": "west_bullrider",
+"en": "Zombie Bull Rider",
+"mundo": "cowboy",
+"res": "CowboyImp",
+"basadoEn": "west_bullrider"
+},
+{
+"id": "cowboy_gargantuar",
+"en": "Wild West Gargantuar",
+"mundo": "cowboy",
+"res": "CowboyGargantuar",
+"basadoEn": "cowboy_gargantuar"
+},
+{
+"id": "zombossmech_cowboy",
+"en": "Zombot War Wagon",
+"mundo": "cowboy",
+"res": "CowboyZombossMech",
+"basadoEn": "zombossmech_cowboy"
+},
+{
+"id": "kongfu",
+"en": "Kongfu Zombie",
+"mundo": "kongfu",
+"res": "KongfuBasic",
+"basadoEn": "kongfu"
+},
+{
+"id": "kongfu_armor1",
+"en": "Kongfu Conehead Zombie",
+"mundo": "kongfu",
+"res": "KongfuBasic",
+"basadoEn": "kongfu_armor1"
+},
+{
+"id": "kongfu_armor2",
+"en": "Kongfu Kettlehead Zombie",
+"mundo": "kongfu",
+"res": "KongfuBasic",
+"basadoEn": "kongfu_armor2"
+},
+{
+"id": "kongfu_armor4",
+"en": "Kongfu Censer-headed Zombie",
+"mundo": "kongfu",
+"res": "KongfuBasic",
+"basadoEn": "kongfu_armor4"
+},
+{
+"id": "kongfu_flag",
+"en": "Flag Kongfu Zombie",
+"mundo": "kongfu",
+"res": "KongfuFlag",
+"basadoEn": "kongfu_flag"
+},
+{
+"id": "kongfu_flag_veteran",
+"en": "Kongfu Rally Zombie",
+"mundo": "kongfu",
+"res": "KongfuRally",
+"basadoEn": "kongfu_flag_veteran"
+},
+{
+"id": "kongfu_hammer",
+"en": "Hammer Zombie",
+"mundo": "kongfu",
+"res": "KongfuHammer",
+"basadoEn": "kongfu_hammer"
+},
+{
+"id": "kongfu_torch",
+"en": "Expeditionist Zombie",
+"mundo": "kongfu",
+"res": "KongfuTorch",
+"basadoEn": "kongfu_torch"
+},
+{
+"id": "abbot_torch",
+"en": "Torch Abbot",
+"mundo": "kongfu",
+"res": "AbbotTorch",
+"basadoEn": "abbot_torch"
+},
+{
+"id": "abbot_fan",
+"en": "Fan Swinging Abbot",
+"mundo": "kongfu",
+"res": "AbbotFan",
+"basadoEn": "abbot_fan"
+},
+{
+"id": "abbot_3section_staff",
+"en": "Three-section Staff Abbot",
+"mundo": "kongfu",
+"res": "Abbot3SectionStaff",
+"basadoEn": "abbot_3section_staff"
+},
+{
+"id": "treasureyeti",
+"en": "Treasure Yeti",
+"mundo": "market",
+"res": "Yeti",
+"basadoEn": "treasureyeti"
+},
+{
+"id": "abbot_chi",
+"en": "Qigong Abbot",
+"mundo": "kongfu",
+"res": "AbbotChi",
+"basadoEn": "abbot_chi"
+},
+{
+"id": "kongfu_drink",
+"en": "Drinking Zombie",
+"mundo": "kongfu",
+"res": "KongfuDrink",
+"basadoEn": "kongfu_drink"
+},
+{
+"id": "kongfu_bronze_strong",
+"en": "Bronze of Toughness",
+"mundo": "kongfu",
+"res": "KongfuBronzeStrong",
+"basadoEn": "kongfu_bronze_strong"
+},
+{
+"id": "kongfu_bronze_chi",
+"en": "Bronze of Qigong",
+"mundo": "kongfu",
+"res": "KongfuBronzeChi",
+"basadoEn": "kongfu_bronze_chi"
+},
+{
+"id": "kongfu_bronze_hook",
+"en": "Bronze of Hook",
+"mundo": "kongfu",
+"res": "KongfuBronzeHook",
+"basadoEn": "kongfu_bronze_hook"
+},
+{
+"id": "kongfu_boss_explode",
+"en": "Devil of Dynamite",
+"mundo": "kongfu",
+"res": "KongfuBossExplode",
+"basadoEn": "kongfu_boss_explode"
+},
+{
+"id": "kongfu_boss_blade",
+"en": "Blade-Wielding Hero",
+"mundo": "kongfu",
+"res": "KongfuBossBlade",
+"basadoEn": "kongfu_boss_blade"
+},
+{
+"id": "kongfu_boss_chi",
+"en": "Qigong Master",
+"mundo": "kongfu",
+"res": "KongfuBossChi",
+"basadoEn": "kongfu_boss_chi"
+},
+{
+"id": "monk_drink",
+"en": "Drinking Monk Zombie",
+"mundo": "kongfu",
+"res": "MonkDrink",
+"basadoEn": "monk_drink"
+},
+{
+"id": "monk_drink_veteran",
+"en": "Pitch-pot Monk Zombie",
+"mundo": "kongfu",
+"res": "MonkDrinkVeteran",
+"basadoEn": "monk_drink_veteran"
+},
+{
+"id": "kongfu_bomb",
+"en": "Bomb Zombie",
+"mundo": "kongfu",
+"res": "KongfuBomb",
+"basadoEn": "kongfu_bomb"
+},
+{
+"id": "kongfu_gong",
+"en": "Gong Zombie",
+"mundo": "kongfu",
+"res": "KongfuGong",
+"basadoEn": "kongfu_gong"
+},
+{
+"id": "kongfu_chi",
+"en": "Qigong Zombie",
+"mundo": "kongfu",
+"res": "KongfuChi",
+"basadoEn": "kongfu_chi"
+},
+{
+"id": "kongfu_rocket_imp",
+"en": "Rocket Imp",
+"mundo": "kongfu",
+"res": "RocketImp",
+"basadoEn": "kongfu_rocket_imp"
+},
+{
+"id": "monk_imp",
+"en": "Kongfu Monk Imp",
+"mundo": "kongfu",
+"res": "KongfuMonkImp",
+"basadoEn": "monk_imp"
+},
+{
+"id": "abbot_imp",
+"en": "Abbot Imp",
+"mundo": "kongfu",
+"res": "AbbotImp",
+"basadoEn": "abbot_imp"
+},
+{
+"id": "monk",
+"en": "Monk Zombie",
+"mundo": "kongfu",
+"res": "MonkBasic",
+"basadoEn": "monk"
+},
+{
+"id": "monk_armor1",
+"en": "Monk Conehead Zombie",
+"mundo": "kongfu",
+"res": "MonkBasic",
+"basadoEn": "monk_armor1"
+},
+{
+"id": "monk_armor2",
+"en": "Monk Kettlehead Zombie",
+"mundo": "kongfu",
+"res": "MonkBasic",
+"basadoEn": "monk_armor2"
+},
+{
+"id": "monk_armor4",
+"en": "Monk Censer-headed Zombie",
+"mundo": "kongfu",
+"res": "MonkBasic",
+"basadoEn": "monk_armor4"
+},
+{
+"id": "monk_flag",
+"en": "Flag Monk Zombie",
+"mundo": "kongfu",
+"res": "MonkFlag",
+"basadoEn": "monk_flag"
+},
+{
+"id": "monk_flag_veteran",
+"en": "Monk Rally Zombie",
+"mundo": "kongfu",
+"res": "MonkRally",
+"basadoEn": "monk_flag_veteran"
+},
+{
+"id": "monk_blade",
+"en": "Blade Monk Zombie",
+"mundo": "kongfu",
+"res": "MonkBlade",
+"basadoEn": "monk_blade"
+},
+{
+"id": "monk_nunchaku",
+"en": "Nunchaku Monk Zombie",
+"mundo": "kongfu",
+"res": "MonkNunchaku",
+"basadoEn": "monk_nunchaku"
+},
+{
+"id": "monk_torch",
+"en": "Torch Monk Zombie",
+"mundo": "kongfu",
+"res": "MonkTorch",
+"basadoEn": "monk_torch"
+},
+{
+"id": "abbot",
+"en": "Abbot Zombie",
+"mundo": "kongfu",
+"res": "AbbotBasic",
+"basadoEn": "abbot"
+},
+{
+"id": "abbot_armor1",
+"en": "Abbot Conehead Zombie",
+"mundo": "kongfu",
+"res": "AbbotBasic",
+"basadoEn": "abbot_armor1"
+},
+{
+"id": "abbot_armor2",
+"en": "Abbot Kettlehead Zombie",
+"mundo": "kongfu",
+"res": "AbbotBasic",
+"basadoEn": "abbot_armor2"
+},
+{
+"id": "abbot_armor4",
+"en": "Abbot Censer-headed Zombie",
+"mundo": "kongfu",
+"res": "AbbotBasic",
+"basadoEn": "abbot_armor4"
+},
+{
+"id": "abbot_flag",
+"en": "Flag Abbot Zombie",
+"mundo": "kongfu",
+"res": "AbbotFlag",
+"basadoEn": "abbot_flag"
+},
+{
+"id": "abbot_flag_veteran",
+"en": "Abbot Rally Zombie",
+"mundo": "kongfu",
+"res": "AbbotRally",
+"basadoEn": "abbot_flag_veteran"
+},
+{
+"id": "future",
+"en": "Future Zombie",
+"mundo": "future",
+"res": "FutureBasic",
+"basadoEn": "future"
+},
+{
+"id": "future_armor1",
+"en": "Future Conehead Zombie",
+"mundo": "future",
+"res": "FutureBasic",
+"basadoEn": "future_armor1"
+},
+{
+"id": "future_armor2",
+"en": "Future Buckethead Zombie",
+"mundo": "future",
+"res": "FutureBasic",
+"basadoEn": "future_armor2"
+},
+{
+"id": "future_armor4",
+"en": "Holo Head Zombie",
+"mundo": "future",
+"res": "FutureBasic",
+"basadoEn": "future_armor4"
+},
+{
+"id": "future_flag",
+"en": "Future Flag Zombie",
+"mundo": "future",
+"res": "FutureFlag",
+"basadoEn": "future_flag"
+},
+{
+"id": "future_flag_veteran",
+"en": "Robo-Rally Zombie",
+"mundo": "future",
+"res": "FutureRally",
+"basadoEn": "future_flag_veteran"
+},
+{
+"id": "future_jetpack",
+"en": "Jetpack Zombie",
+"mundo": "future",
+"res": "FutureJetpack",
+"basadoEn": "future_jetpack"
+},
+{
+"id": "future_jetpack_disco",
+"en": "Disco Jetpack Zombie",
+"mundo": "future",
+"res": "FutureJetpackDisco",
+"basadoEn": "future_jetpack_disco"
+},
+{
+"id": "future_jetpack_veteran",
+"en": "Blastronaut Zombie",
+"mundo": "future",
+"res": "FutureJetpackVeteran",
+"basadoEn": "future_jetpack_veteran"
+},
+{
+"id": "future_protector",
+"en": "Force Shield Zombie",
+"mundo": "future",
+"res": "FutureProtector",
+"basadoEn": "future_protector"
+},
+{
+"id": "mech_cone",
+"en": "Robo-Cone Zombie",
+"mundo": "future",
+"res": "FutureMechCone",
+"basadoEn": "mech_cone"
+},
+{
+"id": "football_mech",
+"en": "Mecha-Football Zombie",
+"mundo": "future",
+"res": "FutureMechFootball",
+"basadoEn": "football_mech"
+},
+{
+"id": "disco_mech",
+"en": "Disco-tron 3000",
+"mundo": "future",
+"res": "FutureMechDisco",
+"basadoEn": "disco_mech"
+},
+{
+"id": "future_imp",
+"en": "Bug Bot Imp",
+"mundo": "future",
+"res": "FutureImp",
+"basadoEn": "future_imp"
+},
+{
+"id": "future_gargantuar",
+"en": "Gargantuar Prime",
+"mundo": "future",
+"res": "FutureGargantuar",
+"basadoEn": "future_gargantuar"
+},
+{
+"id": "zombossmech_future",
+"en": "Zombot Tommorrow-tron",
+"mundo": "future",
+"res": "FutureZombossMech",
+"basadoEn": "zombossmech_future"
+},
+{
+"id": "dark",
+"en": "Peasant Zombie",
+"mundo": "dark",
+"res": "DarkBasic",
+"basadoEn": "dark"
+},
+{
+"id": "dark_armor1",
+"en": "Conehead Peasant",
+"mundo": "dark",
+"res": "DarkBasic",
+"basadoEn": "dark_armor1"
+},
+{
+"id": "dark_armor2",
+"en": "Buckethead Peasant",
+"mundo": "dark",
+"res": "DarkBasic",
+"basadoEn": "dark_armor2"
+},
+{
+"id": "dark_armor3",
+"en": "Knight Zombie",
+"mundo": "dark",
+"res": "DarkBasic",
+"basadoEn": "dark_armor3"
+},
+{
+"id": "dark_armor4",
+"en": "Turret-headed Zombie",
+"mundo": "dark",
+"res": "DarkBasic",
+"basadoEn": "dark_armor4"
+},
+{
+"id": "dark_flag",
+"en": "Peasant Flag Zombie",
+"mundo": "dark",
+"res": "DarkFlag",
+"basadoEn": "dark_flag"
+},
+{
+"id": "dark_flag_veteran",
+"en": "Peasant Rally Zombie",
+"mundo": "dark",
+"res": "DarkRally",
+"basadoEn": "dark_flag_veteran"
+},
+{
+"id": "dark_juggler",
+"en": "Jester Zombie",
+"mundo": "dark",
+"res": "DarkJester",
+"basadoEn": "dark_juggler"
+},
+{
+"id": "dark_wizard",
+"en": "Wizard Zombie",
+"mundo": "dark",
+"res": "DarkWizard",
+"basadoEn": "dark_wizard"
+},
+{
+"id": "dark_wizard_veteran",
+"en": "Master Enchanter Zombie",
+"mundo": "dark",
+"res": "DarkWizardVeteran",
+"basadoEn": "dark_wizard_veteran"
+},
+{
+"id": "dark_king",
+"en": "Zombie King",
+"mundo": "dark",
+"res": "DarkKing",
+"basadoEn": "dark_king"
+},
+{
+"id": "dark_king_veteran",
+"en": "Arthur King Zombie",
+"mundo": "dark",
+"res": "DarkKingVeteran",
+"basadoEn": "dark_king_veteran"
+},
+{
+"id": "dark_imp_dragon",
+"en": "Imp Dragon Zombie",
+"mundo": "dark",
+"res": "DragonImp",
+"basadoEn": "dark_imp_dragon"
+},
+{
+"id": "dark_imp",
+"en": "Imp Monk Zombie",
+"mundo": "dark",
+"res": "DarkImp",
+"basadoEn": "dark_imp"
+},
+{
+"id": "dark_gargantuar",
+"en": "Dark Ages Gargantuar",
+"mundo": "dark",
+"res": "DarkGargantuar",
+"basadoEn": "dark_gargantuar"
+},
+{
+"id": "zombossmech_dark",
+"en": "Zombot Dark Dragon",
+"mundo": "dark",
+"res": "DarkZombossMech",
+"basadoEn": "zombossmech_dark"
+},
+{
+"id": "beach",
+"en": "Pompadour Zombie",
+"mundo": "beach",
+"res": "BeachBasic",
+"basadoEn": "beach"
+},
+{
+"id": "beach_armor1",
+"en": "Pompadour Conehead",
+"mundo": "beach",
+"res": "BeachBasic",
+"basadoEn": "beach_armor1"
+},
+{
+"id": "beach_armor2",
+"en": "Pompadour Buckethead",
+"mundo": "beach",
+"res": "BeachBasic",
+"basadoEn": "beach_armor2"
+},
+{
+"id": "beach_armor4",
+"en": "Crab-head Pompadour",
+"mundo": "beach",
+"res": "BeachBasic",
+"basadoEn": "beach_armor4"
+},
+{
+"id": "beach_fem",
+"en": "Bikini Zombie",
+"mundo": "beach",
+"res": "BeachFemale",
+"basadoEn": "beach_fem"
+},
+{
+"id": "beach_fem_armor1",
+"en": "Bikini Conehead",
+"mundo": "beach",
+"res": "BeachFemale",
+"basadoEn": "beach_fem_armor1"
+},
+{
+"id": "beach_fem_armor2",
+"en": "Bikini Buckethead",
+"mundo": "beach",
+"res": "BeachFemale",
+"basadoEn": "beach_fem_armor2"
+},
+{
+"id": "beach_fem_armor4",
+"en": "Crab-head Bikini",
+"mundo": "beach",
+"res": "BeachFemale",
+"basadoEn": "beach_fem_armor4"
+},
+{
+"id": "beach_flag",
+"en": "Beach Flag Zombie",
+"mundo": "beach",
+"res": "BeachFlag",
+"basadoEn": "beach_flag"
+},
+{
+"id": "beach_flag_veteran",
+"en": "Beach Rally Zombie",
+"mundo": "beach",
+"res": "BeachRally",
+"basadoEn": "beach_flag_veteran"
+},
+{
+"id": "beach_snorkel",
+"en": "Snorkel Zombie",
+"mundo": "beach",
+"res": "BeachSnorkel",
+"basadoEn": "beach_snorkel"
+},
+{
+"id": "beach_surfer",
+"en": "Surfer Zombie",
+"mundo": "beach",
+"res": "BeachSurfer",
+"basadoEn": "beach_surfer"
+},
+{
+"id": "beach_surfer_veteran",
+"en": "Motor Surfer Zombie",
+"mundo": "beach",
+"res": "BeachSurferVeteran",
+"basadoEn": "beach_surfer_veteran"
+},
+{
+"id": "beach_octopus",
+"en": "Octopus Zombie",
+"mundo": "beach",
+"res": "BeachOctopus",
+"basadoEn": "beach_octopus"
+},
+{
+"id": "sky_dronemaker",
+"en": "Drone Engineer",
+"mundo": "sky",
+"res": "SkyDroneMaker",
+"basadoEn": "sky_dronemaker"
+},
+{
+"id": "beach_fisherman",
+"en": "Fisherman Zombie",
+"mundo": "beach",
+"res": "BeachFisher",
+"basadoEn": "beach_fisherman"
+},
+{
+"id": "beach_imp",
+"en": "Imp Mermaid Zombie",
+"mundo": "beach",
+"res": "BeachImp",
+"basadoEn": "beach_imp"
+},
+{
+"id": "beach_gargantuar",
+"en": "Deep Sea Gargantuar",
+"mundo": "beach",
+"res": "BeachGargantuar",
+"basadoEn": "beach_gargantuar"
+},
+{
+"id": "zombossmech_beach",
+"en": "Zombot Sharktronic Sub",
+"mundo": "water",
+"res": "BeachZombossMech",
+"basadoEn": "zombossmech_beach"
+},
+{
+"id": "iceage",
+"en": "Cave Zombie",
+"mundo": "ice",
+"res": "IceageBasic",
+"basadoEn": "iceage"
+},
+{
+"id": "iceage_armor1",
+"en": "Cave Conehead Zombie",
+"mundo": "ice",
+"res": "IceageBasic",
+"basadoEn": "iceage_armor1"
+},
+{
+"id": "iceage_armor2",
+"en": "Cave Buckethead Zombie",
+"mundo": "ice",
+"res": "IceageBasic",
+"basadoEn": "iceage_armor2"
+},
+{
+"id": "iceage_armor3",
+"en": "Blockhead Zombie",
+"mundo": "ice",
+"res": "IceageBasic",
+"basadoEn": "iceage_armor3"
+},
+{
+"id": "iceage_armor4",
+"en": "Mammoth-headed Zombie",
+"mundo": "ice",
+"res": "IceageBasic",
+"basadoEn": "iceage_armor4"
+},
+{
+"id": "iceage_flag",
+"en": "Cave Flag Zombie",
+"mundo": "ice",
+"res": "IceageFlag",
+"basadoEn": "iceage_flag"
+},
+{
+"id": "iceage_flag_veteran",
+"en": "Cave Rally Zombie",
+"mundo": "ice",
+"res": "IceageRally",
+"basadoEn": "iceage_flag_veteran"
+},
+{
+"id": "iceage_hunter",
+"en": "Hunter Zombie",
+"mundo": "ice",
+"res": "IceageHunter",
+"basadoEn": "iceage_hunter"
+},
+{
+"id": "iceage_hunter_veteran",
+"en": "Hunter Leader Zombie",
+"mundo": "ice",
+"res": "IceageHunterVeteran",
+"basadoEn": "iceage_hunter_veteran"
+},
+{
+"id": "iceage_dodo",
+"en": "Dodo Rider Zombie",
+"mundo": "ice",
+"res": "IceageDodoRider",
+"basadoEn": "iceage_dodo"
+},
+{
+"id": "iceage_troglobite",
+"en": "Troglobite",
+"mundo": "ice",
+"res": "IceageTroglobite",
+"basadoEn": "iceage_troglobite"
+},
+{
+"id": "iceage_troglobite_veteran",
+"en": "Troglobite Warchief",
+"mundo": "ice",
+"res": "IceageTroglobiteVeteran",
+"basadoEn": "iceage_troglobite_veteran"
+},
+{
+"id": "iceage_weaselhoarder",
+"en": "Weasel Hoarder",
+"mundo": "ice",
+"res": "IceageWeaselHoarder",
+"basadoEn": "iceage_weaselhoarder"
+},
+{
+"id": "iceage_weasel",
+"en": "Ice Weasel",
+"mundo": "ice",
+"res": "IceageWeasel",
+"basadoEn": "iceage_weasel"
+},
+{
+"id": "iceage_imp",
+"en": "Yeti Imp",
+"mundo": "ice",
+"res": "IceageImp",
+"basadoEn": "iceage_imp"
+},
+{
+"id": "iceage_gargantuar",
+"en": "Sloth Gargantuar",
+"mundo": "ice",
+"res": "IceageGargantuar",
+"basadoEn": "iceage_gargantuar"
+},
+{
+"id": "zombossmech_iceage",
+"en": "Zombot Tuskmaster 10,000 BC",
+"mundo": "ice",
+"res": "IceageZombossMech",
+"basadoEn": "zombossmech_iceage"
+},
+{
+"id": "lostcity",
+"en": "Adventurer Zombie",
+"mundo": "lostcity",
+"res": "LostcityBasic",
+"basadoEn": "lostcity"
+},
+{
+"id": "lostcity_armor1",
+"en": "Conehead Adventurer",
+"mundo": "lostcity",
+"res": "LostcityBasic",
+"basadoEn": "lostcity_armor1"
+},
+{
+"id": "lostcity_armor2",
+"en": "Buckethead Adventurer",
+"mundo": "lostcity",
+"res": "LostcityBasic",
+"basadoEn": "lostcity_armor2"
+},
+{
+"id": "lostcity_armor4",
+"en": "Tent-headed Adventurer",
+"mundo": "lostcity",
+"res": "LostcityBasic",
+"basadoEn": "lostcity_armor4"
+},
+{
+"id": "lostcity_flag",
+"en": "Flag Adventurer",
+"mundo": "lostcity",
+"res": "LostcityFlag",
+"basadoEn": "lostcity_flag"
+},
+{
+"id": "lostcity_flag_veteran",
+"en": "Rally Adventurer",
+"mundo": "lostcity",
+"res": "LostcityRally",
+"basadoEn": "lostcity_flag_veteran"
+},
+{
+"id": "lostcity_lostpilot",
+"en": "Lost Pilot Zombie",
+"mundo": "lostcity",
+"res": "LostcityLostPilot",
+"basadoEn": "lostcity_lostpilot"
+},
+{
+"id": "lostcity_lostpilot_veteran",
+"en": "Rescue Pilot Zombie",
+"mundo": "lostcity",
+"res": "LostcityLostPilotVeteran",
+"basadoEn": "lostcity_lostpilot_veteran"
+},
+{
+"id": "lostcity_excavator",
+"en": "Excavator Zombie",
+"mundo": "lostcity",
+"res": "LostcityExcavator",
+"basadoEn": "lostcity_excavator"
+},
+{
+"id": "lostcity_jane",
+"en": "Parasol Zombie",
+"mundo": "lostcity",
+"res": "LostcityJane",
+"basadoEn": "lostcity_jane"
+},
+{
+"id": "lostcity_bug",
+"en": "Bug Zombie",
+"mundo": "lostcity",
+"res": "LostcityBasic",
+"basadoEn": "lostcity_bug"
+},
+{
+"id": "lostcity_relichunter",
+"en": "Relic Hunter Zombie",
+"mundo": "lostcity",
+"res": "LostcityRelicHunter",
+"basadoEn": "lostcity_relichunter"
+},
+{
+"id": "lostcity_impporter",
+"en": "Imp Porter Zombie",
+"mundo": "lostcity",
+"res": "LostcityImpPorter",
+"basadoEn": "lostcity_impporter"
+},
+{
+"id": "lostcity_crystalskull",
+"en": "Turquoise Skull Zombie",
+"mundo": "lostcity",
+"res": "LostcityCrystalSkull",
+"basadoEn": "lostcity_crystalskull"
+},
+{
+"id": "lostcity_imp",
+"en": "Lost City Imp Zombie",
+"mundo": "lostcity",
+"res": "LostcityImp",
+"basadoEn": "lostcity_imp"
+},
+{
+"id": "lostcity_gargantuar",
+"en": "Porter Gargantuar",
+"mundo": "lostcity",
+"res": "LostcityGargantuar",
+"basadoEn": "lostcity_gargantuar"
+},
+{
+"id": "zombossmech_lostcity",
+"en": "Zombot Aerostatic Gondola",
+"mundo": "lostcity",
+"res": "LostcityZombossMech",
+"basadoEn": "zombossmech_lostcity"
+},
+{
+"id": "sky_electric",
+"en": "Lightning Gun Zombie",
+"mundo": "sky",
+"res": "SkyElectric",
+"basadoEn": "sky_electric"
+},
+{
+"id": "sky",
+"en": "Pilot Zombie",
+"mundo": "sky",
+"res": "SkyBasic",
+"basadoEn": "sky"
+},
+{
+"id": "sky_armor1",
+"en": "Conehead Pilot",
+"mundo": "sky",
+"res": "SkyBasic",
+"basadoEn": "sky_armor1"
+},
+{
+"id": "sky_armor2",
+"en": "Buckethead Pilot",
+"mundo": "sky",
+"res": "SkyBasic",
+"basadoEn": "sky_armor2"
+},
+{
+"id": "sky_flag",
+"en": "Flag Pilot",
+"mundo": "sky",
+"res": "SkyFlag",
+"basadoEn": "sky_flag"
+},
+{
+"id": "sky_imp",
+"en": "Imp Paratrooper",
+"mundo": "sky",
+"res": "SkyImp",
+"basadoEn": "sky_imp"
+},
+{
+"id": "sky_twin",
+"en": "Double-Cabin Aircraft",
+"mundo": "sky",
+"res": "SkyTwinLower",
+"basadoEn": "sky_twin"
+},
+{
+"id": "sky_arbiterx",
+"en": "Arbiter - Model X",
+"mundo": "sky",
+"res": "SkyArbiterX",
+"basadoEn": "sky_arbiterx"
+},
+{
+"id": "sky_gargantuar",
+"en": "Airborne Gargantuar",
+"mundo": "sky",
+"res": "SkyGargantuar",
+"basadoEn": "sky_gargantuar"
+},
+{
+"id": "zombossmech_sky",
+"en": "Zombot Vulture Warplane",
+"mundo": "sky",
+"res": "SkyZombossMech",
+"basadoEn": "zombossmech_sky"
+},
+{
+"id": "sky_battleplane",
+"en": "Battleplane Zombie",
+"mundo": "sky",
+"res": "SkyBattlePlane",
+"basadoEn": "sky_battleplane"
+},
+{
+"id": "eighties",
+"en": "Neon Zombie",
+"mundo": "eighties",
+"res": "EightiesBasic",
+"basadoEn": "eighties"
+},
+{
+"id": "eighties_armor1",
+"en": "Neon Conehead",
+"mundo": "eighties",
+"res": "EightiesBasic",
+"basadoEn": "eighties_armor1"
+},
+{
+"id": "eighties_armor2",
+"en": "Neon Buckethead",
+"mundo": "eighties",
+"res": "EightiesBasic",
+"basadoEn": "eighties_armor2"
+},
+{
+"id": "eighties_armor4",
+"en": "Spotlight Neon Zombie",
+"mundo": "eighties",
+"res": "EightiesBasic",
+"basadoEn": "eighties_armor4"
+},
+{
+"id": "eighties_flag",
+"en": "Neon Flag Zombie",
+"mundo": "eighties",
+"res": "EightiesFlag",
+"basadoEn": "eighties_flag"
+},
+{
+"id": "eighties_punk",
+"en": "Punk Zombie",
+"mundo": "eighties",
+"res": "EightiesPunk",
+"basadoEn": "eighties_punk"
+},
+{
+"id": "eighties_punk_veteran",
+"en": "Skunk Punk",
+"mundo": "eighties",
+"res": "EightiesPunkVeteran",
+"basadoEn": "eighties_punk_veteran"
+},
+{
+"id": "eighties_skunk",
+"en": "Zombie Skunk",
+"mundo": "eighties",
+"res": "EightiesSkunk",
+"basadoEn": "eighties_skunk"
+},
+{
+"id": "eighties_flag_veteran",
+"en": "Neon Rally Zombie",
+"mundo": "eighties",
+"res": "EightiesRally",
+"basadoEn": "eighties_flag_veteran"
+},
+{
+"id": "eighties_glitter",
+"en": "Glitter Zombie",
+"mundo": "eighties",
+"res": "EightiesGlitter",
+"basadoEn": "eighties_glitter"
+},
+{
+"id": "eighties_mc",
+"en": "MC Zom-B",
+"mundo": "eighties",
+"res": "EightiesMC",
+"basadoEn": "eighties_mc"
+},
+{
+"id": "eighties_breakdancer",
+"en": "Breakdancer Zombie",
+"mundo": "eighties",
+"res": "EightiesBreakDancer",
+"basadoEn": "eighties_breakdancer"
+},
+{
+"id": "eighties_arcade",
+"en": "Arcade Zombie",
+"mundo": "eighties",
+"res": "EightiesArcade",
+"basadoEn": "eighties_arcade"
+},
+{
+"id": "eighties_8bit",
+"en": "8-Bit Zombie",
+"mundo": "eighties",
+"res": "Eighties8Bit",
+"basadoEn": "eighties_8bit"
+},
+{
+"id": "eighties_boombox",
+"en": "Boombox Zombie",
+"mundo": "eighties",
+"res": "EightiesBoomBox",
+"basadoEn": "eighties_boombox"
+},
+{
+"id": "eighties_imp",
+"en": "Impunk",
+"mundo": "eighties",
+"res": "EightiesImp",
+"basadoEn": "eighties_imp"
+},
+{
+"id": "eighties_gargantuar",
+"en": "Hair Metal Gargantuar",
+"mundo": "eighties",
+"res": "EightiesGargantuar",
+"basadoEn": "eighties_gargantuar"
+},
+{
+"id": "zombossmech_eighties",
+"en": "Zombot Multi-stage Masher",
+"mundo": "eighties",
+"res": "EightiesZombossMech",
+"basadoEn": "zombossmech_eighties"
+},
+{
+"id": "dino",
+"en": "Jurassic Zombie",
+"mundo": "dino",
+"res": "DinoBasic",
+"basadoEn": "dino"
+},
+{
+"id": "dino_armor1",
+"en": "Jurassic Conehead",
+"mundo": "dino",
+"res": "DinoBasic",
+"basadoEn": "dino_armor1"
+},
+{
+"id": "dino_armor2",
+"en": "Jurassic Buckethead",
+"mundo": "dino",
+"res": "DinoBasic",
+"basadoEn": "dino_armor2"
+},
+{
+"id": "dino_armor3",
+"en": "Jurassic Fossilhead",
+"mundo": "dino",
+"res": "DinoBasic",
+"basadoEn": "dino_armor3"
+},
+{
+"id": "dino_armor4",
+"en": "Amberhead Zombie",
+"mundo": "dino",
+"res": "DinoBasic",
+"basadoEn": "dino_armor4"
+},
+{
+"id": "dino_flag",
+"en": "Jurassic Flag Zombie",
+"mundo": "dino",
+"res": "DinoFlag",
+"basadoEn": "dino_flag"
+},
+{
+"id": "dino_flag_veteran",
+"en": "Jurassic Rally Zombie",
+"mundo": "dino",
+"res": "DinoRally",
+"basadoEn": "dino_flag_veteran"
+},
+{
+"id": "dino_bully",
+"en": "Jurassic Bully",
+"mundo": "dino",
+"res": "DinoBully",
+"basadoEn": "dino_bully"
+},
+{
+"id": "dino_bully_veteran",
+"en": "Jurassic Rockpuncher",
+"mundo": "dino",
+"res": "DinoBullyVeteran",
+"basadoEn": "dino_bully_veteran"
+},
+{
+"id": "dino_imp",
+"en": "Jurassic Imp",
+"mundo": "dino",
+"res": "DinoImp",
+"basadoEn": "dino_imp"
+},
+{
+"id": "dino_gargantuar",
+"en": "Jurassic Gargantuar",
+"mundo": "dino",
+"res": "DinoGargantuar",
+"basadoEn": "dino_gargantuar"
+},
+{
+"id": "zombossmech_dino",
+"en": "Zombot Dinotronic Mechasaur",
+"mundo": "dino",
+"res": "DinoZombossMech",
+"basadoEn": "zombossmech_dino"
+}
+],
+"escenarios": {
+"FrontLawnStage": {
+"noche": false,
+"musica": "Tutorial",
+"basic": [
+"tutorial"
+],
+"flag": [
+"tutorial_flag"
+],
+"rally": [
+"tutorial_flag_veteran"
+],
+"armor1": [
+"tutorial_armor1"
+],
+"armor2": [
+"tutorial_armor2"
+],
+"armor3": [
+"tutorial_armor2"
+],
+"armor4": [
+"tutorial_armor4"
+],
+"imp": [
+"tutorial_imp"
+],
+"gargantuar": [
+"tutorial_gargantuar"
+]
+},
+"ModernStage": {
+"noche": false,
+"musica": "Modern",
+"basic": [
+"tutorial"
+],
+"flag": [
+"tutorial_flag"
+],
+"rally": [
+"tutorial_flag_veteran"
+],
+"armor1": [
+"tutorial_armor1"
+],
+"armor2": [
+"tutorial_armor2"
+],
+"armor3": [
+"tutorial_armor2"
+],
+"armor4": [
+"tutorial_armor4"
+],
+"imp": [
+"tutorial_imp"
+],
+"gargantuar": [
+"tutorial_gargantuar"
+]
+},
+"ModernNightStage": {
+"noche": true,
+"musica": "Modern",
+"basic": [
+"tutorial"
+],
+"flag": [
+"tutorial_flag"
+],
+"rally": [
+"tutorial_flag_veteran"
+],
+"armor1": [
+"tutorial_armor1"
+],
+"armor2": [
+"tutorial_armor2"
+],
+"armor3": [
+"tutorial_armor2"
+],
+"armor4": [
+"tutorial_armor4"
+],
+"imp": [
+"tutorial_imp"
+],
+"gargantuar": [
+"tutorial_gargantuar"
+]
+},
+"EgyptStage": {
+"noche": false,
+"musica": "Egypt",
+"basic": [
+"mummy"
+],
+"flag": [
+"mummy_flag"
+],
+"rally": [
+"mummy_flag_veteran"
+],
+"armor1": [
+"mummy_armor1"
+],
+"armor2": [
+"mummy_armor2"
+],
+"armor3": [
+"mummy_armor2"
+],
+"armor4": [
+"mummy_armor4"
+],
+"imp": [
+"egypt_imp"
+],
+"gargantuar": [
+"egypt_gargantuar"
+]
+},
+"EgyptNightStage": {
+"noche": true,
+"musica": "Egypt",
+"basic": [
+"mummy"
+],
+"flag": [
+"mummy_flag"
+],
+"rally": [
+"mummy_flag_veteran"
+],
+"armor1": [
+"mummy_armor1"
+],
+"armor2": [
+"mummy_armor2"
+],
+"armor3": [
+"mummy_armor2"
+],
+"armor4": [
+"mummy_armor4"
+],
+"imp": [
+"egypt_imp"
+],
+"gargantuar": [
+"egypt_gargantuar"
+]
+},
+"PirateStage": {
+"noche": false,
+"musica": "Pirate",
+"basic": [
+"pirate"
+],
+"flag": [
+"pirate_flag"
+],
+"rally": [
+"pirate_flag_veteran"
+],
+"armor1": [
+"pirate_armor1"
+],
+"armor2": [
+"pirate_armor2"
+],
+"armor3": [
+"pirate_armor2"
+],
+"armor4": [
+"pirate_armor4"
+],
+"imp": [
+"pirate_imp"
+],
+"gargantuar": [
+"pirate_gargantuar"
+]
+},
+"WestStage": {
+"noche": false,
+"musica": "Cowboy",
+"basic": [
+"cowboy"
+],
+"flag": [
+"cowboy_flag"
+],
+"rally": [
+"cowboy_flag_veteran"
+],
+"armor1": [
+"cowboy_armor1"
+],
+"armor2": [
+"cowboy_armor2"
+],
+"armor3": [
+"cowboy_armor2"
+],
+"armor4": [
+"cowboy_armor4"
+],
+"imp": [
+"west_bullrider"
+],
+"gargantuar": [
+"cowboy_gargantuar"
+]
+},
+"KongfuStage": {
+"noche": false,
+"musica": "Kongfu",
+"basic": [
+"kongfu"
+],
+"flag": [
+"kongfu_flag"
+],
+"rally": [
+"kongfu_flag_veteran"
+],
+"armor1": [
+"kongfu_armor1"
+],
+"armor2": [
+"kongfu_armor2"
+],
+"armor3": [
+"kongfu_armor3"
+],
+"armor4": [
+"kongfu_armor4"
+],
+"imp": [
+"kongfu_rocket_imp"
+],
+"gargantuar": [
+"kongfu_bronze_strong"
+]
+},
+"MonkStage": {
+"noche": false,
+"musica": "Kongfu",
+"basic": [
+"monk"
+],
+"flag": [
+"monk_flag"
+],
+"rally": [
+"monk_flag_veteran"
+],
+"armor1": [
+"monk_armor1"
+],
+"armor2": [
+"monk_armor2"
+],
+"armor3": [
+"monk_armor3"
+],
+"armor4": [
+"monk_armor4"
+],
+"imp": [
+"monk_imp"
+],
+"gargantuar": [
+"kongfu_bronze_hook"
+]
+},
+"AbbotStage": {
+"noche": false,
+"musica": "Kongfu",
+"basic": [
+"abbot"
+],
+"flag": [
+"abbot_flag"
+],
+"rally": [
+"abbot_flag_veteran"
+],
+"armor1": [
+"abbot_armor1"
+],
+"armor2": [
+"abbot_armor2"
+],
+"armor3": [
+"abbot_armor3"
+],
+"armor4": [
+"abbot_armor4"
+],
+"imp": [
+"abbot_imp"
+],
+"gargantuar": [
+"kongfu_bronze_chi"
+]
+},
+"KongfuVeteranStage": {
+"noche": false,
+"musica": "Kongfu",
+"basic": [
+"kongfu",
+"monk",
+"abbot"
+],
+"flag": [
+"kongfu_flag",
+"monk_flag",
+"abbot_flag"
+],
+"rally": [
+"kongfu_flag_veteran",
+"monk_flag_veteran",
+"abbot_flag_veteran"
+],
+"armor1": [
+"kongfu_armor1",
+"monk_armor1",
+"abbot_armor1"
+],
+"armor2": [
+"kongfu_armor2",
+"monk_armor2",
+"abbot_armor2"
+],
+"armor3": [
+"kongfu_armor3",
+"monk_armor3",
+"abbot_armor3"
+],
+"armor4": [
+"kongfu_armor4",
+"monk_armor4",
+"abbot_armor4"
+],
+"imp": [
+"kongfu_rocket_imp",
+"monk_imp",
+"abbot_imp"
+],
+"gargantuar": [
+"kongfu_bronze_strong",
+"kongfu_bronze_hook",
+"kongfu_bronze_chi"
+]
+},
+"KongfuBossStage": {
+"noche": false,
+"musica": "Kongfu",
+"basic": [
+"kongfu",
+"monk",
+"abbot"
+],
+"flag": [
+"kongfu_flag",
+"monk_flag",
+"abbot_flag"
+],
+"rally": [
+"kongfu_flag_veteran",
+"monk_flag_veteran",
+"abbot_flag_veteran"
+],
+"armor1": [
+"kongfu_armor1",
+"monk_armor1",
+"abbot_armor1"
+],
+"armor2": [
+"kongfu_armor2",
+"monk_armor2",
+"abbot_armor2"
+],
+"armor3": [
+"kongfu_armor3",
+"monk_armor3",
+"abbot_armor3"
+],
+"armor4": [
+"kongfu_armor4",
+"monk_armor4",
+"abbot_armor4"
+],
+"imp": [
+"kongfu_rocket_imp",
+"monk_imp",
+"abbot_imp"
+],
+"gargantuar": [
+"kongfu_bronze_strong",
+"kongfu_bronze_hook",
+"kongfu_bronze_chi"
+]
+},
+"FutureStage": {
+"noche": false,
+"musica": "Future",
+"basic": [
+"future"
+],
+"flag": [
+"future_flag"
+],
+"rally": [
+"future_flag_veteran"
+],
+"armor1": [
+"future_armor1"
+],
+"armor2": [
+"future_armor2"
+],
+"armor3": [
+"future_armor2"
+],
+"armor4": [
+"future_armor4"
+],
+"imp": [
+"future_imp"
+],
+"gargantuar": [
+"future_gargantuar"
+]
+},
+"FutureNightStage": {
+"noche": true,
+"musica": "Future",
+"basic": [
+"future"
+],
+"flag": [
+"future_flag"
+],
+"rally": [
+"future_flag_veteran"
+],
+"armor1": [
+"future_armor1"
+],
+"armor2": [
+"future_armor2"
+],
+"armor3": [
+"future_armor2"
+],
+"armor4": [
+"future_armor4"
+],
+"imp": [
+"future_imp"
+],
+"gargantuar": [
+"future_gargantuar"
+]
+},
+"DarkStage": {
+"noche": true,
+"musica": "Dark",
+"basic": [
+"dark"
+],
+"flag": [
+"dark_flag"
+],
+"rally": [
+"dark_flag_veteran"
+],
+"armor1": [
+"dark_armor1"
+],
+"armor2": [
+"dark_armor2"
+],
+"armor3": [
+"dark_armor3"
+],
+"armor4": [
+"dark_armor4"
+],
+"imp": [
+"dark_imp"
+],
+"gargantuar": [
+"dark_gargantuar"
+]
+},
+"BeachStage": {
+"noche": false,
+"musica": "Beach",
+"basic": [
+"beach",
+"beach_fem"
+],
+"flag": [
+"beach_flag"
+],
+"rally": [
+"beach_flag_veteran"
+],
+"armor1": [
+"beach_armor1",
+"beach_fem_armor1"
+],
+"armor2": [
+"beach_armor2",
+"beach_fem_armor2"
+],
+"armor3": [
+"beach_armor2",
+"beach_fem_armor2"
+],
+"armor4": [
+"beach_armor4",
+"beach_fem_armor4"
+],
+"imp": [
+"beach_imp"
+],
+"gargantuar": [
+"beach_gargantuar"
+]
+},
+"IceageStage": {
+"noche": false,
+"musica": "Iceage",
+"basic": [
+"iceage"
+],
+"flag": [
+"iceage_flag"
+],
+"rally": [
+"iceage_flag_veteran"
+],
+"armor1": [
+"iceage_armor1"
+],
+"armor2": [
+"iceage_armor2"
+],
+"armor3": [
+"iceage_armor3"
+],
+"armor4": [
+"iceage_armor4"
+],
+"imp": [
+"iceage_imp"
+],
+"gargantuar": [
+"iceage_gargantuar"
+]
+},
+"IceageVeteranStage": {
+"noche": false,
+"musica": "Iceage",
+"basic": [
+"iceage"
+],
+"flag": [
+"iceage_flag"
+],
+"rally": [
+"iceage_flag_veteran"
+],
+"armor1": [
+"iceage_armor1"
+],
+"armor2": [
+"iceage_armor2"
+],
+"armor3": [
+"iceage_armor3"
+],
+"armor4": [
+"iceage_armor4"
+],
+"imp": [
+"iceage_imp"
+],
+"gargantuar": [
+"iceage_gargantuar"
+]
+},
+"LostCityStage": {
+"noche": false,
+"musica": "Lostcity",
+"basic": [
+"lostcity"
+],
+"flag": [
+"lostcity_flag"
+],
+"rally": [
+"lostcity_flag_veteran"
+],
+"armor1": [
+"lostcity_armor1"
+],
+"armor2": [
+"lostcity_armor2"
+],
+"armor3": [
+"lostcity_armor2"
+],
+"armor4": [
+"lostcity_armor4"
+],
+"imp": [
+"lostcity_imp"
+],
+"gargantuar": [
+"lostcity_gargantuar"
+]
+},
+"LostCityNightStage": {
+"noche": true,
+"musica": "Lostcity",
+"basic": [
+"lostcity"
+],
+"flag": [
+"lostcity_flag"
+],
+"rally": [
+"lostcity_flag_veteran"
+],
+"armor1": [
+"lostcity_armor1"
+],
+"armor2": [
+"lostcity_armor2"
+],
+"armor3": [
+"lostcity_armor2"
+],
+"armor4": [
+"lostcity_armor4"
+],
+"imp": [
+"lostcity_imp"
+],
+"gargantuar": [
+"lostcity_gargantuar"
+]
+},
+"SkyStage": {
+"noche": false,
+"musica": "Sky",
+"basic": [
+"sky"
+],
+"flag": [
+"sky_flag"
+],
+"rally": [
+"sky_flag"
+],
+"armor1": [
+"sky_armor1"
+],
+"armor2": [
+"sky_armor2"
+],
+"armor3": [
+"sky_armor2"
+],
+"armor4": [
+"sky_armor2"
+],
+"imp": [
+"sky_imp"
+],
+"gargantuar": [
+"sky_gargantuar"
+]
+},
+"SkyUnarmedStage": {
+"noche": false,
+"musica": "Sky",
+"basic": [
+"sky_unarmed"
+],
+"flag": [
+"sky_unarmed_flag"
+],
+"rally": [
+"sky_unarmed_flag"
+],
+"armor1": [
+"sky_unarmed_armor1"
+],
+"armor2": [
+"sky_unarmed_armor2"
+],
+"armor3": [
+"sky_unarmed_armor2"
+],
+"armor4": [
+"sky_unarmed_armor2"
+],
+"imp": [
+"sky_imp"
+],
+"gargantuar": [
+"sky_gargantuar"
+]
+},
+"EightiesStage": {
+"noche": true,
+"musica": "Eighties",
+"basic": [
+"eighties"
+],
+"flag": [
+"eighties_flag"
+],
+"rally": [
+"eighties_flag_veteran"
+],
+"armor1": [
+"eighties_armor1"
+],
+"armor2": [
+"eighties_armor2"
+],
+"armor3": [
+"eighties_armor2"
+],
+"armor4": [
+"eighties_armor4"
+],
+"imp": [
+"eighties_imp"
+],
+"gargantuar": [
+"eighties_gargantuar"
+]
+},
+"DinoStage": {
+"noche": false,
+"musica": "Dino",
+"basic": [
+"dino"
+],
+"flag": [
+"dino_flag"
+],
+"rally": [
+"dino_flag_veteran"
+],
+"armor1": [
+"dino_armor1"
+],
+"armor2": [
+"dino_armor2"
+],
+"armor3": [
+"dino_armor3"
+],
+"armor4": [
+"dino_armor4"
+],
+"imp": [
+"dino_imp"
+],
+"gargantuar": [
+"dino_gargantuar"
+]
+},
+"CircusStage": {
+"noche": true,
+"musica": "Modern",
+"basic": [
+"tutorial"
+],
+"flag": [
+"tutorial_flag"
+],
+"rally": [
+"tutorial_flag_veteran"
+],
+"armor1": [
+"tutorial_armor1"
+],
+"armor2": [
+"tutorial_armor2"
+],
+"armor3": [
+"tutorial_armor2"
+],
+"armor4": [
+"tutorial_armor4"
+],
+"imp": [
+"tutorial_imp"
+],
+"gargantuar": [
+"tutorial_gargantuar"
+]
+},
+"FutureTutorialStage": {
+"noche": false,
+"musica": "Future",
+"basic": [
+"future"
+],
+"flag": [
+"future_flag"
+],
+"rally": [
+"future_flag_veteran"
+],
+"armor1": [
+"future_armor1"
+],
+"armor2": [
+"future_armor2"
+],
+"armor3": [
+"future_armor2"
+],
+"armor4": [
+"future_armor4"
+],
+"imp": [
+"future_imp"
+],
+"gargantuar": [
+"future_gargantuar"
+]
+},
+"DarkTutorialStage": {
+"noche": true,
+"musica": "Dark",
+"basic": [
+"dark"
+],
+"flag": [
+"dark_flag"
+],
+"rally": [
+"dark_flag_veteran"
+],
+"armor1": [
+"dark_armor1"
+],
+"armor2": [
+"dark_armor2"
+],
+"armor3": [
+"dark_armor3"
+],
+"armor4": [
+"dark_armor4"
+],
+"imp": [
+"dark_imp"
+],
+"gargantuar": [
+"dark_gargantuar"
+]
+},
+"BeachTutorialStage": {
+"noche": false,
+"musica": "Beach",
+"basic": [
+"beach",
+"beach_fem"
+],
+"flag": [
+"beach_flag"
+],
+"rally": [
+"beach_flag_veteran"
+],
+"armor1": [
+"beach_armor1",
+"beach_fem_armor1"
+],
+"armor2": [
+"beach_armor2",
+"beach_fem_armor2"
+],
+"armor3": [
+"beach_armor2",
+"beach_fem_armor2"
+],
+"armor4": [
+"beach_armor4",
+"beach_fem_armor4"
+],
+"imp": [
+"beach_imp"
+],
+"gargantuar": [
+"beach_gargantuar"
+]
+},
+"IceageTutorialStage": {
+"noche": false,
+"musica": "Iceage",
+"basic": [
+"iceage"
+],
+"flag": [
+"iceage_flag"
+],
+"rally": [
+"iceage_flag_veteran"
+],
+"armor1": [
+"iceage_armor1"
+],
+"armor2": [
+"iceage_armor2"
+],
+"armor3": [
+"iceage_armor3"
+],
+"armor4": [
+"iceage_armor4"
+],
+"imp": [
+"iceage_imp"
+],
+"gargantuar": [
+"iceage_gargantuar"
+]
+},
+"LostCityTutorialStage": {
+"noche": false,
+"musica": "Lostcity",
+"basic": [
+"lostcity"
+],
+"flag": [
+"lostcity_flag"
+],
+"rally": [
+"lostcity_flag_veteran"
+],
+"armor1": [
+"lostcity_armor1"
+],
+"armor2": [
+"lostcity_armor2"
+],
+"armor3": [
+"lostcity_armor2"
+],
+"armor4": [
+"lostcity_armor4"
+],
+"imp": [
+"lostcity_imp"
+],
+"gargantuar": [
+"lostcity_gargantuar"
+]
+},
+"EightiesTutorialStage": {
+"noche": true,
+"musica": "Eighties",
+"basic": [
+"eighties"
+],
+"flag": [
+"eighties_flag"
+],
+"rally": [
+"eighties_flag_veteran"
+],
+"armor1": [
+"eighties_armor1"
+],
+"armor2": [
+"eighties_armor2"
+],
+"armor3": [
+"eighties_armor2"
+],
+"armor4": [
+"eighties_armor4"
+],
+"imp": [
+"eighties_imp"
+],
+"gargantuar": [
+"eighties_gargantuar"
+]
+},
+"DinoTutorialStage": {
+"noche": false,
+"musica": "Dino",
+"basic": [
+"dino"
+],
+"flag": [
+"dino_flag"
+],
+"rally": [
+"dino_flag_veteran"
+],
+"armor1": [
+"dino_armor1"
+],
+"armor2": [
+"dino_armor2"
+],
+"armor3": [
+"dino_armor3"
+],
+"armor4": [
+"dino_armor4"
+],
+"imp": [
+"dino_imp"
+],
+"gargantuar": [
+"dino_gargantuar"
+]
+},
+"SummerNightsStage": {
+"noche": true,
+"musica": "Modern",
+"basic": [
+"summer_basic"
+],
+"flag": [
+"summer_flag"
+],
+"rally": [
+"summer_flag"
+],
+"armor1": [
+"summer_armor1"
+],
+"armor2": [
+"summer_armor2"
+],
+"armor3": [
+"summer_armor2"
+],
+"armor4": [
+"summer_armor2"
+],
+"imp": [
+"summer_imp"
+],
+"gargantuar": [
+"summer_gargantuar"
+]
+},
+"LunarStage": {
+"noche": true,
+"musica": "Kongfu",
+"basic": [
+"lunar"
+],
+"flag": [
+"lunar_flag"
+],
+"rally": [
+"lunar_flag"
+],
+"armor1": [
+"lunar_armor1"
+],
+"armor2": [
+"lunar_armor2"
+],
+"armor3": [
+"lunar_armor2"
+],
+"armor4": [
+"lunar_armor2"
+],
+"imp": [
+"kongfu_rocket_imp",
+"monk_imp",
+"abbot_imp"
+],
+"gargantuar": [
+"kongfu_bronze_chi",
+"kongfu_bronze_hook",
+"kongfu_bronze_strong"
+]
+},
+"HalloweenStage": {
+"noche": true,
+"musica": "Dark",
+"basic": [
+"halloween"
+],
+"flag": [
+"halloween_flag"
+],
+"rally": [
+"halloween_flag"
+],
+"armor1": [
+"halloween_armor1"
+],
+"armor2": [
+"halloween_armor2"
+],
+"armor3": [
+"halloween_armor2"
+],
+"armor4": [
+"halloween_armor2"
+],
+"imp": [
+"halloween_imp"
+],
+"gargantuar": [
+"halloween_gargantuar"
+]
+},
+"FarmStage": {
+"noche": false,
+"musica": "Cowboy",
+"basic": [
+"cowboy"
+],
+"flag": [
+"cowboy_flag"
+],
+"rally": [
+"cowboy_flag_veteran"
+],
+"armor1": [
+"cowboy_armor1"
+],
+"armor2": [
+"cowboy_armor2"
+],
+"armor3": [
+"cowboy_armor2"
+],
+"armor4": [
+"cowboy_armor4"
+],
+"imp": [
+"west_bullrider"
+],
+"gargantuar": [
+"cowboy_gargantuar"
+]
+},
+"HeroesStage": {
+"noche": false,
+"musica": "Lostcity",
+"basic": [
+"tutorial"
+],
+"flag": [
+"tutorial_flag"
+],
+"rally": [
+"tutorial_flag_veteran"
+],
+"armor1": [
+"tutorial_armor1"
+],
+"armor2": [
+"tutorial_armor2"
+],
+"armor3": [
+"tutorial_armor2"
+],
+"armor4": [
+"tutorial_armor4"
+],
+"imp": [
+"tutorial_imp"
+],
+"gargantuar": [
+"tutorial_gargantuar"
+]
+},
+"PaddysStage": {
+"noche": false,
+"musica": "Lostcity",
+"basic": [
+"stpatrick"
+],
+"flag": [
+"stpatrick_flag"
+],
+"rally": [
+"stpatrick_flag"
+],
+"armor1": [
+"stpatrick_armor1"
+],
+"armor2": [
+"stpatrick_armor2"
+],
+"armor3": [
+"stpatrick_armor2"
+],
+"armor4": [
+"stpatrick_armor2"
+],
+"imp": [
+"stpatrick_imp"
+],
+"gargantuar": [
+"tutorial_gargantuar"
+]
+},
+"BirthdayStage": {
+"noche": false,
+"musica": "Modern",
+"basic": [
+"birthday"
+],
+"flag": [
+"birthday_flag"
+],
+"rally": [
+"birthday_flag"
+],
+"armor1": [
+"birthday_armor1"
+],
+"armor2": [
+"birthday_armor2"
+],
+"armor3": [
+"birthday_armor2"
+],
+"armor4": [
+"birthday_armor4"
+],
+"imp": [
+"tutorial_imp"
+],
+"gargantuar": [
+"birthday_gargantuar"
+]
+},
+"FallsStage": {
+"noche": false,
+"musica": "Lostcity",
+"basic": [
+"foodfight"
+],
+"flag": [
+"foodfight_flag"
+],
+"rally": [
+"foodfight_flag"
+],
+"armor1": [
+"foodfight_armor1"
+],
+"armor2": [
+"foodfight_armor2"
+],
+"armor3": [
+"foodfight_armor2"
+],
+"armor4": [
+"foodfight_armor2"
+],
+"imp": [
+"summer_imp"
+],
+"gargantuar": [
+"summer_gargantuar"
+]
+},
+"ValentinesStage": {
+"noche": true,
+"musica": "Modern",
+"basic": [
+"valentines"
+],
+"flag": [
+"valentines_flag"
+],
+"rally": [
+"valentines_flag"
+],
+"armor1": [
+"valentines_armor1"
+],
+"armor2": [
+"valentines_armor2"
+],
+"armor3": [
+"valentines_armor2"
+],
+"armor4": [
+"valentines_armor4"
+],
+"imp": [
+"valentines_imp"
+],
+"gargantuar": [
+"valentines_gargantuar"
+]
+},
+"FeastivusStage": {
+"noche": false,
+"musica": "Iceage",
+"basic": [
+"feastivus"
+],
+"flag": [
+"feastivus_flag"
+],
+"rally": [
+"feastivus_flag"
+],
+"armor1": [
+"feastivus_armor1"
+],
+"armor2": [
+"feastivus_armor2"
+],
+"armor3": [
+"feastivus_armor3"
+],
+"armor4": [
+"feastivus_armor3"
+],
+"imp": [
+"holiday_imp",
+"feastivus_imp"
+],
+"gargantuar": [
+"holiday_gargantuar",
+"feastivus_gargantuar"
+]
+},
+"FeastivusNightStage": {
+"noche": true,
+"musica": "Iceage",
+"basic": [
+"feastivus"
+],
+"flag": [
+"feastivus_flag"
+],
+"rally": [
+"feastivus_flag"
+],
+"armor1": [
+"feastivus_armor1"
+],
+"armor2": [
+"feastivus_armor2"
+],
+"armor3": [
+"feastivus_armor3"
+],
+"armor4": [
+"feastivus_armor3"
+],
+"imp": [
+"holiday_imp",
+"feastivus_imp"
+],
+"gargantuar": [
+"holiday_gargantuar",
+"feastivus_gargantuar"
+]
+},
+"SpringStage": {
+"noche": false,
+"musica": "Modern",
+"basic": [
+"easter"
+],
+"flag": [
+"easter_flag"
+],
+"rally": [
+"easter_flag"
+],
+"armor1": [
+"easter_armor1"
+],
+"armor2": [
+"easter_armor2"
+],
+"armor3": [
+"easter_armor2"
+],
+"armor4": [
+"easter_armor4"
+],
+"imp": [
+"easter_imp"
+],
+"gargantuar": [
+"easter_gargantuar"
+]
+},
+"SportzballStage": {
+"noche": false,
+"musica": "Modern",
+"basic": [
+"sportzball"
+],
+"flag": [
+"sportzball_flag"
+],
+"rally": [
+"sportzball_flag"
+],
+"armor1": [
+"sportzball_armor1"
+],
+"armor2": [
+"sportzball_armor2"
+],
+"armor3": [
+"sportzball_armor2"
+],
+"armor4": [
+"sportzball_armor2"
+],
+"imp": [
+"sportzball_imp"
+],
+"gargantuar": [
+"sportzball_gargantuar"
+]
+},
+"PersuitStage": {
+"noche": true,
+"musica": "Modern",
+"basic": [
+"tutorial"
+],
+"flag": [
+"tutorial_flag"
+],
+"rally": [
+"tutorial_flag_veteran"
+],
+"armor1": [
+"tutorial_armor1"
+],
+"armor2": [
+"tutorial_armor2"
+],
+"armor3": [
+"tutorial_armor2"
+],
+"armor4": [
+"tutorial_armor4"
+],
+"imp": [
+"tutorial_imp"
+],
+"gargantuar": [
+"tutorial_gargantuar"
+]
+},
+"ArenaStage": {
+"noche": true,
+"musica": "Dark",
+"basic": [
+"dark"
+],
+"flag": [
+"dark_flag"
+],
+"rally": [
+"dark_flag_veteran"
+],
+"armor1": [
+"dark_armor1"
+],
+"armor2": [
+"dark_armor2"
+],
+"armor3": [
+"dark_armor3"
+],
+"armor4": [
+"dark_armor4"
+],
+"imp": [
+"dark_imp"
+],
+"gargantuar": [
+"dark_gargantuar"
+]
+},
+"GreenStage": {
+"noche": false,
+"musica": "Modern",
+"basic": [
+"tutorial"
+],
+"flag": [
+"tutorial_flag"
+],
+"rally": [
+"tutorial_flag_veteran"
+],
+"armor1": [
+"tutorial_armor1"
+],
+"armor2": [
+"tutorial_armor2"
+],
+"armor3": [
+"tutorial_armor2"
+],
+"armor4": [
+"tutorial_armor4"
+],
+"imp": [
+"tutorial_imp"
+],
+"gargantuar": [
+"tutorial_gargantuar"
+]
+}
+}
+}
