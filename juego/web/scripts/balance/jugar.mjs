@@ -138,7 +138,7 @@ async function jugarEnPagina({ area, equipo, semilla, roles, refuerzo, limite, t
 async function trabajador(n) {
     const ctx = await browser.newContext({ viewport: { width: 800, height: 450 }, ignoreHTTPSErrors: true });
     const page = await ctx.newPage();
-    const errores = []; page.on('pageerror', e => errores.push(e.message.slice(0, 200)));
+    const errores = []; page.on('pageerror', e => errores.push(e.message.slice(0, 200))); page.on('console', m => { if (m.type() === 'warning' && m.text().startsWith('Planta del nivel')) errores.push(m.text()); });
     await page.route('**/balance.html', r => r.fulfill({ contentType: 'text/html', body: '<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;height:100vh"></body></html>' }));
     await page.goto(new URL('balance.html', base).href);
     await page.evaluate(async () => { window.mods = { frente: await import('/src/jardin/motores/frente-gardendless.ts'), nivel: await import('/src/jardin/motores/nivel-historia.ts') }; });

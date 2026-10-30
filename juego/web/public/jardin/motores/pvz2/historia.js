@@ -82,7 +82,7 @@
     const baseFusion = t => semillaCatalogoNativo.fusiones.find(f => f.id === t && f.props)?.base ?? semillaCatalogoNativo.derivadas.find(d => d.id === t)?.base ?? t;
     const fusionadas = c => new Set((c.fusiones ?? []).map(id => semillaCatalogoNativo.fusiones.find(f => f.id === id)?.id).filter(Boolean));
     const validar = c => {
-            if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>239||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||![50,150].includes(c.solInicial) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))
+            if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>239||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||![50,100,150].includes(c.solInicial) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))
                 throw Error('Equipo o escenario incompatible.');
             if (c.escenario !== undefined && !Object.hasOwn(semillaCatalogoNativo.escenarios, c.escenario))
                 throw Error('Escenario desconocido.');
@@ -278,8 +278,12 @@
             if (!reposo && !nivel().gameWon)
                 throw Error('El combate activo todavía no se puede guardar como defensa terminada.');
             const cells = new Set();
-            const ps = plantas().map(p => { const q = p.plantInLnC; if (!q || !(tipos().includes(p.Plant_Type) || fusionadas(config).has(p.Plant_Type)))
-                throw Error('Planta no compatible con este tramo.'); const capa=baseFusion(p.Plant_Type),key=q.lIndex+':'+q.cIndex+':'+(capa==='lilypad'?'base':capa==='pumpkin'?'coraza':'planta'); if (cells.has(key))
+            // Lo que el propio nivel pone en el campo (plantas en ámbar, objetos con forma de planta) no es de la formación:
+            // no se guarda en el punto de descanso en vez de impedir guardar una victoria (prueba de balance, 30 de octubre).
+            const propia = p => tipos().includes(p.Plant_Type) || fusionadas(config).has(p.Plant_Type);
+            for (const p of plantas()) if (!propia(p)) console.warn('Planta del nivel fuera del punto de descanso: ' + p.Plant_Type);
+            const ps = plantas().filter(propia).map(p => { const q = p.plantInLnC; if (!q)
+                throw Error('Planta sin casilla en este tramo: ' + p.Plant_Type + '.'); const capa=baseFusion(p.Plant_Type),key=q.lIndex+':'+q.cIndex+':'+(capa==='lilypad'?'base':capa==='pumpkin'?'coraza':'planta'); if (cells.has(key))
                 throw Error('Defensa con casillas superpuestas.'); cells.add(key); const temporales = {}; for (const k of camposTemporales)
                 if (k==='cds'&&Array.isArray(p[k])||typeof p[k] === 'boolean' || typeof p[k] === 'number' && Number.isFinite(p[k]) && p[k] >= 0)
                     temporales[k] = p[k]; return { tipo: p.Plant_Type, fila: q.lIndex, col: q.cIndex, vida:p.health,...('armorHealth' in p?{armadura:Math.max(0,p.armorHealth)}:{}),temporales }; });
