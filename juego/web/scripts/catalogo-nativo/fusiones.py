@@ -44,7 +44,7 @@ def igual(nativa):
 FUSIONES = [
     # Día
     ('Repeater', 'Repetidora', 'lanza', 'lanza', igual('repeater')),
-    ('Sunshooter', 'Lanzasoles', 'lanza', 'girasol', ('shinevine', {'ProduceSunValue': 25, 'AttackDamage': 20})),
+    ('Sunshooter', 'Lanzasoles', 'lanza', 'girasol', tirador(intervalo=1.2)),  # Gardendless no tiene un tirador que dé soles
     ('Twin Sunflower', 'Girasol gemelo', 'girasol', 'girasol', igual('twinsunflower')),
     ('Cherry-shooter', 'Cerezatiradora', 'lanza', 'cereza', tirador(bala='pea_mega', intervalo=1.8)),
     ('Sun Bomb', 'Bomba solar', 'girasol', 'cereza', ('cherry_bomb', {'Damage': 1800, 'SunCost': 150})),

@@ -106,10 +106,11 @@ export const nativoDe = (t: string) => (TIPOS_NATIVOS as Record<string, string>)
 export const esSemillaConocida = (t: string) => Object.hasOwn(TIPOS_NATIVOS, t) || plantaPorId.has(t) || derivadaPorId.has(t);
 /** Vida máxima con la que una planta (o fusión) puede guardarse en un punto de descanso. */
 export function vidaNativa(tipo: string): number {
+    // Las fusiones que dan una planta nativa (Repetidora…) tienen como base su propio id: se mide la planta.
     const f = fusionPorId.get(tipo);
-    if (f) return Math.max(Number(f.props?.Toughness ?? 0), vidaNativa(f.base), Number(f.props?.ArmorToughness ?? 0));
+    if (f && f.base !== tipo) return Math.max(Number(f.props?.Toughness ?? 0), vidaNativa(f.base), Number(f.props?.ArmorToughness ?? 0));
     const d = derivadaPorId.get(tipo);
-    if (d) return Math.max(Number(d.props.Toughness ?? 0), vidaNativa(d.base));
+    if (d && d.base !== tipo) return Math.max(Number(d.props.Toughness ?? 0), vidaNativa(d.base));
     return Math.max(VIDAS_NATIVAS[tipo] ?? 0, plantaPorId.get(tipo)?.vida ?? 0);
 }
 export function nombrePlantaCatalogo(t: string, propio?: string) {

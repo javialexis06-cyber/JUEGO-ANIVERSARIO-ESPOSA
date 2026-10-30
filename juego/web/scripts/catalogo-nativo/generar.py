@@ -38,8 +38,10 @@ for en, es, a, b, (base, props) in FUSIONES:
                      'base': base, 'props': props})
 derivadas = [{'id': i, 'nombre': es, 'en': en, 'base': base, 'props': props} for i, es, en, base, props in DERIVADAS]
 assert all(d['base'] in ids_plantas for d in derivadas)
-catalogo = {'version': 1, 'fusiones': fusiones, 'derivadas': derivadas, 'motor': fuente['version'], 'plantas': plantas, 'zombis': zombis, 'escenarios': fuente['escenarios']}
+# El escenario de temporada de Halloween no lo usa ningún país y su nombre está vetado en la versión para amigos.
+escenarios = {k: v for k, v in fuente['escenarios'].items() if 'halloween' not in k.lower()}
+catalogo = {'version': 1, 'fusiones': fusiones, 'derivadas': derivadas, 'motor': fuente['version'], 'plantas': plantas, 'zombis': zombis, 'escenarios': escenarios}
 DESTINO.write_text(json.dumps(catalogo, ensure_ascii=False, separators=(',', ':')) + '\n')
-print(f'{len(fusiones)} fusiones, {len(plantas)} plantas, {len(zombis)} zombis, {len(fuente["escenarios"])} escenarios →', DESTINO)
+print(f'{len(fusiones)} fusiones, {len(plantas)} plantas, {len(zombis)} zombis, {len(escenarios)} escenarios →', DESTINO)
 if sin_nombre:
     print('Sin nombre en español:', ', '.join(sin_nombre))

@@ -39,11 +39,97 @@
     gameStarted = false;
     void semillaMotor.cerrar().catch(e => { semillaMotor.avisar('error', 'No se pudo guardar. Exporta la partida antes de cerrar.'); console.error(e); });
   };
+  // El main.pak fijado es anterior a GOTY y solo trae las animaciones y partículas precompiladas (compiled/).
+  // PvZ-Portable lee esas compilaciones como archivos sueltos (no desde el paquete) con el mismo formato de 32 bits,
+  // así que se copian del paquete al sistema de archivos. Cinco nombres cambiaron en GOTY y se agregan como alias.
+  const ALIAS = {
+    'compiled/reanim/IceShroom.reanim.compiled': 'compiled/reanim/Iceshroom.reanim.compiled',
+    'compiled/reanim/TwinSunflower.reanim.compiled': 'compiled/reanim/TwinSunFlower.reanim.compiled',
+    'compiled/reanim/Zombie_disco.reanim.compiled': 'compiled/reanim/Zombie_jackson.reanim.compiled',
+    'compiled/reanim/Zombie_backup.reanim.compiled': 'compiled/reanim/Zombie_dancer.reanim.compiled',
+    'compiled/reanim/zombatar_zombie_head.reanim.compiled': 'compiled/reanim/Zombie.reanim.compiled',
+  };
+  async function compilados() {
+    const pak = collectedFiles.get('main.pak');
+    if (!pak || [...collectedFiles.keys()].some(k => k.startsWith('compiled/') && !(k in ALIAS))) return;
+    const d = new Uint8Array(await pak.arrayBuffer()), x = i => d[i] ^ 0xF7;
+    const u32 = i => (x(i) | x(i + 1) << 8 | x(i + 2) << 16 | x(i + 3) << 24) >>> 0;
+    if (u32(0) !== 0xBAC04AC0) return;
+    let p = 8, renombrar = -1; const entradas = [];
+    while (p < d.length && !(x(p) & 0x80)) {
+      p++; const n = x(p++); let nombre = '';
+      for (let k = 0; k < n; k++) nombre += String.fromCharCode(x(p + k));
+      nombre = nombre.replaceAll('\\', '/');
+      if (nombre.toLowerCase() === 'properties/resources.xml') renombrar = p;
+      p += n; entradas.push([nombre, u32(p)]); p += 12;
+    }
+    let o = p + 1; const leidos = new Map();
+    for (const [nombre, t] of entradas) {
+      if (nombre.startsWith('compiled/')) {
+        const b = d.slice(o, o + t);
+        for (let k = 0; k < t; k++) b[k] ^= 0xF7;
+        leidos.set(nombre, b);
+        collectedFiles.set(nombre, new File([b], nombre.split('/').pop()));
+      }
+      o += t;
+    }
+    for (const [alias, original] of Object.entries(ALIAS))
+      if (leidos.has(original) && !collectedFiles.has(alias)) collectedFiles.set(alias, new File([leidos.get(original)], alias.split('/').pop()));
+    // El motor prefiere el paquete al archivo suelto: la entrada antigua se renombra (mismo largo) para que lea
+    // el manifiesto compatible de abajo.
+    if (renombrar >= 0) {
+      const nuevo = 'properties\\resources.vie';
+      for (let k = 0; k < nuevo.length; k++) d[renombrar + k] = nuevo.charCodeAt(k) ^ 0xF7;
+      collectedFiles.set('main.pak', new File([d], 'main.pak'));
+    }
+    await manifiesto();
+  }
+  // Manifiesto con los grupos que PvZ-Portable exige (grupos-goty.json, de sus fuentes fijadas). Los recursos del
+  // resources.xml antiguo conservan su archivo; los que GOTY agregó (Zombatar, logros…) usan un sustituto existente.
+  async function manifiesto() {
+    const archivo = collectedFiles.get('properties/resources.xml');
+    if (!archivo) return;
+    const grupos = await (await fetch('grupos-goty.json')).json();
+    const xml = new DOMParser().parseFromString(await archivo.text(), 'application/xml');
+    if (xml.querySelector('parsererror')) throw Error('resources.xml ilegible');
+    const antiguos = new Map(), deGrupo = new Map();
+    for (const g of xml.querySelectorAll('Resources')) {
+      let ruta = '', prefijo = '';
+      for (const e of g.children) {
+        if (e.tagName === 'SetDefaults') { ruta = e.getAttribute('path') ?? ''; prefijo = e.getAttribute('idprefix') ?? ''; continue; }
+        const id = prefijo + e.getAttribute('id');
+        antiguos.set(id, {ruta, e}); deGrupo.set(id, g.getAttribute('id'));
+      }
+    }
+    const esc = v => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const elemento = (ruta, e, id) => `<SetDefaults path="${esc(ruta)}" idprefix="" /><${e.tagName} ${[...e.attributes].map(a => `${a.name}="${esc(a.name === 'id' ? id : a.value)}"`).join(' ')} />`;
+    const SUSTITUTO = {I: ['images', 'Image', 'blank'], F: ['data', 'Font', 'BrianneTod16.txt'], S: ['sounds', 'Sound', 'buttonclick']};
+    const usados = new Set(), salida = new Map();
+    for (const [grupo, ids] of Object.entries(grupos))
+      salida.set(grupo, ids.map(([tipo, id]) => {
+        usados.add(id);
+        const a = antiguos.get(id);
+        if (a) return elemento(a.ruta, a.e, id);
+        const [ruta, etiqueta, archivo] = SUSTITUTO[tipo];
+        return `<SetDefaults path="${ruta}" idprefix="" /><${etiqueta} id="${id}" path="${archivo}" />`;
+      }));
+    for (const [id, a] of antiguos) if (!usados.has(id)) {
+      const g = deGrupo.get(id);
+      if (!salida.has(g)) salida.set(g, []);
+      salida.get(g).push(elemento(a.ruta, a.e, id));
+    }
+    const texto = `<?xml version="1.0"?>\n<ResourceManifest>\n${[...salida].map(([g, l]) => `<Resources id="${g}">\n${l.join('\n')}\n</Resources>`).join('\n')}\n</ResourceManifest>\n`;
+    collectedFiles.set('properties/resources.xml', new File([texto], 'resources.xml'));
+  }
   startGame = async function () {
+    // Se conservan los archivos tal como se descargaron; las compilaciones y el manifiesto se rehacen al empezar.
     try { await memoria('readwrite', s => s.put([...collectedFiles], 'paquete')); }
     catch (e) { console.warn('No se pudieron conservar los recursos; las partidas tienen su exportador independiente.', e); }
+    try { await compilados(); }
+    catch (e) { console.warn('No se pudieron preparar los recursos del paquete.', e); }
     return comenzar();
   };
+
   // Recursos remotos fijados por commit (motores.lock.json): main.pak y properties/ del repositorio
   // ruslan831/PlantsVsZombies-decompilation. No se suben al repositorio del juego.
   const FUENTE = 'https://raw.githubusercontent.com/ruslan831/PlantsVsZombies-decompilation/325b2229a7225d73870bb69322eefcda3a45bf8d/SexyAppFramework/DebugVS2005/';

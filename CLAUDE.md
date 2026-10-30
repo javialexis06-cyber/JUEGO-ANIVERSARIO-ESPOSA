@@ -4,7 +4,7 @@
 
 Javier pidió, en este orden: terminar PvZ 1, PvZ 2 y Fusión con todas sus plantas, zombis y mecánicas (se pueden tomar
 recursos de repositorios de GitHub), después desarrollar la campaña territorial completa y al final hacer las pruebas
-finales. **No probar hasta terminar todo**: las pruebas quedan para el cierre.
+finales. Hecho y probado el 30 de octubre; el balance de las 228 áreas nuevas sigue sin comprobar en partidas largas.
 Avance y diseño: [catálogo, Fusión y campaña de 240 áreas](docs/en-obra/pvz-campana-240-2026-10-29.md). Dejó a criterio de Claude el balance del
 versus y aceptó que el arte del tejado mezcle estilos. El minijuego PvZ 1 usa datos remotos fijados por commit.
 
@@ -42,7 +42,7 @@ Portable descarga sus datos (main.pak y properties) de un repositorio público f
 (29 de octubre, pedido de Javier); no se suben al repositorio ni se piden al usuario. Gardendless conecta las doce zonas existentes, con reservas exclusivas, hasta seis combates simultáneos
 y puntos de descanso entre combates. Ver [conexión y límites](docs/en-obra/pvz-mapa-nativo-2026-10-24.md).
 Javier aprobó expresamente el balance original de Gardendless; V2 mantiene sus reglas y claves anteriores. El minijuego PvZ 1
-ya tiene sus recursos remotos; falta comprobarlo con las pruebas finales.
+ya tiene sus recursos remotos (paquete anterior a GOTY adaptado por el adaptador) y llega al nivel 1-1.
 No afirmar migración ni catálogo completo por montar un minijuego.
 Conservar guardados/perfiles y la aventura anterior. La ampliación del 24 de octubre sustituye la pausa para las doce zonas.
 Existe un primer puente aislado de Gardendless (inicio, observación, pausa, resultado y cierre), revisable en

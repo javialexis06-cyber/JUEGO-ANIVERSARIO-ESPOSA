@@ -52,7 +52,8 @@ const estado = () => p.evaluate(() => __historiaNativa.observar());
 const tocar = async (x, y) => { await p.mouse.move(x, y); await p.waitForTimeout(80); await p.mouse.click(x, y); await p.waitForTimeout(80); };
 async function frame(id) {
  await p.waitForFunction(id => {
-  const i=__historiaNativa.instancias().get(id),a=__historiaNativa.observar().ataques.find(a=>a.zona===id);
+  const o=__historiaNativa.observar();if(!o)return false;
+  const i=__historiaNativa.instancias().get(id),a=o.ataques.find(a=>a.zona===id);
   return i?.lista&&(!a||i.ataque===a.id);
  },id,{timeout:180000});
  const sesion=await p.evaluate(id=>__historiaNativa.instancias().get(id).motor.sesion,id);
@@ -231,7 +232,9 @@ try {
     assert.equal(final.perdida, false);
     assert.ok(final.zonas[1].capturada);
     assert.equal(final.ataques.length, 0);
-    assert.deepEqual(await p.evaluate(()=>[...__historiaNativa.instancias()].map(([id,i])=>[id,i.motor.sesion])),sesiones);
+    // Las sesiones iniciales siguen intactas; al recuperar la estación se pueden precargar sus vecinas nuevas.
+    const sesionesFinales=new Map(await p.evaluate(()=>[...__historiaNativa.instancias()].map(([id,i])=>[id,i.motor.sesion])));
+    for(const [id,sesion] of sesiones) assert.equal(sesionesFinales.get(id),sesion,'sesión conservada de '+id);
     ok('Casa y estación conservan sus motores y sesiones durante expedición, defensas y nuevas preparaciones');
     assert.ok(simultaneos);
     await captura({ path: path.join(out, 'sector-conquistado.png') });

@@ -34,7 +34,7 @@ export async function montarHistoriaNativa() {
     const amigo = esModoAmigo(), perfil = amigo ? 'amigos' : 'pareja', params = new URLSearchParams(location.search), eventos = new AbortController();
     const guardado = new GuardadoHistoriaNativa(localStorage, amigo ? 'amigo-conquista-historia-nativa-v3' : 'conquista-historia-nativa-v3');
     let mundo = guardado.leer(), errorArchivo = !!guardado.error, muerto = false, cargando = 0, ocupado = false, anterior = performance.now(), acumulado = 0, raf = 0;
-    let visible: ZonaNativa | null = null, escala: EscalaMapa = 'ciudad', pais = 2, ciudad = 6, seleccion: ZonaNativa | null = null, editor: SemillaNativa[] | null = null, revisionEditor = 0;
+    let visible: ZonaNativa | null = null, escala: EscalaMapa = 'ciudad', pais = AREAS_CAMPANA[8].pais, ciudad = AREAS_CAMPANA[8].ciudad, seleccion: ZonaNativa | null = null, editor: SemillaNativa[] | null = null, revisionEditor = 0;
     let liberar: () => void = () => { }, bloqueo = false, modal = '', avisoHasta = 0, ultimoEstado = '', necesitaGuardar = false, herramientasHTML = '';
     let importacion: HistoriaNativa | null = null, pausaAntesImportar: boolean | null = null, errorMotor = '', iniciando = false;
     let cine:CinematicaConquista|null=null;

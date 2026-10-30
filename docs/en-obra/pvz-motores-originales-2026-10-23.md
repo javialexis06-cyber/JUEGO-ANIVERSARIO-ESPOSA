@@ -10,6 +10,21 @@ ni volver a pedírselos para avanzar la historia. Gardendless conecta ya casa y 
 recursos; la ampliación territorial y la instantánea activa completa siguen pendientes. El minijuego PvZ 1 sigue encargado y conserva su entrada
 e importador, pero todavía necesita una solución de recursos compatible para ser jugable sin aportes del usuario.
 
+**Recursos remotos de PvZ 1 (29–30 de octubre).** Javier pidió conectarlo con datos de GitHub. El adaptador
+descarga `main.pak` y `properties/` de `ruslan831/PlantsVsZombies-decompilation`, commit `325b2229…`
+(`motores.lock.json → pvz1.datosRemotos`), y los guarda en IndexedDB. Ese paquete es **anterior a GOTY**: solo trae
+animaciones y partículas precompiladas y su `resources.xml` no tiene lo que GOTY agregó. Al pulsar «¡A jugar!»:
+
+- copia los 250 `compiled/*.compiled` del paquete como archivos sueltos (PvZ-Portable los lee así, con el mismo
+  formato de 32 bits) y crea cinco alias de nombres cambiados en GOTY (IceShroom, TwinSunflower, bailarines y
+  cabeza de Zombatar);
+- genera un `resources.xml` con los grupos que exige PvZ-Portable (`pvz1/grupos-goty.json`, sacado de sus fuentes
+  0.2.5 con `scripts/pvz1/grupos-goty.py`) y renombra en memoria la entrada antigua del paquete. Los 266 recursos
+  que GOTY agregó (Zombatar, logros, juego rápido, notas nuevas) usan una imagen en blanco, una fuente o un sonido
+  existentes: **esas pantallas se verán incompletas**, y los textos que cambiaron de clave pueden faltar.
+
+Comprobado con `npm run probar:pvz1:datos` (ver el documento de la campaña de 240 áreas).
+
 ## Integración realizada
 
 - `jardin.html?modo=pvz1`: PvZ-Portable **0.2.5**, revisión `141c1476dd462ac3526f796e303177616f4de6bc`.

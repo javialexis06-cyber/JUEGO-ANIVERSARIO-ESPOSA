@@ -43,7 +43,7 @@ PLANTAS = {
     'snapdragon': 'Boca de dragón', 'coldsnapdragon': 'Boca de dragón helada', 'chilibean': 'Frijol picante',
     'hurrikale': 'Huracol', 'stallia': 'Estalia', 'electricpeashooter': 'Lanzaguisantes eléctrico', 'magnifyinggrass': 'Hierba lupa',
     'celerystalker': 'Apio acechador', 'sapfling': 'Lanzasavia', 'parsnip': 'Chirivía', 'explodeonut': 'Nuez explosiva',
-    'grapeshot': 'Uva metralla', 'bulbkekengi': 'Brillokengi', 'peach': 'Durazno celestial', 'jackolantern': 'Calabaza de Halloween',
+    'grapeshot': 'Uva metralla', 'bulbkekengi': 'Brillokengi', 'peach': 'Durazno celestial', 'jackolantern': 'Calabaza farolito',
     'pyrevine': 'Enredadera ígnea', 'dandelion': 'Diente de león', 'chardguard': 'Acelga guardiana', 'electriccurrant': 'Grosella eléctrica',
     'escaperoot': 'Raíz de escape', 'shadowshroom': 'Seta de sombra', 'turnip': 'Rábano resistente', 'empea': 'Durazno EMP',
     'citron': 'Cidra', 'laser_bean': 'Frijol láser', 'solartomato': 'Tomate solar', 'holonut': 'Nuez infinita', 'powerplant': 'Nabo de baldosa',

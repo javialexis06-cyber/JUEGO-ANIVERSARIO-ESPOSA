@@ -38,7 +38,9 @@
     "probar:pvz:mapa-nativo": "node scripts/probar-historia-nativa-mapa.mjs",
     "probar:pvz:mapa-nativo-cocos": "node scripts/probar-mapa-nativo-cocos.mjs",
     "probar:pvz:mapa-nativo-interfaz": "node scripts/probar-mapa-nativo-interfaz.mjs",
-    "probar:pvz:versus-nativo": "node scripts/probar-versus-nativo.mjs"
+    "probar:pvz:versus-nativo": "node scripts/probar-versus-nativo.mjs",
+    "probar:pvz:campana-cocos": "node scripts/probar-campana-cocos.mjs",
+    "probar:pvz1:datos": "node scripts/probar-pvz1-datos.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",

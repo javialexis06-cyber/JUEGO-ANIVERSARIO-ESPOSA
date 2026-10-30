@@ -82,7 +82,7 @@
     const baseFusion = t => semillaCatalogoNativo.fusiones.find(f => f.id === t && f.props)?.base ?? semillaCatalogoNativo.derivadas.find(d => d.id === t)?.base ?? t;
     const fusionadas = c => new Set((c.fusiones ?? []).map(id => semillaCatalogoNativo.fusiones.find(f => f.id === id)?.id).filter(Boolean));
     const validar = c => {
-            if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>11||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||![50,150].includes(c.solInicial) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))
+            if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>239||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||![50,150].includes(c.solInicial) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))
                 throw Error('Equipo o escenario incompatible.');
             if (c.escenario !== undefined && !Object.hasOwn(semillaCatalogoNativo.escenarios, c.escenario))
                 throw Error('Escenario desconocido.');
@@ -204,6 +204,10 @@
             const n = nivel(), datos = objetos(c);
             m('levelController').LevelPlay.levelData = datos;
             n.currentLevelObjects = structuredClone(datos);
+            // Las cartas guardan los datos de su planta: se renuevan con la copia vigente del nivel para que las
+            // recetas de Fusión (que comparan esos datos) reconozcan la carta al sembrarla sobre otra planta.
+            for (const cu of m('Cards').Cards.component.CUs)
+                if (cu.cf?.Type) cu.cf.TypeData = m('Plants').plants.getPlantType(cu.cf.Type);
             n.waveEventsStatisticed = false;
             n.module_SetWaveProperties(datos.find(o => o.objclass === 'WaveManagerProperties').objdata);
             n.currentWave = -1;

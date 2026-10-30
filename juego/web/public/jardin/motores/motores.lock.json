@@ -54,13 +54,18 @@
     },
     {
       "path": "pvz1/adaptador.js",
-      "bytes": 4973,
-      "sha256": "b443272659e4c9a14652546ee35b2174b4dbf93de92e758cb036404c73c3207a"
+      "bytes": 10250,
+      "sha256": "588f0f256bf80477ce0583c552d3ecbcc076ce5449531bfd100080cb85b11264"
     },
     {
       "path": "pvz1/fuentes-0.2.5.tar.gz",
       "bytes": 3722561,
       "sha256": "271bafaf96166171109b4d5ebdaba1d820bc074d9c3efda9bc8a46eeea775e46"
+    },
+    {
+      "path": "pvz1/grupos-goty.json",
+      "sha256": "5268b137909c527ede9c65e14bae2f763be42cfd5719e965b6cebe36dabb32c2",
+      "bytes": 30558
     },
     {
       "path": "pvz1/index.html",
@@ -164,8 +169,8 @@
     },
     {
       "path": "pvz2/catalogo-nativo.json",
-      "bytes": 87003,
-      "sha256": "8889333223447e51be0257029b808c23de3b0156b1020ecd5e4355113ac32276"
+      "bytes": 86748,
+      "sha256": "82cf947761202b136fc47d501547d1f8b606e0efa51142afec9f1cd089b16e18"
     },
     {
       "path": "pvz2/cocos-js/_virtual_cc-937a2166.js",
@@ -239,8 +244,8 @@
     },
     {
       "path": "pvz2/historia.js",
-      "bytes": 21381,
-      "sha256": "502a552b09dfcb24b0101460f1d251f74161a26e0151e2874a516c075c90a139"
+      "bytes": 21764,
+      "sha256": "3ffe9a3d700de4340a04c7f11bc1eb9f7752f3e750976716b26ab0a83ff048c0"
     },
     {
       "path": "pvz2/index.html",
