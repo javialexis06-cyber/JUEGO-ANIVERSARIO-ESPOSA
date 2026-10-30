@@ -131,7 +131,10 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     // sueltos. Prueba de balance, 30 de octubre.
     const exigente = (z: string) => /balloon|jetpack|battleplane|dronemaker|arbiter|gargantuar|mech|bull|catapult|zomboni|excavator|pelican|seagull|allstar|superfan|troglobite/.test(z) ? 1 : 0;
     const especiales = ZOMBIS_NATIVOS.filter(z => mundos.includes(z.mundo) && !z.jefe && !deRol.has(z.id) && !SOLO_INVOCADOS.has(z.id) && !/_flag|bobsled/.test(z.id)).map(z => z.id).sort((a, b) => exigente(a) - exigente(b));
-    const local = area.ciudad % 4, nivelArea = local * 5 + area.ranura, d = area.dificultad;
+    // Dificultad efectiva: completa en los tres primeros países y comprimida después (la prueba de balance completa
+    // perdía todo desde Nubaria: las oleadas crecían sin freno y las plantas no). Entre países sigue cambiando el
+    // catálogo de zombis y crecen los especiales; el tamaño y la armadura suben despacio.
+    const local = area.ciudad % 4, nivelArea = local * 5 + area.ranura, d = Math.min(area.dificultad, 12) + Math.max(0, area.dificultad - 12) * 0.2;
     const disponibles = especiales.slice(0, Math.min(especiales.length, 1 + Math.floor(nivelArea / 3)));
     // Curva revisada con la prueba de balance (30 de octubre): las oleadas empiezan pequeñas (al comienzo solo hay
     // 50–150 soles) y crecen dentro del nivel; entre países sube sobre todo la calidad de los zombis.

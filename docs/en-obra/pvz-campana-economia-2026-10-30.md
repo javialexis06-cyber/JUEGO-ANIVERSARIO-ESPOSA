@@ -120,6 +120,9 @@ El botón Guía reúne todos los temas. En las pruebas automáticas (`?prueba`) 
     solo aparecen en la segunda mitad del nivel.
   - El futbolista, el superfán y el troglobita cuentan como especiales exigentes (aparecen al final de cada país): el
     futbolista causó 3 de las 4 derrotas del primer país.
+  - La primera corrida completa mostró que la dificultad crecía sin freno (el piloto ganaba 75–88 % hasta Solaria y
+    0 % en Nubaria y Umbra). La dificultad efectiva de las oleadas se comprime desde el cuarto país: sube a una quinta
+    parte del ritmo anterior; los zombis de cada país y sus especiales siguen cambiando.
   - De noche (sin soles del cielo) se empieza con 100 soles y llegan tres cuartas partes de los zombis: con las oleadas
     del día se perdían todas las áreas nocturnas de Arenaria.
   - Los tableros de 6 o 7 carriles admiten una semilla más (un área nocturna de 7 carriles con 4 semillas era imposible
