@@ -37,7 +37,6 @@ try{
  await p.locator('[data-cq="ayuda"]').click();await p.locator('.hn-capa [data-cq="nueva"]').click();await p.locator('.hn-capa [data-cq="confirmar-nueva"]').click();
  await p.waitForFunction(()=>!__historiaNativa.observar().inicioCasa&&__historiaNativa.observar().zonas.filter(z=>z.capturada).length===1);
  await p.locator('[data-hn-zona="8"]').waitFor();assert.deepEqual(await p.evaluate(()=>__historiaNativa.observar().conocidas),[8]);ok('Una historia nueva regresa a la ciudad de la casa y conserva solo sus cuatro tipos iniciales');
- const chooser=p.waitForEvent('filechooser');await p.locator('[data-cq="importar"]').click();await(await chooser).setFiles({name:'final.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(final))});await p.locator('.hn-capa [data-cq="confirmar-importacion"]').click();
- await p.locator('.cq-cine-final canvas').waitFor();assert.deepEqual(await p.evaluate(()=>__historiaNativa.observar()),final);ok('Importar una campaña terminada conserva las doce defensas y abre su final directamente');
+ // Importar/Exportar se quitaron de la interfaz por pedido de Javier (30 de octubre): el guardado es automático.
  assert.deepEqual(errors,[]);
 }catch(e){errors.push(String(e.stack));process.exitCode=1;await p.screenshot({path:path.join(out,'fallo.png')}).catch(()=>{});}finally{await fs.writeFile(path.join(out,'resultado.json'),JSON.stringify({checks,errors,alcance:'Interfaz y guardado reales con transporte preparado. Las victorias de este recorrido NO son combates nativos ganados.'},null,2));console.log(JSON.stringify({checks:checks.length,errors}));await b.close();}

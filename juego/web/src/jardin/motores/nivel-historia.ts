@@ -126,24 +126,35 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     const roles = Object.fromEntries(ROLES.map(r => [r, lista(r)])) as Record<typeof ROLES[number], string[]>;
     const deRol = new Set(ROLES.flatMap(r => roles[r]));
     const mundos = PAISES_CAMPANA[area.pais].mundo === 'lostcity' ? ['lostcity', 'kongfu'] : [PAISES_CAMPANA[area.pais].mundo];
-    const especiales = ZOMBIS_NATIVOS.filter(z => mundos.includes(z.mundo) && !z.jefe && !deRol.has(z.id) && !SOLO_INVOCADOS.has(z.id) && !/_flag/.test(z.id)).map(z => z.id);
+    // Especiales del mundo, de más fáciles a más exigentes (los voladores y las máquinas al final, que piden plantas
+    // específicas, y los tanques como el futbolista); los trineos solo existen sobre hielo de zamboni y no se generan
+    // sueltos. Prueba de balance, 30 de octubre.
+    const exigente = (z: string) => /balloon|jetpack|battleplane|dronemaker|arbiter|gargantuar|mech|bull|catapult|zomboni|excavator|pelican|seagull|allstar|superfan|troglobite/.test(z) ? 1 : 0;
+    const especiales = ZOMBIS_NATIVOS.filter(z => mundos.includes(z.mundo) && !z.jefe && !deRol.has(z.id) && !SOLO_INVOCADOS.has(z.id) && !/_flag|bobsled/.test(z.id)).map(z => z.id).sort((a, b) => exigente(a) - exigente(b));
     const local = area.ciudad % 4, nivelArea = local * 5 + area.ranura, d = area.dificultad;
-    const disponibles = especiales.slice(0, Math.min(especiales.length, 1 + Math.floor(nivelArea / 2)));
-    const total = Math.min(10, 5 + Math.floor(d / 8)), oleadas: { tipo: string; fila: number }[][] = [];
+    const disponibles = especiales.slice(0, Math.min(especiales.length, 1 + Math.floor(nivelArea / 3)));
+    // Curva revisada con la prueba de balance (30 de octubre): las oleadas empiezan pequeñas (al comienzo solo hay
+    // 50–150 soles) y crecen dentro del nivel; entre países sube sobre todo la calidad de los zombis.
+    const total = Math.min(10, 6 + Math.floor(d / 12) + (area.tipo === 'fortaleza' ? 1 : 0)), oleadas: { tipo: string; fila: number }[][] = [];
     const tierra = Array.from({ length: area.filas }, (_, i) => i).filter(f => !area.agua.includes(f));
     const acuaticos = ['duckytube', 'duckytube_armor1', 'duckytube_armor2', ...(area.pais === 4 ? ['beach_snorkel'] : [])];
     const elegir = <T,>(opciones: readonly T[]) => opciones[azar.entero(opciones.length)];
     for (let i = 0; i < total; i++) {
-        const ola: { tipo: string; fila: number }[] = [], cantidad = Math.min(40, Math.round(3 + d * 0.35 + i * (1.2 + d * 0.05) + (i === total - 1 ? 4 + d * 0.2 : 0)));
+        const p = (i + 1) / total, ola: { tipo: string; fila: number }[] = [];
+        const cantidad = Math.min(40, Math.round(1 + p * (3 + d * 0.2) + (i === total - 1 ? 2 + d * 0.1 : 0) + (i === Math.floor(total / 2) ? 1 + d * 0.05 : 0)));
         for (let k = 0; k < cantidad; k++) {
             const tirada = azar.siguiente(), progreso = (i + 1) / total;
+            // Como en PvZ, los primeros zombis del nivel son básicos y la armadura crece con cada oleada y con el país
+            // (antes el 60 % de la primera oleada venía blindado: el piloto perdía áreas antes de armar su economía).
+            const fuerza = i === 0 ? Math.min(0.35, d / 100) : Math.min(0.9, 0.2 + progreso * 0.45 + d / 100);
+            const t = tirada / fuerza;
             let pool: string[];
-            if (tirada < 0.42 - progreso * 0.15) pool = roles.basic;
-            else if (tirada < 0.62) pool = roles.armor1;
-            else if (tirada < 0.74 && d >= 1) pool = roles.armor2;
-            else if (tirada < 0.8 && d >= 6) pool = [...roles.armor3, ...roles.armor4];
-            else if (tirada < 0.86 && d >= 4) pool = roles.imp;
-            else if (tirada < 0.89 && (d >= 10 || area.tipo === 'fortaleza' && i === total - 1)) pool = roles.gargantuar;
+            if (tirada >= fuerza) pool = roles.basic;
+            else if (t < 0.4) pool = roles.armor1;
+            else if (t < 0.58 && d >= 1) pool = roles.armor2;
+            else if (t < 0.68 && d >= 6) pool = [...roles.armor3, ...roles.armor4];
+            else if (t < 0.78 && d >= 4) pool = roles.imp;
+            else if (t < 0.82 && progreso > 0.5 && (d >= 10 || area.tipo === 'fortaleza' && i === total - 1)) pool = roles.gargantuar;
             else pool = disponibles.length ? disponibles : roles.armor1;
             if (!pool.length) pool = roles.basic.length ? roles.basic : ['tutorial'];
             const agua = area.agua.length && azar.siguiente() < area.agua.length / area.filas;

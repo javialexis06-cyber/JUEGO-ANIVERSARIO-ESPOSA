@@ -1,6 +1,12 @@
 # Pedidos de Javier · estado vigente
 
 
+**En curso (Claude, 30 de octubre) · territorios, tienda, cupo, tutorial y balance:** el mapa se reparte entero en
+territorios de bordes orgánicos. Las plantas se compran con monedas de capturas y asedios, y cada área tiene un cupo
+de 4 a 8 semillas. Dave explica cada mecánica al aparecer y hay una guía completa. Se mejoraron el mapa, la ficha de
+zona, el editor y las herramientas con texto. La prueba de balance juega la campaña en Gardendless real con un piloto.
+Ver `en-obra/pvz-campana-economia-2026-10-30.md`.
+
 **Hecho por Claude (29–30 de octubre) · catálogo completo, Fusión y campaña de 240 áreas:** catálogo nativo de 185 plantas,
 2 derivadas de PvZ 1, 235 zombis y 117 fusiones (recetas nativas de evolución); campaña de 12 países × 4 ciudades × 5
 áreas con mundos nativos, guardado v6 que migra el v5, y Almanaque. PvZ 1 jugable en su minijuego con datos remotos

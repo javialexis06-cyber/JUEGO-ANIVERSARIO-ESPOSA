@@ -1,5 +1,18 @@
 # Guía de trabajo · Nuestro Hogar
 
+## Pedido vigente · territorios, tienda, tutorial y balance de la campaña (30 de octubre)
+
+Javier pidió:
+
+- territorios que cubran todo el mapa con bordes orgánicos (no cuadros);
+- pruebas de balance completas de la campaña;
+- mejorar lo visual pobre y dejar claro qué hace cada cosa;
+- un tutorial de la campaña que explique cada mecánica nueva al aparecer;
+- comprar las plantas con monedas ganadas al capturar zonas, con un cupo de plantas por zona.
+
+Dejó el balance a criterio de Claude. Guardado v7: migra el v6 conservando las plantas y sin regalar monedas.
+Ver [territorios, tienda, cupo, tutorial y balance](docs/en-obra/pvz-campana-economia-2026-10-30.md).
+
 ## Pedido vigente · catálogo completo y campaña territorial (29 de octubre)
 
 Javier pidió, en este orden: terminar PvZ 1, PvZ 2 y Fusión con todas sus plantas, zombis y mecánicas (se pueden tomar

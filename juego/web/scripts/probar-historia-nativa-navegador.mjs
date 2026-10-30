@@ -186,12 +186,19 @@ try {
     if(!desdeSector){
     await p.locator('[data-hn-zona="9"]').click();
     await p.locator('[data-cq=equipo]').click();
+    // Las plantas se compran con las monedas de la casa (300): Repetidora (200) y Patatapum (75).
+    assert.equal((await estado()).monedas, 300);
+    await p.locator('.hn-editor [data-cq=tienda]').click();
+    await p.locator('[data-hn-comprar="repetidora"]').click();
+    await p.locator('[data-hn-comprar="patatapum"]').click();
+    assert.equal((await estado()).monedas, 25);
+    await p.locator('.hn-tienda [data-cq=cerrar-modal]').click();
     await p.locator('[data-hn-semilla="repetidora"]').click();
     await p.locator('[data-hn-semilla="patatapum"]').click();
     await p.locator('[data-cq=guardar-equipo]').click();
     await p.locator('[data-cq=expedicion]').click();
     f = await frame(9);
-    ok('El mapa desbloquea dos tipos, reserva la formación e inicia la expedición de cuatro carriles');
+    ok('Con las monedas de la casa se compran dos tipos en la tienda, se reserva la formación y se inicia la expedición de cuatro carriles');
     await captura({ path: path.join(out, 'expedicion-cuatro-carriles.png') });
     }
     const limite2 = Date.now() + 1200000;

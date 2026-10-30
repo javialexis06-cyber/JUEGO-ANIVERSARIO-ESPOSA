@@ -1,5 +1,10 @@
 const trazos:Record<string,string>={
  importar:'<path d="M12 16V3m-5 5 5-5 5 5M4 14v7h16v-7"/>',
+ candado:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4m-4 4v2"/>',
+ moneda:'<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.3 0-2.4-.5-3-1.5M12 6v2m0 8v2"/>',
+ tienda:'<path d="M4 9h16l-1 12H5ZM8 9V7a4 4 0 0 1 8 0v2"/>',
+ escudo:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/>',
+ alerta:'<path d="M12 3 2 20h20ZM12 9v5m0 3v.1"/>',
  mapa:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/>',
  pais:'<path d="m3 17 5-11 4 7 3-9 6 13ZM3 20h18M7 9l2 3 2-1M14 7l2 4 2-1"/>',
  ciudad:'<path d="M3 21V9h5V3h8v9h5v9ZM10 6h1m2 0h1m-4 4h1m2 0h1M5 12h1m-1 4h1m4-2h1m2 0h1m4 1h1M11 21v-4h3v4"/>',

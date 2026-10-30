@@ -34,10 +34,16 @@ try {
         assert.deepEqual(m.exportar(), antes);
         assert.deepEqual(HistoriaNativa.restaurar(antes).exportar(), antes);
     });
-    probar('Explorar la estación desbloquea dos tipos una vez y prepara una expedición real de cuatro carriles', () => {
+    probar('La casa paga 300 monedas; con ellas se compran dos plantas y se prepara una expedición real de cuatro carriles', () => {
         const m = abierta();
+        assert.equal(m.estado.monedas, 300);
         assert.ok(m.explorar());
         assert.equal(m.explorar(), false);
+        assert.ok(!m.preparar(9, ['repetidora', 'patatapum']), 'explorar ya no regala plantas');
+        assert.ok(m.comprar('repetidora') && m.comprar('patatapum'));
+        assert.equal(m.estado.monedas, 25);
+        assert.equal(m.comprar('repetidora'), false);
+        assert.equal(m.comprar('nuez-alta'), false, 'sin monedas suficientes');
         assert.ok(m.preparar(9, ['repetidora', 'patatapum']));
         const a = m.expedicion();
         assert.equal(a.zona, 9);
@@ -51,6 +57,7 @@ try {
     probar('Reservar el tipo completo retira sus ejemplares del origen sin devolver soles', () => {
         const m = abierta();
         m.explorar();
+        m.comprar('repetidora');
         assert.ok(m.preparar(9, ['girasol', 'repetidora']));
         assert.equal(m.propietaria('girasol'), 9);
         assert.equal(m.zona(8).punto.soles, 175);
@@ -61,6 +68,7 @@ try {
     probar('La frontera ataca mientras se conquista la estación y la pausa detiene ambos frentes', () => {
         const m = abierta();
         m.explorar();
+        m.comprar('repetidora'); m.comprar('patatapum');
         m.preparar(9, ['repetidora', 'patatapum']);
         m.expedicion();
         for (let i = 0; i < 35 * 60 - 1; i++)
@@ -88,7 +96,7 @@ try {
     });
     probar('Futuros formatos, tipos duplicados y puntos falsos no sustituyen una historia válida', () => {
         const m = abierta();
-        for (const cambiar of [s => s.version = 7, s => s.zonas[1].capturada = true, s => s.zonas[0].punto = null, s => s.zonas[1].equipo = ['girasol'], s => s.zonas[0].punto.plantas[0].vida = 9999, s => s.zonas[0].punto.plantas.push({ ...s.zonas[0].punto.plantas[0] }), s => s.zonas[0].punto.recargas.inventada = 1]) {
+        for (const cambiar of [s => s.version = 8, s => s.monedas++, s => s.compradas.push('repetidora'), s => s.cobradas = [], s => s.desbloqueadas.push('repetidora'), s => s.zonas[1].capturada = true, s => s.zonas[0].punto = null, s => s.zonas[1].equipo = ['girasol'], s => s.zonas[0].punto.plantas[0].vida = 9999, s => s.zonas[0].punto.plantas.push({ ...s.zonas[0].punto.plantas[0] }), s => s.zonas[0].punto.recargas.inventada = 1]) {
             const s = m.exportar();
             cambiar(s);
             assert.throws(() => HistoriaNativa.restaurar(s));
@@ -107,6 +115,7 @@ try {
     probar('Una defensa perdida termina la historia sin regalar la expedición que seguía activa', () => {
         const m = abierta();
         m.explorar();
+        m.comprar('repetidora');
         m.preparar(9, ['repetidora']);
         m.expedicion();
         for (let i = 0; i < 2100; i++)
@@ -118,6 +127,21 @@ try {
         assert.equal(m.resultado(m.estado.ataques[0].id, 'victoria', punto()), false);
         assert.deepEqual(m.exportar(), antes);
         assert.ok(HistoriaNativa.restaurar(antes).estado.perdida);
+    });
+    probar('Una historia v6 pasa a la tienda conservando sus plantas, sin monedas regaladas ni capturas que vuelvan a pagar', () => {
+        const m = abierta();
+        m.explorar(); m.comprar('repetidora'); m.comprar('patatapum');
+        const v6 = m.exportar();
+        v6.version = 6;
+        for (const k of ['monedas', 'compradas', 'heredadas', 'cobradas', 'sinPremio', 'premios']) delete v6[k];
+        const r = HistoriaNativa.restaurar(v6).estado;
+        assert.deepEqual(r.heredadas, ['repetidora', 'patatapum']);
+        assert.equal(r.monedas, 0);
+        assert.deepEqual(r.cobradas, [8]);
+        assert.deepEqual(r.sinPremio, [8]);
+        assert.deepEqual([...r.desbloqueadas].sort(), ['girasol', 'lanzaguisantes', 'nuez', 'patatapum', 'petacereza', 'repetidora']);
+        const mal = structuredClone(v6); mal.desbloqueadas.push('nuez-alta');
+        assert.throws(() => HistoriaNativa.restaurar(mal), 'una v6 con plantas que no ganó no se acepta');
     });
     console.log(JSON.stringify({ checks: checks.length, fallos: 0, alcance: 'Casos estratégicos preparados; no es guardado a mitad de combate ni victoria de Cocos.' }));
 }

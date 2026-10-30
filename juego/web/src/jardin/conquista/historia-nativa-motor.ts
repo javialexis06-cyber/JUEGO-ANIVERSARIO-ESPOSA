@@ -3,6 +3,7 @@ import { ESCENARIOS_HISTORIA_PVZ } from './historia-datos';
 import type { EstadoMapaConquista } from './mapa';
 import { REFUERZO_MAXIMO, nativoDe, vidaNativa, esSemillaConocida, FUSIONES_NATIVAS, type SemillaNativa, type PuntoDescansoNativo } from '../motores/nivel-historia';
 import { arbolPvZ, canonicoPvZ } from '../pvz/motor/validacion';
+import { INICIALES, enTienda, paisDePlanta, precio, recompensa, premioDefensa, cupo } from './economia';
 export type ZonaNativa = number;
 export interface AtaqueNativo {
     id: number;
@@ -15,7 +16,7 @@ export interface AtaqueNativo {
     refuerzo: number;
 }
 export interface PartidaHistoriaNativa {
-    version: 6;
+    version: 7;
     reglas: 1;
     /** Fusiones aprendidas en el laboratorio de Forjaria (tramo final). */
     fusiones: string[];
@@ -27,7 +28,20 @@ export interface PartidaHistoriaNativa {
     perdida: boolean;
     proximoAtaque: number;
     conocidas: ZonaNativa[];
+    /** Semillas disponibles: las iniciales, las heredadas de partidas anteriores a la tienda y las compradas. */
     desbloqueadas: SemillaNativa[];
+    /** Monedas actuales. Siempre igual a lo cobrado por capturas y defensas menos lo gastado en la tienda. */
+    monedas: number;
+    /** Plantas compradas en la tienda (en orden de compra). */
+    compradas: SemillaNativa[];
+    /** Plantas que una partida anterior a la tienda ya tenía; se conservan gratis. */
+    heredadas: SemillaNativa[];
+    /** Áreas cuya captura ya se cobró (una sola vez, aunque se pierdan y se recuperen). */
+    cobradas: ZonaNativa[];
+    /** Áreas capturadas antes de que existiera la tienda: cuentan como cobradas, sin monedas. */
+    sinPremio: ZonaNativa[];
+    /** Monedas ganadas resistiendo asedios. */
+    premios: number;
     zonas: {
         id: ZonaNativa;
         capturada: boolean;
@@ -41,7 +55,7 @@ export interface PartidaHistoriaNativa {
     }[];
     ataques: AtaqueNativo[];
 }
-const iniciales: SemillaNativa[] = ['lanzaguisantes', 'girasol', 'nuez', 'petacereza'];
+const iniciales = INICIALES as SemillaNativa[];
 const semillasZona = (id: number) => AREAS_CAMPANA[id].desbloquea.filter(esSemillaConocida) as SemillaNativa[];
 /** Cada fortaleza de Forjaria (laboratorio) enseña una cuarta parte de las fusiones. */
 const fusionesDe = (zonasCapturadas: readonly number[]) => { const forja = AREAS_CAMPANA.filter(a => a.pais === 7 && a.tipo === 'fortaleza').map(a => a.id), n = forja.filter(id => zonasCapturadas.includes(id)).length; return FUSIONES_NATIVAS.slice(0, Math.ceil(FUSIONES_NATIVAS.length * n / 4)).map(f => f.id); };
@@ -78,8 +92,9 @@ export function validarPuntoNativo(p: PuntoDescansoNativo, filas: number, equipo
 export class HistoriaNativa {
     pausada = false;
     constructor(readonly estado: PartidaHistoriaNativa = {
-        version: 6, reglas: 1, fusiones: [], revision: 0, pasos: 0, proximo: 2, semilla: 23, inicioCasa: true,
+        version: 7, reglas: 1, fusiones: [], revision: 0, pasos: 0, proximo: 2, semilla: 23, inicioCasa: true,
         perdida: false, proximoAtaque: 35, conocidas: [8], desbloqueadas: [...iniciales],
+        monedas: 0, compradas: [], heredadas: [], cobradas: [], sinPremio: [], premios: 0,
         zonas: [8,9,...AREAS_CAMPANA.map(z=>z.id).filter(id=>id!==8&&id!==9)]
             .map(id=>({id,capturada:id===8,equipo:id===8?[...iniciales]:[],punto:null,descanso:0,asedios:0,desde:0})),
         ataques: [{id:1,zona:8,semilla:23,inicio:0,punto:null,equipo:[...iniciales],refuerzo:0}]
@@ -126,13 +141,36 @@ export class HistoriaNativa {
         const s=this.estado;
         if(this.pausada||s.inicioCasa||s.perdida||this.fin||!this.puedeLlegar(id)||s.conocidas.includes(id)) return false;
         s.conocidas.push(id);
-        s.desbloqueadas.push(...semillasZona(id).filter(t=>!s.desbloqueadas.includes(t)));
         s.revision++;return true;
     }
+    /** Un país está abierto a la tienda cuando alguna de sus áreas es nuestra o se puede atacar. */
+    paisesAbiertos() {
+        const abiertos = new Set<number>([0]), suministro = this.abastecidas();
+        for (const z of this.estado.zonas) {
+            const a = AREAS_CAMPANA[z.id];
+            if (abiertos.has(a.pais)) continue;
+            if (z.capturada || (!this.estado.inicioCasa && (suministro.has(z.id) || this.vecinos(z.id).some(v => suministro.has(v))))) abiertos.add(a.pais);
+        }
+        return abiertos;
+    }
+    /** Si una planta se puede comprar ahora: está en la tienda, su país está abierto y no la tenemos. */
+    enVenta(tipo: string, abiertos = this.paisesAbiertos()) {
+        return enTienda(tipo) && abiertos.has(paisDePlanta(tipo)) && !this.estado.desbloqueadas.includes(tipo as SemillaNativa);
+    }
+    comprar(tipo: SemillaNativa) {
+        const s = this.estado, p = precio(tipo);
+        if (this.pausada || s.perdida || s.inicioCasa || !this.enVenta(tipo) || s.monedas < p) return false;
+        s.monedas -= p;
+        s.compradas.push(tipo);
+        s.desbloqueadas.push(tipo);
+        s.revision++;
+        return true;
+    }
+    cupo(id: ZonaNativa) { return cupo(id); }
     propietaria(tipo: SemillaNativa) { return this.estado.zonas.find(z => z.equipo.includes(tipo))?.id ?? null; }
     preparar(id: ZonaNativa, semillas: SemillaNativa[], revision = this.estado.revision) {
         const s = this.estado;
-        if (this.pausada || s.perdida || this.fin || !this.puedeLlegar(id) || !s.conocidas.includes(id) || revision !== s.revision || !Array.isArray(semillas) || !semillas.length || semillas.length>8 || new Set(semillas).size !== semillas.length || semillas.some(t => !s.desbloqueadas.includes(t)))
+        if (this.pausada || s.perdida || this.fin || !this.puedeLlegar(id) || !s.conocidas.includes(id) || revision !== s.revision || !Array.isArray(semillas) || !semillas.length || semillas.length>cupo(id) || new Set(semillas).size !== semillas.length || semillas.some(t => !s.desbloqueadas.includes(t)))
             return false;
         const afectadas = new Set([id, ...semillas.map(t => this.propietaria(t)).filter((x): x is ZonaNativa => x !== null)]);
         if ([...afectadas].some(z=>this.zona(z).capturada&&!this.abastecidas().has(z)) || s.ataques.some(a => afectadas.has(a.zona)))
@@ -190,8 +228,15 @@ export class HistoriaNativa {
         z.descanso = this.t + 18;
         if (resultado === 'victoria') {
             // Resistir un asedio la deja más vigilada (el próximo viene más fuerte); conquistarla empieza de cero
-            if (z.capturada && !(s.inicioCasa && a.zona === 8)) z.asedios = Math.min(REFUERZO_MAXIMO, z.asedios + 1);
-            else { z.asedios = 0; z.desde = this.t; }
+            if (z.capturada && !(s.inicioCasa && a.zona === 8)) {
+                z.asedios = Math.min(REFUERZO_MAXIMO, z.asedios + 1);
+                const premio = premioDefensa(a.zona); s.premios += premio; s.monedas += premio;
+            }
+            else {
+                z.asedios = 0; z.desde = this.t;
+                // La captura se cobra una sola vez: perderla y recuperarla no vuelve a pagar.
+                if (!s.cobradas.includes(a.zona)) { s.cobradas.push(a.zona); s.monedas += recompensa(a.zona); }
+            }
             z.capturada = true;
             z.punto = structuredClone(punto);
             s.fusiones = fusionesDe(s.zonas.filter(q => q.capturada).map(q => q.id));
@@ -238,11 +283,30 @@ export class HistoriaNativa {
             s.fusiones=[];
             s.zonas.push(...AREAS_CAMPANA.filter(a=>a.id>=12).map(a=>({id:a.id,capturada:false,equipo:[],punto:null,descanso:0,asedios:0,desde:0})));
         }
-        exigir(s?.version===6&&s.reglas===1&&entero(s.revision)&&entero(s.pasos)&&entero(s.proximo,2)&&entero(s.semilla,1,4294967295)
+        // V6 → V7: llega la tienda. Se conservan todas las plantas que ya tenía (heredadas, gratis) y sus capturas
+        // cuentan como cobradas sin monedas: no se quita nada ni se regalan recursos.
+        if ((s as any)?.version===6) {
+            exigir(Array.isArray(s.desbloqueadas)&&Array.isArray(s.zonas)&&Array.isArray(s.conocidas));
+            const esperadas=[...new Set(s.conocidas.flatMap(semillasZona))];
+            exigir(canonicoPvZ(s.desbloqueadas)===canonicoPvZ(esperadas));
+            (s as any).version=7;
+            s.heredadas=s.desbloqueadas.filter(t=>!iniciales.includes(t));
+            s.desbloqueadas=[...iniciales,...s.heredadas];
+            s.compradas=[];s.monedas=0;s.premios=0;
+            s.cobradas=s.zonas.filter(z=>z.capturada&&!(z.id===8&&s.inicioCasa)).map(z=>z.id);
+            s.sinPremio=[...s.cobradas];
+        }
+        exigir(s?.version===7&&s.reglas===1&&entero(s.revision)&&entero(s.pasos)&&entero(s.proximo,2)&&entero(s.semilla,1,4294967295)
             &&typeof s.inicioCasa==='boolean'&&typeof s.perdida==='boolean'&&Number.isFinite(s.proximoAtaque)&&s.proximoAtaque>=0
             &&Array.isArray(s.conocidas)&&s.conocidas[0]===8&&s.conocidas.length<=TOTAL_AREAS&&new Set(s.conocidas).size===s.conocidas.length&&s.conocidas.every(zonaValida));
-        const esperadas=[...new Set(s.conocidas.flatMap(semillasZona))];
-        exigir(Array.isArray(s.desbloqueadas)&&canonicoPvZ(s.desbloqueadas)===canonicoPvZ(esperadas)
+        // Tienda: las listas no se repiten ni se mezclan, y las monedas cuadran con lo cobrado y lo gastado.
+        const lista=(x: unknown)=>Array.isArray(x)&&new Set(x).size===x.length;
+        exigir(lista(s.heredadas)&&lista(s.compradas)&&lista(s.cobradas)&&lista(s.sinPremio)&&entero(s.premios,0,1e7)&&entero(s.monedas,0,1e7)
+            &&s.heredadas.every(t=>enTienda(t))&&s.compradas.every(t=>enTienda(t)&&!s.heredadas.includes(t))
+            &&s.cobradas.every(zonaValida)&&s.sinPremio.every(id=>s.cobradas.includes(id)));
+        const esperadas=[...iniciales,...s.heredadas,...s.compradas];
+        exigir(s.monedas===s.cobradas.filter(id=>!s.sinPremio.includes(id)).reduce((t,id)=>t+recompensa(id),0)+s.premios-s.compradas.reduce((t,c)=>t+precio(c),0));
+        exigir(Array.isArray(s.desbloqueadas)&&canonicoPvZ([...s.desbloqueadas].sort())===canonicoPvZ([...esperadas].sort())
             &&Array.isArray(s.zonas)&&s.zonas.length===TOTAL_AREAS&&s.zonas[0].id===8&&s.zonas[1].id===9
             &&new Set(s.zonas.map(z=>z.id)).size===TOTAL_AREAS&&s.zonas.every(z=>zonaValida(z.id))
             &&Array.isArray(s.ataques)&&s.ataques.length<=6);
@@ -252,7 +316,7 @@ export class HistoriaNativa {
             if (z.punto)
                 validarPuntoNativo(z.punto, filasZona(z.id), z.equipo, s.fusiones);
             if (!s.conocidas.includes(z.id)) exigir(!z.capturada && !z.equipo.length && z.punto === null);
-            if(z.capturada) exigir(s.conocidas.includes(z.id));
+            if(z.capturada) exigir(s.conocidas.includes(z.id)&&(s.cobradas.includes(z.id)||z.id===8&&s.inicioCasa));
             if (z.capturada && (z.id !== 8 || !s.inicioCasa)) exigir(z.punto !== null);
         }
         for (const a of s.ataques) {

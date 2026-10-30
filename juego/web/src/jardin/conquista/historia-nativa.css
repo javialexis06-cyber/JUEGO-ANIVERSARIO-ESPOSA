@@ -248,6 +248,11 @@
 .hn-frentes small{max-width:54px;white-space:normal;text-align:center;line-height:1.1}
 .hn-lejana .cq-emblema{filter:grayscale(.8);opacity:.65}
 .hn-equipo{flex-wrap:wrap}
+.hn-equipo:has(>small){min-height:0;margin:6px 0}
+.hn-zombis{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px;width:max-content;max-width:100%;box-sizing:border-box;margin:4px auto 10px;padding:4px 8px;border-radius:12px;background:#4a2560;}
+.hn-zombis small{font:900 11px Nunito;color:#ead9f3;margin-right:6px;text-transform:uppercase;letter-spacing:.5px}
+.hn-zombis img{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 1px 1px #0008)}
+@media (max-height:470px){.hn-zombis img{width:30px;height:30px}}
 /* Estado de cada zona (26 de octubre de 2026): despejada 🛡️ (no la atacan), frontera ⚔️N (asedios que se refuerzan) */
 .cq-pin .hn-insignia{position:absolute;top:-8px;right:-14px;padding:1px 6px;border-radius:10px;background:#2d1b10dd;color:#ffe9a8;font:900 11px Nunito;font-style:normal;white-space:nowrap;pointer-events:none}
 .hn-segura .cq-emblema{box-shadow:0 0 0 3px #7fd36e,0 3px 8px #0006}
@@ -265,3 +270,93 @@
 
 .hn-accion{display:flex;flex-direction:column;align-items:center;gap:3px}
 .hn-accion small{font:800 12px Nunito;color:#4b3520}
+
+/* ---------------- Campaña de 240 áreas (30 de octubre de 2026) ---------------- */
+/* Territorios que cubren el mapa: un lienzo de baja resolución escalado con suavizado (bordes de acuarela). */
+.hn-territorios{position:absolute;inset:0;width:100%;height:100%;image-rendering:auto;cursor:pointer;mix-blend-mode:normal}
+.hn-pines{position:absolute;inset:0;pointer-events:none}
+.hn-pines .cq-pin{pointer-events:auto}
+.cq-nativa .cq-regiones{display:none}
+/* Marcadores con estado legible */
+/* Nombre de cada marcador en una tablilla legible (la textura de madera del mapa anterior no existe aquí y el texto
+   blanco se perdía sobre el dibujo). */
+.hn-pines .cq-pin b{background:linear-gradient(#5d4326f2,#2f1f0ff5);border:1.5px solid #c9a96c;border-radius:10px;padding:3px 10px 4px;color:#fff4ce;font:900 12px Nunito;text-shadow:0 1px #000;box-shadow:0 2px 6px #0008}
+.hn-pines .cq-pin-region b{font-size:14px;padding:4px 12px 5px}
+.cq-pin .hn-chip{display:block;margin-top:2px;padding:2px 8px;border-radius:10px;background:#21140cdd;color:#ffe9a8;font:900 11px Nunito;font-style:normal;white-space:nowrap;box-shadow:0 2px 4px #0006}
+.hn-pin-plantas .cq-emblema,.hn-pin-atacada .cq-emblema{background:radial-gradient(circle at 35% 25%,#a8d569,#3c772f)!important;border-color:#d8eda2!important}
+.hn-pin-recuperable .cq-emblema{background:radial-gradient(circle at 35% 25%,#ffd76a,#b4721f)!important;border-color:#fff1b8!important;animation:hn-llamado 1.6s ease-in-out infinite}
+.hn-pin-recuperable .hn-chip{background:#7a4a0ee6;color:#fff3c4}
+.hn-pin-bloqueada .cq-emblema{background:radial-gradient(circle at 35% 25%,#7f5d99,#3b2552)!important;border-color:#a98dc2!important}
+.hn-pin-bloqueada .hn-chip{background:#2d1b3be0;color:#d9c4ec}
+.hn-pin-mixta .cq-emblema{background:linear-gradient(120deg,#6d9a3c 48%,#7d4e9b 52%)!important;border-color:#f0e2b0!important}
+.hn-pin-atacada .hn-chip{background:#8d2416e6;color:#fff}
+@keyframes hn-llamado{50%{box-shadow:0 0 0 4px #ffe08a88,0 0 22px #ffcf54}}
+@media(prefers-reduced-motion:reduce){.hn-pin-recuperable .cq-emblema{animation:none}}
+/* Cabecera: ruta, progreso y monedas */
+.hn-cabecera{position:absolute;top:8px;left:8px;right:8px;z-index:6;display:flex;align-items:center;gap:10px;pointer-events:none}
+.hn-cabecera>*{pointer-events:auto}
+.hn-migas{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:linear-gradient(#5d4326f2,#30200ff5);border:2px solid #c9a96c;color:#fff4ce;font:900 14px Nunito;box-shadow:0 3px 10px #0007}
+#cq-app .hn-migas button{min-height:0;padding:2px 8px;border:0;border-radius:10px;background:#fff1c22b;color:#ffe9a8;font:900 13px Nunito;box-shadow:none;text-decoration:underline dotted}
+.hn-migas span{opacity:.6}
+.hn-migas b{white-space:nowrap}
+.hn-progreso{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:20px;background:#183a22ee;border:2px solid #9fd06b;color:#e8ffd0;font:800 13px Nunito}
+.hn-progreso svg,.hn-monedas svg,.hn-saldo svg,.hn-comprar svg,.hn-producto em svg,.hn-boton-tienda svg{width:18px;height:18px}
+#cq-app .hn-monedas{margin-left:auto;display:flex;align-items:center;gap:6px;min-height:0;padding:6px 14px;border-radius:20px;background:linear-gradient(#ffd76a,#c98a22);border:2px solid #fff1b8;color:#3b2408;font:900 15px Nunito;box-shadow:0 3px 10px #0007}
+.hn-monedas small{font:800 11px Nunito;opacity:.8}
+/* Leyenda */
+.hn-leyenda{display:flex;flex-wrap:wrap;gap:4px 10px;padding:6px 10px;border-radius:14px;background:#1b130cd0;color:#fff4ce;font:800 11px Nunito;pointer-events:none!important}
+.hn-leyenda span{display:flex;align-items:center;gap:6px}
+.hn-leyenda span::before{content:'';width:14px;height:10px;border-radius:3px;border:2px solid}
+.hn-l-plantas::before{background:#5ccd5288;border-color:#c4ff96!important}
+.hn-l-recuperable::before{background:#803ebe88;border-color:#ffd65c!important}
+.hn-l-bloqueada::before{background:#461e69cc;border-color:#9670be!important}
+.hn-l-atacada::before{background:#5ccd5288;border-color:#ff7048!important}
+.hn-l-mixta::before{background:repeating-linear-gradient(135deg,#5ccd52 0 4px,#803ebe 4px 8px);border-color:#ecd6a0!important}
+/* Herramientas con nombre */
+.hn-herr{display:flex;flex-direction:column;align-items:center;gap:1px}
+.hn-herr small{font:900 10px Nunito;color:#fff4ce;text-shadow:0 1px 2px #000,0 0 4px #000}
+/* Editor: cupo y ranuras vacías */
+.hn-cupo{margin-left:auto;margin-right:8px;padding:4px 12px;border-radius:14px;background:#e4f3cf;color:#2f5a22;font:900 14px Nunito}
+.hn-cupo.hn-lleno{background:#ffe2a8;color:#7a4300}
+#cq-app .hn-boton-tienda{display:flex;align-items:center;gap:4px;min-height:0;margin-right:8px;padding:5px 12px;border-radius:14px;background:linear-gradient(#ffd76a,#c98a22);border:2px solid #fff1b8;color:#3b2408;font:900 13px Nunito}
+.hn-editor .pvz-ranura.hn-vacia{display:inline-block;border:2px dashed #8a6a3c;border-radius:8px;opacity:.55}
+.hn-editor .cq-ficha small{display:block;font:700 11px Nunito}
+.hn-editor .cq-ficha .hn-origen{opacity:.75}
+/* Ficha de zona */
+.hn-subtitulo{margin:-6px 0 6px!important;font:800 13px Nunito!important;color:#6b5136}
+.hn-datos{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:0 0 8px;padding:0;list-style:none}
+.hn-datos li{padding:3px 10px;border-radius:12px;background:#fff7dc;border:1px solid #c9a96c;font:800 13px Nunito}
+/* Guía y tutorial */
+.hn-guia details{margin:6px 0;padding:6px 10px;border-radius:10px;background:#fff6d8aa}
+.hn-guia summary{cursor:pointer;font:900 16px Nunito;color:#3e341d}
+.hn-guia p{margin:6px 0!important;font-size:14px!important}
+.hn-tutorial{max-width:520px}
+.hn-etiqueta{display:inline-block;padding:2px 10px;border-radius:10px;background:#3c772f;color:#fff;font:900 11px Nunito;letter-spacing:.06em;text-transform:uppercase}
+/* Tienda */
+.hn-tienda{width:min(900px,94vw);max-width:none;max-height:90vh;display:flex;flex-direction:column}
+.hn-tienda header{display:flex;align-items:center;gap:10px}
+.hn-tienda h2{margin:0}
+.hn-saldo{margin-left:auto;display:flex;align-items:center;gap:5px;padding:4px 12px;border-radius:14px;background:linear-gradient(#ffd76a,#c98a22);color:#3b2408;font:900 16px Nunito}
+.hn-pestanas{display:flex;gap:6px;margin:8px 0}
+#cq-app .hn-pestanas button{min-height:0;padding:6px 14px;border-radius:14px;background:#efe0b4;border:2px solid #b8955e;color:#4b3520;font:900 13px Nunito}
+#cq-app .hn-pestanas button[aria-pressed=true]{background:#3c772f;border-color:#2a5520;color:#fff}
+.hn-pestanas small{opacity:.75}
+.hn-productos{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;padding:4px}
+.hn-producto{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;border-radius:12px;background:#fff8e2;border:2px solid #d6bb85;box-shadow:0 2px 5px #0002;text-align:center}
+.hn-producto img{height:74px;max-width:100%;object-fit:contain}
+.hn-producto b{font:900 12px/1.15 Nunito}
+.hn-producto small{font:700 11px Nunito;color:#6b5136}
+.hn-producto em{display:flex;align-items:center;gap:3px;font:800 11px Nunito;font-style:normal;color:#5b3f72}
+#cq-app .hn-comprar{display:flex;align-items:center;gap:4px;min-height:0;margin-top:3px;padding:4px 10px;border-radius:12px;background:linear-gradient(#ffd76a,#c98a22);border:2px solid #fff1b8;color:#3b2408;font:900 13px Nunito}
+#cq-app .hn-comprar[disabled]{filter:grayscale(.8);opacity:.6}
+@media (max-width:900px){.hn-leyenda{display:none}}
+@media (max-height:470px){.hn-cabecera{top:4px;gap:6px}.hn-migas{font-size:12px;padding:4px 10px}.hn-leyenda{display:none}.hn-producto img{height:56px}.cq-pin .hn-chip{font-size:9px;padding:1px 6px}.hn-pines .cq-pin b{font-size:10px;padding:2px 8px 3px}.hn-pines .cq-pin-region b{font-size:12px}}
+/* El editor usa el mismo pergamino que las demás ventanas (antes quedaba transparente sobre el mapa). */
+.hn-editor.hn-pergamino{max-width:none;padding:14px 20px}
+.hn-editor h2{margin:0;font-size:22px}
+.hn-editor .cq-ficha{background:#fff8e2;border:2px solid #d6bb85;border-radius:12px;color:#382619;padding:6px 4px}
+.hn-editor .cq-ficha b{font:900 12px/1.15 Nunito;color:#382619}
+.hn-editor .cq-ficha small{color:#6b5136}
+.hn-editor .cq-ficha[disabled]{opacity:.45}
+.hn-editor .pvz-baraja-elegida{background:linear-gradient(#6b4a2a,#4a3119);border-radius:12px;padding:6px}
+.hn-editor>p{color:#4b3520}
