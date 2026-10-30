@@ -141,7 +141,9 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     const elegir = <T,>(opciones: readonly T[]) => opciones[azar.entero(opciones.length)];
     for (let i = 0; i < total; i++) {
         const p = (i + 1) / total, ola: { tipo: string; fila: number }[] = [];
-        const cantidad = Math.min(40, Math.round(1 + p * (3 + d * 0.2) + (i === total - 1 ? 2 + d * 0.1 : 0) + (i === Math.floor(total / 2) ? 1 + d * 0.05 : 0)));
+        // De noche no caen soles del cielo: llegan tres cuartas partes de los zombis (la prueba de balance perdía todas
+        // las áreas nocturnas de Arenaria con las mismas oleadas del día).
+        const cantidad = Math.min(40, Math.max(1, Math.round((1 + p * (3 + d * 0.2) + (i === total - 1 ? 2 + d * 0.1 : 0) + (i === Math.floor(total / 2) ? 1 + d * 0.05 : 0)) * (area.noche ? 0.75 : 1))));
         for (let k = 0; k < cantidad; k++) {
             const tirada = azar.siguiente(), progreso = (i + 1) / total;
             // Como en PvZ, los primeros zombis del nivel son básicos y la armadura crece con cada oleada y con el país
@@ -180,7 +182,7 @@ export function nivelCampana(id: number, equipo: readonly string[], semilla: num
         for (let i = 0; i < Math.min(libres.length, 2 + Math.floor(area.dificultad / 16)); i++) { const [fila] = libres.splice(azar.entero(libres.length), 1); lapidas.push({ fila, col: 5 + azar.entero(4) }); }
     }
     const r = Math.max(0, Math.min(REFUERZO_MAXIMO, Math.floor(refuerzo)));
-    return { zona: id, nombre: area.nombre, filas: area.filas, agua: [...area.agua], noche: area.noche, solInicial: area.noche ? 50 : 150,
+    return { zona: id, nombre: area.nombre, filas: area.filas, agua: [...area.agua], noche: area.noche, solInicial: area.noche ? 100 : 150,
         lapidas: punto ? (punto.lapidas ?? []) : lapidas, semillas: equipo.map(nativoDe), escenario: area.escenario!,
         oleadas: reforzar(oleadasCampana(area, azar), r, new AzarPvZ((semilla ^ 0x5bd1e995) >>> 0 || 1)), punto: structuredClone(punto), reposo, fusiones: [...fusiones] };
 }
