@@ -6,7 +6,9 @@ const NO_USA = new Set(['pvine', 'gloomvine', 'pyrevine', 'shinevine', 'torchwoo
     'moonbean', 'toadstool', 'gravebuster', 'blover', 'escaperoot', 'grimrose', 'perfumeshroom', 'powerlily', 'thymewarp', 'bulbkekengi', 'hypnoshroom',
     'puffshroom', 'scaredyshroom', 'shadowshroom', 'empea', 'hotpotato', 'iceburg', 'explodeonut', 'aloe', 'peach', 'lychee', 'mirrornut', 'gumnut', 'hollyknight',
     // Alcance corto o apoyo: el piloto las sembraría atrás, donde no alcanzan a nadie.
-    'fumeshroom', 'gloomshroom', 'wasabiwhip', 'snapdragon', 'coldsnapdragon', 'moonflower', 'nightshade', 'sporeshroom']);
+    'fumeshroom', 'gloomshroom', 'wasabiwhip', 'snapdragon', 'coldsnapdragon', 'moonflower', 'nightshade', 'sporeshroom',
+    // Acuáticas: solo se siembran en el agua.
+    'lotorpedo', 'seashooter']);
 const PREFERENCIA_SOL = ['twinsunflower', 'primalsunflower', 'sunflower', 'solarsage', 'sunshroom'];
 export function papel(p) {
     if (!p) return 'otro';

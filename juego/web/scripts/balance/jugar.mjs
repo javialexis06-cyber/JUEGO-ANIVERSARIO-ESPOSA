@@ -112,9 +112,10 @@ async function jugarEnPagina({ area, equipo, semilla, roles, refuerzo, limite, t
         // Apertura de PvZ: soles primero. Mientras ningún carril esté en aprietos (un zombi a menos de seis casillas con
         // menos de dos atacantes), las plantas de sol van antes que la defensa, hasta dos columnas.
         const aprieto = filas.some(r => Z.some(z => z.fila === r && z.col <= 3) && cuenta(r, 'ataque') < 2);
-        const objetivoSol = (tierra.length + agua.size) * 2;
+        // Los soles van en tierra: en el agua cada uno cuesta además un nenúfar y deja sin defensa el carril de los patos.
+        const filasSol = tierra.length ? tierra : [...agua], objetivoSol = filasSol.length * 2;
         // 3) Columnas de soles (primero la de atrás).
-        if (!hecho && !apurado && !aprieto && productoras < objetivoSol) for (const r of [...tierra, ...agua]) if (cuenta(r, 'sol') < (productoras < tierra.length + agua.size ? 1 : 2) && poner(productoras < tierra.length + agua.size ? barata('sol') : fuerte('sol'), r, [0, 1])) { hecho = true; break; }
+        if (!hecho && !apurado && !aprieto && productoras < objetivoSol) for (const r of filasSol) if (cuenta(r, 'sol') < (productoras < filasSol.length ? 1 : 2) && poner(productoras < filasSol.length ? barata('sol') : fuerte('sol'), r, [0, 1])) { hecho = true; break; }
         // Si la planta de sol se está recargando, se esperan los soles en vez de gastarlos en carriles sin zombis.
         const ahorrar = !apurado && !aprieto && productoras < objetivoSol && soles < 200;
         // 4) Atacantes hasta la meta en los carriles con zombis (columnas 2–6); en los vacíos, uno cuando ya hay economía.

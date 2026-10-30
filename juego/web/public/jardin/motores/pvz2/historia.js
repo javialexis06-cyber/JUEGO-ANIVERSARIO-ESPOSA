@@ -278,8 +278,8 @@
             if (!reposo && !nivel().gameWon)
                 throw Error('El combate activo todavía no se puede guardar como defensa terminada.');
             const cells = new Set();
-            // Lo que el propio nivel pone en el campo (plantas en ámbar, objetos con forma de planta) no es de la formación:
-            // no se guarda en el punto de descanso en vez de impedir guardar una victoria (prueba de balance, 30 de octubre).
+            // Plantas que no son de la formación (la plántula que deja la bomba atómica): no se guardan en el punto de
+            // descanso, en vez de impedir guardar una victoria (prueba de balance, 30 de octubre).
             const propia = p => tipos().includes(p.Plant_Type) || fusionadas(config).has(p.Plant_Type);
             for (const p of plantas()) if (!propia(p)) console.warn('Planta del nivel fuera del punto de descanso: ' + p.Plant_Type);
             const ps = plantas().filter(propia).map(p => { const q = p.plantInLnC; if (!q)
