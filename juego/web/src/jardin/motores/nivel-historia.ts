@@ -129,7 +129,7 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     // Especiales del mundo, de más fáciles a más exigentes (los voladores y las máquinas al final, que piden plantas
     // específicas, y los tanques como el futbolista); los trineos solo existen sobre hielo de zamboni y no se generan
     // sueltos. Prueba de balance, 30 de octubre.
-    const exigente = (z: string) => /balloon|jetpack|battleplane|dronemaker|arbiter|gargantuar|mech|bull|catapult|zomboni|excavator|pelican|seagull|allstar|superfan|troglobite/.test(z) ? 1 : 0;
+    const exigente = (z: string) => /balloon|jetpack|battleplane|dronemaker|arbiter|gargantuar|mech|bull|catapult|zomboni|excavator|pelican|seagull|allstar|superfan|troglobite|electric|octopus|fisherman|snorkel/.test(z) ? 1 : 0;
     const especiales = ZOMBIS_NATIVOS.filter(z => mundos.includes(z.mundo) && !z.jefe && !deRol.has(z.id) && !SOLO_INVOCADOS.has(z.id) && !/_flag|bobsled/.test(z.id)).map(z => z.id).sort((a, b) => exigente(a) - exigente(b));
     // Dificultad efectiva: completa en los tres primeros países y comprimida después (la prueba de balance completa
     // perdía todo desde Nubaria: las oleadas crecían sin freno y las plantas no). Entre países sigue cambiando el
@@ -157,7 +157,8 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
             if (tirada >= fuerza) pool = roles.basic;
             else if (t < 0.4) pool = roles.armor1;
             else if (t < 0.58 && d >= 1) pool = roles.armor2;
-            else if (t < 0.68 && d >= 6) pool = [...roles.armor3, ...roles.armor4];
+            // Algunos escenarios (el cielo) repiten en las armaduras 3 y 4 el zombi pesado de la 2: ese hueco usa la ligera.
+            else if (t < 0.68 && d >= 6) pool = [...roles.armor3, ...roles.armor4].filter(z => !roles.armor2.includes(z)).length ? [...roles.armor3, ...roles.armor4] : roles.armor1;
             else if (t < 0.78 && d >= 4) pool = roles.imp;
             else if (t < 0.82 && progreso > 0.5 && (d >= 10 || area.tipo === 'fortaleza' && i === total - 1)) pool = roles.gargantuar;
             else pool = disponibles.length ? disponibles : roles.armor1;
