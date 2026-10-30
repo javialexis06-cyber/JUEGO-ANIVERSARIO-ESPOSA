@@ -28,7 +28,7 @@ export const TUTORIAL: Record<string, TemaTutorial> = {
     agua: { titulo: 'Carriles de agua', texto: [
         'Esta área tiene agua. En el agua solo se siembran directo las plantas acuáticas; para las demás pon primero un nenúfar. Estas áreas admiten una semilla más.'] },
     noche: { titulo: 'Combate de noche', texto: [
-        'De noche no caen soles del cielo: empiezas con 100 y llegan menos zombis. Lleva una planta de sol barata (la seta solar cuesta 25) y cuidado con las lápidas.'] },
+        'De noche no caen soles del cielo: empiezas con 100 soles y llegan menos zombis. Lleva una planta de sol barata (la seta solar cuesta 25) y cuidado con las lápidas.'] },
     fusion: { titulo: 'Fusiones', texto: [
         'El laboratorio de Forjaria te enseñó fusiones: siembra una planta encima de otra para combinarlas. Las recetas están en el Almanaque.'] },
     ruta: { titulo: 'Ruta de suministro', texto: [

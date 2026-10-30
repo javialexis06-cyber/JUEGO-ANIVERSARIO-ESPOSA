@@ -120,6 +120,10 @@ const SOLO_INVOCADOS = new Set(['chicken', 'pirate_captain_parrot', 'iceage_weas
 const ROLES = ['basic', 'armor1', 'armor2', 'armor3', 'armor4', 'imp', 'gargantuar'] as const;
 /** Oleadas nativas de un área nueva: zombis del mundo del país por papel y los especiales del mundo, que llegan de
  *  a poco según la ciudad y la ranura. Las fortalezas cierran con gargantúas; el castillo final, con el rey. */
+/** Dificultad efectiva: completa en los tres primeros países y comprimida después (la prueba de balance completa
+ * perdía todo desde Nubaria: las oleadas crecían sin freno y las plantas no). Entre países sigue cambiando el
+ * catálogo de zombis y crecen los especiales; el tamaño, la armadura y las lápidas suben despacio. */
+const dificultadEfectiva = (area: AreaCampana) => Math.min(area.dificultad, 12) + Math.max(0, area.dificultad - 12) * 0.2;
 export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     const escenario = (nativo.escenarios as Record<string, Record<string, unknown>>)[area.escenario!] ?? {};
     const lista = (k: string) => ((escenario[k] as string[] | undefined) ?? []).filter(z => ZOMBIS_NATIVOS.some(n => n.id === z));
@@ -129,12 +133,9 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     // Especiales del mundo, de más fáciles a más exigentes (los voladores y las máquinas al final, que piden plantas
     // específicas, y los tanques como el futbolista); los trineos solo existen sobre hielo de zamboni y no se generan
     // sueltos. Prueba de balance, 30 de octubre.
-    const exigente = (z: string) => /balloon|jetpack|battleplane|dronemaker|arbiter|gargantuar|mech|bull|catapult|zomboni|excavator|pelican|seagull|allstar|superfan|troglobite|electric|octopus|fisherman|snorkel/.test(z) ? 1 : 0;
+    const exigente = (z: string) => /balloon|jetpack|battleplane|dronemaker|arbiter|gargantuar|mech|bull|catapult|zomboni|excavator|pelican|seagull|allstar|superfan|troglobite|electric|octopus|fisherman|snorkel|protector/.test(z) ? 1 : 0;
     const especiales = ZOMBIS_NATIVOS.filter(z => mundos.includes(z.mundo) && !z.jefe && !deRol.has(z.id) && !SOLO_INVOCADOS.has(z.id) && !/_flag|bobsled/.test(z.id)).map(z => z.id).sort((a, b) => exigente(a) - exigente(b));
-    // Dificultad efectiva: completa en los tres primeros países y comprimida después (la prueba de balance completa
-    // perdía todo desde Nubaria: las oleadas crecían sin freno y las plantas no). Entre países sigue cambiando el
-    // catálogo de zombis y crecen los especiales; el tamaño y la armadura suben despacio.
-    const local = area.ciudad % 4, nivelArea = local * 5 + area.ranura, d = Math.min(area.dificultad, 12) + Math.max(0, area.dificultad - 12) * 0.2;
+    const local = area.ciudad % 4, nivelArea = local * 5 + area.ranura, d = dificultadEfectiva(area);
     const disponibles = especiales.slice(0, Math.min(especiales.length, 1 + Math.floor(nivelArea / 3)));
     // Curva revisada con la prueba de balance (30 de octubre): las oleadas empiezan pequeñas (al comienzo solo hay
     // 50–150 soles) y crecen dentro del nivel; entre países sube sobre todo la calidad de los zombis.
@@ -144,9 +145,9 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     const elegir = <T,>(opciones: readonly T[]) => opciones[azar.entero(opciones.length)];
     for (let i = 0; i < total; i++) {
         const p = (i + 1) / total, ola: { tipo: string; fila: number }[] = [];
-        // De noche no caen soles del cielo: llegan tres cuartas partes de los zombis (la prueba de balance perdía todas
-        // las áreas nocturnas de Arenaria con las mismas oleadas del día).
-        const cantidad = Math.min(40, Math.max(1, Math.round((1 + p * (3 + d * 0.2) + (i === total - 1 ? 2 + d * 0.1 : 0) + (i === Math.floor(total / 2) ? 1 + d * 0.05 : 0)) * (area.noche ? 0.75 : 1))));
+        // De noche no caen soles del cielo: llega el 70 % de los zombis (la prueba de balance perdía todas las áreas
+        // nocturnas de Arenaria con las mismas oleadas del día, y después la mayoría de las de Forjaria y Neón).
+        const cantidad = Math.min(40, Math.max(1, Math.round((1 + p * (3 + d * 0.2) + (i === total - 1 ? 2 + d * 0.1 : 0) + (i === Math.floor(total / 2) ? 1 + d * 0.05 : 0)) * (area.noche ? 0.7 : 1))));
         for (let k = 0; k < cantidad; k++) {
             const tirada = azar.siguiente(), progreso = (i + 1) / total;
             // Como en PvZ, los primeros zombis del nivel son básicos y la armadura crece con cada oleada y con el país
@@ -183,7 +184,8 @@ export function nivelCampana(id: number, equipo: readonly string[], semilla: num
     const azar = new AzarPvZ(semilla), lapidas: ConfigDefensaNativa['lapidas'] = [];
     if (area.noche && !punto) {
         const libres = Array.from({ length: area.filas }, (_, i) => i).filter(f => !area.agua.includes(f));
-        for (let i = 0; i < Math.min(libres.length, 2 + Math.floor(area.dificultad / 16)); i++) { const [fila] = libres.splice(azar.entero(libres.length), 1); lapidas.push({ fila, col: 5 + azar.entero(4) }); }
+        // Al menos un carril sin lápida (en tableros de 3 carriles las tres quedaban tapadas).
+        for (let i = 0; i < Math.min(Math.max(1, libres.length - 1), 2 + Math.floor(dificultadEfectiva(area) / 16)); i++) { const [fila] = libres.splice(azar.entero(libres.length), 1); lapidas.push({ fila, col: 5 + azar.entero(4) }); }
     }
     const r = Math.max(0, Math.min(REFUERZO_MAXIMO, Math.floor(refuerzo)));
     return { zona: id, nombre: area.nombre, filas: area.filas, agua: [...area.agua], noche: area.noche, solInicial: area.noche ? 100 : 150,
