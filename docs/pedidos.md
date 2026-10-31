@@ -1,10 +1,18 @@
 # Pedidos de Javier · estado vigente
 
 
-**En curso (Claude, 30 de octubre) · territorios, tienda, cupo, tutorial y balance:** el mapa se reparte entero en
-territorios de bordes orgánicos. Las plantas se compran con monedas de capturas y asedios, y cada área tiene un cupo
-de 4 a 8 semillas. Dave explica cada mecánica al aparecer y hay una guía completa. Se mejoraron el mapa, la ficha de
-zona, el editor y las herramientas con texto. La prueba de balance juega la campaña en Gardendless real con un piloto.
+**Hecho por Claude (30–31 de octubre) · territorios, tienda, cupo, tutorial y balance:**
+
+- **Mapa:** se reparte entero en territorios de bordes orgánicos.
+- **Tienda y cupo:** las plantas se compran con monedas de capturas y asedios, y cada área tiene un cupo de 4 a 8
+  semillas.
+- **Tutorial:** Dave explica cada mecánica al aparecer y hay una guía completa.
+- **Interfaz:** se mejoraron el mapa, la ficha de zona (con sus zombis), el editor y las herramientas con texto. Se
+  quitaron Exportar e Importar por pedido de Javier.
+- **Balance:** la prueba jugó las 239 áreas en Gardendless real con un piloto automático. Ganó 148 (95 % en Verdalia,
+  30 % en Umbra) y resistió 27 de 33 asedios de muestra. Encontró tres fallos del juego, ya corregidos, y llevó a
+  ajustar las oleadas.
+
 Ver `en-obra/pvz-campana-economia-2026-10-30.md`.
 
 **Hecho por Claude (29–30 de octubre) · catálogo completo, Fusión y campaña de 240 áreas:** catálogo nativo de 185 plantas,

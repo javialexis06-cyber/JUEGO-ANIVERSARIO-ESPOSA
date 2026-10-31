@@ -180,4 +180,13 @@ Lectura:
   Levadizo (la última de Umbra, con el castillo del Dr. Zomboid) no gana ninguna. El piloto gana 28 de las 48
   fortalezas.
 
-Asedios: (en curso)
+Asedios (muestra): el piloto captura el área y en seguida la misma zona recibe un asedio reforzado con las plantas,
+soles y podadoras que quedaron, como en la campaña.
+
+| Asedio | Áreas (2 por país / 1 por país) | Capturas | Asedios resistidos | Perdidos |
+|---|---|---|---|---|
+| Nivel 3 | 24 | 23 | 19 (83 %) | 41 y 143 (quedaban 6 y 3 plantas), 202 y 203 (cielo) |
+| Nivel 6 (el máximo) | 12 | 10 | 8 (80 %) | 58 (Marisma) y 99 (fortaleza de Coralia) |
+
+Los asedios perdidos son de zonas que quedaron casi sin plantas al capturarlas o del cielo, cuyos zombis disparan a
+las plantas. Resistir paga 5–10 monedas por asedio.

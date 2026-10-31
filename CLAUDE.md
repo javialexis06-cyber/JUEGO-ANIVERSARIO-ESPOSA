@@ -11,13 +11,15 @@ Javier pidió:
 - comprar las plantas con monedas ganadas al capturar zonas, con un cupo de plantas por zona.
 
 Dejó el balance a criterio de Claude. Guardado v7: migra el v6 conservando las plantas y sin regalar monedas.
+Hecho y probado el 31 de octubre: corrida de las 239 áreas y asedios de muestra con un piloto en Gardendless real
+(`scripts/balance/`); el piloto es más torpe que una persona y sus cifras son un piso.
 Ver [territorios, tienda, cupo, tutorial y balance](docs/en-obra/pvz-campana-economia-2026-10-30.md).
 
 ## Pedido vigente · catálogo completo y campaña territorial (29 de octubre)
 
 Javier pidió, en este orden: terminar PvZ 1, PvZ 2 y Fusión con todas sus plantas, zombis y mecánicas (se pueden tomar
 recursos de repositorios de GitHub), después desarrollar la campaña territorial completa y al final hacer las pruebas
-finales. Hecho y probado el 30 de octubre; el balance de las 228 áreas nuevas sigue sin comprobar en partidas largas.
+finales. Hecho y probado el 30 de octubre; el balance de las áreas nuevas se probó el 31 (pedido de arriba).
 Avance y diseño: [catálogo, Fusión y campaña de 240 áreas](docs/en-obra/pvz-campana-240-2026-10-29.md). Dejó a criterio de Claude el balance del
 versus y aceptó que el arte del tejado mezcle estilos. El minijuego PvZ 1 usa datos remotos fijados por commit.
 
