@@ -32,7 +32,7 @@ El 29 de octubre Javier dejó el balance del versus a criterio de Claude.
 ## Pedido vigente · ampliar la historia al mapa existente
 
 El 24 de octubre Javier autorizó extender Gardendless a las doce zonas del mapa. Esto sustituye la pausa
-anterior para ese recorrido; la campaña futura de 240 áreas sigue pendiente. Conservar la presentación y
+anterior para ese recorrido; la campaña de 240 áreas se hizo el 29–30 de octubre. Conservar la presentación y
 balance nativos, reservas exclusivas por tipo, defensas persistentes, mapas y guardados existentes.
 Aprobó Pirata espadachín, Cabezaladrillo, Breakdancer y Flor de hielo como sustituciones nativas concretas.
 Ver [ampliación y límites](docs/en-obra/pvz-mapa-nativo-2026-10-24.md). No anunciar una campaña ganada por pasar casos
@@ -100,12 +100,12 @@ configurables por escenario (carreteras de tres/cuatro, casas con cinco, almacen
 requiera el mapa). Cada tipo completo de planta se reserva a una sola zona. Desbloquear plantas e introducir
 zombis al llegar a zonas nuevas; completar comportamientos, arte y pruebas de PvZ 1, PvZ 2 y la última versión
 verificada de Fusión. El catálogo y su arte se reanudan; la pausa gráfica anterior queda sustituida.
-Ver `docs/en-obra/pvz-pendientes-2026-10-22.md` y el issue #1 de GitHub: el seguimiento contiene 180 tareas
-con casillas de avance y evidencia. Ya existe el núcleo de carriles/instantáneas y coordinador de defensas;
+Lo que falta de verdad está en `docs/en-obra/pvz-pendientes-2026-10-22.md` (revisado el 31 de octubre; la lista
+original de 180 tareas está archivada). Ya existe el núcleo de carriles/instantáneas y coordinador de defensas;
 ver `docs/en-obra/pvz-instancias-2026-10-23.md`. La historia ya conecta mapa y guardado V2;
 ver `docs/en-obra/pvz-historia-integrada.md`. El localizador de reservas y las comprobaciones normales parciales
 están en `docs/en-obra/pvz-reservas-y-presion-2026-10-23.md`; no certifican el balance de la campaña completa.
-Salas nuevas y migración V1 siguen pendientes. Conservar historia desde casa hasta el 100%,
+Salas nuevas y migración V1 quedan por decidir. Conservar historia desde casa hasta el 100%,
 mapas mundo/país/ciudad, controles redondos,
 PvZ y patios como minijuegos y sus partidas. El prototipo/versus anterior conserva su combate y claves en `modo=prototipo`; la historia nueva usa PvZ real.
 
@@ -202,5 +202,5 @@ El pedido gráfico del 22 de octubre sustituye el reparto anterior: Javier aprob
 encargó a Codex implementar plantas, escenarios y zombis con variedad de ropa. La aventura Canvas conecta
 los cincuenta niveles construidos (mundo 5, el tejado, desde el 26 de octubre), selección, guardado, almanaque y controles; los patios clásicos y el duelo
 conservan sus motores y claves. Ver `docs/en-obra/pvz-arte-2026-10-22.md` y los contratos de
-`docs/en-obra/pvz-arquitectura.md`. Los mundos 6–10, la tienda y demás modos del plan siguen pendientes; no confundir
+`docs/en-obra/pvz-arquitectura.md`. Los mundos siguientes, la tienda de mejoras y demás modos del plan siguen pendientes; no confundir
 las animaciones procedurales actuales con animación independiente de cada extremidad.

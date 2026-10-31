@@ -242,6 +242,9 @@
   top: auto;
   bottom: 8px;
 }
+.hn-en-batalla .hn-herramientas .hn-herr:has(> [data-cq=subir], > [data-cq=tienda], > [data-cq=ayuda], > [data-cq=pantalla], > [data-cq=salir]) {
+  display: none;
+}
 /* Los accesos mantienen su posición durante la batalla. Solo los frentes activos ocupan espacio. */
 .hn-frentes button[aria-hidden=true]{display:none}
 .hn-frentes{max-width:62vw;flex-wrap:wrap;justify-content:flex-end;gap:28px 18px}

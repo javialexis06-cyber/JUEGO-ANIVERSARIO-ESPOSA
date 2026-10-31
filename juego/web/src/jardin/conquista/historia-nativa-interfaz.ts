@@ -40,7 +40,7 @@ export async function montarHistoriaNativa() {
     let mundo = guardado.leer(), errorArchivo = !!guardado.error, muerto = false, cargando = 0, ocupado = false, anterior = performance.now(), acumulado = 0, raf = 0;
     let visible: ZonaNativa | null = null, escala: EscalaMapa = 'ciudad', pais = AREAS_CAMPANA[8].pais, ciudad = AREAS_CAMPANA[8].ciudad, seleccion: ZonaNativa | null = null, editor: SemillaNativa[] | null = null, revisionEditor = 0;
     let liberar: () => void = () => { }, bloqueo = false, modal = '', avisoHasta = 0, ultimoEstado = '', necesitaGuardar = false, herramientasHTML = '';
-    let errorMotor = '', iniciando = false;
+    let errorMotor = '', iniciando = false, avisoEspera: ReturnType<typeof setTimeout> | 0 = 0;
     let cine:CinematicaConquista|null=null;
     const instancias = new Map<ZonaNativa, Instancia>(), atlas = new AtlasPvZ(), retratos = new RetratosPvZ(atlas);
     const capaTerritorios = new CapaTerritorios();
@@ -163,6 +163,9 @@ export async function montarHistoriaNativa() {
     }
     function pintar() {
         $('.hn-mapa').hidden = visible !== null;
+        // En batalla la barra se reduce a Ciudad y Pausa: completa tapaba la esquina del césped y un toque a un sol
+        // podía caer en «Salir». El resto de herramientas sigue en el mapa.
+        root.classList.toggle('hn-en-batalla', visible !== null);
         for (const [id, v] of instancias) {
             v.motor.frame.className = 'hn-frente';
             // Los que no se ven, ocultos del todo: con opacidad 0 el navegador los seguía componiendo uno encima del otro
@@ -237,7 +240,7 @@ export async function montarHistoriaNativa() {
                 n.inert = true;
         let html = '';
         if (modal === 'inicio')
-            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.webp')}" alt="Dave"><section class="cq-modal hn-pergamino hn-inicio"><h2>Primero, nuestra casa</h2><p>Los zombis llegaron a la ciudad. Arrastra una semilla hasta una casilla (o tócala y luego la casilla) y recoge soles para plantar más.</p><p>Después recuperarás el mapa área por área, en doce países, hasta el castillo del Dr. Zomboid. Cada área ganada paga monedas para comprar plantas en la tienda. Yo te explicaré cada cosa cuando aparezca, y todo queda en el botón Guía.</p><p class="hn-nota">Si cierras en plena batalla, ese ataque se repite desde su inicio.</p><nav class="hn-acciones"><button data-cq="iniciar" class="cq-verde">Proteger la casa</button>${boton('volver', 'Volver al jardín', 'salir')}</nav></section>`;
+            html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.webp')}" alt="Dave"><section class="cq-modal hn-pergamino hn-inicio"><h2>Primero, nuestra casa</h2><p>Los zombis llegaron a la ciudad. Arrastra una semilla hasta una casilla (o tócala y luego la casilla) y recoge soles para plantar más.</p><p>Después recuperarás el mapa área por área, en doce países, hasta el castillo del Dr. Zomboid. Cada área ganada paga monedas para comprar plantas en la tienda. Yo te explicaré cada cosa cuando aparezca, y todo queda en el botón Guía.</p><p class="hn-nota">Si cierras en plena batalla, ese ataque se repite desde su inicio.</p><p class="hn-nota hn-espera" hidden>La primera vez se descarga el jardín (unos 100 MB) y puede tardar unos minutos. Después abre desde la caché.</p><nav class="hn-acciones"><button data-cq="iniciar" class="cq-verde">Proteger la casa</button>${boton('volver', 'Volver al jardín', 'salir')}</nav></section>`;
         else if(modal==='victoria')
             html=`<div class="cq-cine cq-cine-final"></div><nav class="cq-final-controles">${boton('cerrar-modal','El mapa está purificado: volver al mapa','mapa')}${boton('salir','Volver al jardín','salir')}</nav>`;
         else if (modal === 'interrumpida')
@@ -310,6 +313,10 @@ export async function montarHistoriaNativa() {
     }
     function disponibilidad() {
         const listas=camposInicio().every(id=>instancias.get(id)?.lista);
+        // Si tarda, se explica por qué (la primera descarga del motor pesa unos 100 MB).
+        const espera=root.querySelector<HTMLElement>('.hn-espera');
+        if(espera&&!listas&&espera.hidden&&!avisoEspera) avisoEspera=setTimeout(()=>{avisoEspera=0;const e=root.querySelector<HTMLElement>('.hn-espera');if(e&&!camposInicio().every(id=>instancias.get(id)?.lista))e.hidden=false;},12000);
+        if(espera&&listas) espera.hidden=true;
         for (const b of root.querySelectorAll<HTMLButtonElement>('[data-cq="iniciar"],[data-cq="retomar"]')) {
             b.disabled = !listas;
             b.setAttribute('aria-busy', String(!listas));
@@ -348,7 +355,9 @@ export async function montarHistoriaNativa() {
         finally { disponibilidad(); }
         return i;
     }
-    function camposInicio() { return mundo?.estado.ataques.length?mundo.estado.ataques.map(a=>a.zona):[8,9]; }
+    // Para empezar basta el motor de la casa: la estación se sigue preparando después, en segundo plano (antes el
+    // botón esperaba dos motores completos en fila y en el celular parecía colgado en «Preparando semillas…»).
+    function camposInicio() { return mundo?.estado.ataques.length?mundo.estado.ataques.map(a=>a.zona):[8]; }
     function prepararCampos() {
         if(muerto)return;
         const activas=mundo?.estado.ataques.map(a=>a.zona)??[];

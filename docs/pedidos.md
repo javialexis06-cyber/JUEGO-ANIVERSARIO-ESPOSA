@@ -1,5 +1,8 @@
 # Pedidos de Javier · estado vigente
 
+**Lo que falta del jardín (31 de octubre):** ver [estado y pendientes reales](en-obra/pvz-pendientes-2026-10-22.md).
+La lista original de 180 tareas está archivada; muchas quedaron resueltas por Gardendless o superadas.
+
 
 **Hecho por Claude (30–31 de octubre) · territorios, tienda, cupo, tutorial y balance:**
 
@@ -51,7 +54,7 @@ los ocho niveles normales al menos una vez pero no 5-5 ni 5-10. Ver `en-obra/pvz
 ## Pedido vigente · ampliar la historia al mapa existente
 
 El 24 de octubre Javier autorizó extender Gardendless a las doce zonas del mapa. Esto sustituye la pausa
-anterior para ese recorrido; la campaña futura de 240 áreas sigue pendiente. Conservar la presentación y
+anterior para ese recorrido; la campaña de 240 áreas se hizo el 29–30 de octubre. Conservar la presentación y
 balance nativos, reservas exclusivas por tipo, defensas persistentes, mapas y guardados existentes.
 Aprobó Pirata espadachín, Cabezaladrillo, Breakdancer y Flor de hielo como sustituciones nativas concretas.
 Ver [ampliación y límites](en-obra/pvz-mapa-nativo-2026-10-24.md). No anunciar una campaña ganada por pasar casos
@@ -82,8 +85,8 @@ aprobó su balance original. Las reservas de tipos son exclusivas y los frentes 
 el guardado conserva puntos entre combates. Una interrupción exige repetir los ataques pendientes desde su
 inicio, con aviso explícito. Ver [conexión nativa y límites](en-obra/pvz-historia-nativa.md). El tutorial aislado
 sigue en `modo=prueba-frente`; V2 se conserva en **Minijuegos → Historia anterior · V2**. No se migra V2; los puntos nativos V3 sí se amplían a las doce zonas conservando sus defensas.
-El minijuego PvZ 1 sigue encargado, pendiente de una solución de recursos compatible sin exigirlos
-al usuario. Se conservan historia V2, aventura de 40 niveles, patios y partidas previas; la ampliación autorizada comprende el mapa de doce áreas.
+El minijuego PvZ 1 descarga sus datos de un repositorio público fijado (29 de octubre) y se comprobó hasta
+el nivel 1-1. Se conservan historia V2, aventura de 40 niveles, patios y partidas previas; la ampliación autorizada comprende el mapa de doce áreas.
 
 ## Base conservada · primer escenario y controles
 
@@ -124,8 +127,9 @@ Se reanuda el catálogo y su arte: todas las plantas y zombis de PvZ 1, PvZ 2 y 
 Fusión, cuyo inventario y recetas requieren verificación. Se retoman nuevas ideas después de tenerlos
 funcionales y dibujados. Las fusiones siguen siendo tardías en historia y accesibles desde el inicio en versus.
 
-**Seguimiento:** [180 tareas en 14 grupos, con casillas de avance](en-obra/pvz-pendientes-2026-10-22.md) ·
-[Issue #1 en GitHub](https://github.com/javialexis06-cyber/JUEGO-ANIVERSARIO-ESPOSA/issues/1). No marcar completado por crear fichas o reciclar arte.
+**Seguimiento:** [estado y pendientes reales del jardín](en-obra/pvz-pendientes-2026-10-22.md) (revisado el 31 de
+octubre; la [lista original de 180 tareas](archivo/pvz-pendientes-2026-10-22-original.md) está archivada). No marcar
+completado por crear fichas o reciclar arte.
 
 [Historia V2 conservada](en-obra/pvz-historia-integrada.md): usa partidas PvZ normales
 por zona, carriles de tres a siete, reservas exclusivas, desbloqueos de las 32 plantas construidas y guardado
@@ -135,9 +139,9 @@ V2 completo con respaldo y protección de pestañas. Los doce escenarios se reco
 conserva el equipo pendiente y los combates activos. Trece defensas normales repetidas conservaron la casa;
 dos intentos prolongados de expansión con piloto terminaron en derrota, sin cambiar dificultad ni economía.
 
-La historia/versus del prototipo se conserva en `modo=prototipo` con sus claves. Faltan adaptar las salas al
-motor nuevo y diseñar la conversión explícita de V1; no se han recortado sus equipos repetidos. El catálogo,
-recetas reales, arte futuro y campaña definitiva continúan pendientes. [Dirección del mundo](en-obra/pvz-conquista-propuesta-2026-10-22.md).
+La historia/versus del prototipo se conserva en `modo=prototipo` con sus claves. Adaptar sus salas al motor nuevo
+y convertir V1 queda por decidir; no se han recortado sus equipos repetidos. El catálogo, las recetas y la campaña
+se hicieron después sobre Gardendless. [Dirección del mundo](en-obra/pvz-conquista-propuesta-2026-10-22.md).
 
 Se conservan historia desde casa hasta el 100% con huida del Dr. Zomboid, mapas mundo → país → ciudad → zona,
 interfaz despejada, controles redondos y minijuegos existentes con sus partidas. La cifra de 240 áreas sigue
@@ -174,7 +178,7 @@ Por eso los valores de PvZ (costos, recargas, vidas, precios de la tienda) cuent
 
 **Estado:** motor, datos de cuarenta niveles de los mundos 1–4, abono del día y guardado implementados.
 La aventura Canvas, selección, almanaque, cuatro fondos, 32 plantas, 21 zombis y ocho vestuarios están
-integrados. [Entrega visual y límites](en-obra/pvz-arte-2026-10-22.md). Los mundos 5–10 y demás modos siguen pendientes.
+integrados. [Entrega visual y límites](en-obra/pvz-arte-2026-10-22.md). El mundo 5 (tejado) se hizo el 26 de octubre; los mundos siguientes y demás modos siguen pendientes.
 
 ## Encargo activo · ampliación de juegos y patio
 

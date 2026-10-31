@@ -10,6 +10,7 @@ El alcance actual está en [pedidos vigentes](../pedidos.md) y la guía técnica
 | [Auditoría inicial](auditoria.md) | Hallazgos y comprobaciones de las primeras versiones. |
 | [Diseño inicial](diseno-juego.md) | Referencias del primer Súper Manía. |
 | [Viabilidad en línea](viabilidad-cooperativo-en-linea.md) | Estudio del cooperativo entre dispositivos. |
+| [Pendientes del jardín, lista original](pvz-pendientes-2026-10-22-original.md) | Las 180 tareas del 22 de octubre, anteriores a Gardendless. |
 
 Las verificaciones fechadas se conservan en `docs/en-obra/` como evidencia, con sus límites. Las propuestas
 marcadas históricas y la granja pausada no deben retomarse por aparecer en ellas.

@@ -68,7 +68,10 @@ Dejó el balance a criterio de Claude ("el balance que decidas para el juego").
   Exportar e Importar: el guardado es automático y solo se ofrecen en las ventanas de error del guardado.
 - **Ficha de zona**: tipo, país y ciudad, carriles, agua, noche, cupo y recompensa. Debajo, los zombis que trae (como la
   vista previa antes de cada nivel de PvZ) y, si aún no tiene formación, una pista para elegirla.
-- **Inicio**: el texto de Dave se acortó a lo esencial; el resto lo explica el tutorial al aparecer.
+- **Inicio**: el texto de Dave se acortó a lo esencial; el resto lo explica el tutorial al aparecer. El botón
+  «Proteger la casa» solo espera el motor de la casa (antes esperaba también el de la estación, en fila, y en el
+  celular parecía colgado en «Preparando semillas…»): en un navegador limpio pasó de unos 95 a unos 48 segundos.
+  Si tarda, un aviso explica que la primera vez se descargan unos 100 MB del jardín.
 - **Editor de formación**:
   - pergamino legible y contador n / cupo con ranuras vacías;
   - familia y coste en soles de cada planta, y dónde está reservada;
