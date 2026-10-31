@@ -126,6 +126,8 @@ El botón Guía reúne todos los temas. En las pruebas automáticas (`?prueba`) 
   - Más especiales exigentes: el zombi eléctrico y el gemelo del cielo, el pulpo, el pescador y el buceador de la playa
     y el protector del futuro. Los exigentes solo aparecen en la segunda mitad de cada país (sus 10 últimas áreas),
     aunque el país no tenga especiales fáciles. El cielo repetía su zombi pesado en las armaduras 3 y 4; ese hueco usa ahora la ligera.
+  - Los zombis del cielo (Nubaria) disparan rayos a las plantas desde lejos: el piloto perdía todas sus áreas aun con
+    solo zombis básicos. Ese escenario trae el 55 % de los zombis.
   - De noche (sin soles del cielo) se empieza con 100 soles y llega el 70 % de los zombis: con las oleadas del día se
     perdían todas las áreas nocturnas de Arenaria y luego la mayoría de las de Forjaria y Neón. Las lápidas siguen la
     dificultad comprimida (máximo 3) y siempre dejan un carril libre. El protector del futuro es especial exigente.

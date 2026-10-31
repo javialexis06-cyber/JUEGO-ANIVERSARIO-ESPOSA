@@ -123,6 +123,8 @@ const ROLES = ['basic', 'armor1', 'armor2', 'armor3', 'armor4', 'imp', 'gargantu
 /** Dificultad efectiva: completa en los tres primeros países y comprimida después (la prueba de balance completa
  * perdía todo desde Nubaria: las oleadas crecían sin freno y las plantas no). Entre países sigue cambiando el
  * catálogo de zombis y crecen los especiales; el tamaño, la armadura y las lápidas suben despacio. */
+/** Escenarios con zombis que atacan a distancia (los del cielo disparan rayos a las plantas): llegan menos. */
+const FACTOR_ESCENARIO: Record<string, number> = { SkyStage: 0.55 };
 const dificultadEfectiva = (area: AreaCampana) => Math.min(area.dificultad, 12) + Math.max(0, area.dificultad - 12) * 0.2;
 export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     const escenario = (nativo.escenarios as Record<string, Record<string, unknown>>)[area.escenario!] ?? {};
@@ -150,7 +152,7 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
         const p = (i + 1) / total, ola: { tipo: string; fila: number }[] = [];
         // De noche no caen soles del cielo: llega el 70 % de los zombis (la prueba de balance perdía todas las áreas
         // nocturnas de Arenaria con las mismas oleadas del día, y después la mayoría de las de Forjaria y Neón).
-        const cantidad = Math.min(40, Math.max(1, Math.round((1 + p * (3 + d * 0.2) + (i === total - 1 ? 2 + d * 0.1 : 0) + (i === Math.floor(total / 2) ? 1 + d * 0.05 : 0)) * (area.noche ? 0.7 : 1))));
+        const cantidad = Math.min(40, Math.max(1, Math.round((1 + p * (3 + d * 0.2) + (i === total - 1 ? 2 + d * 0.1 : 0) + (i === Math.floor(total / 2) ? 1 + d * 0.05 : 0)) * (area.noche ? 0.7 : 1) * (FACTOR_ESCENARIO[area.escenario!] ?? 1))));
         for (let k = 0; k < cantidad; k++) {
             const tirada = azar.siguiente(), progreso = (i + 1) / total;
             // Como en PvZ, los primeros zombis del nivel son básicos y la armadura crece con cada oleada y con el país
