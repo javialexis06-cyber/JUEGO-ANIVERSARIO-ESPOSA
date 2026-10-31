@@ -125,7 +125,8 @@ El botón Guía reúne todos los temas. En las pruebas automáticas (`?prueba`) 
     parte del ritmo anterior; los zombis de cada país y sus especiales siguen cambiando.
   - Más especiales exigentes: el zombi eléctrico y el gemelo del cielo, el pulpo, el pescador y el buceador de la playa
     y el protector del futuro. Los exigentes solo aparecen en la segunda mitad de cada país (sus 10 últimas áreas),
-    aunque el país no tenga especiales fáciles. El cielo repetía su zombi pesado en las armaduras 3 y 4; ese hueco usa ahora la ligera.
+    aunque el país no tenga especiales fáciles. El cielo repetía su zombi pesado en las armaduras 3 y 4; ese hueco usa
+    ahora la ligera.
   - Los zombis del cielo (Nubaria) disparan rayos a las plantas desde lejos: el piloto perdía todas sus áreas aun con
     solo zombis básicos. Ese escenario trae el 55 % de los zombis. La playa (Coralia), con dos carriles de agua, trae
     el 85 %.
@@ -137,8 +138,46 @@ El botón Guía reúne todos los temas. En las pruebas automáticas (`?prueba`) 
   - Las 12 zonas originales conservan su composición aprobada.
 
 El piloto no es un jugador humano: sirve para encontrar áreas imposibles o regaladas, no para certificar la
-experiencia. Los resultados finales se anotan abajo.
+experiencia.
 
-### Resultados
+Fallos del juego que encontró la prueba (corregidos):
 
-(pendiente: se completan al terminar la corrida de las 240 áreas)
+- Las áreas nocturnas con 100 soles no cargaban: el puente de Gardendless solo aceptaba 50 o 150.
+- La plántula que deja la bomba atómica impedía guardar el punto de descanso de una victoria ("La defensa no
+  respondió"). Ahora queda fuera del punto y se avisa en la consola.
+- Comprar en la tienda con el editor de formación abierto hacía fallar el guardado de la formación.
+
+### Resultados (31 de octubre de 2026)
+
+Corrida completa en Gardendless real: las 239 áreas (la casa aparte), una partida por área con la formación y las
+compras del plan, a unas 5 veces la velocidad normal y sin dibujar. Coralia se volvió a jugar tras su último ajuste.
+
+| País | Áreas | Victorias del piloto | Día | Noche | Podadoras gastadas por victoria |
+|---|---|---|---|---|---|
+| 1. Verdalia | 19 | 18 (95 %) | 12/13 | 6/6 | 0,8 |
+| 2. Arenaria | 20 | 17 (85 %) | 9/10 | 8/10 | 0,9 |
+| 3. Marisma | 20 | 15 (75 %) | 15/20 | — | 1,3 |
+| 4. Solaria | 20 | 15 (75 %) | 15/20 | — | 1,4 |
+| 5. Coralia | 20 | 15 (75 %) | 15/20 | — | 1,7 |
+| 6. Borealia | 20 | 14 (70 %) | 14/20 | — | 1,4 |
+| 7. Altarruta | 20 | 9 (45 %) | 8/16 | 1/4 | 1,9 |
+| 8. Forjaria | 20 | 9 (45 %) | 6/10 | 3/10 | 1,6 |
+| 9. Neón | 20 | 12 (60 %) | — | 12/20 | 1,5 |
+| 10. Sauria | 20 | 8 (40 %) | 8/20 | — | 2,5 |
+| 11. Nubaria | 20 | 10 (50 %) | 10/20 | — | 0,9 |
+| 12. Umbra | 20 | 6 (30 %) | — | 6/20 | 3,2 |
+
+Total: 148 de 239 áreas (62 %), sin errores del motor.
+
+Lectura:
+
+- La dificultad sube a lo largo de la campaña: los cuatro primeros países son cómodos y los últimos piden
+  formación y atención. Umbra, el país final y todo de noche, es el más duro.
+- El piloto juega peor que una persona: no apunta los instantáneos, no elige plantas según los zombis que vienen
+  y en el agua es torpe. Perder una expedición no cuesta progreso (se reintenta). Las cifras son un piso, no la
+  experiencia de un jugador.
+- Por ciudad: 18 de las 48 ciudades ganan 4 o 5 de sus áreas, 26 ganan 2 o 3, 3 ganan una y solo Puente
+  Levadizo (la última de Umbra, con el castillo del Dr. Zomboid) no gana ninguna. El piloto gana 28 de las 48
+  fortalezas.
+
+Asedios: (en curso)
