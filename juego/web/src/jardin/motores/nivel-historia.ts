@@ -123,8 +123,9 @@ const ROLES = ['basic', 'armor1', 'armor2', 'armor3', 'armor4', 'imp', 'gargantu
 /** Dificultad efectiva: completa en los tres primeros países y comprimida después (la prueba de balance completa
  * perdía todo desde Nubaria: las oleadas crecían sin freno y las plantas no). Entre países sigue cambiando el
  * catálogo de zombis y crecen los especiales; el tamaño, la armadura y las lápidas suben despacio. */
-/** Escenarios con zombis que atacan a distancia (los del cielo disparan rayos a las plantas): llegan menos. */
-const FACTOR_ESCENARIO: Record<string, number> = { SkyStage: 0.55 };
+/** Escenarios más exigentes que su dificultad: los zombis del cielo disparan rayos a las plantas y la playa abre dos
+ * carriles de agua (nenúfar y planta, cada uno con su recarga). Llegan menos zombis. */
+const FACTOR_ESCENARIO: Record<string, number> = { SkyStage: 0.55, BeachStage: 0.85 };
 const dificultadEfectiva = (area: AreaCampana) => Math.min(area.dificultad, 12) + Math.max(0, area.dificultad - 12) * 0.2;
 export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     const escenario = (nativo.escenarios as Record<string, Record<string, unknown>>)[area.escenario!] ?? {};
