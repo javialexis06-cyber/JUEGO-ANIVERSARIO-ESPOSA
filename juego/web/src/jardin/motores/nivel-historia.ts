@@ -133,10 +133,13 @@ export function oleadasCampana(area: AreaCampana, azar: AzarPvZ) {
     // Especiales del mundo, de más fáciles a más exigentes (los voladores y las máquinas al final, que piden plantas
     // específicas, y los tanques como el futbolista); los trineos solo existen sobre hielo de zamboni y no se generan
     // sueltos. Prueba de balance, 30 de octubre.
-    const exigente = (z: string) => /balloon|jetpack|battleplane|dronemaker|arbiter|gargantuar|mech|bull|catapult|zomboni|excavator|pelican|seagull|allstar|superfan|troglobite|electric|octopus|fisherman|snorkel|protector/.test(z) ? 1 : 0;
+    const exigente = (z: string) => /balloon|jetpack|battleplane|dronemaker|arbiter|gargantuar|mech|bull|catapult|zomboni|excavator|pelican|seagull|allstar|superfan|troglobite|electric|octopus|fisherman|snorkel|protector|twin/.test(z) ? 1 : 0;
     const especiales = ZOMBIS_NATIVOS.filter(z => mundos.includes(z.mundo) && !z.jefe && !deRol.has(z.id) && !SOLO_INVOCADOS.has(z.id) && !/_flag|bobsled/.test(z.id)).map(z => z.id).sort((a, b) => exigente(a) - exigente(b));
     const local = area.ciudad % 4, nivelArea = local * 5 + area.ranura, d = dificultadEfectiva(area);
-    const disponibles = especiales.slice(0, Math.min(especiales.length, 1 + Math.floor(nivelArea / 3)));
+    // Los fáciles se suman poco a poco; los exigentes solo en la segunda mitad del país (de las 20 áreas), aunque el
+    // país no tenga fáciles (el cielo traía su gemelo desde la primera área).
+    const faciles = especiales.filter(z => !exigente(z)), duros = especiales.filter(z => exigente(z));
+    const disponibles = [...faciles.slice(0, 1 + Math.floor(nivelArea / 3)), ...(nivelArea >= 10 ? duros.slice(0, 1 + Math.floor((nivelArea - 10) / 3)) : [])];
     // Curva revisada con la prueba de balance (30 de octubre): las oleadas empiezan pequeñas (al comienzo solo hay
     // 50–150 soles) y crecen dentro del nivel; entre países sube sobre todo la calidad de los zombis.
     const total = Math.min(10, 6 + Math.floor(d / 12) + (area.tipo === 'fortaleza' ? 1 : 0)), oleadas: { tipo: string; fila: number }[][] = [];

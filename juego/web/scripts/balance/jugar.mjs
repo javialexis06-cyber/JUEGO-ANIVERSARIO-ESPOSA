@@ -60,6 +60,13 @@ async function jugarEnPagina({ area, equipo, semilla, roles, refuerzo, limite, t
         if (agua.has(r) && carta.rol !== 'agua' && !nenufar(r, k)) { const n = lista.find(x => x.rol === 'agua' && x.lista); return n ? sembrar(n, r, k) : false; }
         return sembrar(carta, r, k);
     }
+    // Columnas sembrables (el cielo solo tiene la plataforma de la izquierda): soles, atacantes, muros y minas se
+    // acomodan en ellas, como haría una persona.
+    const prueba = cartas().find(x => x.rol === 'ataque')?.tipo ?? cards.CFs[0]?.Type;
+    const legales = [...new Set(tierra.flatMap(r => [...Array(9).keys()].filter(k => S.getLnC(r, k)?.putPlantTypeAvailable(false, prueba, true, false))))].sort((a, b) => a - b);
+    const angosto = legales.length > 0 && legales.length < 8, ultima = legales.length ? legales.at(-1) : 8;
+    const colsSol = angosto ? legales.slice(0, 1) : [0, 1], colsMuro = angosto ? [ultima] : [7, 6, 8], colsMina = angosto ? [ultima] : [7, 6];
+    const colsAtaque = base => angosto ? legales.slice(1, -1).concat(legales.length <= 2 ? legales : []) : base;
     let segundos = 0, peor = 9, maxZombis = 0, siembras = 0, captura = null;
     const llegaron = new Set();
     const limiteFrames = limite * 60;
@@ -78,7 +85,7 @@ async function jugarEnPagina({ area, equipo, semilla, roles, refuerzo, limite, t
         if (o.fase === 'victoria' || o.fase === 'derrota') {
             const punto = o.fase === 'victoria' ? await f.puntoHistoria() : null;
             const porCarril = [...Array(c.filas).keys()].map(r => ['sol', 'ataque', 'muro'].map(rol => plantas().filter(p => p.plantInLnC?.lIndex === r && roles[p.Plant_Type] === rol).length).join('/'));
-            return { fase: asedio && !captura ? 'captura-perdida' : o.fase, captura, segundos, oleada: o.oleada, peor, maxZombis, siembras, llegaron: [...llegaron], porCarril, diario, plantas: punto?.plantas.length ?? 0, podadoras: punto ? punto.cortacespedes.filter((x, i) => i < c.filas && !x).length : null };
+            return { fase: asedio && !captura ? 'captura-perdida' : o.fase, legales, captura, segundos, oleada: o.oleada, peor, maxZombis, siembras, llegaron: [...llegaron], porCarril, diario, plantas: punto?.plantas.length ?? 0, podadoras: punto ? punto.cortacespedes.filter((x, i) => i < c.filas && !x).length : null };
         }
         // Soles: se recogen al caer (un jugador atento los toca enseguida).
         for (const s of m('Droppings').droppings?.controller?.sunPool?.concat() ?? []) try { if (s.collectable?.()) s.collect(); } catch { }
@@ -107,15 +114,15 @@ async function jugarEnPagina({ area, equipo, semilla, roles, refuerzo, limite, t
         // 2) Ningún carril con zombis sin atacante. Si no se puede pagar, se guardan los soles para eso (como haría una
         // persona) en vez de gastarlos en más girasoles.
         const sinDefensa = filas.filter(r => amenaza(r) > 0 && !cuenta(r, 'ataque'));
-        if (!hecho) for (const r of sinDefensa) if (poner(barata('ataque'), r, [2, 1, 3, 4, 0])) { hecho = true; break; }
+        if (!hecho) for (const r of sinDefensa) if (poner(barata('ataque'), r, colsAtaque([2, 1, 3, 4, 0]))) { hecho = true; break; }
         const apurado = sinDefensa.length > 0 || Z.some(z => z.col <= 3);
         // Apertura de PvZ: soles primero. Mientras ningún carril esté en aprietos (un zombi a menos de seis casillas con
         // menos de dos atacantes), las plantas de sol van antes que la defensa, hasta dos columnas.
         const aprieto = filas.some(r => Z.some(z => z.fila === r && z.col <= 3) && cuenta(r, 'ataque') < 2);
         // Los soles van en tierra: en el agua cada uno cuesta además un nenúfar y deja sin defensa el carril de los patos.
-        const filasSol = tierra.length ? tierra : [...agua], objetivoSol = filasSol.length * 2;
+        const filasSol = tierra.length ? tierra : [...agua], objetivoSol = filasSol.length * (angosto && legales.length < 7 ? 1 : 2);
         // 3) Columnas de soles (primero la de atrás).
-        if (!hecho && !apurado && !aprieto && productoras < objetivoSol) for (const r of filasSol) if (cuenta(r, 'sol') < (productoras < filasSol.length ? 1 : 2) && poner(productoras < filasSol.length ? barata('sol') : fuerte('sol'), r, [0, 1])) { hecho = true; break; }
+        if (!hecho && !apurado && !aprieto && productoras < objetivoSol) for (const r of filasSol) if (cuenta(r, 'sol') < (productoras < filasSol.length ? 1 : 2) && poner(productoras < filasSol.length ? barata('sol') : fuerte('sol'), r, colsSol)) { hecho = true; break; }
         // Si la planta de sol se está recargando, se esperan los soles en vez de gastarlos en carriles sin zombis.
         const ahorrar = !apurado && !aprieto && productoras < objetivoSol && soles < 200;
         // 4) Atacantes hasta la meta en los carriles con zombis (columnas 2–6); en los vacíos, uno cuando ya hay economía.
@@ -124,13 +131,13 @@ async function jugarEnPagina({ area, equipo, semilla, roles, refuerzo, limite, t
         const caro = deRol('ataque').concat(L.filter(x => x.rol === 'ataque' && !x.lista)).sort((a, b) => b.cf.SUNCOST - a.cf.SUNCOST)[0];
         const paraElCaro = caro && !apurado && !aprieto && filas.every(r => !amenaza(r) || cuenta(r, 'ataque') >= 1) && soles < caro.cf.SUNCOST;
         const atacante = () => paraElCaro ? null : caro && soles >= caro.cf.SUNCOST && caro.lista ? caro : fuerte('ataque');
-        if (!hecho) for (const r of filas) if ((amenaza(r) > 0 ? cuenta(r, 'ataque') < meta(r) : !ahorrar && productoras >= objetivoSol && cuenta(r, 'ataque') < 1) && poner(atacante(), r, [2, 3, 4, 5, 1, 6])) { hecho = true; break; }
+        if (!hecho) for (const r of filas) if ((amenaza(r) > 0 ? cuenta(r, 'ataque') < meta(r) : !ahorrar && productoras >= objetivoSol && cuenta(r, 'ataque') < 1) && poner(atacante(), r, colsAtaque([2, 3, 4, 5, 1, 6]))) { hecho = true; break; }
         // 5) Muro delante de carriles con dos atacantes y zombis.
-        if (!hecho) for (const r of filas) if (cuenta(r, 'ataque') >= 2 && !cuenta(r, 'muro') && amenaza(r) > 0 && poner(fuerte('muro'), r, [7, 6, 8])) { hecho = true; break; }
+        if (!hecho) for (const r of filas) if (cuenta(r, 'ataque') >= 2 && !cuenta(r, 'muro') && amenaza(r) > 0 && poner(fuerte('muro'), r, colsMuro)) { hecho = true; break; }
         // 6) Minas por delante donde vienen zombis.
-        if (!hecho) for (const r of filas) if (Z.some(z => z.fila === r && z.col >= 6) && !cuenta(r, 'mina') && poner(barata('mina'), r, [7, 6])) { hecho = true; break; }
+        if (!hecho) for (const r of filas) if (Z.some(z => z.fila === r && z.col >= 6) && !cuenta(r, 'mina') && poner(barata('mina'), r, colsMina)) { hecho = true; break; }
         // 7) Sobra sol: un atacante más en el carril más débil.
-        if (!hecho && !apurado && soles >= 300) for (const r of [...filas].sort((a, b) => cuenta(a, 'ataque') - cuenta(b, 'ataque'))) if (cuenta(r, 'ataque') < 6 && poner(fuerte('ataque'), r, [2, 3, 4, 5, 6, 1])) { hecho = true; break; }
+        if (!hecho && !apurado && soles >= 300) for (const r of [...filas].sort((a, b) => cuenta(a, 'ataque') - cuenta(b, 'ataque'))) if (cuenta(r, 'ataque') < 6 && poner(fuerte('ataque'), r, colsAtaque([2, 3, 4, 5, 6, 1]))) { hecho = true; break; }
         if (hecho) siembras++;
     }
     return { fase: 'tiempo', segundos, peor, maxZombis, siembras, diario };
