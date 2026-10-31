@@ -36,7 +36,9 @@ async function jugarEnPagina({ area, equipo, semilla, roles, refuerzo, limite, t
     const f = window.f;
     await f.prepararHistoria(c); await f.iniciarHistoria(c);
     const w = f.frame.contentWindow, m = n => w.System.get(`chunks:///_virtual/${n}.ts`);
-    const S = m('Square').Square, cards = m('Cards').Cards.component, ui = m('UI').UIInGame.component, CM = m('CharacterManager');
+    const S = m('Square').Square, CM = m('CharacterManager');
+    // La barra de cartas y la interfaz son de cada nivel: se vuelven a leer al empezar el asedio.
+    let cards = m('Cards').Cards.component, ui = m('UI').UIInGame.component;
     const colX = Array.from({ length: 9 }, (_, k) => S.getSquareWorldPosition(0, k).x), paso = (colX[8] - colX[0]) / 8;
     const colDe = x => Math.round((x - colX[0]) / paso);
     const agua = new Set(c.agua), tierra = [...Array(c.filas).keys()].filter(r => !agua.has(r));
@@ -79,6 +81,7 @@ async function jugarEnPagina({ area, equipo, semilla, roles, refuerzo, limite, t
             captura = { segundos, plantas: punto.plantas.length };
             c = nivelCampana(area, equipo, (semilla * 7 + 13) >>> 0 || 1, punto, false, asedio, []);
             await f.prepararHistoria(c); await f.iniciarHistoria(c);
+            cards = m('Cards').Cards.component; ui = m('UI').UIInGame.component;
             frame = -6; peor = 9; maxZombis = 0; llegaron.clear();
             continue;
         }
