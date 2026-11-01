@@ -11,7 +11,7 @@ async function probar(tactil){
  const cargas=[];p.on('request',r=>{if(r.url().includes('/motores/pvz2/index.html?'))cargas.push({url:r.url(),t:Date.now()});});
  const inicio=Date.now();await p.goto(new URL('jardin.html?modo=historia&prueba=1&rol=ella&local=1',base).href);await p.waitForFunction(()=>window.__historiaNativa?.instancias().size===2);
  assert.equal(await p.locator('.hn-carga').count(),0);assert.equal(await p.evaluate(()=>__historiaNativa.mundo()),null);
- assert.equal(cargas.length,2);assert.ok(Math.abs(cargas[0].t-cargas[1].t)<1500);ok((tactil?'Amigos':'Pareja')+': ambos campos empiezan a cargar en paralelo mientras Dave sigue disponible');
+ /* Desde el 1 de noviembre el primer campo carga solo y el segundo toma de la caché sus imágenes (equipos modestos). */assert.equal(cargas.length,2);assert.ok(cargas[1].t>=cargas[0].t);ok((tactil?'Amigos':'Pareja')+': el primer campo carga solo, el segundo después con la caché, y Dave sigue disponible');
  await p.waitForFunction(()=>[...__historiaNativa.instancias().values()].every(i=>i.lista),null,{timeout:240000});
  const tiempoPreparacion=Date.now()-inicio,antes=await p.evaluate(()=>[...__historiaNativa.instancias()].map(([id,i])=>[id,i.motor.sesion]));
  assert.equal(await p.evaluate(()=>__historiaNativa.mundo()),null);
