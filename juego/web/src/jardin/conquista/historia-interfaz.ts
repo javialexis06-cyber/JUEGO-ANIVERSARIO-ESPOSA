@@ -201,7 +201,8 @@ export async function montarHistoriaConquista(){
    case'pausa':pausa();break;case'reintentar':if(guardar()&&mundo){mundo.pausar(false);modal='';pintarModal();acumulado=0;anterior=performance.now();actualizar();fondoAudio();}break;
    case'salir':if(guardar()||confirm('No se pudo guardar la historia. Si sales ahora se pierde lo jugado desde el último guardado. ¿Salir de todos modos?'))menu();break;
    case'volver-jardin':{soltar();const u=new URL('jardin.html',location.href);for(const k of ['rol','local','salas'])if(params.has(k))u.searchParams.set(k,params.get(k)!);location.href=u.href;break;}
-   case'volver-casa':{soltar();const u=new URL(amigo?'./amigos.html':'./index.html',location.href);for(const k of ['rol','local'])if(params.has(k))u.searchParams.set(k,params.get(k)!);location.href=u.href;break;}case'exportar':exportar();break;
+   // Vuelve al patio de la casa, donde está la entrada al Jardín (como la salida de los patios clásicos).
+   case'volver-casa':{soltar();const u=new URL(amigo?'./amigos.html':'./index.html',location.href);if(!amigo)u.searchParams.set('desdePatio','1');for(const k of ['rol','local'])if(params.has(k))u.searchParams.set(k,params.get(k)!);location.href=u.href;break;}case'exportar':exportar();break;
    case'ayuda':abrirTutorial();break;case'dave-anterior':avanzarTutorial(-1);break;case'dave-siguiente':avanzarTutorial(1);break;case'cerrar-tutorial':cerrarTutorial();break;case'cerrar-modal':editor=null;modal='';pintarModal();break;
    case'sonido':sonido=!sonido;audio.habilitado=sonido;if(sonido){audio.activar();if(modal==='ayuda')audio.dave(PASOS_DAVE[tutorialPaso].audio);else fondoAudio();}cine?.activarSonido(sonido);b.setAttribute('aria-pressed',String(sonido));break;
    case'pantalla':if(document.fullscreenElement)void document.exitFullscreen();else void document.documentElement.requestFullscreen().catch(()=>noticia('El navegador no permite pantalla completa.'));break;
