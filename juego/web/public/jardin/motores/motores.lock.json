@@ -69,8 +69,8 @@
     },
     {
       "path": "pvz1/index.html",
-      "bytes": 22624,
-      "sha256": "7e00213f5e05eb2355e8ce2d3c4a07f00bdddefffa6dcafdee1feae206eed8a8"
+      "bytes": 22653,
+      "sha256": "96d8d68e708cf9880ce335a86a5def026203421aa94c11f86d667e48dd6804af"
     },
     {
       "path": "pvz1/jszip.min.js",
@@ -249,8 +249,8 @@
     },
     {
       "path": "pvz2/index.html",
-      "bytes": 3455,
-      "sha256": "875ef21944e012cf8dbbf4c1e978b2fd35c979dccfab8ba0e3f8096dc0c3f1b8"
+      "bytes": 3486,
+      "sha256": "59b9b1cfd7f1c3cc0f35136d7a3cfa72237114b7ca3a481abb52f4f805876468"
     },
     {
       "path": "pvz2/index.js",

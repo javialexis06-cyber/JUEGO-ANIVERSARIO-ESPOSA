@@ -18,9 +18,12 @@ export function montarMotorOriginal(motor:'pvz1'|'pvz2') {
  frame.addEventListener('load',()=>{carga.hidden=true;},{signal:eventos.signal});
  window.addEventListener('message',e=>{if(e.source!==frame.contentWindow||e.origin!==location.origin||e.data?.canal!=='semilla-motor-v1'||e.data.motor!==motor)return;
   if(e.data.estado==='cerrado'){destruir();volver();}
-  if(e.data.estado==='error'){cerrando=false;error.textContent=String(e.data.mensaje).slice(0,300);error.hidden=false;}
+  // Si el motor no deja cerrar (PvZ 1 a mitad de nivel), se explica y se ofrece salir sin guardar ese nivel:
+  // volver al jardín nunca queda bloqueado.
+  if(e.data.estado==='error'){const intentoSalir=cerrando;cerrando=false;error.textContent=String(e.data.mensaje).slice(0,300);if(intentoSalir){const b=document.createElement('button');b.dataset.motor='forzar';b.textContent='Salir sin guardar este nivel';error.append(' ',b);}error.hidden=false;}
  },{signal:eventos.signal});
  root.addEventListener('click',e=>{const accion=(e.target as HTMLElement).closest<HTMLElement>('[data-motor]')?.dataset.motor;if(accion==='volver'){if(cerrando)return;cerrando=true;ordenar('cerrar');}
+  else if(accion==='forzar'){destruir();volver();}
   else if(accion==='pausa'){pausada=!pausada;ordenar(pausada?'pausa':'reanudar');const b=root.querySelector<HTMLButtonElement>('[data-motor="pausa"]')!;b.setAttribute('aria-pressed',String(pausada));b.setAttribute('aria-label',pausada?'Reanudar':'Pausar');b.innerHTML=pausada?seguir:pausaIcono;}
   else if(accion==='pantalla')void(document.fullscreenElement?document.exitFullscreen():root.requestFullscreen()).catch(()=>{});
  },{signal:eventos.signal});

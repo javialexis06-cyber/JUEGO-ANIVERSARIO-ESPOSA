@@ -739,7 +739,8 @@ export async function montarHistoriaNativa() {
                     }
                     if (mundo) {
                         await pausar(true);
-                        if (!guardar()) break;
+                        // Salir nunca queda bloqueado: si el guardado falla, se pregunta (antes no hacía nada).
+                        if (!guardar() && !confirm('No se pudo guardar la historia. Si sales ahora se pierde lo jugado desde el último guardado. ¿Salir de todos modos?')) break;
                     }
                     // Se sale: lo que se estaba preparando en segundo plano se cancela sin tomarse por una avería.
                     muerto = true;

@@ -102,7 +102,7 @@ export async function montarAventuraPvZ(){
    case'inicio':inicio();break;case'mapa':mapa();break;case'plantar':void comenzar();break;case'pausa':cambiarPausa();break;case'pala':seleccion=seleccion?.tipo==='pala'?null:{tipo:'pala'};actualizarHud();break;
    case'velocidad':{const v=guardado.progreso.ajustes.velocidad===1?2:1;if(guardado.actualizarAjustes({velocidad:v}))b.textContent='×'+v;else errorGuardarEnPartida();break;}
    case'abandonar':limpiarPartida();mapa();break;case'galeria':verGaleria();break;case'ajustes':opciones();break;case'cerrar-detalle':root.querySelector('#pvz-detalle')!.innerHTML='';break;
-   case'reintentar':guardado.reintentar();if(motor?.terminado)mostrarResultado();else if(motor){if(guardado.guardado)cambiarPausa(false);else errorGuardarEnPartida();}else if(pantalla==='opciones')opciones();else inicio();break;case'salir':if(!guardado.pendiente)location.href=volverURL('jardin.html');break;
+   case'reintentar':guardado.reintentar();if(motor?.terminado)mostrarResultado();else if(motor){if(guardado.guardado)cambiarPausa(false);else errorGuardarEnPartida();}else if(pantalla==='opciones')opciones();else inicio();break;case'salir':if(!guardado.pendiente||confirm('No se pudo guardar el último avance de la aventura. ¿Salir de todos modos?'))location.href=volverURL('jardin.html');break;
   }
  },{signal:eventos.signal});
  document.addEventListener('visibilitychange',()=>{if(document.hidden&&motor&&!motor.terminado)cambiarPausa(true);},{signal:eventos.signal});

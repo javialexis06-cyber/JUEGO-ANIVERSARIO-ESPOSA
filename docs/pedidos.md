@@ -11,6 +11,8 @@ casa no se borraron (sin acceso). El jardín quedó más ligero con varios comba
   Gana quien toma la base rival o quien tenga más zonas al acabar el tiempo. Ver `en-obra/pvz-versus-nativo.md`.
 - **Minijuegos:** cada uno muestra su juego de origen (PvZ 1, PvZ 2, PvZ Fusión, propio) y hay un minijuego
   **Fusión** con doce niveles.
+- **Revisión del Jardín:** salir nunca queda bloqueado (historia, aventura y patios preguntan si el guardado
+  falla, en vez de no hacer nada); la aventura vuelve al Jardín; los motores ya no piden un icono inexistente.
 - **Pendiente después del Jardín:** mejorar mucho los juegos de intelecto del patio (pedido del mismo día).
 
 **Hecho por Claude (1 de noviembre) · arreglos de uso:**

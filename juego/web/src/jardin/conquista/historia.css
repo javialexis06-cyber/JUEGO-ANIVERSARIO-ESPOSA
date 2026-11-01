@@ -66,3 +66,5 @@
 .cq-juego-mixto .cq-juego-etiqueta{background:#9b7a1c}.cq-juego-mixto{border-color:#9b7a1c!important}
 #cq-app .cq-biblioteca-volver{display:block;margin:0 auto}
 @media(max-height:470px){#cq-app .cq-juego-carta{min-height:96px;padding:8px}.cq-juego-carta small{font-size:11px}.cq-juego-emoji{font-size:24px}}
+/* Contador de pasos de Dave legible sobre el pergamino (1 de noviembre). */
+.cq-tutorial-globo header small{display:inline-block;padding:3px 10px;border-radius:999px;background:#3c5a2ae6;color:#fff3c4;font:900 11px Nunito;letter-spacing:.12em;position:relative;z-index:1}
