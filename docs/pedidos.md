@@ -4,6 +4,18 @@
 esta versión (partidas, compras y perfiles), con `public/reinicio-general.js`. Los datos del servidor Supabase de la
 casa no se borraron (sin acceso). El jardín quedó más ligero con varios combates y la tienda sin título grande.
 
+**Hecho por Claude (1 de noviembre) · juegos de intelecto del patio (`mente.html`):**
+
+- **Seis juegos nuevos (22 en total):** Tabla de luciérnagas, Apaga los faroles, El candado de colores, ¿Qué número
+  sigue?, La pieza que falta y El dibujo escondido. Todos tienen solución comprobada y se juegan con ratón o toque.
+- **Rediseño completo:** portada con el reto del día destacado, filtros por categoría con color propio, estrellas por
+  juego y etiqueta «Nuevo». La partida tiene panel de avance, tableros ilustrados y animaciones de acierto, error y
+  ronda. El final trae confeti, de una a tres estrellas y «Jugar otra vez». En teléfono horizontal caben los 22
+  tableros.
+- **Arreglos:** al entrar a un juego la página ya no queda desplazada (la cabecera tapaba el tablero) y el reto
+  diario sigue en los 16 juegos que valida el servidor. Sumar los nuevos al reto exige cambiar el SQL de la
+  clasificación. No se cambió la dificultad de los juegos anteriores. Ver `sistemas/patio-mental.md`.
+
 **Hecho por Claude (1 de noviembre) · Versus por territorios, Fusión y minijuegos:**
 
 - **Versus → Territorios:** mapa con La casa, la guarida zombi y 3, 5, 7 o 9 zonas neutrales de los mundos de la
@@ -13,7 +25,6 @@ casa no se borraron (sin acceso). El jardín quedó más ligero con varios comba
   **Fusión** con doce niveles.
 - **Revisión del Jardín:** salir nunca queda bloqueado (historia, aventura y patios preguntan si el guardado
   falla, en vez de no hacer nada); la aventura vuelve al Jardín; los motores ya no piden un icono inexistente.
-- **Pendiente después del Jardín:** mejorar mucho los juegos de intelecto del patio (pedido del mismo día).
 
 **Hecho por Claude (1 de noviembre) · arreglos de uso:**
 

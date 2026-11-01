@@ -28,7 +28,7 @@ solo conectar Supabase para habilitar su clasificación real. Voces nuevas desca
 | [`carreras.md`](sistemas/carreras.md) | 16 circuitos, copas, desafíos, guardado y salas. |
 | [`celular.md`](sistemas/celular.md) | Doce teléfonos de Astra, historiales, audios y apuntes manuales. |
 | [`escudo.md`](sistemas/escudo.md) | Doce mapas de campaña del tower defense y modo infinito. |
-| [`patio-mental.md`](sistemas/patio-mental.md) | Los dieciséis juegos del patio, reto diario y clasificación. |
+| [`patio-mental.md`](sistemas/patio-mental.md) | Los veintidós juegos del patio, su presentación, reto diario y clasificación. |
 | [`jardin.md`](sistemas/jardin.md) | Jardín de los Desvelados, doce patios y figuras originales. |
 | [`granja.md`](sistemas/granja.md) | La granja integrada: acceso desde la casa, motor y guardado, documentación de sistemas y límites actuales. |
 | [`cine-granja.md`](sistemas/cine-granja.md) | Las películas de la historia de la granja (el prólogo con Celia, Aura y Lara): motor, actores, escenarios, voces celestiales y música. |

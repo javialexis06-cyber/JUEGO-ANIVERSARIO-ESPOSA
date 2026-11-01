@@ -1,4 +1,4 @@
-// Dieciséis juegos por controles reales; clasificación de dos contextos contra PostgreSQL temporal mediante puente RPC.
+// Todos los juegos del patio (22 desde el 1 de noviembre de 2026) por controles reales; clasificación de dos contextos contra PostgreSQL temporal mediante puente RPC.
 // CHROME_PATH=/usr/bin/chromium node scripts/probar-mente-interfaz.mjs URL SALIDA
 import assert from'node:assert/strict';import{chromium}from'@playwright/test';import{build}from'esbuild';import{mkdtemp,mkdir,rm,writeFile}from'node:fs/promises';import{tmpdir}from'node:os';import{join,resolve}from'node:path';import{pathToFileURL}from'node:url';import{execFile}from'node:child_process';import{promisify}from'node:util';import{siguientes}from'./mente-piloto.mjs';
 const base=process.argv[2]??'http://127.0.0.1:5176/',out=process.argv[3]??'test-results/patio-2026-10-16/mente',tmp=await mkdtemp(join(tmpdir(),'mente-ui-'));await mkdir(out,{recursive:true});

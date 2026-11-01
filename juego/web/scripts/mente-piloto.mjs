@@ -28,4 +28,20 @@ export function siguientes(m,tangram,colores){const a=(tipo,valor)=>({tipo,valor
  case 'hanoi':return movimientosHanoi().flatMap(p=>p.map(i=>a('celda',i)));
  case 'laberinto':return caminoLaberinto(m).map(i=>a('celda',i));
  case 'nback':return [a('opcion',m.solucion[m.turno]===m.solucion[m.turno-2]?1:0)];
+ // Juegos nuevos (1 de noviembre de 2026).
+ case 'schulte':return Array.from({length:26-m.cursor},(_,k)=>a('celda',m.tablero.indexOf(m.cursor+k)));
+ case 'luces':{const x=resolverLuces(m.tablero,m.taman);return x.length?[a('celda',x[0])]:[];}
+ case 'codigo':return [...m.solucion.flatMap((c,i)=>[a('celda',i),a('opcion',c)]),a('confirmar')];
+ case 'series':case 'matriz':return [a('opcion',String(m.cursor))];
+ case 'nonograma':return m.solucion.flatMap((v,i)=>v===1&&m.tablero[i]!==1?[a('celda',i)]:[]);
  }throw Error(m.id);}
+/** Apaga los faroles con el tablero visible: sistema lineal en GF(2) (cada pulsación cambia su casilla y sus vecinas). */
+export function resolverLuces(tablero,n){
+ const N=n*n,filas=[];
+ for(let i=0;i<N;i++){const fila=new Array(N+1).fill(0),x=i%n,y=Math.floor(i/n);for(const [dx,dy] of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const X=x+dx,Y=y+dy;if(X>=0&&X<n&&Y>=0&&Y<n)fila[Y*n+X]=1;}fila[N]=tablero[i]&1;filas.push(fila);}
+ const pivotes=[];let r=0;
+ for(let c=0;c<N&&r<N;c++){let p=r;while(p<N&&!filas[p][c])p++;if(p===N)continue;[filas[r],filas[p]]=[filas[p],filas[r]];for(let k=0;k<N;k++)if(k!==r&&filas[k][c])for(let j=c;j<=N;j++)filas[k][j]^=filas[r][j];pivotes.push(c);r++;}
+ for(let k=r;k<N;k++)if(filas[k][N])throw Error('Faroles sin solución');
+ const x=new Array(N).fill(0);pivotes.forEach((c,k)=>{x[c]=filas[k][N];});
+ return x.flatMap((v,i)=>v?[i]:[]);
+}

@@ -16,6 +16,9 @@ nada del Jardín; que cada minijuego diga de qué juego viene (PvZ 1, PvZ 2…).
 trabaja en otra cosa.** Después: mejorar mucho lo visual y los tipos de juego de los juegos de intelecto del patio
 (`mente.html`). Hecho el modo Territorios, el minijuego Fusión y los minijuegos rotulados; ver
 [versus nativo](docs/en-obra/pvz-versus-nativo.md). El balance del versus sigue a criterio de Claude (29 de octubre).
+Hecho también el patio mental: rediseño completo y seis juegos nuevos (22 en total); el reto diario sigue en los 16
+que valida el SQL de la clasificación y no se cambió la dificultad de los anteriores. Ver
+[patio mental](docs/sistemas/patio-mental.md).
 
 ## Pedido vigente · territorios, tienda, tutorial y balance de la campaña (30 de octubre)
 
@@ -128,8 +131,8 @@ PvZ y patios como minijuegos y sus partidas. El prototipo/versus anterior conser
 
 La cola y las decisiones actuales están en [docs/pedidos.md](docs/pedidos.md). El encargo del 16 de octubre quedó
 completado: poses y predicción de Torneo, icono y salas de desafíos de Carreras y limpieza del repositorio.
-Ampliación implementada y comprobada: El Escudo y Desaparecidos con doce mapas/casos, los 16 juegos mentales
-del patio con reto diario y Jardín de los Desvelados con doce patios. Solo falta conectar Supabase y aplicar
+Ampliación implementada y comprobada: El Escudo y Desaparecidos con doce mapas/casos, los juegos mentales
+del patio con reto diario (16; 22 desde el 1 de noviembre) y Jardín de los Desvelados con doce patios. Solo falta conectar Supabase y aplicar
 la clasificación real; la prueba temporal no acredita ese despliegue. Ver `docs/pedidos.md`.
 Las voces clonadas y los diálogos hablados del encargo anterior fueron descartados expresamente. La granja quedó congelada (17 de octubre): no modificar sus sistemas, historia,
 arte ni balance. Se permiten sus regresiones e integración existentes.

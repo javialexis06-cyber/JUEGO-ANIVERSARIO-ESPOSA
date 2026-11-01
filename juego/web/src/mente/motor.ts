@@ -14,6 +14,32 @@ export const TANGRAM:Pieza[]=[
  {p:[[0,0],[70.710678,0],[70.710678,70.710678],[0,70.710678]],x:140,y:140,giro:315,periodo:90},
  {p:[[0,0],[100,0],[150,-50],[50,-50]],x:40,y:240,giro:0,periodo:180},
 ];
+// Juegos nuevos (1 de noviembre de 2026).
+export const COLORES_CODIGO=['#d94f5c','#f0a33a','#f2d544','#4fae6a','#3f8fd2','#9a62c9'];
+export const NOMBRES_CODIGO=['Rojo','Naranja','Amarillo','Verde','Azul','Violeta'];
+export const FORMAS_MATRIZ=['Círculo','Cuadrado','Triángulo'];
+export const COLORES_MATRIZ=['#d94f5c','#3f8fd2','#4fae6a'];
+export const NOMBRES_COLOR_MATRIZ=['rojo','azul','verde'];
+/** Dibujos de 5×5 para «El dibujo escondido» (# se pinta). */
+export const DIBUJOS:readonly {nombre:string;filas:readonly string[]}[]=[
+ {nombre:'un corazón',filas:['.#.#.','#####','#####','.###.','..#..']},
+ {nombre:'una casa',filas:['..#..','.###.','#####','##.##','##.##']},
+ {nombre:'una estrella',filas:['..#..','.###.','#####','.###.','.#.#.']},
+ {nombre:'una flecha',filas:['..#..','.###.','#.#.#','..#..','..#..']},
+ {nombre:'un árbol',filas:['..#..','.###.','#####','..#..','..#..']},
+ {nombre:'un gato',filas:['#...#','##.##','#####','#.#.#','.###.']},
+ {nombre:'una carita feliz',filas:['.###.','#.#.#','#####','#...#','.###.']},
+ {nombre:'un hongo',filas:['.###.','#####','#.#.#','..#..','.###.']},
+ {nombre:'un pez',filas:['.....','.##.#','#####','.##.#','.....']},
+ {nombre:'una campana',filas:['..#..','.###.','.###.','#####','..#..']},
+ {nombre:'un barco',filas:['..#..','..##.','..#..','#####','.###.']},
+ {nombre:'una copa',filas:['#####','.###.','..#..','..#..','.###.']},
+];
+/** Pistas de un nonograma: largo de cada tramo pintado por fila y por columna ([0] si no hay ninguno). */
+export function pistasNonograma(celdas:readonly number[],n:number){
+ const tramos=(v:number[])=>{const r:number[]=[];let k=0;for(const x of v){if(x===1)k++;else if(k){r.push(k);k=0;}}if(k)r.push(k);return r.length?r:[0];};
+ return {filas:Array.from({length:n},(_,y)=>tramos(celdas.slice(y*n,y*n+n).map(Number))),columnas:Array.from({length:n},(_,x)=>tramos(Array.from({length:n},(_,y)=>Number(celdas[y*n+x]))))};
+}
 export type Fase='observar'|'jugar'|'fin';
 export type Accion={tipo:'celda'|'opcion'|'confirmar'|'borrar'|'girar'|'colocar'|'mover';valor?:number|string;x?:number;y?:number};
 export class MotorMental {
@@ -52,7 +78,48 @@ export class MotorMental {
    case 'laberinto':this.laberinto();break;
    case 'compras':this.solucion=this.mezclar([...Array(16).keys()]).slice(0,8);this.tablero=this.mezclar([...Array(16).keys()]);this.observar(8);break;
    case 'nback':this.solucion=[];for(let i=0;i<24;i++)this.solucion.push(i>1&&this.rnd()<.35?this.solucion[i-2]:this.n(8));this.observar(1.6);break;
+   case 'schulte':this.taman=5;this.tablero=this.mezclar(Array.from({length:25},(_,i)=>i+1));this.cursor=1;break;
+   case 'luces':this.nuevasLuces();break;
+   case 'codigo':this.solucion=Array.from({length:4},()=>this.n(6));this.seleccion=[-1,-1,-1,-1];this.cursor=0;this.torres=[];this.otro=[];break;
+   case 'series':this.nuevaSerie();break;
+   case 'matriz':this.nuevaMatriz();break;
+   case 'nonograma':{const d=DIBUJOS[this.n(DIBUJOS.length)];this.taman=5;this.solucion=d.filas.join('').split('').map(c=>c==='#'?1:0);this.tablero=Array(25).fill(0);this.tema=d.nombre;this.cursor=0;break;}
   }
+ }
+ /** Apaga los faroles: el tablero sale de pulsar casillas al azar desde todo apagado, así siempre tiene solución. */
+ private nuevasLuces(){
+  const n=this.ronda===0?4:5,pulsos=this.ronda===0?4:7;this.taman=n;
+  for(let k=0;k<20;k++){this.tablero=Array(n*n).fill(0);const elegidas=this.mezclar([...Array(n*n).keys()]).slice(0,pulsos);for(const i of elegidas)this.pulsar(i);if(this.tablero.filter(Boolean).length>=3){this.solucion=elegidas.sort((a,b)=>a-b);return;}}
+  this.tablero[0]=1;this.tablero[1]=1;this.tablero[n]=1;this.solucion=[0];
+ }
+ private pulsar(i:number){const n=this.taman,x=i%n,y=Math.floor(i/n);for(const [dx,dy] of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const X=x+dx,Y=y+dy;if(X>=0&&X<n&&Y>=0&&Y<n)this.tablero[Y*n+X]^=1;}}
+ /** ¿Qué número sigue?: siete reglas; la que tocó se cuenta después de responder. */
+ private nuevaSerie(){
+  const tipo=this.n(7);let t:number[]=[];
+  switch(tipo){
+   case 0:{const a=1+this.n(20),d=2+this.n(8);t=Array.from({length:6},(_,i)=>a+d*i);break;}
+   case 1:{const d=2+this.n(7),a=5*d+5+this.n(30);t=Array.from({length:6},(_,i)=>a-d*i);break;}
+   case 2:{const a=1+this.n(4),r=2+this.n(2);t=Array.from({length:6},(_,i)=>a*r**i);break;}
+   case 3:{const a=1+this.n(9),p=1+this.n(5),q=6+this.n(6);t=[a];for(let i=1;i<6;i++)t.push(t[i-1]+(i%2?p:q));break;}
+   case 4:{const b=1+this.n(5);t=Array.from({length:6},(_,i)=>(b+i)**2);break;}
+   case 5:{const x=1+this.n(4),y=x+1+this.n(4);t=[x,y];while(t.length<6)t.push(t[t.length-1]+t[t.length-2]);break;}
+   default:{const a=1+this.n(10);t=[a];for(let i=1;i<6;i++)t.push(t[i-1]+i);break;}
+  }
+  this.cursor=t[5];this.texto=t.slice(0,5).join(' · ');
+  this.tema=['suma siempre lo mismo','resta siempre lo mismo','multiplica siempre por lo mismo','alterna dos saltos','son números al cuadrado','cada número suma los dos anteriores','el salto crece de uno en uno'][tipo];
+  const otras=new Set([t[5]]),saltos=[1,2,3,4,5,t[5]-t[4]];
+  for(let k=0;otras.size<4&&k<200;k++){const v=t[5]+(this.n(2)?1:-1)*saltos[this.n(saltos.length)];if(v>=0)otras.add(v);}
+  for(let v=t[5]+1;otras.size<4;v++)otras.add(v);
+  this.opciones=this.mezclar([...otras]).map(String);
+ }
+ /** La pieza que falta: la forma va por fila, el color por columna y la cantidad sigue un cuadro latino o es fija. */
+ private nuevaMatriz(){
+  const formas=this.mezclar([0,1,2]),colores=this.mezclar([0,1,2]),patron=this.n(3),fija=this.n(3);
+  const cantidad=(r:number,c:number)=>patron===0?fija:patron===1?(r+c)%3:(r+2*c)%3;
+  this.tablero=Array.from({length:9},(_,i)=>formas[Math.floor(i/3)]*9+colores[i%3]*3+cantidad(Math.floor(i/3),i%3));
+  const ok=this.tablero[8],f=Math.floor(ok/9),co=Math.floor(ok/3)%3,q=ok%3;this.cursor=ok;
+  const variantes=this.mezclar([((f+1)%3)*9+co*3+q,((f+2)%3)*9+co*3+q,f*9+((co+1)%3)*3+q,f*9+((co+2)%3)*3+q,f*9+co*3+(q+1)%3,f*9+co*3+(q+2)%3]);
+  this.opciones=this.mezclar([ok,...variantes.slice(0,3)]).map(String);this.tablero[8]=-1;
  }
  private nuevaCuadricula(){this.solucion=this.mezclar([...Array(16).keys()]).slice(0,4+this.ronda);this.observar(4);}
  private nuevaBusqueda(){this.cursor=this.n(16);this.solucion=[this.n(36)];this.tablero=Array.from({length:36},()=>{let v=this.n(15);if(v>=this.cursor)v++;return v;});this.tablero[this.solucion[0]]=this.cursor;this.taman=6;}
@@ -129,6 +196,31 @@ export class MotorMental {
     const nuevo=a.tipo==='mover'?this.cursor+({'arriba':-this.taman,'abajo':this.taman,'izquierda':-1,'derecha':1}[String(a.valor)]??0):n;
     if(this.valida(nuevo)&&!this.tablero[nuevo]&&Math.abs(nuevo%this.taman-this.cursor%this.taman)+Math.abs(Math.floor(nuevo/this.taman)-Math.floor(this.cursor/this.taman))===1){this.cursor=nuevo;if(nuevo===this.solucion[0]){this.aciertos=1;this.terminar();}}break;}
    case 'nback':if(a.tipo==='opcion'&&(n===0||n===1))this.responderNback(n);break;
+   case 'schulte':if(a.tipo==='celda'&&this.valida(n)){if(this.tablero[n]===this.cursor){this.encontrados.push(n);this.aciertos++;this.cursor++;if(this.cursor>25)this.terminar();}else if(!this.encontrados.includes(n))this.error(`Busca el ${this.cursor}`);}break;
+   case 'luces':if(a.tipo==='celda'&&this.valida(n)){this.pulsar(n);if(this.tablero.every(v=>!v)){this.aciertos++;this.ronda++;if(this.ronda===2)this.terminar();else{this.decir('¡Primer tablero apagado!');this.nuevasLuces();}}}break;
+   case 'codigo':
+    if(a.tipo==='celda'&&n>=0&&n<4)this.cursor=n;
+    else if(a.tipo==='opcion'&&Number.isInteger(n)&&n>=0&&n<6){this.seleccion[this.cursor]=n;const vacio=this.seleccion.indexOf(-1);this.cursor=vacio>=0?vacio:Math.min(3,this.cursor+1);}
+    else if(a.tipo==='borrar')this.seleccion[this.cursor]=-1;
+    else if(a.tipo==='confirmar'){
+     if(this.seleccion.includes(-1)){this.decir('Completa los cuatro colores');break;}
+     const intento=[...this.seleccion],quedanS:number[]=[],quedanI:number[]=[];let negras=0,blancas=0;
+     intento.forEach((c,i)=>{if(c===this.solucion[i])negras++;else{quedanS.push(this.solucion[i]);quedanI.push(c);}});
+     for(const c of quedanI){const k=quedanS.indexOf(c);if(k>=0){blancas++;quedanS.splice(k,1);}}
+     this.torres.push(intento);this.otro.push(negras,blancas);
+     if(negras===4){this.aciertos=1;this.terminar();}
+     else if(this.torres.length>=8)this.terminar(false);
+     else{this.seleccion=[-1,-1,-1,-1];this.cursor=0;this.decir(`${negras} en su sitio · ${blancas} de buen color en otro sitio`);}
+    }break;
+   case 'series':case 'matriz':if(a.tipo==='opcion'&&this.opciones.includes(String(a.valor))){
+    const bien=this.cursor===n,regla=this.id==='series'?`Era ${this.cursor}: ${this.tema}.`:'';
+    if(bien){this.aciertos++;this.decir(this.id==='series'?`¡Sí! ${this.tema[0].toUpperCase()+this.tema.slice(1)}.`:'¡Esa era la pieza!');}else this.error(this.id==='series'?regla:'Mira la regla de cada fila y columna');
+    this.ronda++;if(this.ronda===(this.id==='series'?8:6))this.terminar();else if(this.id==='series')this.nuevaSerie();else this.nuevaMatriz();}break;
+   case 'nonograma':
+    if(a.tipo==='girar')this.cursor=this.cursor?0:1;
+    else if(a.tipo==='celda'&&this.valida(n)){const v=this.cursor?2:1;this.tablero[n]=this.tablero[n]===v?0:v;
+     const tengo=pistasNonograma(this.tablero.map(x=>x===1?1:0),5),meta=pistasNonograma(this.solucion,5);
+     if(JSON.stringify(tengo)===JSON.stringify(meta)){this.aciertos=1;this.decir(`¡Es ${this.tema}!`);this.terminar();}}break;
   }
  }
  private responderNback(n:number){if((this.solucion[this.turno]===this.solucion[this.turno-2]?1:0)===n)this.aciertos++;else this.error(n===-1?'Se acabó el turno':'Observa la figura de hace dos turnos');this.turno++;if(this.turno>=24)this.terminar();else this.espera=8;}
