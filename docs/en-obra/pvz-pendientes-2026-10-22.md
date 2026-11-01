@@ -17,6 +17,22 @@ la historia a Gardendless; se conserva sin cambios en el
 | Minijuegos | Jardín clásico 1 (PvZ-Portable) y 2 (Gardendless), Fusión, aventura propia de 50 niveles, patios y duelo, primera campaña V2 y versus clásico; cada uno dice su juego de origen. | [Motores originales](pvz-motores-originales-2026-10-23.md), [tejado](pvz-tejado-2026-10-26.md) |
 | Guardado | Historia v7 validada, protección entre pestañas, migraciones sin regalar recursos. Cerrar en plena batalla repite ese ataque (decisión aceptada). | [Mapa nativo](pvz-mapa-nativo-2026-10-24.md) |
 
+## Revisión completa del Jardín (1 de noviembre)
+
+Javier pidió revisar que no hubiera fallos en nada del Jardín. Se corrieron las 25 suites de reglas y todos los
+recorridos de navegador del Jardín sobre Gardendless, PvZ-Portable y los motores propios. Pasan historia (8 y 10),
+Versus de un jardín (6) y por territorios (11 + 9 de reglas), Fusión (4), patios y duelo, Versus clásico, motores
+originales (7), datos de PvZ 1 (4), campaña en Cocos (3), mapa nativo en Cocos (15), frente, puente, caché, cola,
+precarga (14), reutilización (3), coordinación, aventura, carriles, presentación y audio, principios, persistencia,
+accesos desde la casa y la copia portátil. Casos preparados: no certifican balance ni dispositivos físicos.
+
+Fallos reales corregidos: la Primera campaña no se podía continuar (solo reemplazar); salir no hacía nada si el
+guardado fallaba (historia, Primera campaña, aventura y patios: ahora pregunta); PvZ 1 no dejaba volver a mitad de
+nivel (ahora «Salir sin guardar este nivel»); «Volver a casa» no regresaba al patio; la aventura volvía a la casa
+en vez del Jardín; carrera del reproductor de música de Gardendless; los motores pedían un icono inexistente (404).
+Pruebas puestas al día porque esperaban cosas anteriores a cambios aprobados (tejado, tienda, menú del Jardín,
+carga escalonada); la del mapa de doce zonas se retiró (la cubren las del mapa de 240 áreas).
+
 ## Pendientes reales
 
 Se pueden hacer sin nuevas decisiones:

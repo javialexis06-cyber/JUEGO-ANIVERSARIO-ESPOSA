@@ -98,8 +98,9 @@ intermedios. V2, aventura, minijuegos y sus claves no se migran ni se sobrescrib
   filas de agua, noche, semillas y reinicio entre terrenos. Revisa además la persistencia por capas y
   siembra/impactos en la séptima fila mediante un combate preparado y pasos externos acelerados. Registra
   capturas y resultados en `juego/web/test-results/mapa-nativo-cocos/`.
-- `node scripts/probar-mapa-nativo-interfaz.mjs`: recorre mundo/país/ciudad, barajas, conquista y recarga del
-  final con transporte preparado. La interfaz/coordinador/guardado son reales; sus victorias son simuladas.
+- *(Retirada el 1 de noviembre.)* `probar-mapa-nativo-interfaz.mjs` recorría el mapa de doce zonas con el guardado
+  v4; la campaña de 240 áreas (29–30 de octubre) cambió el mapa y el guardado (v7). Lo cubren ahora
+  `probar-historia-nativa-mapa.mjs`, `probar-mapa-nativo-cocos.mjs` y los recorridos de la historia.
 
 Los informes de navegador identifican errores y solicitudes fallidas. Las pruebas con casos preparados no
 certifican ganar todas las zonas con recursos normales, todas las habilidades posibles ni fluidez en teléfonos.
