@@ -70,10 +70,11 @@ async function datos(f) {
         const cams = cc.director.getScene().getComponentsInChildren(cc.Camera).filter(c => c.enabledInHierarchy), canvas = cc.game.canvas, r = canvas.getBoundingClientRect();
         const proyectar = n => { const cam = cams.find(c => (c.visibility & n.layer) !== 0); if (!cam)
             return null; const q = cam.worldToScreen(n.worldPosition); return { x: r.left + q.x / canvas.width * r.width, y: r.top + (canvas.height - q.y) / canvas.height * r.height }; };
-        return { t: lp.gamedTime, oleada: lp.currentWave, sol: m('SunCount').SunCount.Value, ganada: lp.gameWon, perdida: lp.gameLost,
+        const x0 = s.getSquareWorldPosition(0, 0).x, paso = (s.getSquareWorldPosition(0, 8).x - x0) / 8;
+        return { t: lp.gamedTime, oleada: lp.currentWave, x0, paso, sol: m('SunCount').SunCount.Value, ganada: lp.gameWon, perdida: lp.gameLost,
             plantas: m('CharacterManager').PlantPool.pool().filter(x => x.node?.isValid && x.health > 0).map(x => ({ tipo: x.Plant_Type, fila: x.plantInLnC?.lIndex, col: x.plantInLnC?.cIndex, vida: x.health, id: x.node.uuid })),
             zombis: m('CharacterManager').ZombiePool.pool().filter(x => x.node?.isValid && x.health > 0).map(x => ({ fila: x.inLane?.LaneIndex ?? x.lIndex, x: x.worldPositionX, vida: x.health })),
-            cartas: c.CFs.map((cf, i) => ({ tipo: cf.Type, cd: c.CUs[i]?.CD, precio: cf._SUNCOST, x: (510 + i * 110)*innerWidth/1280, y: 42*innerHeight/720 })),
+            cartas: c.CFs.map((cf, i) => ({ tipo: cf.Type, cd: c.CUs[i]?.CD ?? 0, precio: cf.SUNCOST ?? cf._SUNCOST, lista: !!(c.CUs[i]?.selectable && cf.ca?.getSelectable?.()), x: (510 + i * 110)*innerWidth/1280, y: 42*innerHeight/720 })),
             celdas: Array.from({ length: 5 }, (_, fila) => Array.from({ length: 9 }, (_, col) => ({ fila, col, p: proyectar(s.getLnC(fila, col).plantPoint) }))).flat(),
             soles: (m('Droppings').droppings.controller?.sunPool ?? []).filter(x => x.node?.isValid).map(x => proyectar(x.node)).filter(Boolean) };
     });
@@ -89,7 +90,7 @@ async function pilotar(f, filas) {
         return d;
     const ocupada = (fila, col) => d.plantas.some(x => x.fila === fila && x.col === col), disparos = fila => d.plantas.filter(x => x.fila === fila && ['peashooter', 'repeater'].includes(x.tipo)).length;
     const orden = [...Array(filas).keys()].sort((a, b) => { const za = d.zombis.filter(x => x.fila === a), zb = d.zombis.filter(x => x.fila === b); return Number(!!zb.length) - Number(!!za.length) || disparos(a) - disparos(b) || a - b; });
-    const elegir = tipo => d.cartas.find(c => c.tipo === tipo && c.cd <= 0 && d.sol >= c.precio);
+    const elegir = tipo => d.cartas.find(c => c.tipo === tipo && (c.lista || c.cd <= 0 && d.sol >= c.precio));
     let c, fila, col;
     if (d.plantas.filter(x => x.tipo === 'sunflower').length < 2 && (c = elegir('sunflower'))) {
         fila = orden.find(r => !ocupada(r, 0));
@@ -210,7 +211,13 @@ try {
             throw Error('Cayó la casa durante la expedición');
         if (e.zonas[1].capturada && !e.ataques.length)
             break;
-        const active = e.ataques.find(a => a.zona === 9) ? 9 : e.ataques[0]?.zona;
+        let active = e.ataques.find(a => a.zona === 9) ? 9 : e.ataques[0]?.zona;
+        // Como un jugador: si los zombis del contraataque ya están a menos de cinco casillas de la casa, se vuelve a
+        // defenderla (antes el piloto solo miraba la expedición y la prueba dependía de la carga de la máquina).
+        if (active === 9 && e.ataques.some(a => a.zona === 8)) {
+            const dc = await datos(await frame(8));
+            if (dc.zombis.some(q => (q.x - dc.x0) / dc.paso < 5)) active = 8;
+        }
         if (active === undefined)
             break;
         if (e.ataques.length === 2 && !simultaneos) {

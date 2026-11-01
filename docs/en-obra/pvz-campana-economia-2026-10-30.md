@@ -72,6 +72,11 @@ Dejó el balance a criterio de Claude ("el balance que decidas para el juego").
   «Proteger la casa» solo espera el motor de la casa (antes esperaba también el de la estación, en fila, y en el
   celular parecía colgado en «Preparando semillas…»): en un navegador limpio pasó de unos 95 a unos 48 segundos.
   Si tarda, un aviso explica que la primera vez se descargan unos 100 MB del jardín.
+- **Barra en batalla**: en pantallas bajas (cualquier celular en horizontal) la caja invisible de la barra ocupaba
+  todo el ancho de abajo y se tragaba los toques del carril inferior del césped: no se podía sembrar ahí y la casa
+  caía por ese carril en los asedios. Ahora solo los botones reciben toques, y en batalla la barra queda en Ciudad y
+  Pausa (completa tapaba la esquina del césped y un toque a un sol podía abrir «Salir»).
+- **Salir** ya no toma por avería los campos que se estaban preparando en segundo plano.
 - **Editor de formación**:
   - pergamino legible y contador n / cupo con ranuras vacías;
   - familia y coste en soles de cada planta, y dónde está reservada;

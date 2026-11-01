@@ -280,7 +280,8 @@ export async function montarHistoriaNativa() {
         if (!mundo)
             return;
         mundo.pausada = si;
-        await Promise.all([...instancias.values()].filter(i => i.lista).map(i => si ? i.motor.pausa() : i.motor.reanudar()));
+        // Un frente cerrado mientras tanto (al salir o al liberar un campo) no impide pausar o reanudar los demás.
+        await Promise.all([...instancias.values()].filter(i => i.lista).map(i => (si ? i.motor.pausa() : i.motor.reanudar()).catch(e => { if (!muerto && instancias.get(Number(i.motor.zona)) === i) throw e; })));
         anterior = performance.now();
         acumulado = 0;
     }
@@ -293,7 +294,7 @@ export async function montarHistoriaNativa() {
     }
     function falloMotor(e: unknown) {
         errorMotor = e instanceof Error ? e.message : String(e);
-        void pausar(true);
+        void pausar(true).catch(() => { /* el aviso de avería ya está en pantalla */ });
         modal = 'motor-error';
         capa();
         pintar();
@@ -723,6 +724,8 @@ export async function montarHistoriaNativa() {
                         await pausar(true);
                         if (!guardar()) break;
                     }
+                    // Se sale: lo que se estaba preparando en segundo plano se cancela sin tomarse por una avería.
+                    muerto = true;
                     for (const i of instancias.values())
                         await i.motor.cerrar();
                     volver();
@@ -770,7 +773,7 @@ export async function montarHistoriaNativa() {
         mundo.pausada = true;
         for (const i of instancias.values())
             if (i.lista)
-                void i.motor.pausa();
+                void i.motor.pausa().catch(() => { /* un frente ya cerrado no necesita pausa */ });
         modal = 'pausa';
         capa();
         pintar();

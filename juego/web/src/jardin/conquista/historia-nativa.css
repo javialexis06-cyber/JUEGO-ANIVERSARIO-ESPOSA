@@ -241,6 +241,14 @@
 .cq-nativa .hn-herramientas {
   top: auto;
   bottom: 8px;
+  /* En pantallas bajas conquista.css vuelve a fijar right: la barra ocupaba todo el ancho de abajo y su caja
+     invisible se tragaba los toques del carril inferior del césped. Solo los botones reciben toques. */
+  right: auto !important;
+  width: max-content;
+  pointer-events: none;
+}
+.cq-nativa .hn-herramientas .hn-herr {
+  pointer-events: auto;
 }
 .hn-en-batalla .hn-herramientas .hn-herr:has(> [data-cq=subir], > [data-cq=tienda], > [data-cq=ayuda], > [data-cq=pantalla], > [data-cq=salir]) {
   display: none;
