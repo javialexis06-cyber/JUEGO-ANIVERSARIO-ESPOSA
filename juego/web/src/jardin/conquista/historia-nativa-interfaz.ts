@@ -40,6 +40,8 @@ export async function montarHistoriaNativa() {
     let mundo = guardado.leer(), errorArchivo = !!guardado.error, muerto = false, cargando = 0, ocupado = false, anterior = performance.now(), acumulado = 0, raf = 0;
     let visible: ZonaNativa | null = null, escala: EscalaMapa = 'ciudad', pais = AREAS_CAMPANA[8].pais, ciudad = AREAS_CAMPANA[8].ciudad, seleccion: ZonaNativa | null = null, editor: SemillaNativa[] | null = null, revisionEditor = 0;
     let liberar: () => void = () => { }, bloqueo = false, modal = '', avisoHasta = 0, ultimoEstado = '', necesitaGuardar = false, herramientasHTML = '';
+    // Equipo modesto: menos precargas y menos cuadros con varios combates (no cambia ninguna regla del juego).
+    const ligero = ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8) <= 4 || (navigator.hardwareConcurrency ?? 8) <= 4;
     let errorMotor = '', iniciando = false, avisoEspera: ReturnType<typeof setTimeout> | 0 = 0;
     let cine:CinematicaConquista|null=null;
     const instancias = new Map<ZonaNativa, Instancia>(), atlas = new AtlasPvZ(), retratos = new RetratosPvZ(atlas);
@@ -205,7 +207,9 @@ export async function montarHistoriaNativa() {
         const lista = tiendaVista === 'venta' ? venta : tiendaVista === 'proximas' ? proximas : [...m.estado.desbloqueadas];
         const ficha = (t: string) => `<article class="hn-producto">${imagen(t as SemillaNativa)}<b>${esc(nombre(t as SemillaNativa))}</b><small>${familia(t)} · ☀${costeSol(t)}</small>${tiendaVista === 'venta' ? `<button class="hn-comprar" data-hn-comprar="${t}" ${m.estado.monedas < precio(t) || m.estado.inicioCasa ? 'disabled' : ''}>${icono('moneda')}${precio(t)}</button>` : tiendaVista === 'proximas' ? `<em>${icono('candado')}${esc(nombrePais(paisDePlanta(t)))}</em>` : `<em>Tuya</em>`}</article>`;
         const pestana = (v: string, t: string, n: number) => `<button data-hn-tienda="${v}" aria-pressed="${tiendaVista === v}">${t} <small>${n}</small></button>`;
-        return `<section class="cq-modal hn-pergamino hn-tienda"><header><h2>Tienda de Dave</h2><span class="hn-saldo">${icono('moneda')}<b>${m.estado.monedas}</b></span>${boton('cerrar-modal', tiendaDesde === 'equipo' ? 'Volver a la formación' : 'Volver al mapa', 'cerrar')}</header><nav class="hn-pestanas">${pestana('venta', 'A la venta', venta.length)}${pestana('proximas', 'Próximamente', proximas.length)}${pestana('tuyas', 'Tus plantas', m.estado.desbloqueadas.length)}</nav><p class="hn-nota">${m.estado.inicioCasa ? 'Defiende primero la casa: después podrás comprar.' : 'Las monedas se ganan recuperando áreas (una vez cada una) y resistiendo asedios. Cada país pone a la venta sus plantas cuando llegas a él.'}</p><div class="hn-productos">${lista.map(ficha).join('') || '<p>Nada por aquí todavía.</p>'}</div></section>`;
+        // Sin título grande (pedido de Javier, 1 de noviembre): pestañas, monedas y cerrar en una sola fila para que se
+        // vean más plantas. Cómo se ganan las monedas lo explica el tutorial.
+        return `<section class="cq-modal hn-pergamino hn-tienda" aria-label="Tienda de Dave"><header><nav class="hn-pestanas">${pestana('venta', 'A la venta', venta.length)}${pestana('proximas', 'Próximamente', proximas.length)}${pestana('tuyas', 'Tus plantas', m.estado.desbloqueadas.length)}</nav><span class="hn-saldo" title="Monedas: se ganan recuperando áreas y resistiendo asedios">${icono('moneda')}<b>${m.estado.monedas}</b></span>${boton('cerrar-modal', tiendaDesde === 'equipo' ? 'Volver a la formación' : 'Volver al mapa', 'cerrar')}</header>${m.estado.inicioCasa ? '<p class="hn-nota">Defiende primero la casa: después podrás comprar.</p>' : ''}<div class="hn-productos">${lista.map(ficha).join('') || '<p>Nada por aquí todavía.</p>'}</div></section>`;
     }
     /** Explicación de Dave la primera vez que aparece una mecánica (en cola si ya hay otra ventana abierta). */
     function ensenar(tema: string, base = tema, cambio: Record<string, string> = {}) {
@@ -366,8 +370,12 @@ export async function montarHistoriaNativa() {
             ? mundo.estado.zonas.filter(z=>mundo!.puedeLlegar(z.id)).map(z=>z.id):[8,9];
         // Cada campo es un motor completo (memoria y gráficos): se precargan los combates, lo que se mira o se tocó y
         // solo tres vecinas más (antes, todas las alcanzables hasta ocho, y el celular se ahogaba)
-        const fijas=[...new Set([...activas,...(visible===null?[]:[visible]),...(seleccion===null?[]:[seleccion])])];
-        const extra=[...new Set([...(mundo?.fin?[]:mundo?.fronteras()??[]),...proximas])].filter(id=>!fijas.includes(id)).slice(0,Math.max(0,Math.min(3,8-fijas.length)));
+        // Al empezar, la casa es fija (se defiende primero); la estación es la precarga.
+        const fijas=[...new Set([...activas,...(visible===null?[]:[visible]),...(seleccion===null?[]:[seleccion]),...(!mundo||mundo.estado.inicioCasa?[8]:[])])];
+        // Rendimiento (1 de noviembre): cada campo es un motor completo en el mismo hilo. Con dos o más combates no se
+        // crean motores nuevos de precarga (competían por la CPU con los combates); los ya listos se conservan.
+        const maxExtra=3, crearExtra=activas.length<2;
+        const extra=[...new Set([...(mundo?.fin?[]:mundo?.fronteras()??[]),...proximas])].filter(id=>!fijas.includes(id)).slice(0,Math.max(0,Math.min(maxExtra,8-fijas.length)));
         const deseadas=[...fijas,...extra];
         // Los combates vivos nunca se descartan. Los puntos terminados permiten liberar
         // motores de interiores seguros sin perder una sola planta ni su vida.
@@ -376,7 +384,7 @@ export async function montarHistoriaNativa() {
         }
         // El primer motor carga solo: así los demás toman de la caché sus imágenes (decenas de MB) en vez de
         // descargarlas todos a la vez
-        const nuevos=deseadas.filter(id=>instancias.get(id)?.ataque==null);
+        const nuevos=deseadas.filter(id=>instancias.get(id)?.ataque==null&&(crearExtra||fijas.includes(id)||instancias.has(id)));
         const hayListo=[...instancias.values()].some(i=>i.lista);
         void (hayListo||!nuevos.length?Promise.all(nuevos.map(id=>prepararCampo(configuracion(id))))
             :prepararCampo(configuracion(nuevos[0])).then(()=>Promise.all(nuevos.slice(1).map(id=>prepararCampo(configuracion(id))))))
@@ -502,7 +510,10 @@ export async function montarHistoriaNativa() {
                     break;
             }
             const activas = [...instancias.entries()].filter(([, i]) => i.lista && i.ataque !== null);
-            const estados = await Promise.all(activas.map(async ([id, i]) => ({ id, i, estado: await i.motor.pasoHistoria(i.ataque === null ? 0 : pasos, id === visible) })));
+            // Con tres o más combates (dos en un equipo modesto) el campo visible se dibuja a 30 cuadros por segundo; la
+            // lógica sigue a 60 Hz.
+            const fps = activas.length >= (ligero ? 2 : 3) ? 30 : 60;
+            const estados = await Promise.all(activas.map(async ([id, i]) => ({ id, i, estado: await i.motor.pasoHistoria(i.ataque === null ? 0 : pasos, id === visible, fps) })));
             for (const { id, i, estado } of estados) {
                 i.estado = estado;
                 await terminar(id, i, estado);

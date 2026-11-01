@@ -344,17 +344,17 @@
 .hn-tutorial{max-width:520px}
 .hn-etiqueta{display:inline-block;padding:2px 10px;border-radius:10px;background:#3c772f;color:#fff;font:900 11px Nunito;letter-spacing:.06em;text-transform:uppercase}
 /* Tienda */
-.hn-tienda{width:min(900px,94vw);max-width:none;max-height:90vh;display:flex;flex-direction:column}
-.hn-tienda header{display:flex;align-items:center;gap:10px}
-.hn-tienda h2{margin:0}
+.hn-tienda{width:min(1100px,97vw);max-width:none;max-height:96vh;height:96vh;box-sizing:border-box;padding:8px 10px!important;display:flex;flex-direction:column}
+.hn-tienda header{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hn-tienda .hn-nota{margin:4px 0 0}
 .hn-saldo{margin-left:auto;display:flex;align-items:center;gap:5px;padding:4px 12px;border-radius:14px;background:linear-gradient(#ffd76a,#c98a22);color:#3b2408;font:900 16px Nunito}
-.hn-pestanas{display:flex;gap:6px;margin:8px 0}
+.hn-pestanas{display:flex;gap:6px;margin:0;flex-wrap:wrap}
 #cq-app .hn-pestanas button{min-height:0;padding:6px 14px;border-radius:14px;background:#efe0b4;border:2px solid #b8955e;color:#4b3520;font:900 13px Nunito}
 #cq-app .hn-pestanas button[aria-pressed=true]{background:#3c772f;border-color:#2a5520;color:#fff}
 .hn-pestanas small{opacity:.75}
-.hn-productos{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;padding:4px}
-.hn-producto{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;border-radius:12px;background:#fff8e2;border:2px solid #d6bb85;box-shadow:0 2px 5px #0002;text-align:center}
-.hn-producto img{height:74px;max-width:100%;object-fit:contain}
+.hn-productos{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px;padding:6px 2px 2px}
+.hn-producto{display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 4px;border-radius:10px;background:#fff8e2;border:2px solid #d6bb85;box-shadow:0 2px 4px #0002;text-align:center}
+.hn-producto img{height:64px;max-width:100%;object-fit:contain}
 .hn-producto b{font:900 12px/1.15 Nunito}
 .hn-producto small{font:700 11px Nunito;color:#6b5136}
 .hn-producto em{display:flex;align-items:center;gap:3px;font:800 11px Nunito;font-style:normal;color:#5b3f72}

@@ -84,7 +84,7 @@
           break;
         case 'paso-historia':
           if(!window.semillaHistoriaMotor?.activa)throw Error('No hay una defensa de historia.');
-          semillaHistoriaMotor.paso(p.cantidad,p.visible);valor=observar();break;
+          semillaHistoriaMotor.paso(p.cantidad,p.visible,p.fps);valor=observar();break;
         case 'punto-historia':valor=semillaHistoriaMotor.punto();break;
         case 'soltar-zombi':
           if(!window.semillaHistoriaMotor?.activa)throw Error('No hay un versus en curso.');

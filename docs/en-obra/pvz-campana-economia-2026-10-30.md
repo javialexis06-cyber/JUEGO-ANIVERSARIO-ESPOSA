@@ -77,6 +77,35 @@ Dejó el balance a criterio de Claude ("el balance que decidas para el juego").
   caía por ese carril en los asedios. Ahora solo los botones reciben toques, y en batalla la barra queda en Ciudad y
   Pausa (completa tapaba la esquina del césped y un toque a un sol podía abrir «Salir»).
 - **Salir** ya no toma por avería los campos que se estaban preparando en segundo plano.
+- **Tienda** (1 de noviembre): sin título grande; pestañas, monedas y cerrar en una sola fila, ventana casi a
+  pantalla completa y tarjetas más compactas (en 960 × 540 se ven 24 plantas en vez de unas 14).
+
+## Rendimiento con varios combates (1 de noviembre de 2026)
+
+Cada campo es un motor completo de Gardendless y todos corren en el mismo hilo. Cambios, sin tocar reglas:
+
+- **Frentes que no se ven, a 30 Hz**: se simulan en pasos de 1/30 s (la mitad de trabajo) cubriendo el mismo tiempo de
+  juego; el paso suelto se da al volver a la vista. Comprobado con dos motores iguales durante 160 s: mismas oleadas,
+  plantas que caen en el mismo momento y zombis equivalentes (solo varía el azar fino).
+- **Resolución del campo**: se dibuja como mucho al ancho de su diseño (1280 px). Antes, en un celular, Cocos usaba 2
+  píxeles por punto (un 75 % más de píxeles en un 844 × 390 sin ganar detalle).
+- **Campo visible a 30 cuadros por segundo con tres o más combates** (su lógica sigue a 60 Hz).
+- **Modo ligero automático** (4 GB de memoria o 4 núcleos, o menos): densidad 1× y 30 cuadros desde dos combates.
+- **Precargas**: con dos o más combates no se crean motores nuevos de precarga; los ya listos se conservan.
+- La versión de los scripts del motor sube a `historia7` para que nadie siga con una copia vieja en caché.
+
+Medición en esta máquina (sin tarjeta gráfica: dibujo por software, que no representa un celular), tres combates a la
+vez durante 20 s con la misma partida preparada (`scripts/_rendimiento.mjs`, local):
+
+| | Cuadros/s | Cuadro p95 | CPU de la página | Ritmo del juego |
+|---|---|---|---|---|
+| Antes | 16,9–17,6 | 117 ms | 11,1–13,0 s | 93–95 % |
+| Después, sin modo ligero | 17,1–18,1 | 100 ms | 10,0–10,2 s | 96–99 % |
+| Después, modo ligero (esta máquina tiene 4 núcleos) | 27,5 | 67 ms (mediana 33 ms) | 11,2 s | 100 % |
+
+Aquí manda el dibujo por software. Sin modo ligero la mejora es moderada (unos 15–20 % menos CPU y combates más cerca
+del tiempo real); con el modo ligero (densidad 1× y 30 cuadros) la fluidez sube un 60 % y los combates van a tiempo
+real. En un teléfono con tarjeta gráfica la simulación pesa proporcionalmente más; no se midió en un teléfono real.
 - **Editor de formación**:
   - pergamino legible y contador n / cupo con ranuras vacías;
   - familia y coste en soles de cada planta, y dónde está reservada;

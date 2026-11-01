@@ -234,8 +234,8 @@
     },
     {
       "path": "pvz2/frente.js",
-      "bytes": 7268,
-      "sha256": "0bdf415b213045a855cc3dadf444b61623c9d34411ea3f289e334eb954f14684"
+      "bytes": 7274,
+      "sha256": "33e9cb259677a948a01dcd0355cc1cb2e9c88a2c0a682f9e26d3bb5b7ac4f976"
     },
     {
       "path": "pvz2/game-audio.js",
@@ -244,13 +244,13 @@
     },
     {
       "path": "pvz2/historia.js",
-      "bytes": 22183,
-      "sha256": "2dfc0e71a8c0ab0696b6c5fce7bad46919a56e3247e4c5aa1cc2693c0bfe8448"
+      "bytes": 23243,
+      "sha256": "3fa24714b2b33b2398c753edabb3e6f886b6dd15b6f242d95688f7e888c67bdb"
     },
     {
       "path": "pvz2/index.html",
-      "bytes": 2898,
-      "sha256": "c0851519f16638995377742954f05a558e45a0b0e2ef23711e39996fe5c23848"
+      "bytes": 3455,
+      "sha256": "8d0b5dec409bd2e1c38306327550e8bfec6460486a2b53470911af049b20a17e"
     },
     {
       "path": "pvz2/index.js",

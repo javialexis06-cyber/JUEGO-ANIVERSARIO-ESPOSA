@@ -79,7 +79,8 @@ export class FrenteGardendless {
  iniciar(){return this.ordenar('iniciar',{nivel:'tutorial1'});}
  prepararHistoria(config:ConfigDefensaNativa){return this.ordenar('preparar-historia',{config});}
  iniciarHistoria(config:ConfigDefensaNativa){return this.ordenar('iniciar-historia',{config});}
- pasoHistoria(cantidad:number,visible:boolean){return this.ordenar('paso-historia',{cantidad,visible});}
+ /** fps: cuadros por segundo del campo visible (la lógica sigue a 60 Hz). */
+ pasoHistoria(cantidad:number,visible:boolean,fps=60){return this.ordenar('paso-historia',{cantidad,visible,fps});}
  async puntoHistoria(){return await this.ordenar('punto-historia') as unknown as PuntoDescansoNativo;}
  soltarZombi(tipo:string,fila:number){return this.ordenar('soltar-zombi',{tipo,fila});}
  async estadoVersus(){return await this.ordenar('estado-versus') as unknown as EstadoVersusNativo;}

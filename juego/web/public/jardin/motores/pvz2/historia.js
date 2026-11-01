@@ -7,7 +7,7 @@
     const m=n=>System.get(`chunks:///_virtual/${n}.ts`), tipos=()=>[...new Set([...Object.values(semillaCatalogoHistoria.tipos),...semillaCatalogoNativo.plantas.map(p=>p.id),...semillaCatalogoNativo.derivadas.map(p=>p.id)])],
         zombisValidos=()=>new Set([...Object.values(semillaCatalogoHistoria.zombis),...semillaCatalogoNativo.zombis.map(z=>z.id)]);
     const camposTemporales=['busy','grown','activated','growthCountdown_','growthCountdown','growthStage','sunValue','lifeCD','resting','cds'];
-    let cc, config = null, pausada = false, visible = true, reposo = false, preparada = false, preparando = false, render;
+    let cc, config = null, pausada = false, visible = true, reposo = false, preparada = false, preparando = false, render, resto = 0, ultimoDibujo = 0;
     const esperar = fn => new Promise((ok, mal) => { const inicio = performance.now(); const ver = () => { if (fn())
         ok();
     else if (performance.now() - inicio > 120000)
@@ -221,7 +221,7 @@
             if(reposo){n.gameWarnTween.forEach(t=>t.stop());n.inGameWarnLabel.string='';}
             await api.pausa(false);
         },
-        paso(cantidad, mostrar) {
+        paso(cantidad, mostrar, fps = 60) {
             if (!config || !Number.isInteger(cantidad) || cantidad < 0 || cantidad > 6 || preparada && cantidad!==0)
                 throw Error('Paso de defensa incompatible.');
             visible = !!mostrar;
@@ -233,11 +233,29 @@
                 return;
             }
             if (!pausada && !reposo && !nivel().gameWon && !nivel().gameLost) {
-                cc.game.frameRate = 60;
-                for (let i = 0; i < cantidad; i++) {
-                    visible = !!mostrar && i === cantidad - 1;
-                    cc.director.gameSpeed = 1;
-                    cc.game.step();
+                // Rendimiento (1 de noviembre): fuera de vista basta simular a 30 Hz. El mismo tiempo de juego se cubre
+                // en pasos dobles (1/30 s) y la mitad de trabajo; el paso suelto que sobre se da al volver a la vista.
+                if (!mostrar) {
+                    resto += cantidad;
+                    cc.game.frameRate = 30;
+                    for (; resto >= 2; resto -= 2) {
+                        cc.director.gameSpeed = 1;
+                        cc.game.step();
+                    }
+                    cc.game.frameRate = 60;
+                }
+                else {
+                    cc.game.frameRate = 60;
+                    const total = cantidad + resto, ahora = performance.now();
+                    // Con muchos combates el campo visible se dibuja a menos cuadros; su lógica no cambia.
+                    const dibujarAhora = !(fps < 60) || ahora - ultimoDibujo >= 1000 / fps - 4;
+                    if (dibujarAhora) ultimoDibujo = ahora;
+                    resto = 0;
+                    for (let i = 0; i < total; i++) {
+                        visible = dibujarAhora && i === total - 1;
+                        cc.director.gameSpeed = 1;
+                        cc.game.step();
+                    }
                 }
                 visible = !!mostrar;
             }
