@@ -1,5 +1,13 @@
 # Guía de trabajo · Nuestro Hogar
 
+## Reinicio general (1 de noviembre)
+
+Javier pidió reiniciar todo desde cero en todas las cuentas y jugadores para evitar problemas entre versiones.
+`public/reinicio-general.js` (cargado al inicio de cada página) borra una sola vez por dispositivo el almacenamiento
+local, de sesión y las bases del juego, perfiles incluidos, y deja la marca `nuestro-hogar-epoca`. Conserva la caché
+de recursos y no actúa en navegadores automatizados (pruebas). Los datos del servidor Supabase de la casa (pareja,
+eventos, recuerdos y fotos) no se borraron: no hubo acceso. Desde aquí rige otra vez «conservar partidas».
+
 ## Pedido vigente · territorios, tienda, tutorial y balance de la campaña (30 de octubre)
 
 Javier pidió:

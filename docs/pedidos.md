@@ -1,5 +1,9 @@
 # Pedidos de Javier · estado vigente
 
+**Hecho por Claude (1 de noviembre) · reinicio general:** cada dispositivo empieza desde cero una sola vez al abrir
+esta versión (partidas, compras y perfiles), con `public/reinicio-general.js`. Los datos del servidor Supabase de la
+casa no se borraron (sin acceso). El jardín quedó más ligero con varios combates y la tienda sin título grande.
+
 **Lo que falta del jardín (31 de octubre):** ver [estado y pendientes reales](en-obra/pvz-pendientes-2026-10-22.md).
 La lista original de 180 tareas está archivada; muchas quedaron resueltas por Gardendless o superadas.
 

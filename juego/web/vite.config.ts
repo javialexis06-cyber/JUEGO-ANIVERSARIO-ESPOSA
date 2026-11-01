@@ -62,7 +62,7 @@ export const PERMITIDOS_AMIGOS = [
 ];
 
 /** Lo de `public/` que va en la versión para amigos (carpetas que terminan en «/» o archivos), además de la ropa. */
-export const PUBLICOS_AMIGOS = ['jardin/', 'modelos/escudo_mapa.glb', 'modelos/escudo_torres.glb', 'modelos/escudo_enemigos.glb', 'audio/escudo/',
+export const PUBLICOS_AMIGOS = ['reinicio-general.js', 'jardin/', 'modelos/escudo_mapa.glb', 'modelos/escudo_torres.glb', 'modelos/escudo_enemigos.glb', 'audio/escudo/',
   'modelos/granja-v3/dragon_lod.glb', 'modelos/granja-v3/grifo_lod.glb', 'modelos/granja-v3/unicornio_lod.glb', 'modelos/el.glb', 'modelos/ella.glb', 'modelos/lavado/', 'lavado/', 'modelos/sangre/', 'sangre/', 'datos/niveles.json',
   'modelos/manifest_export.json',
   // La carrera: pistas, carros, íconos y voces (sin las de la pareja); las criaturas ya van arriba
