@@ -1,6 +1,6 @@
 # La Semilla Madre · estado y pendientes reales del jardín
 
-Revisado el **31 de octubre de 2026**. Sustituye la lista de 180 tareas del 22 de octubre, escrita antes de pasar
+Revisado el **1 de noviembre de 2026**. Sustituye la lista de 180 tareas del 22 de octubre, escrita antes de pasar
 la historia a Gardendless; se conserva sin cambios en el
 [archivo](../archivo/pvz-pendientes-2026-10-22-original.md). La granja queda fuera: está pausada.
 
@@ -13,16 +13,15 @@ la historia a Gardendless; se conserva sin cambios en el
 | Fusión | 117 recetas de PvZ Fusión 4.0.x con piezas nativas: en la historia (Forjaria) y todas desde el inicio en el Versus. | [Fusión](pvz-campana-240-2026-10-29.md#fusión) |
 | Tienda, cupo y tutorial | Plantas compradas con monedas de capturas y asedios, cupo de 4 a 8 semillas, Dave explica cada mecánica. | [Economía y tutorial](pvz-campana-economia-2026-10-30.md) |
 | Balance | Corrida de las 239 áreas y asedios de muestra con un piloto en Gardendless real (148 victorias, 27 de 33 asedios). | [Resultados](pvz-campana-economia-2026-10-30.md#resultados-31-de-octubre-de-2026) |
-| Versus de dos personas | En un dispositivo y por sala con código, catálogo completo y fusiones. | [Versus nativo](pvz-versus-nativo.md) |
-| Minijuegos | Jardín clásico 1 (PvZ-Portable) y 2 (Gardendless), aventura propia de 50 niveles, patios y duelo, primera campaña V2 y versus clásico conservados. | [Motores originales](pvz-motores-originales-2026-10-23.md), [tejado](pvz-tejado-2026-10-26.md) |
+| Versus de dos personas | En un dispositivo y por sala con código, catálogo completo y fusiones; modo **Territorios** con zonas neutrales y varias batallas a la vez (1 de noviembre). | [Versus nativo](pvz-versus-nativo.md) |
+| Minijuegos | Jardín clásico 1 (PvZ-Portable) y 2 (Gardendless), Fusión, aventura propia de 50 niveles, patios y duelo, primera campaña V2 y versus clásico; cada uno dice su juego de origen. | [Motores originales](pvz-motores-originales-2026-10-23.md), [tejado](pvz-tejado-2026-10-26.md) |
 | Guardado | Historia v7 validada, protección entre pestañas, migraciones sin regalar recursos. Cerrar en plena batalla repite ese ataque (decisión aceptada). | [Mapa nativo](pvz-mapa-nativo-2026-10-24.md) |
 
 ## Pendientes reales
 
 Se pueden hacer sin nuevas decisiones:
 
-1. **Fusión como minijuego propio.** El pedido del 17 de octubre pedía un modo Fusión aparte. Hoy las fusiones
-   se juegan en el Versus y en la historia, pero no hay entrada propia.
+1. ~~**Fusión como minijuego propio.**~~ Hecho el 1 de noviembre: **Minijuegos → Fusión**, doce niveles.
 2. **Aventura propia (motor Canvas, 50 niveles).** Faltan las mejoras de la tienda de PvZ 1 en ese motor
    (Guisantralladora, Birasol, Melancoseta, Totora, Melonpulta congelada, Imán dorado, Pinchorroca, Mazorcañón,
    Imitadora), su arte, el Yeti y los mundos siguientes del plan. En la historia nativa esas plantas ya existen.

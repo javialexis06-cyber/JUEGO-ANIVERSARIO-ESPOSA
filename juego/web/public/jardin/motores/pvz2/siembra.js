@@ -121,10 +121,12 @@
                 let firma='';
                 const c=document.hidden?null:contexto(), i=c?.ui.index ?? -1, cf=i>=0 && i<8 ? c.cards.CFs[i] : null;
                 const t=cf?.node.activeInHierarchy && (cf.node._uiProps?.uiTransformComp ?? cf.node.getComponent('cc.UITransform'));
-                if(t) {
-                    const b=t.getBoundingBoxToWorld(), r=canvas.getBoundingClientRect(), v=cc.view.getVisibleSize(), o=cc.view.getVisibleOrigin(),
-                        sx=r.width/v.width, sy=r.height/v.height;
-                    firma=[r.left+(b.x-o.x)*sx, r.bottom-(b.y-o.y+b.height)*sy, b.width*sx, b.height*sy].map(n=>Math.round(n)).join(',');
+                // La cámara de la carta proyecta sus esquinas: así el marco cuadra también con bandas a los lados.
+                const cam=t && cc.director.getScene().getComponentsInChildren(cc.Camera).find(k=>k.enabledInHierarchy && (k.visibility & cf.node.layer));
+                if(t && cam) {
+                    const b=t.getBoundingBoxToWorld(), r=canvas.getBoundingClientRect(), a=cam.worldToScreen(new cc.Vec3(b.x,b.y,0)), z=cam.worldToScreen(new cc.Vec3(b.x+b.width,b.y+b.height,0));
+                    const px=x=>r.left+x/canvas.width*r.width, py=y=>r.top+(canvas.height-y)/canvas.height*r.height;
+                    firma=[px(a.x), py(z.y), px(z.x)-px(a.x), py(a.y)-py(z.y)].map(n=>Math.round(n)).join(',');
                 }
                 if(firma===ultimoMarco) return;
                 ultimoMarco=firma;

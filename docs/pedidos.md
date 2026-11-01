@@ -4,6 +4,15 @@
 esta versión (partidas, compras y perfiles), con `public/reinicio-general.js`. Los datos del servidor Supabase de la
 casa no se borraron (sin acceso). El jardín quedó más ligero con varios combates y la tienda sin título grande.
 
+**Hecho por Claude (1 de noviembre) · Versus por territorios, Fusión y minijuegos:**
+
+- **Versus → Territorios:** mapa con La casa, la guarida zombi y 3, 5, 7 o 9 zonas neutrales de los mundos de la
+  historia; cada bando ataca zonas vecinas y puede haber hasta seis batallas a la vez, en un dispositivo o por sala.
+  Gana quien toma la base rival o quien tenga más zonas al acabar el tiempo. Ver `en-obra/pvz-versus-nativo.md`.
+- **Minijuegos:** cada uno muestra su juego de origen (PvZ 1, PvZ 2, PvZ Fusión, propio) y hay un minijuego
+  **Fusión** con doce niveles.
+- **Pendiente después del Jardín:** mejorar mucho los juegos de intelecto del patio (pedido del mismo día).
+
 **Hecho por Claude (1 de noviembre) · arreglos de uso:**
 
 - **Paseo del farol (y cualquier zona de noche) ya no se traba al entrar.** La precarga del campo usaba otras lápidas

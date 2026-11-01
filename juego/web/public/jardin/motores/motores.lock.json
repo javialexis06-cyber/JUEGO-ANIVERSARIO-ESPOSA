@@ -139,8 +139,8 @@
     },
     {
       "path": "pvz2/assets/main/index.js",
-      "bytes": 3830466,
-      "sha256": "3a982bfea707e5ce2fbb519c01f2b557be57026eadebc85fa6e793e202b31d3c"
+      "bytes": 3830472,
+      "sha256": "f43f992101298bf422f2a747594b04f3c5d38c6db4cfd0107c371ad207f74071"
     },
     {
       "path": "pvz2/assets/resources/config.json",
@@ -244,13 +244,13 @@
     },
     {
       "path": "pvz2/historia.js",
-      "bytes": 23243,
-      "sha256": "3fa24714b2b33b2398c753edabb3e6f886b6dd15b6f242d95688f7e888c67bdb"
+      "bytes": 24111,
+      "sha256": "23c84678169d66f242d2d4d21f1c1af8d58f6d499104e0e1194d5689e1265543"
     },
     {
       "path": "pvz2/index.html",
       "bytes": 3455,
-      "sha256": "6bb9bfaaae0d3734db2f63016650105dcda9929bc7653a3bea139c94a6d31a82"
+      "sha256": "875ef21944e012cf8dbbf4c1e978b2fd35c979dccfab8ba0e3f8096dc0c3f1b8"
     },
     {
       "path": "pvz2/index.js",
@@ -259,8 +259,8 @@
     },
     {
       "path": "pvz2/siembra.js",
-      "bytes": 8811,
-      "sha256": "b6be572acbb6cf29eb24cd91ac7e3d36d641f108fb2f61f62f3bc3ed46ddb660"
+      "bytes": 9165,
+      "sha256": "9cc73a4d6ca3923137bf5af49a8f474b99d81b0e0ca17e404b72601f98b3e2ff"
     },
     {
       "path": "pvz2/src/chunks/bundle.js",

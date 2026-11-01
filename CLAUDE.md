@@ -8,6 +8,15 @@ local, de sesión y las bases del juego, perfiles incluidos, y deja la marca `nu
 de recursos y no actúa en navegadores automatizados (pruebas). Los datos del servidor Supabase de la casa (pareja,
 eventos, recuerdos y fotos) no se borraron: no hubo acceso. Desde aquí rige otra vez «conservar partidas».
 
+## Pedido vigente · versus por territorios, revisión del Jardín y juegos de intelecto (1 de noviembre)
+
+Javier pidió, en este orden: un Versus que también se juegue capturando zonas con el motor de la historia, eligiendo
+cuántas zonas neutrales hay y con **las dos personas jugando varias zonas a la vez**; revisar que no haya fallos en
+nada del Jardín; que cada minijuego diga de qué juego viene (PvZ 1, PvZ 2…). **Hasta terminar el Jardín no se
+trabaja en otra cosa.** Después: mejorar mucho lo visual y los tipos de juego de los juegos de intelecto del patio
+(`mente.html`). Hecho el modo Territorios, el minijuego Fusión y los minijuegos rotulados; ver
+[versus nativo](docs/en-obra/pvz-versus-nativo.md). El balance del versus sigue a criterio de Claude (29 de octubre).
+
 ## Pedido vigente · territorios, tienda, tutorial y balance de la campaña (30 de octubre)
 
 Javier pidió:

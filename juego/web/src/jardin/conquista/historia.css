@@ -48,3 +48,21 @@
 .cq-semillas-editor>header{padding:7px 12px 0}.cq-semillas-editor>header .cq-enemigos-previstos{margin-left:auto;background:none;padding:0;height:54px}.cq-semillas-editor>header .cq-enemigos-previstos img{height:52px}
 @media(max-height:560px){.cq-semillas-editor>header{padding-top:5px;min-height:42px}.cq-semillas-editor>header .cq-enemigos-previstos{height:38px}.cq-semillas-editor>header .cq-enemigos-previstos img{height:38px}}
 .cq-derrota-mapa{position:absolute;inset:0;pointer-events:none;filter:brightness(.75)}.cq-derrota-mapa .cq-pin:not([data-zona="8"]),.cq-derrota-mapa .cq-nombre-mapa{display:none}.cq-derrota-mapa [data-zona="8"]{filter:drop-shadow(0 0 16px #d892d9)}.cq-derrota-rotulo{bottom:auto!important;top:8%;left:50%!important;transform:translateX(-50%);white-space:nowrap}.cq-derrota-rotulo h2{font-size:clamp(23px,3vw,38px)!important;background:#382737d6;border:1px solid #d9acd0;border-radius:12px;padding:12px 22px}
+
+/* Minijuegos con el juego de origen de cada uno (1 de noviembre). */
+.cq-biblioteca{width:min(860px,94vw)!important;max-width:94vw!important;max-height:92vh;overflow:auto}
+.cq-biblioteca h2{text-align:center}
+.cq-juegos{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:6px 0 10px}
+#cq-app .cq-juego-carta{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:132px;padding:12px 12px 10px;border-radius:14px;border:3px solid #6b5636;background:#fff6dc;background-image:none;color:#3a2a17;text-align:left;box-shadow:0 4px 0 #6b563666;overflow:hidden;white-space:normal}
+#cq-app .cq-juego-carta:hover{transform:translateY(-2px);box-shadow:0 6px 0 #6b563666}
+.cq-juego-carta b{font-size:16px;line-height:1.15}
+.cq-juego-carta small{font-size:12px;line-height:1.3;color:#5c4a2e;font-weight:700}
+.cq-juego-emoji{position:absolute;right:8px;top:6px;font-size:34px;opacity:.9}
+.cq-juego-etiqueta{display:inline-block;padding:2px 9px;border-radius:999px;font:900 11px Nunito;letter-spacing:.04em;color:#fff;background:#6b5636;margin-bottom:2px}
+.cq-juego-pvz1 .cq-juego-etiqueta{background:#3c8a2f}.cq-juego-pvz1{border-color:#3c8a2f!important}
+.cq-juego-pvz2 .cq-juego-etiqueta{background:#2c6fb0}.cq-juego-pvz2{border-color:#2c6fb0!important}
+.cq-juego-fusion .cq-juego-etiqueta{background:linear-gradient(90deg,#b0369a,#5b3cc4)}.cq-juego-fusion{border-color:#8a3cb0!important}
+.cq-juego-propio .cq-juego-etiqueta{background:#c06a1c}.cq-juego-propio{border-color:#c06a1c!important}
+.cq-juego-mixto .cq-juego-etiqueta{background:#9b7a1c}.cq-juego-mixto{border-color:#9b7a1c!important}
+#cq-app .cq-biblioteca-volver{display:block;margin:0 auto}
+@media(max-height:470px){#cq-app .cq-juego-carta{min-height:96px;padding:8px}.cq-juego-carta small{font-size:11px}.cq-juego-emoji{font-size:24px}}

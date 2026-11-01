@@ -42,6 +42,8 @@ export interface ConfigDefensaNativa {
     reposo: boolean;
     /** Versus de dos personas: sin oleadas ni victoria automática; los zombis los suelta el otro jugador. */
     versus?: boolean;
+    /** Recogida nativa de soles (versus por territorios: hay tableros que nadie mira). */
+    autoSol?: boolean;
     /** Escenario nativo (mundo del país). Sin él se usa el jardín de día o de noche. */
     escenario?: string;
     /** Fusiones disponibles: plantar B sobre A forma la fusión (recetas nativas de evolución). */

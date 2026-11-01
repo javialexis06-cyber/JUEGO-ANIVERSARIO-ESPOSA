@@ -1,0 +1,40 @@
+/* Minijuego Fusión (1 de noviembre de 2026). */
+.fu-app{background:radial-gradient(circle at 70% 15%,#5a2a7a,#1d1230 65%)}
+.fu-menu{position:absolute;inset:0;overflow:auto;padding:16px 18px 24px}
+.fu-menu header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.fu-menu header div{flex:1}
+.fu-menu header small{letter-spacing:.14em;color:#e7b8ff;font:900 11px Nunito}
+.fu-menu header h1{margin:0;font:900 34px Nunito;background:linear-gradient(90deg,#ffd76a,#ff8ad8,#9fd0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fu-cuenta{font:900 16px Nunito;color:#ffe9a8;background:#0006;padding:6px 12px;border-radius:12px}
+.fu-intro{margin:0 0 12px;font-size:14px;color:#f3e3ff;line-height:1.5;max-width:880px}
+.fu-intro .fu-ejemplo{display:inline-flex;vertical-align:middle;margin:0 4px}.fu-intro .fu-ejemplo .fu-receta{flex-direction:row;gap:8px;padding:4px 10px}.fu-intro .fu-ejemplo small{display:none}
+.fu-niveles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+#cq-app .fu-nivel{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:118px;padding:12px;border-radius:16px;border:3px solid var(--mundo);background:linear-gradient(160deg,color-mix(in srgb,var(--mundo) 45%,#1d1230),#1d1230);background-image:linear-gradient(160deg,color-mix(in srgb,var(--mundo) 45%,#1d1230),#1d1230);color:#fff6dc;text-align:left;box-shadow:0 4px 0 #0008;overflow:hidden}
+#cq-app .fu-nivel:hover:not(:disabled){transform:translateY(-2px)}
+.fu-nivel small{font:900 11px Nunito;letter-spacing:.06em;color:#ffe9a8}
+.fu-nivel b{font:900 18px Nunito;line-height:1.15}
+.fu-nivel span{font-size:12px;color:#e8dcff}
+.fu-nivel i{margin-top:auto;font-style:normal;font:900 12px Nunito;padding:3px 10px;border-radius:999px;background:#ffcf3a;color:#3a2405}
+.fu-ganado i{background:#7fd36e!important;color:#163a12!important}
+#cq-app .fu-nivel:disabled{filter:grayscale(.7) brightness(.7);cursor:not-allowed}
+.fu-preparar h2 small{margin-left:6px}
+#cq-app .fu-todas{min-height:0;margin-left:10px;padding:3px 12px;border-radius:999px;font:900 12px Nunito;background:#ffffff22;background-image:none;color:#fff6dc;border:1px solid #ffffff55;box-shadow:none}
+.fu-recetas{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:6px;max-height:36vh;overflow:auto}
+.fu-receta{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 6px 7px;border-radius:12px;background:#f7efd6;color:#3a2a17;text-align:center;border:2px solid #d9c7f0}
+.fu-receta div{display:flex;align-items:center;gap:2px}
+.fu-receta img{width:34px;height:34px;object-fit:contain}
+.fu-receta img.fu-resultado{width:42px;height:42px;filter:drop-shadow(0 0 6px #c58cff)}
+.fu-receta i{font-style:normal;color:#9b6a00;font:900 15px Nunito}
+.fu-receta b{font:900 13px Nunito;color:#6a2a8a;line-height:1.1}
+.fu-receta small{font-size:10px;color:#6b5a3e;line-height:1.2}
+.fu-vacia{padding:8px;color:#f3e3ff}
+.fu-panel{max-width:min(720px,94vw)!important}
+.fu-panel .fu-recetas{max-height:60vh;text-align:left}
+.fu-juego{position:absolute;inset:0}
+.fu-tablero{position:absolute;inset:0}
+.fu-herramientas{position:absolute;left:10px;bottom:10px;z-index:4;display:flex;gap:6px}
+#cq-app .fu-herramientas .cq-redondo{width:40px;height:40px;min-width:40px;min-height:40px;padding:6px;font:900 16px Nunito}
+.fu-capa{position:absolute;inset:0;z-index:6;display:grid;place-items:center;pointer-events:none;padding:12px}
+.fu-capa:not(:empty){background:#0009;pointer-events:auto}
+.fu-aviso{margin-top:10px}
+@media(max-height:470px){.fu-menu header h1{font-size:26px}.fu-intro{font-size:12px}#cq-app .fu-nivel{min-height:92px;padding:8px}.fu-nivel b{font-size:15px}}

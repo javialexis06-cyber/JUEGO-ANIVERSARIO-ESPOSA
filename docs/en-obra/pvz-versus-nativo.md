@@ -53,3 +53,55 @@ no certifican el balance. No se probó una sala real entre dos dispositivos por 
 
 - La vista del invitado es un tablero dibujado (retratos propios, carriles y podadoras); no es la imagen de Cocos.
 - Sin guardado a mitad de partida: salir termina el duelo.
+
+## Versus por territorios (1 de noviembre de 2026)
+
+Javier pidió que el Versus también se pudiera jugar **capturando zonas**, con el mismo motor de la historia, que se
+eligiera cuántas zonas neutrales hay y que **las dos personas jueguen varias zonas a la vez**. Al preparar el duelo
+se elige el modo **Un jardín** (el de arriba, sin cambios) o **Territorios**.
+
+- **Mapa:** La casa (base de las plantas) a la izquierda, la guarida zombi (una fortaleza de Umbra) a la derecha y
+  3, 5, 7 o 9 zonas neutrales entre ellas, cada una de un mundo distinto de la campaña (Egipto, piratas, oeste,
+  hielo…), de 4 a 6 carriles, con su escenario, noche y lápidas nativos. Se dibuja sobre `mapa-pais.webp` con los
+  territorios de bordes orgánicos de la historia y rutas entre zonas vecinas. Hay zonas con agua solo si las
+  plantas llevan nenúfar.
+- **Atacar:** se toca una zona en el mapa. Cada bando ataca solo zonas **vecinas** de las suyas. Una batalla es
+  un duelo del versus en el tablero de esa zona: las plantas la ganan si resisten su reloj; los zombis, si uno
+  entra a la casa (la podadora protege una vez por carril). Quien gana se queda la zona.
+- **Varias a la vez:** hasta 3 ataques abiertos por bando y 6 batallas en total (4 en equipos modestos). Cada
+  batalla corre en su propio tablero de Gardendless; los que no se miran siguen jugando y **recogen sus soles
+  solos** (módulo nativo `AutoCollectProperties`).
+- **Plantas:** siembran en el tablero grande y cambian de batalla con los botones de abajo a la izquierda (sobre la
+  casa, donde no se siembra). Al ganar una zona su defensa queda guardada (plantas, vida, soles y podadoras) y
+  vuelve si la atacan otra vez.
+- **Zombis:** un solo banco de cerebros para todas las batallas. En un dispositivo, la barra de la derecha tiene un
+  tablero objetivo dibujado donde se toca el carril; en una sala, el invitado ve en grande la batalla que elige.
+- **Guarnición:** una zona zombi atacada por las plantas suelta zombis sola; la guarida, más seguido y más fuertes.
+- **Victoria:** tomar la base rival gana al instante. Si se acaba el reloj de la partida (10, 15 o 20 minutos),
+  gana quien tenga más zonas; con las mismas, empate.
+- **Sala:** el anfitrión (plantas) corre todos los tableros y valida cada orden del invitado; manda el estado del
+  mapa y unas siete fotos por segundo de las batallas abiertas. Un corte pausa la partida.
+
+| Valor (versus por territorios) | Cifra |
+|---|---|
+| Reloj de batalla | 2:00; La casa 1:40 (ventaja de local); la guarida 2:30 |
+| Descanso de una zona tras su batalla | 25 s |
+| Cerebros | 200 al empezar; cada 4 s: 15 + 15 por batalla abierta + 10 por zona zombi (tope 2000) |
+| Soles al abrir un tablero nuevo | 150 + 50 por zona de las plantas (tope 400); una zona defendida conserva los suyos |
+| Guarnición | un zombi cada 10 s (zombi o caracono); en la guarida cada 6 s (hasta caracubo y periódico) |
+| Zombis del mazo | los 11 del versus, con sus costes y recargas |
+
+Código: reglas en `src/jardin/motores/versus-territorios.ts` (sin motor), partida en
+`src/jardin/conquista/versus-territorios.ts`. El puente (`historia.js`) acepta para el versus soles iniciales de
+50 a 1000, reutilizar un tablero terminado y guardar su defensa. Pruebas: `scripts/probar-versus-territorios-reglas.mjs`
+(9 reglas) y `scripts/probar-versus-territorios.mjs` (11 recorridos en Gardendless real, en un dispositivo y en sala;
+casos preparados, no balance). La carrera nativa del reproductor de música (`getPosition` sobre una pista ya
+cambiada) se corrigió con un cambio mínimo en `pvz2/assets/main/index.js`, fijado de nuevo en `motores.lock.json`.
+
+## Minijuego Fusión (1 de noviembre de 2026)
+
+`jardin.html?modo=fusion`, desde **Minijuegos → Fusión**: el modo Fusión aparte del encargo del 17 de octubre.
+Doce niveles, uno por mundo de la campaña, con las oleadas ya probadas de esas áreas (sin balance nuevo). Se elige
+un mazo de 8 y se ven las recetas que permite (o las 117); sembrar una planta encima de otra de su receta forma la
+fusión. El progreso va en `pvz-fusion-v1` (`amigo-pvz-fusion-v1` en la versión de amigos). Prueba:
+`scripts/probar-fusion-nativa.mjs`.

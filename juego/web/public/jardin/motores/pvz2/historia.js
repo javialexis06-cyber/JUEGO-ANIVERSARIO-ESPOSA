@@ -33,13 +33,16 @@
     const objetos = c => {
         const local = n => `RTID(${n}@CurrentLevel)`, global = n => `RTID(${n}@LevelModules)`;
         // En versus no hay victoria por oleadas: termina un zombi en la casa o el reloj del coordinador.
-        const modules = ['StandardIntro','DefaultZombieWinCondition',...(!c.noche?['DefaultSunDropper']:[]),...(c.versus?[]:['ZombiesDeadWinCon'])].map(global).concat([local('Semillas'), local('Cortacespedes'), local('Oleadas')]);
+        const modules = ['StandardIntro','DefaultZombieWinCondition',...(!c.noche?['DefaultSunDropper']:[]),...(c.versus?[]:['ZombiesDeadWinCon'])].map(global).concat([local('Semillas'), local('Cortacespedes'), local('Oleadas'), ...(c.autoSol ? [local('AutoSol')] : [])]);
         return [{ objclass: 'LevelDefinition', objdata: { Name:c.nombre, Description: 'La Semilla Madre', StartingSun:c.punto?.soles??c.solInicial, StageModule:global(c.escenario??(c.noche?'ModernNightStage':'TutorialStage')), Loot: global('NoLoot'), Modules: modules } },
                 { objclass: 'SeedBankProperties', aliases: ['Semillas'], objdata: { SelectionMethod: 'preset', SuppressObjectiveTip: true, PresetPlantList: c.semillas.map(PlantType => ({ PlantType })) } },
                 { objclass: 'LawnMowerProperties', aliases: ['Cortacespedes'], objdata: { MowerType: 'mower_lawn', MowerEntryAnimDuration: 2.5, MowerRows: Array.from({ length: Math.max(5,c.filas) }, (_, i) => i < c.filas && (c.punto?.cortacespedes[i] ?? true)) } },
                 { objclass: 'WaveManagerModuleProperties', aliases: ['Oleadas'], objdata: { WaveManagerProps: local('Director') } },
                 { objclass: 'WaveManagerProperties', aliases: ['Director'], objdata: { ZombieCountdownFirstWaveSecs: 18, SpawnRows: Array.from({ length: c.filas }, (_, i) => i), SuppressFlagZombie: true, MinNextWaveHealthPercentage: .5, MaxNextWaveHealthPercentage: .5, FlagWaveInterval: c.versus ? 99 : c.oleadas.length, Waves: c.oleadas.map((_, i) => [local('O' + i)]) } },
                 ...c.oleadas.map((o, i) => ({ objclass: 'SpawnZombiesJitteredWaveActionProps', aliases: ['O' + i], objdata: { Zombies: o.map(z => ({ Row: z.fila + 1, Type: `RTID(${z.tipo}@ZombieTypes)` })) } })),
+                // Versus por territorios: con varios tableros a la vez nadie puede tocar los soles de los que no se ven;
+                // el módulo nativo de recogida automática los suma al banco de ese tablero.
+                ...(c.autoSol ? [{ objclass: 'AutoCollectProperties', aliases: ['AutoSol'], objdata: { AutoCollectList: ['sun'] } }] : []),
                 ...fusionesNivel(c)];
     };
     /** Fusión: los tipos nuevos y los padres con sus recetas de evolución viajan en los datos del nivel (CurrentLevel),
@@ -82,13 +85,13 @@
     const baseFusion = t => semillaCatalogoNativo.fusiones.find(f => f.id === t && f.props)?.base ?? semillaCatalogoNativo.derivadas.find(d => d.id === t)?.base ?? t;
     const fusionadas = c => new Set((c.fusiones ?? []).map(id => semillaCatalogoNativo.fusiones.find(f => f.id === id)?.id).filter(Boolean));
     const validar = c => {
-            if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>239||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||![50,100,150].includes(c.solInicial) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))
+            if (!c || !Number.isInteger(c.zona)||c.zona<0||c.zona>239||!Number.isInteger(c.filas)||c.filas<3||c.filas>7||!Array.isArray(c.agua)||c.agua.some(f=>!Number.isInteger(f)||f<0||f>=c.filas)||typeof c.noche!=='boolean'||!([50,100,150].includes(c.solInicial)||c.versus===true&&Number.isInteger(c.solInicial)&&c.solInicial>=50&&c.solInicial<=1000&&c.solInicial%25===0) || !Array.isArray(c.semillas) || c.semillas.length > 8 || new Set(c.semillas).size !== c.semillas.length || c.semillas.some(t => !tipos().includes(t)))
                 throw Error('Equipo o escenario incompatible.');
             if (c.escenario !== undefined && !Object.hasOwn(semillaCatalogoNativo.escenarios, c.escenario))
                 throw Error('Escenario desconocido.');
             if (c.fusiones !== undefined && (!Array.isArray(c.fusiones) || c.fusiones.length > 200 || c.fusiones.some(f => !semillaCatalogoNativo.fusiones.some(x => x.id === f))))
                 throw Error('Fusiones desconocidas.');
-            if (c.versus !== undefined && typeof c.versus !== 'boolean')
+            if (c.versus !== undefined && typeof c.versus !== 'boolean' || c.autoSol !== undefined && typeof c.autoSol !== 'boolean')
                 throw Error('Modo incompatible.');
             if (!Array.isArray(c.oleadas) || c.oleadas.length < 1 || c.oleadas.length > 20 || c.oleadas.some(o => !Array.isArray(o) || o.length > 40 || o.some(z => !zombisValidos().has(z.tipo) || !Number.isInteger(z.fila) || z.fila < 0 || z.fila >= c.filas)))
                 throw Error('Oleadas incompatibles.');
@@ -101,7 +104,8 @@
     const api = window.semillaHistoriaMotor = {
         get activa() { return !!config && !preparada && !preparando; }, get preparada() { return preparada || reposo; }, get pausada() { return pausada || reposo; },
         async preparar(c) {
-            if (config && !preparada && !reposo && !nivel().gameWon && !nivel().gameLost)
+            // Un tablero del versus lo reutiliza el coordinador al terminar su batalla (versus por territorios).
+            if (config && !config.versus && !preparada && !reposo && !nivel().gameWon && !nivel().gameLost)
                 throw Error('La defensa ya está creada.');
             validar(c);
             const reinicio=!!config;
@@ -186,7 +190,7 @@
             render ??= cc.director.root.frameMove.bind(cc.director.root);
             cc.director.root.frameMove = dt => { if (visible)
                 render(dt); };
-            semillaMotor.puedeCerrar = () => preparando || preparada || reposo || nivel().gameWon || nivel().gameLost;
+            semillaMotor.puedeCerrar = () => preparando || preparada || reposo || !!config?.versus || nivel().gameWon || nivel().gameLost;
             semillaMotor.mensajeCierre = 'Vuelve al mapa para cambiar de frente. Termina los combates antes de cerrar la historia.';
             preparando = false;
             preparada = true;
@@ -293,7 +297,8 @@
             return { soles: m('SunCount').SunCount.Value, zombis: zs, plantas: ps, cortacespedes: nivel().currentMowerLanes.slice(), ganaron: nivel().gameWon ? 'plantas' : nivel().gameLost ? 'zombis' : null, pantalla: { filas, derecha, ancho } };
         },
         punto() {
-            if (!reposo && !nivel().gameWon)
+            // En el versus por territorios la defensa que resistió el reloj se conserva para la próxima batalla de la zona.
+            if (!reposo && !nivel().gameWon && !config?.versus)
                 throw Error('El combate activo todavía no se puede guardar como defensa terminada.');
             const cells = new Set();
             // Plantas que no son del catálogo (la plántula que deja la bomba atómica): no se guardan en el punto de

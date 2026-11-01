@@ -63,3 +63,16 @@
 .vs-fin h2{font-size:30px;font-weight:900;margin:0 0 6px}.vs-fin-zombis h2{color:#7b2a52}.vs-fin-plantas h2{color:#2f7a2f}
 .vs-fin div{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .vs-fin div>button:not(.vs-principal){border:2px solid #3a2a17;background:transparent;border-radius:999px;padding:8px 16px}
+
+/* Modo del duelo y opciones del versus por territorios (1 de noviembre). */
+.vs-modos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+#cq-app .vs-modos button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:0;padding:10px 14px;border-radius:14px;border:3px solid #0d2414;background:#24502f;background-image:none;color:#fff8e6;text-align:left;box-shadow:0 3px 0 #0d2414}
+.vs-modos b{font-size:17px}.vs-modos span{font-size:12px;color:#c9e7a4;line-height:1.3}
+#cq-app .vs-modos [aria-pressed=true]{background:#ffcf3a;color:#3a2405;border-color:#9b6a00;box-shadow:0 0 0 2px #0d2414,0 0 14px 3px rgba(255,207,58,.75)}
+#cq-app .vs-modos [aria-pressed=true] span{color:#5d4100}
+.vs-opciones-vt{display:flex;flex-wrap:wrap;gap:8px}
+#cq-app .vs-opciones-vt button{display:flex;flex-direction:column;align-items:center;min-width:76px;min-height:0;padding:8px 12px;border-radius:12px;border:3px solid #0d2414;background:#24502f;background-image:none;color:#fff8e6;box-shadow:0 3px 0 #0d2414}
+.vs-opciones-vt b{font-size:18px}.vs-opciones-vt span{font-size:11px;color:#c9e7a4}
+#cq-app .vs-opciones-vt [aria-pressed=true]{background:#ffcf3a;color:#3a2405;border-color:#9b6a00;box-shadow:0 0 0 2px #0d2414,0 0 12px 3px rgba(255,207,58,.7)}
+#cq-app .vs-opciones-vt [aria-pressed=true] span{color:#5d4100}
+.vs-nota{margin:8px 0 0;font-size:13px;color:#c9e7a4}

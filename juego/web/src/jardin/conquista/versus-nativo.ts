@@ -16,6 +16,8 @@ import type { Sala } from '../../salas/tipos';
 import { AtlasPvZ } from '../pvz/arte/atlas';
 import { RetratosPvZ } from '../pvz/ui/retratos';
 import { PLANTAS_PVZ } from '../pvz/datos/plantas';
+import { crearEleccionVT, eleccionVTSegura, llevaNenufar, VT as VT_REGLAS, type EleccionVT } from '../motores/versus-territorios';
+import { jugarTerritorios } from './versus-territorios';
 
 const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 // Todo el catálogo: las 32 heredadas con su identificador propio y el resto de plantas nativas.
@@ -23,7 +25,7 @@ const HEREDADAS = new Set<string>(Object.values(TIPOS_NATIVOS));
 const SEMILLAS = [...Object.keys(TIPOS_NATIVOS), ...PLANTAS_NATIVAS.map(p => p.id).filter(id => !HEREDADAS.has(id))] as SemillaNativa[];
 const reloj = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 type Rol = 'local' | 'anfitrion' | 'invitado';
-type Pantalla = 'menu' | 'sala' | 'preparar' | 'esperando' | 'cargando' | 'juego';
+type Pantalla = 'menu' | 'sala' | 'preparar' | 'esperando' | 'cargando' | 'juego' | 'territorios';
 /** Lo que el anfitrión elige y manda al invitado: con esto los dos saben qué tablero se juega. */
 interface EleccionVersus { version: 1; sesion: string; zona: number; semillas: SemillaNativa[] }
 /** Foto que el anfitrión manda unas diez veces por segundo. */
@@ -49,6 +51,8 @@ export async function montarVersusNativo() {
     let tablero: EstadoVersusNativo | null = null, anteriorTablero: EstadoVersusNativo | null = null, llegada = 0;
     let elegido: string | null = null, ganador: 'plantas' | 'zombis' | null = null, pausa = false, aviso = '', avisoHasta = 0;
     let raf = 0, anterior = performance.now(), acumulado = 0, enPaso = false, ultimoEstado = 0, n = 0, ultimaFoto = -1, muerto = false, generacion = 0, envios = 0;
+    // Versus por territorios (1 de noviembre): mapa con zonas neutrales y varias batallas a la vez.
+    let modo: 'jardin' | 'territorios' = 'jardin', neutrales = 5, duracionVT = 900, territorio: { cerrar(): void } | null = null;
     await Promise.all([atlas.cargar(undefined, ['dia', 'noche', 'piscina', 'niebla', 'tripitidora', 'ropa', 'protegidos', 'especiales', 'agua']), cargarRetratosNativos().catch(() => undefined)]);
     const nombrePlanta = (t: SemillaNativa) => nombrePlantaCatalogo(t, PLANTAS_PVZ[t] ? nombreSemillaNativa(t, PLANTAS_PVZ[t].nombre) : undefined);
     const imgPlanta = (t: string) => { try { return ARTE_PLANTAS_PVZ[t] ? retratos.planta(t) : retratoPlantaNativa(t); } catch { return ''; } };
@@ -59,7 +63,7 @@ export async function montarVersusNativo() {
     // ------------------------------------------------------------------ menús
     function menu(mensaje = '') {
         cerrarPartida(); salirSala(); pantalla = 'menu'; rol = 'local';
-        root.innerHTML = `<section class="vs-menu"><header><small>PLANTAS CONTRA ZOMBIS</small><h1>Versus</h1><p>Una persona siembra plantas; la otra manda zombis. Las plantas ganan si resisten ${reloj(VERSUS.duracion)} minutos; los zombis, si uno llega a la casa.</p></header>
+        root.innerHTML = `<section class="vs-menu"><header><small>PLANTAS CONTRA ZOMBIS</small><h1>Versus</h1><p>Una persona siembra plantas; la otra manda zombis. En <b>Un jardín</b> las plantas ganan si resisten ${reloj(VERSUS.duracion)} minutos; en <b>Territorios</b> se disputan un mapa con varias batallas a la vez.</p></header>
         <div class="vs-opciones"><button data-vs="local"><b>En este dispositivo</b><span>Las plantas juegan en el tablero; los zombis, con la barra de la derecha.</span></button>
         <button data-vs="crear"><b>Crear sala</b><span>Tú siembras plantas. Comparte el código con quien lleve los zombis.</span></button>
         <form class="vs-unirse"><label><b>Unirse con código</b><span>Llevas los zombis desde otro dispositivo.</span><input name="codigo" maxlength="8" autocomplete="off" placeholder="CÓDIGO" aria-label="Código de la sala"></label><button>Entrar</button></form></div>
@@ -69,7 +73,11 @@ export async function montarVersusNativo() {
         pantalla = 'preparar';
         const esc0 = escenarioHistoriaPvZ(zona).nivel;
         root.innerHTML = `<section class="vs-preparar"><header><button class="vs-volver" data-vs="${rol === 'anfitrion' ? 'salir-sala' : 'menu'}">Atrás</button><div><small>${rol === 'anfitrion' ? 'SALA ' + esc(sala?.codigo ?? '') + ' · TÚ LLEVAS LAS PLANTAS' : 'VERSUS EN ESTE DISPOSITIVO'}</small><h1>Prepara el duelo</h1></div><button class="vs-principal" data-vs="jugar" ${semillas.length ? '' : 'disabled'}>¡A jugar!</button></header>
-        <h2>Escenario</h2><div class="vs-escenarios">${ESCENARIOS_HISTORIA_PVZ.map(e => { const nv = e.nivel; return `<button data-zona="${e.id}" aria-pressed="${e.id === zona}"><b>${esc(e.nombre)}</b><span>${nv.tablero!.filas} carriles${nv.filasAgua?.length ? ' · agua' : ''}${nv.sinSolCielo ? ' · noche' : ''}</span></button>`; }).join('')}</div>
+        <h2>Modo</h2><div class="vs-modos"><button data-vs-modo="jardin" aria-pressed="${modo === 'jardin'}"><b>🌻 Un jardín</b><span>Un tablero: las plantas resisten ${reloj(VERSUS.duracion)} min o un zombi entra a la casa.</span></button><button data-vs-modo="territorios" aria-pressed="${modo === 'territorios'}"><b>🗺 Territorios</b><span>Un mapa con zonas por conquistar y varias batallas a la vez, con los mundos de la historia.</span></button></div>
+        ${modo === 'territorios' ? `<h2>Zonas neutrales</h2><div class="vs-opciones-vt">${VT_REGLAS.neutrales.map(k => `<button data-vt-neutrales="${k}" aria-pressed="${k === neutrales}"><b>${k}</b><span>${k <= 3 ? 'Rápida' : k <= 5 ? 'Normal' : k <= 7 ? 'Grande' : 'Enorme'}</span></button>`).join('')}</div>
+        <h2>Duración de la partida</h2><div class="vs-opciones-vt">${VT_REGLAS.duraciones.map(d => `<button data-vt-duracion="${d}" aria-pressed="${d === duracionVT}"><b>${d / 60} min</b></button>`).join('')}</div>
+        <p class="vs-nota">Las zonas salen de los mundos de la historia (Egipto, piratas, oeste, hielo…). ${llevaNenufar(semillas) ? 'Llevas nenúfar: puede haber zonas con agua.' : 'Sin nenúfar no habrá zonas con agua.'}</p>`
+        : `<h2>Escenario</h2><div class="vs-escenarios">${ESCENARIOS_HISTORIA_PVZ.map(e => { const nv = e.nivel; return `<button data-zona="${e.id}" aria-pressed="${e.id === zona}"><b>${esc(e.nombre)}</b><span>${nv.tablero!.filas} carriles${nv.filasAgua?.length ? ' · agua' : ''}${nv.sinSolCielo ? ' · noche' : ''}</span></button>`; }).join('')}</div>`}
         <h2>Semillas de las plantas <small>${semillas.length} / 8</small></h2><div class="vs-semillas">${SEMILLAS.map(t => `<button data-semilla="${t}" aria-pressed="${semillas.includes(t)}"${semillas.includes(t) ? ` data-orden="${semillas.indexOf(t) + 1}"` : ''} title="${esc(nombrePlanta(t))}"><img src="${imgPlanta(t)}" alt=""><span>${esc(nombrePlanta(t))}</span></button>`).join('')}</div>
         <h2>Zombis disponibles</h2><div class="vs-zombis-lista">${new ReglasVersus(esc0.filasAgua ?? [], esc0.tablero!.filas).disponibles().map(z => `<figure><img src="${imgZombi(z.propio)}" alt=""><figcaption>${esc(z.nombre)}<span>🧠 ${z.coste}</span></figcaption></figure>`).join('')}</div></section>`;
     }
@@ -101,7 +109,8 @@ export async function montarVersusNativo() {
     function escucharSala(s: Sala) {
         const otro = () => s.jugadores.find(j => j.id !== s.yo.id);
         quitarSala.push(
-            s.al('vs:eleccion', (d, de) => { if (rol !== 'invitado' || de.puesto !== 0 || !eleccionSegura(d)) return; sesion = d.sesion; zona = d.zona; semillas = d.semillas; ultimaFoto = -1; empezarInvitado(); }),
+            s.al('vs:eleccion', (d, de) => { if (rol !== 'invitado' || de.puesto !== 0 || !eleccionSegura(d)) return; cerrarPartida(); sesion = d.sesion; zona = d.zona; semillas = d.semillas; ultimaFoto = -1; empezarInvitado(); }),
+            s.al('vt:eleccion', (d, de) => { if (rol !== 'invitado' || de.puesto !== 0 || !eleccionVTSegura(d, t => SEMILLAS.includes(t as SemillaNativa))) return; cerrarPartida(); sesion = d.sesion; lanzarTerritorios(d); }),
             s.al('vs:foto', (d, de) => {
                 const f = d as FotoVersus;
                 if (rol !== 'invitado' || de.puesto !== 0 || f?.sesion !== sesion || !Number.isSafeInteger(f.n) || f.n <= ultimaFoto || !f.tablero || !Array.isArray(f.tablero.zombis) || f.tablero.zombis.length > 200 || !Array.isArray(f.tablero.plantas) || f.tablero.plantas.length > 200) return;
@@ -120,7 +129,7 @@ export async function montarVersusNativo() {
     }
 
     // ------------------------------------------------------------------ partida
-    function cerrarPartida() { cancelAnimationFrame(raf); raf = 0; const f = frente; frente = null; void f?.cerrar().catch(() => {}); config = null; reglas = null; tablero = anteriorTablero = null; ganador = null; elegido = null; pausa = false; enPaso = false; }
+    function cerrarPartida() { territorio?.cerrar(); territorio = null; cancelAnimationFrame(raf); raf = 0; const f = frente; frente = null; void f?.cerrar().catch(() => {}); config = null; reglas = null; tablero = anteriorTablero = null; ganador = null; elegido = null; pausa = false; enPaso = false; }
     function plantillaJuego() {
         const zombisHTML = reglas!.disponibles().map(z => `<button class="vs-carta" data-zombi="${z.id}" aria-pressed="false" title="${esc(z.nombre)} · ${z.coste} cerebros"><img src="${imgZombi(z.propio)}" alt=""><span>🧠 ${z.coste}</span><i class="vs-recarga"></i></button>`).join('');
         const cartas = rol !== 'anfitrion';
@@ -150,6 +159,21 @@ export async function montarVersusNativo() {
             anterior = performance.now(); acumulado = 0;
             raf = requestAnimationFrame(cuadroAnfitrion);
         } catch (e) { if (g === generacion) menu('No se pudo abrir el jardín: ' + (e as Error).message); }
+    }
+    function lanzarTerritorios(eleccion: EleccionVT) {
+        pantalla = 'territorios';
+        territorio = jugarTerritorios({
+            root, rol, sala, perfil, eleccion, imgPlanta, imgZombi,
+            alSalir: m => { territorio = null; if (rol === 'local') preparar(); else menu(m ?? ''); },
+            alOtra: () => { territorio = null; if (rol === 'invitado') esperando('El jardinero está eligiendo semillas…'); else preparar(); },
+        });
+    }
+    function empezarTerritorios() {
+        cerrarPartida();
+        sesion = crypto.randomUUID();
+        const eleccion = crearEleccionVT({ sesion, semilla: Math.floor(Math.random() * 2 ** 31), neutrales, duracion: duracionVT, semillas });
+        if (rol === 'anfitrion') sala?.mandar('vt:eleccion', eleccion);
+        lanzarTerritorios(eleccion);
     }
     function empezarInvitado() {
         const nv = escenarioHistoriaPvZ(zona).nivel;
@@ -266,7 +290,7 @@ export async function montarVersusNativo() {
             const s = tablero, a = anteriorTablero, mezcla = Math.min(1, (performance.now() - llegada) / 110);
             if (s) {
                 for (let f = 0; f < filas; f++) if (s.cortacespedes[f]) { ctx.fillStyle = '#d64a3a'; ctx.fillRect(x0 - cw * .45, y0 + f * ch + ch * .55, cw * .35, ch * .22); }
-                for (const p of s.plantas) { const src = imgPlanta(PROPIO_PLANTA[p.tipo] ?? ''); if (!src) continue; const im = img(src); if (im.complete && im.naturalWidth) { const h = ch * .82, w = h * im.naturalWidth / im.naturalHeight; ctx.drawImage(im, x0 + (p.col + .5) * cw - w / 2, y0 + (p.fila + .92) * ch - h, w, h); } }
+                for (const p of s.plantas) { const src = imgPlanta(PROPIO_PLANTA[p.tipo] ?? p.tipo); if (!src) continue; const im = img(src); if (im.complete && im.naturalWidth) { const h = ch * .82, w = h * im.naturalWidth / im.naturalHeight; ctx.drawImage(im, x0 + (p.col + .5) * cw - w / 2, y0 + (p.fila + .92) * ch - h, w, h); } }
                 const zs = [...s.zombis].sort((p, q) => p.fila - q.fila);
                 for (const z of zs) {
                     const antes = a?.zombis.find(v => v.tipo === z.tipo && v.fila === z.fila && Math.abs(v.x - z.x) < .5), x = antes ? antes.x + (z.x - antes.x) * mezcla : z.x;
@@ -284,7 +308,11 @@ export async function montarVersusNativo() {
     root.addEventListener('click', e => {
         const el = (e.target as HTMLElement).closest<HTMLElement>('button');
         if (!el) return;
+        if (pantalla === 'territorios') return;
         if (el.dataset.zona) { zona = Number(el.dataset.zona); preparar(); return; }
+        if (el.dataset.vsModo) { modo = el.dataset.vsModo === 'territorios' ? 'territorios' : 'jardin'; preparar(); return; }
+        if (el.dataset.vtNeutrales) { neutrales = Number(el.dataset.vtNeutrales); preparar(); return; }
+        if (el.dataset.vtDuracion) { duracionVT = Number(el.dataset.vtDuracion); preparar(); return; }
         if (el.dataset.semilla) { const t = el.dataset.semilla as SemillaNativa; semillas = semillas.includes(t) ? semillas.filter(s => s !== t) : semillas.length < 8 ? [...semillas, t] : semillas; if (semillas.length === 8 && !semillas.includes(t)) noticia('Caben ocho semillas.');
             // Se redibuja el menú conservando dónde estaba cada lista: antes saltaba al inicio y no se veía qué se eligió.
             const desplazados = [root, ...root.querySelectorAll<HTMLElement>('*')].filter(x => x.scrollTop > 0).map(x => [x === root ? null : [...root.querySelectorAll('*')].indexOf(x), x.scrollTop] as const);
@@ -300,7 +328,7 @@ export async function montarVersusNativo() {
             case 'menu': menu(); break;
             case 'volver': volverJardin(); break;
             case 'salir-sala': menu(); break;
-            case 'jugar': if (semillas.length) void empezarLocalOAnfitrion(); break;
+            case 'jugar': if (semillas.length) { if (modo === 'territorios') empezarTerritorios(); else void empezarLocalOAnfitrion(); } break;
             case 'pausa': void pausar(!pausa); break;
             case 'abandonar': if (pantalla === 'juego' && !ganador && !confirm('¿Salir del duelo?')) break; if (rol === 'local') { cerrarPartida(); preparar(); } else menu(); break;
             case 'otra': cerrarPartida(); if (rol === 'anfitrion') sala?.mandar('vs:otra', {}); preparar(); break;

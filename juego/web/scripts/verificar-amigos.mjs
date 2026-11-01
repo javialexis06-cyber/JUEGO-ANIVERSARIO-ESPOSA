@@ -74,7 +74,7 @@ for (const p of ['pvz1/index.html','pvz1/pvz-portable.html','pvz2/index.html']) 
 // Coincidencias públicas de Gardendless: mundo Halloween y detección de iPhone.
 // Solo se admiten en los bytes revisados de esos cuatro distribuibles; las demás palabras/frases siguen activas.
 const EXTERNOS_PVZ = {
-  'pvz2/assets/main/index.js': ['3a982bfea707e5ce2fbb519c01f2b557be57026eadebc85fa6e793e202b31d3c', 'Halloween'],
+  'pvz2/assets/main/index.js': ['f43f992101298bf422f2a747594b04f3c5d38c6db4cfd0107c371ad207f74071', 'Halloween'],
   'pvz2/assets/resources/config.json': ['347d9145e173863487189617410959dc1bbb93fe27a15cba715dabc175c3adec', 'Halloween'],
   'pvz2/audio/manifest.json': ['77ccb8534419911f6430e45ed1f67cda99edde0c725577e018ed7980e9fc36f7', 'Halloween'],
   'pvz2/cocos-js/_virtual_cc-937a2166.js': ['cf800aff939138b976b7155adec58eada72d3831b0be5887bd806868e861c276', 'iPhone'],

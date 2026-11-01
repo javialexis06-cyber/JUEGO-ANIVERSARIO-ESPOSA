@@ -3,7 +3,7 @@
  * Cada marcador (país, ciudad o área) reclama la parte del dibujo más cercana a él; las fronteras se ondulan con
  * ruido para que parezcan trazadas a mano y no cuadros. Se pinta en un lienzo de baja resolución que el navegador
  * escala con suavizado: el borde queda como un trazo de acuarela. El mar del mundo y de los países se tiñe menos. */
-export type EstadoTerritorio = 'plantas' | 'atacada' | 'recuperable' | 'zombis' | 'bloqueada' | 'mixta';
+export type EstadoTerritorio = 'plantas' | 'atacada' | 'recuperable' | 'zombis' | 'bloqueada' | 'mixta' | 'neutral' | 'disputa';
 export interface Territorio { id: number; x: number; y: number; estado: EstadoTerritorio; progreso?: number }
 
 const ANCHO = 384, ALTO = 216;
@@ -76,6 +76,10 @@ const COLORES: Record<EstadoTerritorio, { relleno: [number, number, number]; bor
     zombis: { relleno: [140, 60, 200], borde: [214, 170, 255], alfa: .48, trama: 'rayas' },
     bloqueada: { relleno: [118, 46, 176], borde: [190, 150, 235], alfa: .55, trama: 'rayas' },
     mixta: { relleno: [140, 60, 200], borde: [244, 222, 168], alfa: .42, trama: 'rayas' },
+    // Versus por territorios: zona sin dueño, apenas un velo de pergamino.
+    neutral: { relleno: [236, 222, 176], borde: [255, 246, 214], alfa: .14, trama: 'puntos' },
+    // Zona neutral con una batalla en curso: pergamino con borde rojo.
+    disputa: { relleno: [236, 222, 176], borde: [255, 96, 64], alfa: .2, trama: 'puntos' },
 };
 export class CapaTerritorios {
     readonly lienzo = document.createElement('canvas');

@@ -1,0 +1,135 @@
+/* Versus por territorios (1 de noviembre de 2026): mapa de zonas, tableros simultáneos y barra de los zombis. */
+.vt-juego{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) var(--vt-barra,clamp(210px,24vw,292px));background:#0d2016;color:#fff6dc;font-family:Nunito,system-ui,sans-serif;font-weight:700;overflow:hidden}
+.vt-rol-anfitrion{--vt-barra:clamp(180px,19vw,240px)}
+.vt-escena{position:relative;overflow:hidden;min-width:0;background:#10271a}
+.vt-oculto{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+
+/* Mapa: se ve entero (zonas cerca del borde incluidas) sobre un fondo desenfocado del mismo dibujo. */
+.vt-mapa{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;transition:opacity .2s}
+.vt-mapa-fondo{position:absolute;inset:-40px;background:center/cover;filter:blur(20px) brightness(.42) saturate(1.25)}
+#cq-app .vt-mapa .cq-cartografia{position:relative;inset:auto;width:min(100%,177.78vh);height:auto;aspect-ratio:16/9;max-height:100%;background-size:100% 100%;border-radius:14px;box-shadow:0 12px 40px #000b,0 0 0 3px #c9a96c66}
+.vt-rutas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;filter:drop-shadow(0 1px 1px #000a)}
+.vt-ruta{stroke:#fff3c4;stroke-width:3.5;stroke-dasharray:1 7;stroke-linecap:round;opacity:.8;vector-effect:non-scaling-stroke;fill:none}
+.vt-ruta-plantas{stroke:#b8f08a;stroke-dasharray:none;opacity:.7}
+.vt-ruta-zombis{stroke:#cfa6f2;stroke-dasharray:none;opacity:.7}
+.vt-pin .cq-emblema{transition:transform .15s}
+.vt-pin-plantas .cq-emblema{background:radial-gradient(circle at 35% 25%,#a8d569,#3c772f)!important;border-color:#d8eda2!important}
+.vt-pin-zombis .cq-emblema{background:radial-gradient(circle at 35% 25%,#a377c4,#55326f)!important;border-color:#bca0df!important}
+.vt-pin-neutral .cq-emblema{background:radial-gradient(circle at 35% 25%,#f4e8c2,#9c8a5c)!important;border-color:#fff4cf!important;color:#4a3a1c}
+.vt-pin-base .cq-emblema{width:44px!important;height:50px!important}
+.vt-pin-base b{font-size:14px!important}
+.vt-pin-alcance .cq-emblema{box-shadow:0 0 0 3px #ffd66a,0 0 18px 6px #ffcf54aa!important;animation:vt-llamado 1.6s ease-in-out infinite}
+.vt-pin-batalla .cq-emblema{animation:vt-latido 1s ease-in-out infinite}
+.vt-pin-batalla .hn-chip{background:#8d2416e6!important;color:#fff!important}
+.vt-pin-elegida b{background:linear-gradient(#ffe7a0,#e2b64e)!important;color:#3a2405!important;border-color:#fff4cf!important;text-shadow:none!important}
+@keyframes vt-latido{50%{box-shadow:0 0 0 5px #ff5a3c99,0 0 24px 10px #ff5a3c88}}
+@keyframes vt-llamado{50%{box-shadow:0 0 0 5px #ffd66a,0 0 26px 10px #ffcf54cc}}
+.vt-leyenda{position:absolute;left:50%;top:10px;transform:translateX(-50%);display:flex;gap:6px;z-index:3;font:900 11px Nunito;pointer-events:none}
+.vt-leyenda span{padding:3px 9px;border-radius:10px;background:#21140cd9;color:#fff4ce;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.vt-leyenda span:before{content:'';width:10px;height:10px;border-radius:50%;background:currentColor}
+.vt-l-plantas{color:#a8e27a!important}.vt-l-neutral{color:#efe2b8!important}.vt-l-zombis{color:#cfa6f2!important}.vt-l-alcance{color:#ffd66a!important}
+
+/* Tableros nativos y vista dibujada. */
+.vt-motores,.vt-motor{position:absolute;inset:0}
+.vt-lienzo{position:absolute;inset:0;width:100%;height:100%;cursor:pointer;display:block}
+.vt-cargando{position:absolute;inset:0;display:grid;place-content:center;gap:6px;text-align:center;background:radial-gradient(circle,#24502fee,#10271af5);z-index:3}
+.vt-cargando b{font:900 24px Nunito;color:#ffe9a8}.vt-cargando span{color:#cfe7b5}
+.vt-carriles{position:absolute;inset:0;pointer-events:none;z-index:4}
+.vt-carriles .vs-carril{pointer-events:auto}
+
+/* Batallas de las plantas: sobre la casa del tablero (abajo a la izquierda), donde no se siembra. */
+.vt-frentes{position:absolute;left:8px;bottom:8px;z-index:6;display:flex;flex-direction:column;gap:5px;max-width:min(214px,27%)}
+#cq-app .vt-chip{position:relative;display:flex;align-items:center;gap:6px;min-height:0;padding:6px 10px 8px;border-radius:12px;background:linear-gradient(#3b2a17f2,#24170cf5);background-image:linear-gradient(#3b2a17f2,#24170cf5);border:2px solid #c9a96c;color:#fff4ce;font:900 12px Nunito;box-shadow:0 3px 8px #0009;overflow:hidden;text-align:left;text-shadow:none}
+#cq-app .vt-chip svg{width:16px;height:16px;flex:none}
+.vt-chip b{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt-chip span{font-variant-numeric:tabular-nums;color:#ffe9a8}
+#cq-app .vt-chip.vt-de-zombis{border-color:#bca0df}
+#cq-app .vt-chip.vt-activo{border-color:#ffe14a;box-shadow:0 0 0 2px #3a2405,0 0 14px 3px #ffe14aaa}
+#cq-app .vt-chip.vt-peligro{animation:vt-latido 1s ease-in-out infinite}
+.vt-barrita{position:absolute;left:0;bottom:0;height:3px;width:var(--p,0%);background:#7fd36e;transition:width .3s linear}
+.vt-de-zombis .vt-barrita{background:#c08ef0}
+
+/* Ficha de la zona elegida en el mapa. */
+.vt-ficha{position:absolute;right:12px;bottom:12px;z-index:8;width:min(340px,calc(100% - 24px));background:linear-gradient(#f7ecd0,#ecdcb4);color:#3d3a24;border-radius:16px;border:3px solid #8a6a3a;box-shadow:0 10px 28px #000b;padding:12px 14px 14px}
+.vt-ficha header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.vt-ficha header small{display:block;font:900 10px Nunito;letter-spacing:.12em;color:#7a6438;text-transform:uppercase}
+.vt-ficha header b{font:900 20px Nunito;line-height:1.1;color:#3a2a12}
+#cq-app .vt-cerrar{min-height:0;width:30px;height:30px;padding:0;border-radius:50%;background:#5d4326;background-image:none;color:#fff4ce;font:900 18px Nunito;flex:none}
+.vt-datos{display:flex;flex-wrap:wrap;gap:5px;list-style:none;margin:8px 0 6px;padding:0}
+.vt-datos li{padding:2px 8px;border-radius:10px;background:#fff8e2;border:1px solid #d6c08e;font:900 12px Nunito}
+.vt-datos .vt-d-plantas{background:#d8f7a8;border-color:#3fae2a}.vt-datos .vt-d-zombis{background:#e6d2f7;border-color:#9a6cc4}
+.vt-ficha p{margin:4px 0 8px;font-size:13px;line-height:1.35}
+.vt-acciones{display:flex;flex-direction:column;gap:6px}
+#cq-app .vt-atacar,#cq-app .vt-ver{min-height:0;padding:9px 14px;border-radius:999px;font:900 14px Nunito;background-image:none;border:0;box-shadow:0 4px 0 #0005}
+#cq-app .vt-atacar-plantas{background:#57b33f;color:#fff}
+#cq-app .vt-atacar-zombis{background:#8a4fc0;color:#fff}
+#cq-app .vt-ver{background:#ffcf3a;color:#3a2405}
+#cq-app .vt-atacar:disabled{background:#b7ab8c;color:#6c6244;box-shadow:none;cursor:not-allowed}
+.vt-motivo{display:block;margin-top:-2px;color:#7a4a1a;font-size:12px;text-align:center}
+
+.vt-aviso{position:absolute;top:24%;left:50%;transform:translateX(-50%);z-index:9;background:#21140ceb;color:#ffe9a8;padding:8px 16px;border-radius:12px;font:900 14px Nunito;max-width:80%;text-align:center;box-shadow:0 4px 12px #0008;pointer-events:none}
+.vt-capa{position:absolute;inset:0;z-index:10;display:grid;place-items:center;pointer-events:none;padding:12px}
+.vt-capa:not(:empty){background:#0009;pointer-events:auto}
+.vt-modal{max-height:calc(100vh - 24px);overflow:auto}
+.vt-intro{max-width:min(560px,94vw)!important;text-align:left!important}
+.vt-intro small{display:block;letter-spacing:.14em;color:#6c8a3a;font:900 11px Nunito}
+.vt-intro h2{text-align:left}
+.vt-reglas{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.vt-reglas li{font-size:14px;line-height:1.35;padding:8px 10px;border-radius:12px;background:#fff8e2;border:1px solid #e0cfa2}
+.vt-reglas em{font-style:normal;text-decoration:underline;text-decoration-color:#e2b64e;text-decoration-thickness:3px}
+.vt-recuento{display:flex;justify-content:center;gap:8px;list-style:none;padding:0;margin:8px 0}
+.vt-recuento li{padding:4px 10px;border-radius:10px;background:#2b2a1f;font:900 14px Nunito}
+
+/* Barra: reloj, cerebros, zombis, tablero objetivo y batallas. */
+.vt-barra{display:flex;flex-direction:column;gap:8px;padding:10px;background:linear-gradient(#1f3a27,#132519);border-left:3px solid #3e6a35;overflow-y:auto;min-width:0}
+.vt-barra>*{flex-shrink:0}
+.vt-hud{display:grid;grid-template-columns:1fr auto;gap:6px 8px;align-items:center}
+.vt-hud small{display:block;font:900 9px Nunito;letter-spacing:.12em;color:#9fc98a}
+.vt-reloj{font:900 22px Nunito;color:#ffe9a8;font-variant-numeric:tabular-nums}
+.vt-botones{display:flex;gap:6px}
+#cq-app .vt-botones .cq-redondo{width:36px;height:36px;min-width:36px;min-height:36px;padding:8px;font:900 15px Nunito}
+.vt-cuenta{grid-column:1/-1;display:flex;gap:5px;font:900 13px Nunito}
+.vt-cuenta span{flex:1;text-align:center;padding:3px 4px;border-radius:10px;background:#0006}
+.vt-c-plantas{color:#b8f08a}.vt-c-zombis{color:#d9b8f5}.vt-c-neutral{color:#efe2b8}
+.vt-zombis,.vt-objetivo,.vt-batallas{background:#0b1a1166;border:1px solid #3e6a3566;border-radius:12px;padding:8px}
+.vt-zombis{background:#2a1530aa;border-color:#7b4a9466}
+.vt-zombis header,.vt-objetivo header,.vt-batallas header{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px}
+.vt-zombis header b,.vt-batallas header b{font:900 13px Nunito;letter-spacing:.06em}
+.vt-cerebros{font:900 18px Nunito;color:#ffd0e0}
+.vt-ingreso{display:block;margin-top:5px;color:#e8c7da;font-size:11px;text-align:center}
+.vt-cartas{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:5px}
+#cq-app .vt-cartas .vs-carta{min-height:0;padding:2px 2px 3px;background:#f3e2c7;background-image:none;border:2px solid #120a14;border-radius:10px;box-shadow:none;color:#3a1f2c}
+.vt-cartas .vs-carta img{width:38px;height:42px}
+.vt-cartas .vs-carta span{font-size:10px}
+.vt-objetivo header b{font:900 13px Nunito;color:#ffe9a8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vt-objetivo header span{font:900 13px Nunito;color:#ffd0e0;font-variant-numeric:tabular-nums}
+.vt-mini{width:100%;aspect-ratio:16/10;display:block;border-radius:10px;border:2px solid #4e7b3f;cursor:pointer;background:#183424}
+.vt-objetivo small{display:block;margin-top:5px;color:#cfe7b5;font-size:11px;text-align:center}
+.vt-cupo{color:#9fc98a;font:900 12px Nunito}
+.vt-lista{display:flex;flex-direction:column;gap:5px}
+#cq-app .vt-fila{position:relative;display:grid;grid-template-columns:1fr auto;gap:2px 6px;min-height:0;padding:7px 9px 9px;border-radius:10px;background:#21140cd9;background-image:none;border:2px solid #6b5636;color:#fff4ce;text-align:left;box-shadow:none;overflow:hidden;text-shadow:none}
+#cq-app .vt-fila.vt-de-zombis{border-color:#6e4a8a}
+#cq-app .vt-fila.vt-activo{border-color:#ffe14a;box-shadow:0 0 0 2px #3a2405,0 0 12px 2px #ffe14a88}
+.vt-fila-nombre{font:900 12px Nunito;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vt-fila-reloj{font:900 12px Nunito;color:#ffe9a8;font-variant-numeric:tabular-nums}
+.vt-fila small{grid-column:1/-1;font-size:11px;color:#d8cfb4}
+.vt-vacia{margin:0;font-size:12px;color:#cfe7b5;text-align:center}
+.vt-ayuda{margin:0;font-size:11px;line-height:1.35;color:#b9d6a6}
+
+@media (max-height:470px){
+  .vt-intro{padding:12px 16px!important}
+  .vt-intro h2{font-size:22px!important;margin:0 0 4px!important}
+  .vt-reglas{grid-template-columns:1fr 1fr;gap:5px}
+  .vt-reglas li{font-size:11.5px;padding:5px 7px}
+  .vs-fin div{margin-top:8px}
+  .vt-barra{padding:6px;gap:5px}
+  .vt-reloj{font-size:18px}
+  .vt-leyenda{display:none}
+  .vt-ayuda{display:none}
+  .vt-cartas .vs-carta img{width:30px;height:32px}
+  .vt-ficha{padding:8px 10px 10px}
+  .vt-ficha header b{font-size:16px}
+  .vt-ficha p{display:none}
+  .vt-pin-base .cq-emblema{width:36px!important;height:41px!important}
+}
+@media (prefers-reduced-motion:reduce){.vt-pin-alcance .cq-emblema,.vt-pin-batalla .cq-emblema,#cq-app .vt-chip.vt-peligro{animation:none}}
