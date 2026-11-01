@@ -1,6 +1,6 @@
 /** Coordinador e interfaz reales con transporte preparado. Las victorias son simuladas expresamente. */
 import{chromium}from'@playwright/test';import assert from'node:assert/strict';import fs from'node:fs/promises';import path from'node:path';
-const base=process.argv[2]??'http://127.0.0.1:4196/',file=process.argv[3]??'test-results/gardendless-precarga/recuperacion/resultado.json',out=path.resolve(process.argv[4]??'test-results/mapa-nativo-interfaz');await fs.mkdir(out,{recursive:true});const casa=JSON.parse(await fs.readFile(file,'utf8')).casa;assert.ok(casa?.zonas[0].punto);
+const base=process.argv[2]??'http://127.0.0.1:4196/',file=process.argv[3]??'test-results/historia-nativa/resultado.json',out=path.resolve(process.argv[4]??'test-results/mapa-nativo-interfaz');await fs.mkdir(out,{recursive:true});const casa=JSON.parse(await fs.readFile(file,'utf8')).casa;assert.ok(casa?.zonas[0].punto);
 const mock=`export class FrenteGardendless{
  constructor(el,zona){this.zona=zona;this.sesion=crypto.randomUUID();this.frame=document.createElement('iframe');el.append(this.frame);this.activa=false;this.parada=true;this.t=0;}
  estado(){return{version:1,zona:this.zona,nivel:'historia',fase:this.activa&&this.t>1?'victoria':this.activa?'combatiendo':'preparando',segundos:this.t,oleada:0,soles:this.c?.punto?.soles??150,plantas:0,zombis:0,pausada:this.parada};}
