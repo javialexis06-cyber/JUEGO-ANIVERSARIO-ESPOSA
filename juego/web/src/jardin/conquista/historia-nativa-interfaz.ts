@@ -254,7 +254,7 @@ export async function montarHistoriaNativa() {
         else if (modal === 'zona')
             html = `<section class="cq-modal hn-pergamino hn-zona"><h2>${casa(seleccion!)}</h2><p class="hn-subtitulo">${TIPO_AREA[AREAS_CAMPANA[seleccion!].tipo]} · ${PAISES_CAMPANA[AREAS_CAMPANA[seleccion!].pais].nombre} › ${CIUDADES_CAMPANA[AREAS_CAMPANA[seleccion!].ciudad].nombre}</p><ul class="hn-datos"><li title="Carriles del tablero">🌿 ${AREAS_CAMPANA[seleccion!].filas} carriles</li>${AREAS_CAMPANA[seleccion!].agua.length ? '<li title="Necesitas nenúfares">💧 Agua</li>' : ''}${AREAS_CAMPANA[seleccion!].noche ? '<li title="No caen soles del cielo">🌙 Noche</li>' : ''}<li title="Semillas que admite su formación">🎴 Cupo ${cupo(seleccion!)}</li><li title="Monedas al recuperarla por primera vez">${cobrada(seleccion!) ? '🪙 Ya cobrada' : '🪙 ' + recompensa(seleccion!) + ' monedas'}</li></ul><p class="hn-estado hn-${estadoZona(mundo!, seleccion!).clase}">${estadoZona(mundo!, seleccion!).largo}</p><div class="hn-equipo">${mundo!.zona(seleccion!).equipo.length?mundo!.zona(seleccion!).equipo.map(imagen).join(''):'<small>Todavía no tiene formación: toca <b>Formación</b> para elegir sus semillas.</small>'}</div><div class="hn-zombis" aria-label="Zombis de esta zona"><small>Zombis</small>${zombisDe(seleccion!)}</div><nav>${conTexto(boton('equipo', 'Preparar formación', 'equipo'),'Formación')}${mundo!.zona(seleccion!).capturada ? conTexto(boton('ver', 'Ver la defensa', 'historia'),'Ver defensa') : conTexto(boton('expedicion', 'Iniciar expedición', 'atacar'),'Expedición')}${conTexto(boton('cerrar-modal', 'Volver al mapa', 'cerrar'),'Volver')}</nav></section>`;
         else if (modal === 'salida')
-            html = `<section class="cq-modal hn-pergamino"><h2>La batalla sigue</h2><p>Puedes recorrer el mapa sin perder el combate. Termina los ataques antes de cerrar esta historia para guardar sus defensas.</p>${boton('cerrar-modal', 'Volver al mapa', 'mapa')}</section>`;
+            html = `<section class="cq-modal hn-pergamino"><h2>La batalla sigue</h2><p>Puedes recorrer el mapa sin perder el combate. Si sales ahora se guardan las zonas y las plantas, y al volver los ataques abiertos se repetirán desde su inicio.</p><nav class="hn-acciones">${boton('cerrar-modal', 'Seguir jugando', 'mapa')}<button data-cq="salir-ya">${icono('salir')} Salir de todos modos</button></nav></section>`;
         else if (modal === 'ayuda')
             html = `<img class="hn-dave" src="${urlArtePvZ('dave-tutorial.webp')}" alt="Dave"><section class="cq-modal hn-pergamino hn-guia"><h2>Guía de la campaña</h2><p>En combate arrastra una semilla a una casilla (o tócala y luego la casilla) y recoge los soles para plantar más.</p>${GUIA.map(k => `<details${k === 'mapa' ? ' open' : ''}><summary>${TUTORIAL[k].titulo}</summary>${TUTORIAL[k].texto.map(x => `<p>${esc(x.replace('{pais}', 'un país nuevo'))}</p>`).join('')}</details>`).join('')}<nav class="hn-acciones">${mundo && !mundo.estado.ataques.length ? boton('nueva', 'Comenzar otra historia', 'historia') : ''}${boton('cerrar-modal', 'Entendido', 'cerrar')}</nav></section>`;
         else if (modal === 'tutorial' && temaActual)
@@ -303,7 +303,11 @@ export async function montarHistoriaNativa() {
         capa();
         pintar();
     }
-    const firmaCampo = (c: ConfigDefensaNativa) => JSON.stringify([c.zona, c.semillas, c.punto]);
+    // Los mismos datos que el motor exige para iniciar (historia.js, base): sin las lápidas, la precarga de una zona de
+    // noche parecía lista con otras lápidas que las del ataque y el motor se negaba a iniciar (Paseo del farol trabado).
+    const firmaCampo = (c: ConfigDefensaNativa) => JSON.stringify([c.zona, c.filas, c.agua, c.noche, c.lapidas, c.semillas, c.punto, c.escenario ?? null, c.fusiones ?? []]);
+    /** Zonas cuyo ataque se está cargando: la precarga en segundo plano no las toca mientras tanto. */
+    const cargandoAtaque = new Set<number>();
     function configuracion(id: ZonaNativa) {
         const z=mundo?.zona(id),previstas=AREAS_CAMPANA[id].desbloquea as SemillaNativa[];
         // Explorar un destino sin baraja aún no debe vaciar y reconstruir su vista previa.
@@ -384,7 +388,7 @@ export async function montarHistoriaNativa() {
         }
         // El primer motor carga solo: así los demás toman de la caché sus imágenes (decenas de MB) en vez de
         // descargarlas todos a la vez
-        const nuevos=deseadas.filter(id=>instancias.get(id)?.ataque==null&&(crearExtra||fijas.includes(id)||instancias.has(id)));
+        const nuevos=deseadas.filter(id=>instancias.get(id)?.ataque==null&&!cargandoAtaque.has(id)&&(crearExtra||fijas.includes(id)||instancias.has(id)));
         const hayListo=[...instancias.values()].some(i=>i.lista);
         void (hayListo||!nuevos.length?Promise.all(nuevos.map(id=>prepararCampo(configuracion(id))))
             :prepararCampo(configuracion(nuevos[0])).then(()=>Promise.all(nuevos.slice(1).map(id=>prepararCampo(configuracion(id))))))
@@ -393,13 +397,14 @@ export async function montarHistoriaNativa() {
     async function cargarAtaque(a: AtaqueNativo) {
         if (instancias.get(a.zona)?.ataque === a.id) return;
         cargando++;
+        cargandoAtaque.add(a.zona);
         try {
             const c=nivelCampana(a.zona,a.equipo,a.semilla,a.punto,false,a.refuerzo,mundo!.estado.fusiones), i=await prepararCampo(c);
             i.estado=await i.motor.iniciarHistoria(c);
             i.ataque=a.id;
             if(mundo!.pausada) await i.motor.pausa();
         } catch(e) {if(!muerto)falloMotor(e);}
-        finally {cargando--;pintar();}
+        finally {cargando--;cargandoAtaque.delete(a.zona);pintar();}
     }
     async function ver(id: ZonaNativa) {
         const i=instancias.get(id);
@@ -726,7 +731,8 @@ export async function montarHistoriaNativa() {
                     await (document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen());
                     break;
                 case 'salir':
-                    if (mundo?.estado.ataques.length && !mundo.estado.perdida) {
+                case 'salir-ya':
+                    if (target.dataset.cq === 'salir' && mundo?.estado.ataques.length && !mundo.estado.perdida) {
                         modal = 'salida';
                         capa();
                         break;
@@ -789,7 +795,9 @@ export async function montarHistoriaNativa() {
         capa();
         pintar();
     } }, { signal: eventos.signal });
-    window.addEventListener('beforeunload', e => { if (mundo?.estado.ataques.length && !mundo.estado.perdida || necesitaGuardar) {
+    // Solo se avisa si el guardado falló. Cerrar en plena batalla conserva zonas y plantas y repite esos ataques
+    // (decisión aceptada); avisar entonces bloqueaba la ventana de escritorio sin que se viera el diálogo.
+    window.addEventListener('beforeunload', e => { if (necesitaGuardar) {
         e.preventDefault();
         e.returnValue = '';
     } }, { signal: eventos.signal });

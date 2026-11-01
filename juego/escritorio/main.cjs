@@ -40,6 +40,9 @@ function abrir(puerto) {
     const [, alto] = ventana.getContentSize();
     ventana.webContents.setZoomFactor(Math.max(1, Math.min(4, alto / ALTO_CSS)));
   };
+  // Cerrar la ventana nunca queda bloqueado por un «¿Salir de la página?» que Electron no muestra: antes había que
+  // terminar el juego desde el administrador de tareas. Las páginas guardan su avance por su cuenta.
+  ventana.webContents.on('will-prevent-unload', evento => evento.preventDefault());
   ventana.on('resize', ajustarZoom);
   ventana.on('enter-full-screen', ajustarZoom);
   ventana.on('leave-full-screen', ajustarZoom);

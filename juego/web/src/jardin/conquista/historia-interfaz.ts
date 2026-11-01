@@ -65,7 +65,7 @@ export async function montarHistoriaConquista(){
   // portátil sigue con su historia propia. Importar/exportar viven dentro de cada historia.
   let nativa=false;try{nativa=!!localStorage.getItem(amigo?'amigo-conquista-historia-nativa-v3':'conquista-historia-nativa-v3');}catch{/* sin almacenamiento */}void anteriorGuardado;
   const acciones=portatil?[...(almacenado?[['continuar','Continuar historia','continuar']]:[]),['historia','Historia','historia'],['importar','Abrir respaldo','exportar']]
-   :[['historia',nativa?'Continuar historia':'Historia','historia'],['biblioteca','Minijuegos','minijuegos'],['versus','Versus','versus']];
+   :[['historia',nativa?'Continuar historia':'Historia','historia'],['biblioteca','Minijuegos','minijuegos'],['versus','Versus','versus'],['volver-casa',amigo?'Volver al inicio':'Volver a casa','salir']];
   root.innerHTML=`<section class="cq-menu cq-menu-inmersivo"><div class="cq-cine"></div><div class="cq-marca-mini"><small>PLANTAS CONTRA ZOMBIS</small><h1>La Semilla Madre</h1></div><nav class="cq-herramientas">${botonRedondo('pantalla','Pantalla completa','pantalla')}${botonRedondo('sonido','Sonido','sonido')}${botonRedondo('ayuda','Cómo jugar','ayuda')}</nav><nav class="cq-menu-dock">${acciones.map(([a,t,i])=>'<div>'+botonRedondo(a,t,i)+'<span>'+t+'</span></div>').join('')}</nav><input type="file" id="cq-respaldo" accept="application/json,.json" hidden><p class="cq-error cq-error-menu" role="alert">${esc(guardado.error)}</p></section><div class="cq-noticia cq-oculto" id="cq-noticia" role="status"></div><div id="cq-capa"></div>`;pelicula(false,true);
  }
  async function comenzar(continuar:boolean){
@@ -184,7 +184,8 @@ export async function montarHistoriaConquista(){
    case'expedicion':if(mundo?.expedicion(zona)){guardar();verDefensa(zona);}else noticia('Revisa las semillas, la ruta y los combates abiertos.');break;
    case'intervenir':verDefensa(zona);break;case'pala':pala=!pala;carta=null;actualizar();break;
    case'pausa':pausa();break;case'reintentar':if(guardar()&&mundo){mundo.pausar(false);modal='';pintarModal();acumulado=0;anterior=performance.now();actualizar();fondoAudio();}break;
-   case'salir':if(guardar())menu();break;case'exportar':exportar();break;
+   case'salir':if(guardar())menu();break;
+   case'volver-casa':{soltar();const u=new URL(amigo?'./amigos.html':'./index.html',location.href);for(const k of ['rol','local'])if(params.has(k))u.searchParams.set(k,params.get(k)!);location.href=u.href;break;}case'exportar':exportar();break;
    case'ayuda':abrirTutorial();break;case'dave-anterior':avanzarTutorial(-1);break;case'dave-siguiente':avanzarTutorial(1);break;case'cerrar-tutorial':cerrarTutorial();break;case'cerrar-modal':editor=null;modal='';pintarModal();break;
    case'sonido':sonido=!sonido;audio.habilitado=sonido;if(sonido){audio.activar();if(modal==='ayuda')audio.dave(PASOS_DAVE[tutorialPaso].audio);else fondoAudio();}cine?.activarSonido(sonido);b.setAttribute('aria-pressed',String(sonido));break;
    case'pantalla':if(document.fullscreenElement)void document.exitFullscreen();else void document.documentElement.requestFullscreen().catch(()=>noticia('El navegador no permite pantalla completa.'));break;

@@ -4,6 +4,16 @@
 esta versión (partidas, compras y perfiles), con `public/reinicio-general.js`. Los datos del servidor Supabase de la
 casa no se borraron (sin acceso). El jardín quedó más ligero con varios combates y la tienda sin título grande.
 
+**Hecho por Claude (1 de noviembre) · arreglos de uso:**
+
+- **Paseo del farol (y cualquier zona de noche) ya no se traba al entrar.** La precarga del campo usaba otras lápidas
+  que el ataque y el motor se negaba a iniciar; ahora se compara la formación completa.
+- **Salir siempre es posible.** En la historia, «Salir» durante una batalla ofrece «Salir de todos modos» (se guardan
+  zonas y plantas; los ataques abiertos se repiten). La app de escritorio ya no bloquea el cierre de la ventana.
+- **Jardín:** la portada tiene «Volver a casa».
+- **Versus:** la semilla elegida se ve en verde con su número de orden, el menú no salta al principio al elegir, y
+  en la partida un marco amarillo indica la semilla en la mano (también en la historia).
+
 **Lo que falta del jardín (31 de octubre):** ver [estado y pendientes reales](en-obra/pvz-pendientes-2026-10-22.md).
 La lista original de 180 tareas está archivada; muchas quedaron resueltas por Gardendless o superadas.
 

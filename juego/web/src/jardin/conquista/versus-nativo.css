@@ -22,11 +22,15 @@
 .vs-escenarios{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .vs-escenarios button{display:flex;flex-direction:column;align-items:flex-start;padding:8px 10px;border-radius:12px;border:2px solid #0d2414;background:#24502f;color:#fff8e6}
 .vs-escenarios button span{font-size:12px;color:#c9e7a4}
-.vs-escenarios [aria-pressed=true],.vs-semillas [aria-pressed=true]{background:#ffcf3a;color:#3a2405;border-color:#9b6a00}
+#cq-app .vs-escenarios [aria-pressed=true]{background:#ffcf3a;background-image:none;border:3px solid #9b6a00;box-shadow:0 0 0 2px #0d2414,0 0 12px 3px rgba(255,207,58,.8);color:#3a2405;border-color:#9b6a00}
 .vs-escenarios [aria-pressed=true] span{color:#5d4100}
 .vs-semillas{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px}
 .vs-semillas button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border-radius:12px;border:2px solid #0d2414;background:#f7efd6;color:#3a2a17;font-size:11px;line-height:1.1}
 .vs-semillas img{width:52px;height:52px;object-fit:contain}
+/* Semilla elegida para el duelo (1 de noviembre): verde con brillo, marca y número de orden; antes solo pasaba de crema a amarillo. */
+.vs-semillas button{position:relative}
+#cq-app .vs-semillas [aria-pressed=true]{background:#d8f7a8;background-image:none;color:#173a12;border:4px solid #3fae2a;box-shadow:0 0 0 2px #0d2414,0 0 14px 3px rgba(120,230,80,.85);transform:scale(1.04);padding:4px 2px}
+.vs-semillas [aria-pressed=true]::after{content:"✓ " attr(data-orden);position:absolute;top:-8px;right:-8px;min-width:22px;padding:2px 6px;border-radius:12px;background:#3fae2a;color:#fff;font-size:12px;font-weight:900;box-shadow:0 0 0 2px #0d2414}
 .vs-zombis-lista{display:flex;flex-wrap:wrap;gap:8px}
 .vs-zombis-lista figure{margin:0;width:84px;text-align:center;font-size:11px;background:#2b2a3a;border-radius:12px;padding:6px 4px}
 .vs-zombis-lista img{width:56px;height:68px;object-fit:contain}.vs-zombis-lista span{display:block;color:#ffd0e0}
@@ -49,7 +53,7 @@
 .vs-barra p{font-size:11px;text-align:center;margin:4px 0;color:#e8d1e0}
 .vs-carta{position:relative;display:flex;flex-direction:column;align-items:center;border-radius:12px;border:3px solid #120a14;background:#f3e2c7;color:#3a1f2c;padding:2px 2px 4px;overflow:hidden}
 .vs-carta img{width:58px;height:62px;object-fit:contain}.vs-carta span{font-size:12px;font-weight:900}
-.vs-carta[aria-pressed=true]{background:#ffcf3a;box-shadow:0 0 0 3px #fff}
+#cq-app .vs-carta[aria-pressed=true]{background:#ffcf3a;background-image:none;border:3px solid #ffe14a;border-color:#ffe14a;box-shadow:0 0 0 3px #3a2405,0 0 16px 5px rgba(255,225,74,.9);transform:scale(1.06);z-index:1}
 .vs-carta:disabled{filter:grayscale(.85) brightness(.8)}
 .vs-recarga{position:absolute;left:0;right:0;top:0;height:0;background:#0009;pointer-events:none}
 .vs-aviso{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:#1b1208e6;padding:8px 14px;border-radius:12px;z-index:4;grid-area:t;max-width:80%}

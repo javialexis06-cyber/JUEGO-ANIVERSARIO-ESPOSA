@@ -107,5 +107,30 @@
             window.addEventListener('blur',cancelar);
             document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelar();});
             window.addEventListener('keydown',e=>{if(e.key==='Escape' && gesto){detener(e);cancelar();}},true);
+            // Marco visible sobre la semilla elegida (1 de noviembre): el contorno nativo es un trazo verde muy fino y no
+            // se distinguía qué planta estaba en la mano. Solo dibuja por encima; no cambia la selección ni el juego.
+            const marco=document.createElement('div');
+            marco.id='marco-semilla';marco.setAttribute('aria-hidden','true');
+            const estilo=document.createElement('style');
+            estilo.textContent='#marco-semilla{position:fixed;display:none;pointer-events:none;z-index:5;box-sizing:border-box;border:4px solid #ffe14a;border-radius:9px;box-shadow:0 0 0 2px #3a2405,0 0 14px 4px rgba(255,225,74,.85);animation:marco-semilla .7s ease-in-out infinite alternate}'
+                +'@keyframes marco-semilla{from{transform:scale(1);box-shadow:0 0 0 2px #3a2405,0 0 8px 2px rgba(255,225,74,.6)}to{transform:scale(1.06);box-shadow:0 0 0 2px #3a2405,0 0 18px 6px rgba(255,225,74,1)}}'
+                +'@media (prefers-reduced-motion:reduce){#marco-semilla{animation:none}}';
+            document.head.append(estilo);document.body.append(marco);
+            let ultimoMarco='';
+            setInterval(()=>{
+                let firma='';
+                const c=document.hidden?null:contexto(), i=c?.ui.index ?? -1, cf=i>=0 && i<8 ? c.cards.CFs[i] : null;
+                const t=cf?.node.activeInHierarchy && (cf.node._uiProps?.uiTransformComp ?? cf.node.getComponent('cc.UITransform'));
+                if(t) {
+                    const b=t.getBoundingBoxToWorld(), r=canvas.getBoundingClientRect(), v=cc.view.getVisibleSize(), o=cc.view.getVisibleOrigin(),
+                        sx=r.width/v.width, sy=r.height/v.height;
+                    firma=[r.left+(b.x-o.x)*sx, r.bottom-(b.y-o.y+b.height)*sy, b.width*sx, b.height*sy].map(n=>Math.round(n)).join(',');
+                }
+                if(firma===ultimoMarco) return;
+                ultimoMarco=firma;
+                if(!firma) {marco.style.display='none';return;}
+                const [x,y,w,h]=firma.split(',');
+                Object.assign(marco.style,{display:'block',left:(x-3)+'px',top:(y-3)+'px',width:(+w+6)+'px',height:(+h+6)+'px'});
+            },80);
     })();
 })();

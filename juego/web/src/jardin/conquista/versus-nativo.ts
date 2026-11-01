@@ -70,7 +70,7 @@ export async function montarVersusNativo() {
         const esc0 = escenarioHistoriaPvZ(zona).nivel;
         root.innerHTML = `<section class="vs-preparar"><header><button class="vs-volver" data-vs="${rol === 'anfitrion' ? 'salir-sala' : 'menu'}">Atrás</button><div><small>${rol === 'anfitrion' ? 'SALA ' + esc(sala?.codigo ?? '') + ' · TÚ LLEVAS LAS PLANTAS' : 'VERSUS EN ESTE DISPOSITIVO'}</small><h1>Prepara el duelo</h1></div><button class="vs-principal" data-vs="jugar" ${semillas.length ? '' : 'disabled'}>¡A jugar!</button></header>
         <h2>Escenario</h2><div class="vs-escenarios">${ESCENARIOS_HISTORIA_PVZ.map(e => { const nv = e.nivel; return `<button data-zona="${e.id}" aria-pressed="${e.id === zona}"><b>${esc(e.nombre)}</b><span>${nv.tablero!.filas} carriles${nv.filasAgua?.length ? ' · agua' : ''}${nv.sinSolCielo ? ' · noche' : ''}</span></button>`; }).join('')}</div>
-        <h2>Semillas de las plantas <small>${semillas.length} / 8</small></h2><div class="vs-semillas">${SEMILLAS.map(t => `<button data-semilla="${t}" aria-pressed="${semillas.includes(t)}" title="${esc(nombrePlanta(t))}"><img src="${imgPlanta(t)}" alt=""><span>${esc(nombrePlanta(t))}</span></button>`).join('')}</div>
+        <h2>Semillas de las plantas <small>${semillas.length} / 8</small></h2><div class="vs-semillas">${SEMILLAS.map(t => `<button data-semilla="${t}" aria-pressed="${semillas.includes(t)}"${semillas.includes(t) ? ` data-orden="${semillas.indexOf(t) + 1}"` : ''} title="${esc(nombrePlanta(t))}"><img src="${imgPlanta(t)}" alt=""><span>${esc(nombrePlanta(t))}</span></button>`).join('')}</div>
         <h2>Zombis disponibles</h2><div class="vs-zombis-lista">${new ReglasVersus(esc0.filasAgua ?? [], esc0.tablero!.filas).disponibles().map(z => `<figure><img src="${imgZombi(z.propio)}" alt=""><figcaption>${esc(z.nombre)}<span>🧠 ${z.coste}</span></figcaption></figure>`).join('')}</div></section>`;
     }
     function esperando(texto: string) {
@@ -285,7 +285,13 @@ export async function montarVersusNativo() {
         const el = (e.target as HTMLElement).closest<HTMLElement>('button');
         if (!el) return;
         if (el.dataset.zona) { zona = Number(el.dataset.zona); preparar(); return; }
-        if (el.dataset.semilla) { const t = el.dataset.semilla as SemillaNativa; semillas = semillas.includes(t) ? semillas.filter(s => s !== t) : semillas.length < 8 ? [...semillas, t] : semillas; if (semillas.length === 8 && !semillas.includes(t)) noticia('Caben ocho semillas.'); preparar(); return; }
+        if (el.dataset.semilla) { const t = el.dataset.semilla as SemillaNativa; semillas = semillas.includes(t) ? semillas.filter(s => s !== t) : semillas.length < 8 ? [...semillas, t] : semillas; if (semillas.length === 8 && !semillas.includes(t)) noticia('Caben ocho semillas.');
+            // Se redibuja el menú conservando dónde estaba cada lista: antes saltaba al inicio y no se veía qué se eligió.
+            const desplazados = [root, ...root.querySelectorAll<HTMLElement>('*')].filter(x => x.scrollTop > 0).map(x => [x === root ? null : [...root.querySelectorAll('*')].indexOf(x), x.scrollTop] as const);
+            preparar();
+            const todos = [...root.querySelectorAll<HTMLElement>('*')];
+            for (const [i, y] of desplazados) { const x = i == null ? root : todos[i]; if (x) x.scrollTop = y; }
+            return; }
         if (el.dataset.zombi) { elegido = elegido === el.dataset.zombi ? null : el.dataset.zombi; root.querySelector<HTMLElement>('.vs-carriles')!.dataset.firma = ''; return; }
         if (el.dataset.fila) { if (!elegido) { noticia('Primero elige un zombi.'); return; } const tipo = elegido; void soltar(tipo, Number(el.dataset.fila)); return; }
         switch (el.dataset.vs) {
